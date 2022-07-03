@@ -1,7 +1,10 @@
-import { Module } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { Module } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { ChatModule } from './Chat/ChatModule';
+import { ChatModule } from "./Chat/ChatModule";
+import { User } from "./User/Models/User";
+import { UserModule } from "./User/Module";
 
 /*
  |--------------------------------------------------------------------------------
@@ -18,7 +21,19 @@ const PORT = process.env.PORT ?? 8370;
  */
 
 @Module({
-  imports: [ChatModule],
+  imports: [
+    ChatModule,
+    UserModule,
+    TypeOrmModule.forRoot({
+      type: "mysql",
+      host: "localhost",
+      port: 33060,
+      username: "admin",
+      password: "secret",
+      database: "socious",
+      entities: [User]
+    })
+  ]
 })
 export class AppModule {}
 

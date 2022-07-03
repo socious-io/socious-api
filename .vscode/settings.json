@@ -16,9 +16,16 @@
   "[html,svg]": {
     "editor.formatOnSaveMode": "file",
     "editor.defaultFormatter": "HookyQR.beautify"
-  },  
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   "cSpell.words": [
+    "datasource",
+    "datetime",
+    "mediumtext",
     "nestjs",
-    "socious"
+    "socious",
+    "typeorm"
   ]
 }

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as bcrypt from "bcrypt";
 import { Repository } from "typeorm";
 
 import { User } from "../Models/User";
@@ -16,7 +17,7 @@ export class UserService {
       .values({
         username,
         email,
-        password
+        password: await bcrypt.hash(password, 10)
       })
       .execute();
   }

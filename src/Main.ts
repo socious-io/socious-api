@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { ChatModule } from "./Chat/ChatModule";
+import { ChatModule } from "./Chat/Module";
 import { User } from "./User/Models/User";
 import { UserModule } from "./User/Module";
 

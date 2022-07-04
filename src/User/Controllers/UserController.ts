@@ -1,11 +1,11 @@
+import { AuthService } from "@app/auth";
 import { Body, Controller, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
-import * as bcrypt from "bcrypt";
 
 import { UserService } from "../Services/UserService";
 
 @Controller("users")
 export class UserController {
-  constructor(readonly users: UserService) {}
+  constructor(readonly auth: AuthService, readonly users: UserService) {}
 
   @Post()
   public async create(
@@ -19,7 +19,7 @@ export class UserController {
   @Get("test")
   public async test(): Promise<void> {
     const user = await this.users.findOne(1);
-    console.log(user, await bcrypt.compare("admin", user.password));
+    console.log(user.name, await this.auth.compare("12345678", user.password));
   }
 
   @Get(":id")

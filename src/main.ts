@@ -2,9 +2,7 @@ import { Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { ChatModule } from "./Chat/Module";
-import { User } from "./User/Models/User";
-import { UserModule } from "./User/Module";
+import { User, UserModule } from "./User";
 
 /*
  |--------------------------------------------------------------------------------
@@ -22,7 +20,6 @@ const PORT = process.env.PORT ?? 8370;
 
 @Module({
   imports: [
-    ChatModule,
     UserModule,
     TypeOrmModule.forRoot({
       type: "mysql",

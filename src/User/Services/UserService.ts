@@ -17,7 +17,7 @@ export class UserService {
       .values({
         username,
         email,
-        password: await bcrypt.hash(password, 10)
+        password: await bcrypt.hash(password, 12)
       })
       .execute();
   }

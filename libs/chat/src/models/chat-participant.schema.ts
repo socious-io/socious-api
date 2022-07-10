@@ -9,9 +9,6 @@ export abstract class ChatParticipant {
   @ManyToOne(() => Chat)
   chat: Chat;
 
-  @Column()
-  chatId: number;
-
   @Column({ default: () => "false" })
   muted: boolean;
 
@@ -32,4 +29,12 @@ export abstract class ChatParticipant {
 
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt?: Date;
+
+  /** Filtered view of the participant data for sending to other participants. */
+  public publicView(): any {
+    return {
+      lastReadId: this.lastReadId,
+      lastReadDT: this.lastReadDT,
+    };
+  }
 }

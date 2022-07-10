@@ -6,4 +6,12 @@ import { ChatParticipant } from "./chat-participant.schema";
 export class UserChat extends ChatParticipant {
   @Column({ type: "bigint", unsigned: true })
   userId: number;
+
+  /** Filtered view of the participant data for sending to other participants. */
+  public publicView(): any {
+    return {
+      ...super.publicView(),
+      userId: this.userId,
+    };
+  }
 }

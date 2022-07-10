@@ -4,6 +4,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
 import { config } from "./AuthConfig";
+import { AuthenticatedUser } from "./decorators/authenticated-user.decorator";
 import { AuthService } from "./Services/AuthService";
 import { JwtStrategy } from "./Strategies/JwtStrategy";
 import { LocalStrategy } from "./Strategies/LocalStrategy";
@@ -15,11 +16,11 @@ import { LocalStrategy } from "./Strategies/LocalStrategy";
     JwtModule.register({
       secret: config.secret,
       signOptions: {
-        expiresIn: "24h"
-      }
-    })
+        expiresIn: "24h",
+      },
+    }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService]
+  exports: [AuthService, AuthenticatedUser],
 })
 export class AuthModule {}

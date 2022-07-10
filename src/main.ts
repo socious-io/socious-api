@@ -1,4 +1,5 @@
 import { AuthModule } from "@app/auth";
+import { ChatModule } from "@app/chat";
 import { UsersModule } from "@app/users";
 import { Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -25,6 +26,7 @@ const PORT = process.env.PORT ?? 8370;
   imports: [
     AuthModule,
     UsersModule,
+    ChatModule,
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
@@ -32,10 +34,10 @@ const PORT = process.env.PORT ?? 8370;
       username: "admin",
       password: "secret",
       database: "socious",
-      autoLoadEntities: true
-    })
+      autoLoadEntities: true,
+    }),
   ],
-  controllers: [AuthController, UsersController]
+  controllers: [AuthController, UsersController],
 })
 export class AppModule {}
 

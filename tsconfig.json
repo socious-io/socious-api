@@ -20,6 +20,12 @@
     "paths": {
       "@app/*": [
         "libs/*/src"
+      ],
+      "@app/chat": [
+        "libs/chat/src"
+      ],
+      "@app/chat/*": [
+        "libs/chat/src/*"
       ]
     }
   }

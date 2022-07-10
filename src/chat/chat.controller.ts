@@ -1,7 +1,7 @@
 import { AuthenticatedUser, AuthService, JwtAuthGuard } from "@app/auth";
 import { ChatService } from "@app/chat";
 import { User, UsersService } from "@app/users";
-import { Body, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Query, UseGuards } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 
 import { AsPage } from "./as-page.decorator";
@@ -114,12 +114,7 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Get("list")
   public async getMyChats(@AuthenticatedUser() principal: User, @AsPage() asPage: number | null): Promise<any[]> {
-    return (await this.chat.getMyChats(principal, asPage)).map((chat) => {
-      const view = chat.publicView();
-      view.users = chat.users.map((userChat) => (userChat.userId == principal.id ? userChat : userChat.publicView()));
-      view.pages = chat.pages.map((pageChat) => (pageChat.pageId === asPage ? pageChat : pageChat.publicView()));
-      return view;
-    });
+    return (await this.chat.getMyChats(principal, asPage)).map((chat) => chat.publicView(principal.id, asPage));
   }
 
   /** Get the user or page's participant data (last read, notification settings, etc). */
@@ -130,6 +125,8 @@ export class ChatController {
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
   ): Promise<any> {
-    return this.chat.getOwnParticipant(principal, asPage, chatId);
+    const info = await this.chat.getOwnParticipant(principal, asPage, chatId);
+    if (info) return info;
+    else throw new NotFoundException();
   }
 }

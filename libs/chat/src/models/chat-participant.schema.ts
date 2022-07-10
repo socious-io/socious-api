@@ -37,4 +37,10 @@ export abstract class ChatParticipant {
       lastReadDT: this.lastReadDT,
     };
   }
+
+  toJSON(): any {
+    const obj = { ...this };
+    delete obj.id;
+    return obj;
+  }
 }

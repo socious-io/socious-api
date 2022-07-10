@@ -28,9 +28,11 @@ export class Chat {
   messages: Message[];
 
   /** Filtered view of the chat data for sending to front-end. */
-  public publicView(): any {
+  public publicView(user?: number, page?: number): any {
     const obj = { ...this };
     delete obj.participantsHash;
+    obj.users = this.users.map((userChat) => (userChat.userId == user ? userChat : userChat.publicView()));
+    obj.pages = this.pages.map((pageChat) => (pageChat.pageId == page ? pageChat : pageChat.publicView()));
     return obj;
   }
 }

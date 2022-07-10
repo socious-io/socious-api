@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { DataSource, Repository } from "typeorm";
 
 import { Chat } from "./models/chat.model";
+import { ChatParticipant } from "./models/chat-participant.schema";
 import { Message } from "./models/message.model";
 import { PageChat } from "./models/page-chat.model";
 import { UserChat } from "./models/user-chat.model";
@@ -86,7 +87,8 @@ export class ChatService {
 
   /** Get the user or page's participant data (last read, notification settings, etc). */
   public async getOwnParticipant(principal: User, asPage: number | null, chatId: number): Promise<UserChat | PageChat> {
-    throw new NotImplementedException();
+    if (asPage) return this.pageChats.findOneBy({ chat: { id: chatId }, pageId: asPage });
+    return this.userChats.findOneBy({ chat: { id: chatId }, userId: principal.id });
   }
 
   /** Get all users or pages' participant data (last read, notification settings, etc).
@@ -97,7 +99,10 @@ export class ChatService {
     asPage: number | null,
     chatId: number,
   ): Promise<Array<UserChat | PageChat>> {
-    throw new NotImplementedException();
+    // TODO: validate that the user is supposed to see this
+    const users: Array<UserChat | PageChat> = await this.userChats.findBy({ chat: { id: chatId } });
+    const pages = await this.pageChats.findBy({ chat: { id: chatId } });
+    return users.concat(pages);
   }
 
   /** Delete a chat from this user or page's list of chats. */

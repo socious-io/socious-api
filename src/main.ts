@@ -5,6 +5,7 @@ import { Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { ChatController } from "./chat/chat.controller";
 import { AuthController } from "./Controllers/AuthController";
 import { UsersController } from "./Controllers/UsersController";
 
@@ -37,7 +38,7 @@ const PORT = process.env.PORT ?? 8370;
       autoLoadEntities: true,
     }),
   ],
-  controllers: [AuthController, UsersController],
+  controllers: [AuthController, UsersController, ChatController],
 })
 export class AppModule {}
 

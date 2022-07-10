@@ -5,16 +5,16 @@ export class createChatTables1657461305298 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE \`chat_messages\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`userId\` bigint UNSIGNED NOT NULL, \`pageId\` bigint UNSIGNED NOT NULL, \`text\` mediumtext NOT NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`media\` varchar(255) NOT NULL, \`mediaType\` varchar(255) NOT NULL, \`chatId\` bigint UNSIGNED NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`chat_messages\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`userId\` bigint UNSIGNED, \`pageId\` bigint UNSIGNED, \`text\` mediumtext, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`media\` varchar(255), \`mediaType\` varchar(255), \`chatId\` bigint UNSIGNED NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`page_chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`chatId\` bigint NOT NULL, \`muted\` tinyint NOT NULL DEFAULT false, \`deleted\` tinyint NOT NULL, \`lastReadId\` int NOT NULL, \`lastReadDT\` datetime NOT NULL, \`allRead\` tinyint NOT NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`pageId\` bigint UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`page_chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`chatId\` bigint NOT NULL, \`muted\` tinyint NOT NULL DEFAULT false, \`deleted\` tinyint NOT NULL DEFAULT false, \`lastReadId\` int, \`lastReadDT\` datetime, \`allRead\` tinyint NOT NULL DEFAULT false, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`pageId\` bigint UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`user_chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`chatId\` bigint NOT NULL, \`muted\` tinyint NOT NULL DEFAULT false, \`deleted\` tinyint NOT NULL, \`lastReadId\` int NOT NULL, \`lastReadDT\` datetime NOT NULL, \`allRead\` tinyint NOT NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`userId\` bigint UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`user_chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`chatId\` bigint NOT NULL, \`muted\` tinyint NOT NULL DEFAULT false, \`deleted\` tinyint NOT NULL DEFAULT false, \`lastReadId\` int, \`lastReadDT\` datetime, \`allRead\` tinyint NOT NULL DEFAULT false, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`userId\` bigint UNSIGNED NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`uuid\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`chats\` (\`id\` bigint UNSIGNED NOT NULL AUTO_INCREMENT, \`participantsHash\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`updatedAt\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `ALTER TABLE \`chat_messages\` ADD CONSTRAINT \`FK_e82334881c89c2aef308789c8be\` FOREIGN KEY (\`chatId\`) REFERENCES \`chats\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,

@@ -10,13 +10,13 @@ export class Chat {
   id: number;
 
   @Column()
-  uuid?: string;
+  participantsHash: string;
 
   @Column("timestamp", { default: () => "NOW()" })
-  createdAt?: Date;
+  createdAt: Date;
 
   @Column("timestamp", { default: () => "NOW()" })
-  updatedAt?: Date;
+  updatedAt: Date;
 
   @OneToMany(() => UserChat, (participant) => participant.chat)
   users: UserChat[];

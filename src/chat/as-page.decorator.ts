@@ -1,4 +1,6 @@
-// TODO this belongs somewhere else, mabye the page library
+// TODO: this belongs somewhere else, mabye the page library
+// TODO: optionally return a Page entity
+// TODO: this should verify that the authenticated user is a member of this page
 
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 

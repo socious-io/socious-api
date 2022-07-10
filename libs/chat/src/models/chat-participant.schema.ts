@@ -12,23 +12,23 @@ export abstract class ChatParticipant {
   @Column({ default: () => "false" })
   muted: boolean;
 
-  @Column()
+  @Column({ default: () => "false" })
   deleted: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   lastReadId?: number;
 
-  @Column()
+  @Column({ nullable: true })
   lastReadDT?: Date;
 
-  @Column()
+  @Column({ default: () => "false" })
   allRead: boolean;
 
   @Column("timestamp", { default: () => "NOW()" })
-  createdAt?: Date;
+  createdAt: Date;
 
   @Column("timestamp", { default: () => "NOW()" })
-  updatedAt?: Date;
+  updatedAt: Date;
 
   /** Filtered view of the participant data for sending to other participants. */
   public publicView(): any {

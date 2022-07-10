@@ -1,28 +1,72 @@
 import { User } from "@app/users";
 import { Injectable, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { createHash } from "node:crypto";
+import { DataSource, Repository } from "typeorm";
 
 import { Chat } from "./models/chat.model";
 import { Message } from "./models/message.model";
 import { PageChat } from "./models/page-chat.model";
 import { UserChat } from "./models/user-chat.model";
-
 // TODO: in design stage
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 @Injectable()
 export class ChatService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Chat) readonly chats: Repository<Chat>,
     @InjectRepository(Message) readonly messages: Repository<Message>,
     @InjectRepository(UserChat) readonly userChats: Repository<UserChat>,
     @InjectRepository(PageChat) readonly pageChats: Repository<PageChat>,
   ) {}
 
+  public hashParticipants(users: number[], pages: number[]): string {
+    const hash = createHash("sha256");
+    users = users.slice();
+    users.sort();
+    pages = pages.slice();
+    pages.sort();
+
+    hash.update(JSON.stringify({ users, pages }));
+    return hash.digest("hex");
+  }
+
   /** If a chat exists with this set of participants, return it. Otherwise, create and return. */
   public async getChat(principal: User, asPage: number | null, users: number[], pages: number[]): Promise<Chat> {
-    throw new NotImplementedException();
+    if (asPage && !pages.includes(asPage)) {
+      pages = pages.slice();
+      pages.push(asPage);
+    } else if (asPage === null && !users.includes(Number(principal.id))) {
+      users = users.slice();
+      users.push(Number(principal.id));
+    }
+
+    // TODO: validate ids
+    const hash = this.hashParticipants(users, pages);
+
+    const existing = await this.chats.findOneBy({ participantsHash: hash });
+    if (existing) return existing;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      let chat = new Chat();
+      chat.participantsHash = hash;
+      chat = await queryRunner.manager.save(chat);
+
+      for (const user of users) await queryRunner.manager.insert(UserChat, { userId: user, chat });
+      for (const page of pages) await queryRunner.manager.insert(PageChat, { pageId: page, chat });
+
+      await queryRunner.commitTransaction();
+      return chat;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   /** Send a message in a chat. TODO: media */

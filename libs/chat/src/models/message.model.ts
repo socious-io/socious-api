@@ -10,13 +10,13 @@ export class Message {
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;
 
-  @Column({ type: "bigint", unsigned: true })
+  @Column({ type: "bigint", unsigned: true, nullable: true })
   userId?: number;
 
-  @Column({ type: "bigint", unsigned: true })
+  @Column({ type: "bigint", unsigned: true, nullable: true })
   pageId?: number;
 
-  @Column("mediumtext")
+  @Column("mediumtext", { nullable: true })
   text?: string;
 
   @Column("timestamp", { default: () => "NOW()" })
@@ -25,9 +25,9 @@ export class Message {
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   media?: string;
 
-  @Column()
+  @Column({ nullable: true })
   mediaType?: string;
 }

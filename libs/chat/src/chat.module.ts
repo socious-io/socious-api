@@ -9,7 +9,7 @@ import { UserChat } from "./models/user-chat.model";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Chat, Message, PageChat, UserChat])],
-  providers: [ChatService],
+  providers: [ChatService, ChatClient],
   exports: [ChatService, ChatClient],
 })
 export class ChatModule {}

@@ -26,4 +26,11 @@ export class Chat {
 
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
+
+  /** Filtered view of the chat data for sending to front-end. */
+  public publicView(): any {
+    const obj = { ...this };
+    delete obj.participantsHash;
+    return obj;
+  }
 }

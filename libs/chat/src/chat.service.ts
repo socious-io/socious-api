@@ -118,7 +118,16 @@ export class ChatService {
   /** Get all non-deleted chats for this user or page. Messages are of course not loaded, but
    * participants are loaded. */
   public async getMyChats(principal: User, asPage: number | null): Promise<Chat[]> {
-    throw new NotImplementedException();
+    const infos = asPage
+      ? await this.pageChats.find({
+          where: { pageId: asPage },
+          relations: { chat: { users: true, pages: true } },
+        })
+      : await this.userChats.find({
+          where: { userId: Number(principal.id) },
+          relations: { chat: { users: true, pages: true } },
+        });
+    return infos.map((info) => info.chat);
   }
 }
 

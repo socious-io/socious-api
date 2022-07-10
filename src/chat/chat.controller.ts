@@ -20,7 +20,7 @@ export class ChatController {
     @AsPage() asPage: number | null,
     @Body() participants: ChatWithDTO,
   ): Promise<any> {
-    return this.chat.getChat(principal, asPage, participants.users, participants.pages);
+    return (await this.chat.getChat(principal, asPage, participants.users, participants.pages)).publicView();
   }
 
   /** Send a message in a chat. TODO: media */
@@ -73,17 +73,6 @@ export class ChatController {
     this.chat.setMuted(principal, asPage, chatId, false);
   }
 
-  /** Get the user or page's participant data (last read, notification settings, etc). */
-  @UseGuards(JwtAuthGuard)
-  @Get(":id")
-  public async getOwnParticipant(
-    @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
-    @Param("id", ParseIntPipe) chatId: number,
-  ): Promise<any> {
-    return this.chat.getOwnParticipant(principal, asPage, chatId);
-  }
-
   /** Get all users or pages' participant data (last read, notification settings, etc).
    * Note most of this data should not be exposed to the front-end, but some of it (like read status) is.
    */
@@ -125,6 +114,22 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Get("list")
   public async getMyChats(@AuthenticatedUser() principal: User, @AsPage() asPage: number | null): Promise<any[]> {
-    return this.chat.getMyChats(principal, asPage);
+    return (await this.chat.getMyChats(principal, asPage)).map((chat) => {
+      const view = chat.publicView();
+      view.users = chat.users.map((userChat) => (userChat.userId == principal.id ? userChat : userChat.publicView()));
+      view.pages = chat.pages.map((pageChat) => (pageChat.pageId === asPage ? pageChat : pageChat.publicView()));
+      return view;
+    });
+  }
+
+  /** Get the user or page's participant data (last read, notification settings, etc). */
+  @UseGuards(JwtAuthGuard)
+  @Get(":id")
+  public async getOwnParticipant(
+    @AuthenticatedUser() principal: User,
+    @AsPage() asPage: number | null,
+    @Param("id", ParseIntPipe) chatId: number,
+  ): Promise<any> {
+    return this.chat.getOwnParticipant(principal, asPage, chatId);
   }
 }

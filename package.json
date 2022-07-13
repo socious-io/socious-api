@@ -8,6 +8,10 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "docker:build": "docker build -t socious-api .",
+    "docker:build-dev": "docker build -t socious-api-dev --target development .",
+    "docker:run": "docker run -p 8370:8370 -h socious_api --name socious_api --network socious-backend_default -d socious-api",
+    "docker:run-dev": "docker run -p 8370:8370 -h socious_api --name socious_api --network socious-backend_default socious-api-dev",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

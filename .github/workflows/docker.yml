@@ -114,7 +114,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Docker run
-        ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+        ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ steps.meta.outputs.tags }}
         run: |
           docker ps -q --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 8370:8370 -h socious_api --network sociousbackend_default --name socious_api ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+          docker run -d --restart always -p 8370:8370 -h socious_api --network sociousbackend_default --name socious_api ${{ steps.meta.outputs.tags }}

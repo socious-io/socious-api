@@ -105,7 +105,7 @@ jobs:
       #     echo DB_HOST="$DB_PORT" >> /etc/socious-api/env
       #   shell: bash
       - name: Docker run
-        ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+        ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ env.IMAGE_NAME }}:${{ steps.build-and-push.outputs.digest }}
         run: |
           docker ps -q --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 8370:8370 -h socious_api --network sociousbackend_default --name socious_api ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+          docker run -d --restart always -p 8370:8370 -h socious_api --network sociousbackend_default --name socious_api ${{ env.IMAGE_NAME }}:${{ steps.build-and-push.outputs.digest }}

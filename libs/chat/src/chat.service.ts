@@ -95,12 +95,32 @@ export class ChatService {
 
   /** Update read status for a participant. */
   public async setReadStatus(principal: User, asPage: number | null, chatId: number, messageId: number): Promise<void> {
-    throw new NotImplementedException();
+    if (asPage !== null) throw new NotImplementedException();
+
+    const chat = await this.chats.findOneBy({ id: chatId });
+    if (!chat) throw new NotFoundException();
+    const participant = await this.getOwnParticipant(principal, asPage, chatId);
+    if (!participant) throw new NotFoundException();
+    const message = await this.messages.findOneBy({ id: messageId, chat: { id: chatId } });
+    if (!message) throw new NotFoundException();
+
+    participant.lastReadId = messageId;
+    participant.lastReadDT = message.createdAt;
+    participant.allRead = message.createdAt.valueOf() === chat.updatedAt.valueOf();
+    participant.updatedAt = new Date();
+
+    this.userChats.save(participant);
   }
 
   /** Set whether the user wants notifications for this chat. */
   public async setMuted(principal: User, asPage: number | null, chatId: number, muted: boolean): Promise<void> {
-    throw new NotImplementedException();
+    if (asPage !== null) throw new NotImplementedException();
+
+    const participant = await this.getOwnParticipant(principal, asPage, chatId);
+    if (!participant) throw new NotFoundException();
+
+    participant.muted = muted;
+    this.userChats.save(participant);
   }
 
   /** Get the user or page's participant data (last read, notification settings, etc). */
@@ -118,14 +138,20 @@ export class ChatService {
     chatId: number,
   ): Promise<Array<UserChat | PageChat>> {
     // TODO: validate that the user is supposed to see this
-    const users: Array<UserChat | PageChat> = await this.userChats.findBy({ chat: { id: chatId } });
+    const users: Array<UserChat | PageChat> = await this.userChats.findBy({ chat: { id: chatId }, deleted: false });
     const pages = await this.pageChats.findBy({ chat: { id: chatId } });
     return users.concat(pages);
   }
 
   /** Delete a chat from this user or page's list of chats. */
   public async deleteChat(principal: User, asPage: number | null, chatId: number): Promise<void> {
-    throw new NotImplementedException();
+    if (asPage !== null) throw new NotImplementedException();
+
+    const participant = await this.getOwnParticipant(principal, asPage, chatId);
+    if (!participant) throw new NotFoundException();
+
+    participant.deleted = true;
+    this.userChats.save(participant);
   }
 
   /** Get a batch of messages, starting from the latest. */

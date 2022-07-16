@@ -37,7 +37,7 @@ export class Message {
     if (obj.pageId === null) delete obj.pageId;
     if (obj.media === null) delete obj.media;
     if (obj.mediaType === null) delete obj.mediaType;
-    if (obj.updatedAt.valueOf === obj.createdAt.valueOf) delete obj.updatedAt;
+    if (obj.updatedAt.valueOf() === obj.createdAt.valueOf()) delete obj.updatedAt;
     return obj;
   }
 }

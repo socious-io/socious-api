@@ -1,7 +1,19 @@
 import { AuthenticatedUser, AuthService, JwtAuthGuard } from "@app/auth";
 import { ChatService } from "@app/chat";
 import { User, UsersService } from "@app/users";
-import { Body, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Query, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 
 import { AsPage } from "./as-page.decorator";
@@ -47,8 +59,9 @@ export class ChatController {
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
     @Param("messageId", ParseIntPipe) messageId: number,
-  ): Promise<void> {
+  ): Promise<any> {
     this.chat.setReadStatus(principal, asPage, chatId, messageId);
+    return { status: "ok" };
   }
 
   /** Disable notifications for this chat. */
@@ -58,8 +71,9 @@ export class ChatController {
     @AuthenticatedUser() principal: User,
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
-  ): Promise<void> {
+  ): Promise<any> {
     this.chat.setMuted(principal, asPage, chatId, true);
+    return { status: "ok" };
   }
 
   /** Disable notifications for this chat. */
@@ -69,8 +83,9 @@ export class ChatController {
     @AuthenticatedUser() principal: User,
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
-  ): Promise<void> {
+  ): Promise<any> {
     this.chat.setMuted(principal, asPage, chatId, false);
+    return { status: "ok" };
   }
 
   /** Get all users or pages' participant data (last read, notification settings, etc).
@@ -93,8 +108,9 @@ export class ChatController {
     @AuthenticatedUser() principal: User,
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
-  ): Promise<void> {
+  ): Promise<any> {
     this.chat.deleteChat(principal, asPage, chatId);
+    return { status: "ok" };
   }
 
   /** Get a batch of messages, starting from the latest. */
@@ -104,17 +120,33 @@ export class ChatController {
     @AuthenticatedUser() principal: User,
     @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
-    @Query("skip") skip: string,
+    @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
   ): Promise<any[]> {
-    return this.chat.getRecentMessages(principal, asPage, chatId, isNaN(skip as any) ? 0 : Number(skip));
+    return this.chat.getRecentMessages(principal, asPage, chatId, skip);
   }
 
   /** Get all non-deleted chats for this user or page. Messages are of course not loaded, but
    * participants are loaded. */
   @UseGuards(JwtAuthGuard)
   @Get("list")
-  public async getMyChats(@AuthenticatedUser() principal: User, @AsPage() asPage: number | null): Promise<any[]> {
-    return (await this.chat.getMyChats(principal, asPage)).map((chat) => chat.publicView(principal.id, asPage));
+  public async getMyChats(
+    @AuthenticatedUser() principal: User,
+    @AsPage() asPage: number | null,
+    @Query("includeDeleted", new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
+  ): Promise<any[]> {
+    let chats = await this.chat.getMyChats(principal, asPage);
+    if (!includeDeleted)
+      chats = chats.filter((chat) => {
+        if (asPage !== null)
+          for (const participant of chat.pages) {
+            if (participant.id == (asPage as any)) return !participant.deleted;
+          }
+        else
+          for (const participant of chat.users) {
+            if (participant.id == (principal.id as any)) return !participant.deleted;
+          }
+      });
+    return chats.map((chat) => chat.publicView(principal.id, asPage));
   }
 
   /** Get the user or page's participant data (last read, notification settings, etc). */

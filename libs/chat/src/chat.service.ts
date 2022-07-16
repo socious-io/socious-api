@@ -1,16 +1,17 @@
 import { User } from "@app/users";
-import { Injectable, NotImplementedException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createHash } from "node:crypto";
 import { DataSource, Repository } from "typeorm";
 
 import { Chat } from "./models/chat.model";
-import { ChatParticipant } from "./models/chat-participant.schema";
 import { Message } from "./models/message.model";
 import { PageChat } from "./models/page-chat.model";
 import { UserChat } from "./models/user-chat.model";
 // TODO: in design stage
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+const MESSAGE_BATCH_SIZE = 20;
 
 @Injectable()
 export class ChatService {
@@ -72,7 +73,24 @@ export class ChatService {
 
   /** Send a message in a chat. TODO: media */
   public async sendMessage(principal: User, asPage: number | null, chatId: number, text: string): Promise<Message> {
-    throw new NotImplementedException();
+    if (asPage !== null) throw new NotImplementedException();
+
+    const chat = await this.chats.findOneBy({ id: chatId });
+    if (!chat) throw new NotFoundException();
+    const participant = await this.getOwnParticipant(principal, asPage, chatId);
+    if (!participant) throw new ForbiddenException();
+
+    let message = new Message();
+    message.userId = principal.id;
+    message.chat = chat;
+    message.text = text;
+    message = await this.messages.save(message);
+    chat.updatedAt = message.createdAt;
+    this.chats.save(chat);
+    this.userChats.update({ chat: { id: chatId } }, { allRead: false });
+    this.pageChats.update({ chat: { id: chatId } }, { allRead: false });
+
+    return message;
   }
 
   /** Update read status for a participant. */
@@ -117,7 +135,16 @@ export class ChatService {
     chatId: number,
     skip: number,
   ): Promise<Message[]> {
-    throw new NotImplementedException();
+    if (asPage !== null) throw new NotImplementedException();
+
+    if (!(await this.getOwnParticipant(principal, asPage, chatId))) throw new ForbiddenException();
+
+    return this.messages.find({
+      where: { chat: { id: chatId } },
+      order: { createdAt: "DESC" },
+      skip,
+      take: MESSAGE_BATCH_SIZE,
+    });
   }
 
   /** Get all non-deleted chats for this user or page. Messages are of course not loaded, but

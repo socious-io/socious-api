@@ -30,4 +30,14 @@ export class Message {
 
   @Column({ nullable: true })
   mediaType?: string;
+
+  toJSON(): any {
+    const obj = { ...this };
+    if (obj.userId === null) delete obj.userId;
+    if (obj.pageId === null) delete obj.pageId;
+    if (obj.media === null) delete obj.media;
+    if (obj.mediaType === null) delete obj.mediaType;
+    if (obj.updatedAt.valueOf === obj.createdAt.valueOf) delete obj.updatedAt;
+    return obj;
+  }
 }

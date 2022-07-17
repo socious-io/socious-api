@@ -90,6 +90,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node --from=modules /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 COPY --chown=node:node ormconfig.ts .
+COPY --chown=node:node migrations ./migrations
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV production

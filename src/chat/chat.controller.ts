@@ -16,7 +16,6 @@ import {
 } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 
-import { AsPage } from "./as-page.decorator";
 import { ChatWithDTO } from "./chat-with.dto";
 import { SendMessageDTO } from "./send-message.dto";
 
@@ -27,12 +26,8 @@ export class ChatController {
   /** If a chat exists with this set of participants, return it. Otherwise, create and return. */
   @UseGuards(JwtAuthGuard)
   @Post("chatWith")
-  public async getChat(
-    @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
-    @Body() participants: ChatWithDTO,
-  ): Promise<any> {
-    return (await this.chat.getChat(principal, asPage, participants.users, participants.pages)).publicView();
+  public async getChat(@AuthenticatedUser() principal: User, @Body() participants: ChatWithDTO): Promise<any> {
+    return (await this.chat.getChat(principal, participants.users)).publicView();
   }
 
   /** Send a message in a chat. TODO: media */
@@ -40,11 +35,10 @@ export class ChatController {
   @Post(":id/message")
   public async sendMessage(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
     @Body() content: SendMessageDTO,
   ): Promise<any> {
-    const message = await this.chat.sendMessage(principal, asPage, chatId, content.text);
+    const message = await this.chat.sendMessage(principal, chatId, content.text);
     return {
       id: message.id,
       createdAt: message.createdAt,
@@ -56,23 +50,18 @@ export class ChatController {
   @Post(":id/read/:messageId")
   public async setReadStatus(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
     @Param("messageId", ParseIntPipe) messageId: number,
   ): Promise<any> {
-    this.chat.setReadStatus(principal, asPage, chatId, messageId);
+    this.chat.setReadStatus(principal, chatId, messageId);
     return { status: "ok" };
   }
 
   /** Disable notifications for this chat. */
   @UseGuards(JwtAuthGuard)
   @Post(":id/mute")
-  public async setMuted(
-    @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
-    @Param("id", ParseIntPipe) chatId: number,
-  ): Promise<any> {
-    this.chat.setMuted(principal, asPage, chatId, true);
+  public async setMuted(@AuthenticatedUser() principal: User, @Param("id", ParseIntPipe) chatId: number): Promise<any> {
+    this.chat.setMuted(principal, chatId, true);
     return { status: "ok" };
   }
 
@@ -81,10 +70,9 @@ export class ChatController {
   @Post(":id/unmute")
   public async unsetMuted(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
   ): Promise<any> {
-    this.chat.setMuted(principal, asPage, chatId, false);
+    this.chat.setMuted(principal, chatId, false);
     return { status: "ok" };
   }
 
@@ -95,10 +83,9 @@ export class ChatController {
   @Get(":id/participants")
   public async getParticipants(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
   ): Promise<any[]> {
-    return (await this.chat.getParticipants(principal, asPage, chatId)).map((participant) => participant.publicView());
+    return (await this.chat.getParticipants(principal, chatId)).map((participant) => participant.publicView());
   }
 
   /** Delete a chat from this user or page's list of chats. */
@@ -106,10 +93,9 @@ export class ChatController {
   @Delete(":id")
   public async deleteChat(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
   ): Promise<any> {
-    this.chat.deleteChat(principal, asPage, chatId);
+    this.chat.deleteChat(principal, chatId);
     return { status: "ok" };
   }
 
@@ -118,11 +104,10 @@ export class ChatController {
   @Get(":id/messages")
   public async getRecentMessages(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
     @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
   ): Promise<any[]> {
-    return this.chat.getRecentMessages(principal, asPage, chatId, skip);
+    return this.chat.getRecentMessages(principal, chatId, skip);
   }
 
   /** Get all non-deleted chats for this user or page. Messages are of course not loaded, but
@@ -131,22 +116,16 @@ export class ChatController {
   @Get("list")
   public async getMyChats(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Query("includeDeleted", new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
   ): Promise<any[]> {
-    let chats = await this.chat.getMyChats(principal, asPage);
+    let chats = await this.chat.getMyChats(principal);
     if (!includeDeleted)
       chats = chats.filter((chat) => {
-        if (asPage !== null)
-          for (const participant of chat.pages) {
-            if (participant.id == (asPage as any)) return !participant.deleted;
-          }
-        else
-          for (const participant of chat.users) {
-            if (participant.id == (principal.id as any)) return !participant.deleted;
-          }
+        for (const participant of chat.users) {
+          if (participant.id == (principal.id as any)) return !participant.deleted;
+        }
       });
-    return chats.map((chat) => chat.publicView(principal.id, asPage));
+    return chats.map((chat) => chat.publicView(principal.id));
   }
 
   /** Get the user or page's participant data (last read, notification settings, etc). */
@@ -154,10 +133,9 @@ export class ChatController {
   @Get(":id")
   public async getOwnParticipant(
     @AuthenticatedUser() principal: User,
-    @AsPage() asPage: number | null,
     @Param("id", ParseIntPipe) chatId: number,
   ): Promise<any> {
-    const info = await this.chat.getOwnParticipant(principal, asPage, chatId);
+    const info = await this.chat.getOwnParticipant(principal, chatId);
     if (info) return info;
     else throw new NotFoundException();
   }

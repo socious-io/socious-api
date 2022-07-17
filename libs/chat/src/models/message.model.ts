@@ -13,9 +13,6 @@ export class Message {
   @Column({ type: "bigint", unsigned: true, nullable: true })
   userId?: number;
 
-  @Column({ type: "bigint", unsigned: true, nullable: true })
-  pageId?: number;
-
   @Column("mediumtext", { nullable: true })
   text?: string;
 
@@ -34,7 +31,6 @@ export class Message {
   toJSON(): any {
     const obj = { ...this };
     if (obj.userId === null) delete obj.userId;
-    if (obj.pageId === null) delete obj.pageId;
     if (obj.media === null) delete obj.media;
     if (obj.mediaType === null) delete obj.mediaType;
     if (obj.updatedAt.valueOf() === obj.createdAt.valueOf()) delete obj.updatedAt;

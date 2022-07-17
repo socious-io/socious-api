@@ -15,4 +15,5 @@ export const connectionSource = new DataSource({
     // "libs/**/Models/*{.ts,.js}",
   ],
   migrations: ["migrations/*.{ts,js}"],
+  migrationsTableName: "typeorm_migrations",
 });

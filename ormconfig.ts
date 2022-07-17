@@ -5,8 +5,8 @@ import { DataSource } from "typeorm";
 
 export const connectionSource = new DataSource({
   type: "mysql",
-  host: "localhost",
-  port: 33060,
+  host: process.env.DB_HOST || "localhost",
+  port: Number(process.env.DB_PORT || 33060),
   username: "admin",
   password: "secret",
   database: "socious",

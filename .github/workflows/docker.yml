@@ -117,5 +117,6 @@ jobs:
       - name: Docker run
         ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ steps.meta.outputs.tags }}
         run: |
+          docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious_api" | grep -q . && docker stop socious_api && docker rm -fv socious_api
           docker run -d --restart always -p 8370:8370 -h socious_api --network sociousbackend_default --name socious_api ${{ steps.meta.outputs.tags }}

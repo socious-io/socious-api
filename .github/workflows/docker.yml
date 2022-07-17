@@ -83,6 +83,7 @@ jobs:
   deploy-dev:
     needs: build
     name: Deploy
+    if: github.ref == 'refs/heads/development'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

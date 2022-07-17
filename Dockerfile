@@ -84,6 +84,8 @@ ENTRYPOINT ["/tini", "--"]
 
 USER node
 
+WORKDIR /usr/src/app
+
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=modules /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist

@@ -2,35 +2,6 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
-  "projects": {
-    "auth": {
-      "type": "library",
-      "root": "libs/auth",
-      "entryFile": "index",
-      "sourceRoot": "libs/auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/auth/tsconfig.lib.json"
-      }
-    },
-    "users": {
-      "type": "library",
-      "root": "libs/users",
-      "entryFile": "index",
-      "sourceRoot": "libs/users/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/users/tsconfig.lib.json"
-      }
-    },
-    "chat": {
-      "type": "library",
-      "root": "libs/chat",
-      "entryFile": "index",
-      "sourceRoot": "libs/chat/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/chat/tsconfig.lib.json"
-      }
-    }
-  },
   "compilerOptions": {
     "webpack": true
   }

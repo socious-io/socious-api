@@ -3,6 +3,7 @@
         "hookyqr.beautify",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig"
+        "irongeek.vscode-env",
+        "prisma.prisma"
     ]
 }

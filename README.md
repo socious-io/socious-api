@@ -58,16 +58,10 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Development Resources
+
+- [Postman Workspace Invite](https://app.getpostman.com/join-team?invite_code=48023a83d39a65f22566514b5c7bc86d&target_code=982cb3c9fd918da193d322d4cd7091b3)
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).

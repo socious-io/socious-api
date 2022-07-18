@@ -16,9 +16,24 @@
   "[html,svg]": {
     "editor.formatOnSaveMode": "file",
     "editor.defaultFormatter": "HookyQR.beautify"
-  },  
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
   "cSpell.words": [
+    "datasource",
+    "datetime",
+    "Laravel",
+    "mediumtext",
     "nestjs",
-    "socious"
+    "socious",
+    "typeorm"
   ]
 }

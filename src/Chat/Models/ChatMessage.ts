@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Chat } from "./Chat";
 
 @Entity("chat_messages", { schema: "socious" })
-export class Message {
+export class ChatMessage {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id", unsigned: true })
   id: number;
 
@@ -28,7 +28,7 @@ export class Message {
   @Column({ nullable: true })
   mediaType?: string;
 
-  toJSON(): any {
+  public toJSON(): any {
     const obj = { ...this };
     if (obj.userId === null) delete obj.userId;
     if (obj.media === null) delete obj.media;

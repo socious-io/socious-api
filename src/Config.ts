@@ -2,6 +2,8 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+const isProduction = process.env.MODE === "production";
+
 export const config = {
   port: Number(process.env.PORT ?? 8370),
   auth: {
@@ -12,6 +14,7 @@ export const config = {
     port: Number(process.env.MYSQL_PORT ?? 33060),
     username: process.env.MYSQL_USERNAME ?? "admin",
     password: process.env.MYSQL_PASSWORD ?? "secret",
-    database: process.env.MYSQL_DATABASE ?? "socious"
+    database: process.env.MYSQL_DATABASE ?? "socious",
+    synchronize: isProduction === false
   }
 };

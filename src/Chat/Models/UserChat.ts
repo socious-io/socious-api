@@ -5,7 +5,7 @@ import { Chat } from "./Chat";
 @Entity("user_chats", { schema: "socious" })
 export class UserChat {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id", unsigned: true })
-  id: string;
+  id: number;
 
   @Column({ type: "bigint", unsigned: true })
   userId: number;
@@ -34,7 +34,9 @@ export class UserChat {
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt: Date;
 
-  /** Filtered view of the participant data for sending to other participants. */
+  /**
+   * Filtered view of the participant data for sending to other participants.
+   */
   public publicView(): any {
     return {
       userId: this.userId,
@@ -43,9 +45,10 @@ export class UserChat {
     };
   }
 
-  toJSON(): any {
-    const obj = { ...this };
-    delete obj.id;
-    return obj;
+  public toJSON(): Omit<this, "id"> {
+    return {
+      ...this,
+      id: undefined
+    };
   }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   DefaultValuePipe,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -16,19 +17,29 @@ import { Controller } from "@nestjs/common";
 import { Auditor, AuthService, JwtAuthGuard, User, UsersService } from "../../Identity";
 import { ChatWithDto } from "../Dto/ChatWith";
 import { SendMessageDto } from "../Dto/SendMessage";
+import { Chat } from "../Models/Chat";
+import { UserChat } from "../Models/UserChat";
+import { ChatMessageService } from "../Services/ChatMessageService";
 import { ChatService } from "../Services/ChatService";
+import { UserChatService } from "../Services/UserChatService";
 
 @Controller("chat")
 export class ChatController {
-  constructor(readonly auth: AuthService, readonly chat: ChatService, readonly users: UsersService) {}
+  constructor(
+    readonly auth: AuthService,
+    readonly chats: ChatService,
+    readonly userChats: UserChatService,
+    readonly messages: ChatMessageService,
+    readonly users: UsersService
+  ) {}
 
   /**
    * If a chat exists with this set of participants, return it. Otherwise, create and return.
    */
   @UseGuards(JwtAuthGuard)
   @Post("with")
-  public async getChat(@Body() participants: ChatWithDto, @Auditor() principal: User): Promise<any> {
-    const chat = await this.chat.getChat(principal, participants.users);
+  public async getChat(@Body() { users }: ChatWithDto, @Auditor() principal: User): Promise<Chat> {
+    const chat = await this.chats.findOrCreate(mergeUsers(users, principal));
     return chat.publicView();
   }
 
@@ -41,8 +52,28 @@ export class ChatController {
     @Param("id", ParseIntPipe) chatId: number,
     @Body() content: SendMessageDto,
     @Auditor() principal: User
-  ): Promise<any> {
-    const message = await this.chat.sendMessage(principal, chatId, content.text);
+  ): Promise<{ id: number; createdAt: Date }> {
+    const chat = await this.chats.findById(chatId);
+    if (chat === undefined) {
+      throw new NotFoundException();
+    }
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === undefined) {
+      throw new ForbiddenException();
+    }
+    const message = await this.messages.create(principal.id, chat, content.text);
+
+    // ### Meta
+    // Update meta information side effected by new message.
+
+    this.chats.setUpdatedAt(chat.id, message.createdAt);
+    this.userChats.setAllRead(chat.id, false);
+
+    // ### Emit
+    // Send message to all active participants.
+
+    // TODO: socket.emit ...
+
     return {
       id: message.id,
       createdAt: message.createdAt
@@ -59,7 +90,19 @@ export class ChatController {
     @Param("messageId", ParseIntPipe) messageId: number,
     @Auditor() principal: User
   ): Promise<any> {
-    this.chat.setReadStatus(principal, chatId, messageId);
+    const chat = await this.chats.findById(chatId);
+    if (chat === undefined) {
+      throw new NotFoundException();
+    }
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === undefined) {
+      throw new NotFoundException();
+    }
+    const message = await this.messages.findById(messageId);
+    if (message === undefined) {
+      throw new NotFoundException();
+    }
+    await this.userChats.setReadStatus(chatId, messageId, message.createdAt, chat.updatedAt);
     return { status: "ok" };
   }
 
@@ -69,7 +112,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post(":id/mute")
   public async setMuted(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    this.chat.setMuted(principal, chatId, true);
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === undefined) {
+      throw new NotFoundException();
+    }
+    this.userChats.setMuted(participant.id, true);
     return { status: "ok" };
   }
 
@@ -79,7 +126,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post(":id/unmute")
   public async unsetMuted(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    this.chat.setMuted(principal, chatId, false);
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === undefined) {
+      throw new NotFoundException();
+    }
+    this.userChats.setMuted(participant.id, false);
     return { status: "ok" };
   }
 
@@ -89,8 +140,9 @@ export class ChatController {
    */
   @UseGuards(JwtAuthGuard)
   @Get(":id/participants")
-  public async getParticipants(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any[]> {
-    return (await this.chat.getParticipants(principal, chatId)).map((participant) => participant.publicView());
+  public async getParticipants(@Param("id", ParseIntPipe) chatId: number): Promise<any[]> {
+    const chats = await this.userChats.findByChat(chatId);
+    return chats.map((participant) => participant.publicView());
   }
 
   /**
@@ -99,7 +151,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Delete(":id")
   public async deleteChat(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    this.chat.deleteChat(principal, chatId);
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === null) {
+      throw new NotFoundException();
+    }
+    await this.userChats.delete(chatId);
     return { status: "ok" };
   }
 
@@ -113,7 +169,11 @@ export class ChatController {
     @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Auditor() principal: User
   ): Promise<any[]> {
-    return this.chat.getRecentMessages(principal, chatId, skip);
+    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (participant === undefined) {
+      throw new ForbiddenException();
+    }
+    return this.messages.findRecent(chatId, skip);
   }
 
   /**
@@ -126,8 +186,8 @@ export class ChatController {
     @Query("includeDeleted", new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
     @Auditor() principal: User
   ): Promise<any[]> {
-    let chats = await this.chat.getMyChats(principal);
-    if (!includeDeleted) {
+    let chats = await this.chats.findByPrincipal(principal.id);
+    if (includeDeleted === false) {
       chats = chats.filter((chat) => {
         for (const participant of chat.users) {
           if (participant.id == (principal.id as any)) return !participant.deleted;
@@ -142,11 +202,27 @@ export class ChatController {
    */
   @UseGuards(JwtAuthGuard)
   @Get(":id")
-  public async getOwnParticipant(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    const info = await this.chat.getOwnParticipant(principal, chatId);
-    if (!info) {
+  public async getOwnParticipant(
+    @Param("id", ParseIntPipe) chatId: number,
+    @Auditor() principal: User
+  ): Promise<UserChat> {
+    const userChat = await this.userChats.findByChatParticipant(chatId, principal.id);
+    if (userChat === null) {
       throw new NotFoundException();
     }
-    return info;
+    return userChat;
   }
+}
+
+/*
+ |--------------------------------------------------------------------------------
+ | Utilities
+ |--------------------------------------------------------------------------------
+ */
+
+function mergeUsers(users: number[], principal: User) {
+  if (users.includes(principal.id) === false) {
+    return [...users, principal.id];
+  }
+  return users;
 }

@@ -20,12 +20,12 @@ import { LocalStrategy } from "./Strategies/LocalStrategy";
     JwtModule.register({
       secret: config.auth.secret,
       signOptions: {
-        expiresIn: "24h",
-      },
-    }),
+        expiresIn: "24h"
+      }
+    })
   ],
   providers: [AuthService, PasswordService, UsersService, LocalStrategy, JwtStrategy],
   controllers: [AuthController, UsersController],
-  exports: [AuthService, UsersService],
+  exports: [AuthService, UsersService]
 })
 export class IdentityModule {}

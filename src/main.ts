@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { ChatModule } from "./Chat/ChatModule";
+import { ChatModule } from "./Chat";
 import { config } from "./Config";
 import { IdentityModule } from "./Identity";
 
@@ -19,9 +19,9 @@ import { IdentityModule } from "./Identity";
     TypeOrmModule.forRoot({
       type: "mysql",
       autoLoadEntities: true,
-      ...config.mysql,
-    }),
-  ],
+      ...config.mysql
+    })
+  ]
 })
 export class AppModule {}
 

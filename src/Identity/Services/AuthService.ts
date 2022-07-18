@@ -18,8 +18,8 @@ export class AuthService {
   public async login(user: User): Promise<{ access_token: string }> {
     return {
       access_token: this.jwt.sign({
-        id: user.id,
-      }),
+        id: user.id
+      })
     };
   }
 

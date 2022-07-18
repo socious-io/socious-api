@@ -9,7 +9,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  UseGuards,
+  UseGuards
 } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 
@@ -40,12 +40,12 @@ export class ChatController {
   public async sendMessage(
     @Param("id", ParseIntPipe) chatId: number,
     @Body() content: SendMessageDto,
-    @Auditor() principal: User,
+    @Auditor() principal: User
   ): Promise<any> {
     const message = await this.chat.sendMessage(principal, chatId, content.text);
     return {
       id: message.id,
-      createdAt: message.createdAt,
+      createdAt: message.createdAt
     };
   }
 
@@ -57,7 +57,7 @@ export class ChatController {
   public async setReadStatus(
     @Param("id", ParseIntPipe) chatId: number,
     @Param("messageId", ParseIntPipe) messageId: number,
-    @Auditor() principal: User,
+    @Auditor() principal: User
   ): Promise<any> {
     this.chat.setReadStatus(principal, chatId, messageId);
     return { status: "ok" };
@@ -111,7 +111,7 @@ export class ChatController {
   public async getRecentMessages(
     @Param("id", ParseIntPipe) chatId: number,
     @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
-    @Auditor() principal: User,
+    @Auditor() principal: User
   ): Promise<any[]> {
     return this.chat.getRecentMessages(principal, chatId, skip);
   }
@@ -124,7 +124,7 @@ export class ChatController {
   @Get("list")
   public async getMyChats(
     @Query("includeDeleted", new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
-    @Auditor() principal: User,
+    @Auditor() principal: User
   ): Promise<any[]> {
     let chats = await this.chat.getMyChats(principal);
     if (!includeDeleted) {

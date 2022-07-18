@@ -23,7 +23,7 @@ export class UsersService {
       .values({
         username,
         email,
-        password: await bcrypt.hash(password, 12),
+        password: await bcrypt.hash(password, 12)
       })
       .execute();
   }

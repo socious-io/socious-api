@@ -39,7 +39,7 @@ export class UserChat {
     return {
       userId: this.userId,
       lastReadId: this.lastReadId,
-      lastReadDT: this.lastReadDT,
+      lastReadDT: this.lastReadDT
     };
   }
 

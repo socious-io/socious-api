@@ -12,6 +12,6 @@ import { ChatService } from "./Services/ChatService";
   imports: [IdentityModule, TypeOrmModule.forFeature([Chat, Message, UserChat])],
   providers: [ChatService],
   controllers: [ChatController],
-  exports: [ChatService],
+  exports: [ChatService]
 })
 export class ChatModule {}

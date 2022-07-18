@@ -16,7 +16,7 @@ export class ChatService {
     private dataSource: DataSource,
     @InjectRepository(Chat) readonly chats: Repository<Chat>,
     @InjectRepository(Message) readonly messages: Repository<Message>,
-    @InjectRepository(UserChat) readonly userChats: Repository<UserChat>,
+    @InjectRepository(UserChat) readonly userChats: Repository<UserChat>
   ) {}
 
   public hashParticipants(users: number[]): string {
@@ -135,7 +135,7 @@ export class ChatService {
       where: { chat: { id: chatId } },
       order: { createdAt: "DESC" },
       skip,
-      take: MESSAGE_BATCH_SIZE,
+      take: MESSAGE_BATCH_SIZE
     });
   }
 
@@ -144,7 +144,7 @@ export class ChatService {
   public async getMyChats(principal: User): Promise<Chat[]> {
     const infos = await this.userChats.find({
       where: { userId: Number(principal.id) },
-      relations: { chat: { users: true } },
+      relations: { chat: { users: true } }
     });
     return infos.map((info) => info.chat);
   }

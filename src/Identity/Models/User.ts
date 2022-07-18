@@ -104,7 +104,7 @@ export class User {
   toJSON() {
     return {
       ...this,
-      password: undefined,
+      password: undefined
     };
   }
 }

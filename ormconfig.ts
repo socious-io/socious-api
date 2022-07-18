@@ -1,4 +1,10 @@
-/* TypeORM configuration for database inspection and creating/running migrations
+/*
+ |--------------------------------------------------------------------------------
+ | TypeOrm
+ |--------------------------------------------------------------------------------
+ |
+ | Configuration for database inspection and creating/running migrations.
+ |
  */
 
 import { DataSource } from "typeorm";
@@ -12,5 +18,5 @@ export const connectionSource = new DataSource({
   database: "socious",
   entities: ["src/**/Models/*{.ts,.js}"],
   migrations: ["migrations/*.{ts,js}"],
-  migrationsTableName: "typeorm_migrations",
+  migrationsTableName: "typeorm_migrations"
 });

@@ -13,10 +13,6 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "[html,svg]": {
-    "editor.formatOnSaveMode": "file",
-    "editor.defaultFormatter": "HookyQR.beautify"
-  },
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,

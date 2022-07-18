@@ -23,7 +23,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-esm -d ormconfig.ts"
+    "migrate": "typeorm-ts-node-esm -d ormconfig.ts migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -33,6 +33,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.1.4",
     "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.1",
     "mysql2": "^2.3.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
@@ -88,10 +89,6 @@
     "roots": [
       "<rootDir>/src/",
       "<rootDir>/libs/"
-    ],
-    "moduleNameMapper": {
-      "^@app/(|/.*)$": "<rootDir>/libs/$1/src",
-      "^@app/chat(|/.*)$": "<rootDir>/libs/chat/src/$1"
-    }
+    ]
   }
 }

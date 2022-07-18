@@ -10,10 +10,7 @@ export const connectionSource = new DataSource({
   username: "admin",
   password: "secret",
   database: "socious",
-  entities: [
-    "libs/**/*.model.{ts,js}",
-    // "libs/**/Models/*{.ts,.js}",
-  ],
+  entities: ["src/**/Models/*{.ts,.js}"],
   migrations: ["migrations/*.{ts,js}"],
   migrationsTableName: "typeorm_migrations",
 });

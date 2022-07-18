@@ -15,11 +15,11 @@ import { LocalStrategy } from "./Strategies/LocalStrategy";
     JwtModule.register({
       secret: config.secret,
       signOptions: {
-        expiresIn: "24h"
-      }
-    })
+        expiresIn: "24h",
+      },
+    }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

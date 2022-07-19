@@ -101,7 +101,13 @@ export class User {
   @DeleteDateColumn({ name: "deleted_at" })
   deletedAt?: Date;
 
-  toJSON() {
+  /*
+   |--------------------------------------------------------------------------------
+   | Utilities
+   |--------------------------------------------------------------------------------
+   */
+
+  public toJSON() {
     return {
       ...this,
       password: undefined

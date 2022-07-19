@@ -18,17 +18,17 @@ import { Auditor, AuthService, JwtAuthGuard, User, UsersService } from "../../Id
 import { ChatWithDto } from "../Dto/ChatWith";
 import { SendMessageDto } from "../Dto/SendMessage";
 import { Chat } from "../Models/Chat";
-import { UserChat } from "../Models/UserChat";
+import { ChatParticipant } from "../Models/ChatParticipant";
 import { ChatMessageService } from "../Services/ChatMessageService";
 import { ChatService } from "../Services/ChatService";
-import { UserChatService } from "../Services/UserChatService";
+import { ChatParticipantService } from "../Services/UserChatService";
 
 @Controller("chat")
 export class ChatController {
   constructor(
     readonly auth: AuthService,
     readonly chats: ChatService,
-    readonly userChats: UserChatService,
+    readonly participants: ChatParticipantService,
     readonly messages: ChatMessageService,
     readonly users: UsersService
   ) {}
@@ -57,7 +57,7 @@ export class ChatController {
     if (chat === undefined) {
       throw new NotFoundException();
     }
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === undefined) {
       throw new ForbiddenException();
     }
@@ -67,7 +67,7 @@ export class ChatController {
     // Update meta information side effected by new message.
 
     this.chats.setUpdatedAt(chat.id, message.createdAt);
-    this.userChats.setAllRead(chat.id, false);
+    this.participants.setAllRead(chat.id, false);
 
     // ### Emit
     // Send message to all active participants.
@@ -94,7 +94,7 @@ export class ChatController {
     if (chat === undefined) {
       throw new NotFoundException();
     }
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === undefined) {
       throw new NotFoundException();
     }
@@ -102,7 +102,7 @@ export class ChatController {
     if (message === undefined) {
       throw new NotFoundException();
     }
-    await this.userChats.setReadStatus(chatId, messageId, message.createdAt, chat.updatedAt);
+    await this.participants.setReadStatus(chatId, messageId, message.createdAt, chat.updatedAt);
     return { status: "ok" };
   }
 
@@ -112,11 +112,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post(":id/mute")
   public async setMuted(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === undefined) {
       throw new NotFoundException();
     }
-    this.userChats.setMuted(participant.id, true);
+    this.participants.setMuted(participant.id, true);
     return { status: "ok" };
   }
 
@@ -126,11 +126,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post(":id/unmute")
   public async unsetMuted(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === undefined) {
       throw new NotFoundException();
     }
-    this.userChats.setMuted(participant.id, false);
+    this.participants.setMuted(participant.id, false);
     return { status: "ok" };
   }
 
@@ -141,7 +141,7 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Get(":id/participants")
   public async getParticipants(@Param("id", ParseIntPipe) chatId: number): Promise<any[]> {
-    const chats = await this.userChats.findByChat(chatId);
+    const chats = await this.participants.findByChat(chatId);
     return chats.map((participant) => participant.publicView());
   }
 
@@ -151,11 +151,11 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Delete(":id")
   public async deleteChat(@Param("id", ParseIntPipe) chatId: number, @Auditor() principal: User): Promise<any> {
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === null) {
       throw new NotFoundException();
     }
-    await this.userChats.delete(chatId);
+    await this.participants.delete(chatId);
     return { status: "ok" };
   }
 
@@ -169,7 +169,7 @@ export class ChatController {
     @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Auditor() principal: User
   ): Promise<any[]> {
-    const participant = await this.userChats.findByChatParticipant(chatId, principal.id);
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
     if (participant === undefined) {
       throw new ForbiddenException();
     }
@@ -205,12 +205,12 @@ export class ChatController {
   public async getOwnParticipant(
     @Param("id", ParseIntPipe) chatId: number,
     @Auditor() principal: User
-  ): Promise<UserChat> {
-    const userChat = await this.userChats.findByChatParticipant(chatId, principal.id);
-    if (userChat === null) {
+  ): Promise<ChatParticipant> {
+    const participant = await this.participants.findByChatAndUser(chatId, principal.id);
+    if (participant === null) {
       throw new NotFoundException();
     }
-    return userChat;
+    return participant;
   }
 }
 

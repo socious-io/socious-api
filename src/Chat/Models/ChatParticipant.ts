@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Chat } from "./Chat";
 
 @Entity("user_chats", { schema: "socious" })
-export class UserChat {
+export class ChatParticipant {
   @PrimaryGeneratedColumn({ type: "bigint", name: "id", unsigned: true })
   id: number;
 
@@ -33,6 +33,12 @@ export class UserChat {
 
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt: Date;
+
+  /*
+   |--------------------------------------------------------------------------------
+   | Utilities
+   |--------------------------------------------------------------------------------
+   */
 
   /**
    * Filtered view of the participant data for sending to other participants.

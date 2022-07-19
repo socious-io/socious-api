@@ -5,14 +5,14 @@ import { IdentityModule } from "../Identity";
 import { ChatController } from "./Controllers/ChatController";
 import { Chat } from "./Models/Chat";
 import { ChatMessage } from "./Models/ChatMessage";
-import { UserChat } from "./Models/UserChat";
+import { ChatParticipant } from "./Models/ChatParticipant";
 import { ChatMessageService } from "./Services/ChatMessageService";
 import { ChatService } from "./Services/ChatService";
-import { UserChatService } from "./Services/UserChatService";
+import { ChatParticipantService } from "./Services/UserChatService";
 
 @Module({
-  imports: [IdentityModule, TypeOrmModule.forFeature([Chat, ChatMessage, UserChat])],
-  providers: [ChatService, UserChatService, ChatMessageService],
+  imports: [IdentityModule, TypeOrmModule.forFeature([Chat, ChatMessage, ChatParticipant])],
+  providers: [ChatService, ChatParticipantService, ChatMessageService],
   controllers: [ChatController]
 })
 export class ChatModule {}

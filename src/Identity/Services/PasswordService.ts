@@ -4,6 +4,15 @@ import * as bcrypt from "bcrypt";
 @Injectable()
 export class PasswordService {
   /**
+   * Hash password using bcrypt algorithm.
+   *
+   * @param password - Password to hash.
+   */
+  public async hash(password: string) {
+    return bcrypt.hash(password, 12);
+  }
+
+  /**
    * Compare a plain text password against a string hashed using bcrypt
    * algorithm either from Laravel or JavaScript.
    *

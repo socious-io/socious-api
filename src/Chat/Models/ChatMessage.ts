@@ -16,17 +16,23 @@ export class ChatMessage {
   @Column("mediumtext", { nullable: true })
   text?: string;
 
+  @Column({ nullable: true })
+  media?: string;
+
+  @Column({ nullable: true })
+  mediaType?: string;
+
   @Column("timestamp", { default: () => "NOW()" })
   createdAt: Date;
 
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt: Date;
 
-  @Column({ nullable: true })
-  media?: string;
-
-  @Column({ nullable: true })
-  mediaType?: string;
+  /*
+   |--------------------------------------------------------------------------------
+   | Utilities
+   |--------------------------------------------------------------------------------
+   */
 
   public toJSON(): any {
     const obj = { ...this };

@@ -20,8 +20,8 @@ import { SendMessageDto } from "../Dto/SendMessage";
 import { Chat } from "../Models/Chat";
 import { ChatParticipant } from "../Models/ChatParticipant";
 import { ChatMessageService } from "../Services/ChatMessageService";
+import { ChatParticipantService } from "../Services/ChatParticipantService";
 import { ChatService } from "../Services/ChatService";
-import { ChatParticipantService } from "../Services/UserChatService";
 
 @Controller("chat")
 export class ChatController {

@@ -6,7 +6,7 @@ import { DataSource, Repository } from "typeorm";
 import { transaction } from "../../Transactions";
 import { Chat } from "../Models/Chat";
 import { ChatMessageService } from "./ChatMessageService";
-import { ChatParticipantService } from "./UserChatService";
+import { ChatParticipantService } from "./ChatParticipantService";
 
 @Injectable()
 export class ChatService {

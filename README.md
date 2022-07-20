@@ -44,8 +44,8 @@ $ npm run migrate
 
 ## Development Process
 
-Follow the ‘future process’ as described in (Socious Development Workflow)[https://www.notion.so/Socious-Development-Work-Flow-e6139ec5119b461ea20516da3b0fbf9d#ccc95257679543a893dcd4fc65cc5075].
+Follow the ‘future process’ as described in [Socious Development Workflow](https://www.notion.so/Socious-Development-Work-Flow-e6139ec5119b461ea20516da3b0fbf9d#ccc95257679543a893dcd4fc65cc5075).
 
 ## Development Resources
 
-Check the (Notion Engineering section)[https://www.notion.so/4b955198c9724210bbe5a75fb773bded?v=a2e2ca1138164f2eb9fc937a7e304509] for more details.
+Check the [Notion Engineering section](https://www.notion.so/4b955198c9724210bbe5a75fb773bded?v=a2e2ca1138164f2eb9fc937a7e304509) for more details.

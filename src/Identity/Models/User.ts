@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { SkillUser } from "src/Skill/Models/SkillUser";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
 
 @Entity({ name: "users" })
 export class User {
@@ -101,6 +110,8 @@ export class User {
   @DeleteDateColumn({ name: "deleted_at" })
   deletedAt?: Date;
 
+  @OneToMany(() => SkillUser, (userSkills) => userSkills.skill)
+  skillUsers: SkillUser[];
   /*
    |--------------------------------------------------------------------------------
    | Utilities

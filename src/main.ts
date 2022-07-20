@@ -5,7 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ChatModule } from "./Chat";
 import { config } from "./Config";
 import { IdentityModule } from "./Identity";
-
+import { SkillModule } from "./Skill";
 /*
  |--------------------------------------------------------------------------------
  | Root Module
@@ -14,6 +14,7 @@ import { IdentityModule } from "./Identity";
 
 @Module({
   imports: [
+    SkillModule,
     ChatModule,
     IdentityModule,
     TypeOrmModule.forRoot({

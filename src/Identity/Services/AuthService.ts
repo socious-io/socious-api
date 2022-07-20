@@ -40,7 +40,7 @@ export class AuthService {
    */
   public async validate(email: string, password: string): Promise<UserProfile | undefined> {
     const user = await this.users.findByEmail(email);
-    if (user === undefined) {
+    if (!user) {
       return undefined;
     }
     const hasValidPassword = await this.password.compare(password, user.password);

@@ -1,3 +1,7 @@
+# Socious API server
+
+![Build Docker](https://github.com/socious-io/socious-api/actions/workflows/docker.yml/badge.svg)
+
 ## Installation
 
 ```bash

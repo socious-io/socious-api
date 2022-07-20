@@ -26,7 +26,7 @@ export class SkillController {
   @UseGuards(JwtAuthGuard)
   @Post("update-skills-user")
   public async update(@Body() body: SkillUserDto, @Auditor() user: User): Promise<any[]> {
-    const skills = await this.skillsService.findbyIds(body.skills.slice(0, 5));
+    const skills = await this.skillsService.findByIds(body.skills.slice(0, 5));
     const userSkills = await this.skillsService.update(user, skills);
     return userSkills.map((userSkill) => userSkill.skill);
   }

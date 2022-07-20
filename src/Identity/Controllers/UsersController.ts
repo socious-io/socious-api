@@ -1,4 +1,14 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  ConflictException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards
+} from "@nestjs/common";
 
 import { JwtAuthGuard } from "../Guards/JwtAuthGuard";
 import { AuthService } from "../Services/AuthService";
@@ -14,14 +24,21 @@ export class UsersController {
     @Body("email") email: string,
     @Body("password") password: string
   ) {
-    await this.users.create(username, email, password);
+    try {
+      await this.users.create(username, email, password);
+    } catch (err) {
+      if (err.message.includes("Duplicate entry")) {
+        throw new ConflictException(`User with email '${email}' already exists`);
+      }
+      throw err;
+    }
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(":id")
   public async get(@Param("id", ParseIntPipe) id: number): Promise<UserProfile> {
     const user = await this.users.findById(id);
-    if (user === undefined) {
+    if (user === null) {
       throw new NotFoundException();
     }
     return user;

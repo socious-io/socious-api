@@ -66,11 +66,11 @@ export class UsersService {
     return this.repository.find();
   }
 
-  public async findByEmail(email: string): Promise<User | undefined> {
+  public async findByEmail(email: string): Promise<User | null> {
     return this.repository.findOneBy({ email });
   }
 
-  public async findById(id: number): Promise<User | undefined> {
+  public async findById(id: number): Promise<User | null> {
     return this.repository.findOneBy({ id });
   }
 

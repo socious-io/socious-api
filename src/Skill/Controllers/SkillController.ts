@@ -9,16 +9,20 @@ import { SkillService } from "../Services/SkillService";
 export class SkillController {
   constructor(readonly auth: AuthService, readonly skillsService: SkillService, readonly usersService: UsersService) {}
 
-  /**
-   * Get all non-deleted chats for this user or page. Messages are of course not loaded, but
-   * participants are loaded.
-   */
+  /*
+    list of skills
+    TODO: need language order
+  */
   @UseGuards(JwtAuthGuard)
   @Get("list-skills")
   public async list(): Promise<any[]> {
     return this.skillsService.list();
   }
 
+  /*
+    update user skills skills
+    TODO: need body validation
+  */
   @UseGuards(JwtAuthGuard)
   @Post("update-skills-user")
   public async update(@Body() body: SkillUserDto, @Auditor() user: User): Promise<any[]> {

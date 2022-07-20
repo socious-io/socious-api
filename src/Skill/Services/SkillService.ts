@@ -12,7 +12,7 @@ export class SkillService {
   constructor(readonly dataSource: DataSource, @InjectRepository(Skill) readonly skills: Repository<Skill>) {}
 
   /**
-   * Get all skills.
+   * update many to many users skills
    */
   public async update(user: User, skills: Skill[]): Promise<SkillUser[]> {
     return transaction<SkillUser[]>(this.dataSource, async (queryRunner) => {
@@ -24,13 +24,6 @@ export class SkillService {
       );
       return usersSkills;
     });
-    /* await this.skillUsers.delete({ userId });
-    const usersSkills = await Promise.all(
-      skillIds.map((skillId) => {
-        return this.skillUsers.save({ userId, skillId });
-      })
-    );
-    return usersSkills.map((usersSkill) => usersSkill.skill); */
   }
 
   /**

@@ -1,4 +1,3 @@
-import { SkillUser } from "src/Skill/Models/SkillUser";
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
+
+import { UserSkill } from "../../Skill/Models/UserSkill";
 
 @Entity({ name: "users" })
 export class User {
@@ -37,6 +38,9 @@ export class User {
 
   @Column({ type: "varchar", nullable: true })
   phone?: string;
+
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.skill)
+  skills: UserSkill[];
 
   @Column({ type: "varchar", name: "wallet_address", nullable: true })
   walletAddress?: string;
@@ -110,8 +114,6 @@ export class User {
   @DeleteDateColumn({ name: "deleted_at" })
   deletedAt?: Date;
 
-  @OneToMany(() => SkillUser, (userSkills) => userSkills.skill)
-  skillUsers: SkillUser[];
   /*
    |--------------------------------------------------------------------------------
    | Utilities

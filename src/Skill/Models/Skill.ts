@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-import { SkillUser } from "./SkillUser";
+import { UserSkill } from "./UserSkill";
 
 @Entity("skills")
 export class Skill {
@@ -13,12 +13,12 @@ export class Skill {
   @Column("varchar", { name: "ja_JP", nullable: true, length: 255 })
   jaJp?: string | null;
 
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
+  users: UserSkill[];
+
   @Column("timestamp", { default: () => "NOW()" })
   createdAt?: Date;
 
   @Column("timestamp", { default: () => "NOW()" })
   updatedAt?: Date;
-
-  @OneToMany(() => SkillUser, (userSkills) => userSkills.user)
-  skillUsers: SkillUser[];
 }

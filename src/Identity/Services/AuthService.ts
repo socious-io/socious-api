@@ -15,7 +15,7 @@ export class AuthService {
    *
    * @param user - User to login.
    */
-  public async login(user: User): Promise<{ access_token: string }> {
+  public async login(user: User): Promise<AccessToken> {
     return {
       access_token: this.jwt.sign({
         id: user.id
@@ -28,7 +28,7 @@ export class AuthService {
    *
    * @param id - User id.
    */
-  public async profile(id: number): Promise<UserProfile | undefined> {
+  public async profile(id: number): Promise<UserProfile | null> {
     return this.users.findById(id);
   }
 
@@ -38,7 +38,7 @@ export class AuthService {
    * @param email    - User email.
    * @param password - User password.
    */
-  public async validate(email: string, password: string): Promise<UserProfile | undefined> {
+  public async validate(email: string, password: string): Promise<UserProfile | null> {
     const user = await this.users.findByEmail(email);
     if (!user) {
       return undefined;
@@ -50,3 +50,7 @@ export class AuthService {
     return user;
   }
 }
+
+export type AccessToken = {
+  access_token: string;
+};

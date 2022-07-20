@@ -1,4 +1,9 @@
 {
+  "printWidth": 80,
+  "singleQuote": true,
   "trailingComma": "all",
-  "printWidth": 120
+  "bracketSpacing": false,
+  "parser": "babel",
+  "semi": true,
+  "arrowParens": "always"
 }

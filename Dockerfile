@@ -33,28 +33,7 @@ ENV DB_HOST socious_mysql
 
 EXPOSE 8370
 
-###################
-# BUILD FOR PRODUCTION
-###################
-
-FROM node:lts AS build
-
-WORKDIR /usr/src/app
-
-COPY --chown=node:node package*.json ./
-
-# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
-COPY --chown=node:node . .
-
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
-
-# Run the build command which creates the production bundle
-RUN npm run build
-
-USER node
+CMD [ "node", "serve.js" ]
 
 ###################
 # BUILD PACKAGES FOR PRODUCTION
@@ -88,8 +67,7 @@ WORKDIR /usr/src/app
 
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=modules /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node ormconfig.ts .
+COPY --chown=node:node --from=development /usr/src/app/src ./src
 COPY --chown=node:node migrations ./migrations
 
 # Set NODE_ENV environment variable
@@ -102,4 +80,4 @@ ENV DB_PORT 3306
 EXPOSE 8370
 
 # Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+CMD [ "node", "serve.js" ]

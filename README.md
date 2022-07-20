@@ -2,19 +2,18 @@
 
 ```bash
 $ npm install
+$ cp template.env .env
+$ $EDITOR .env
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ npm start
 
 # watch mode
 $ npm run start:debug
-
-# production mode
-$ npm run start:prod
 ```
 
 ## Test
@@ -33,17 +32,14 @@ $ npm run test:cov
 ## Development helpers
 
 ```bash
-# create new Nest library
-$ nest g library newcoolfeature
-
-# create new controller
-$ nest g co newcoolfeature
+# set up commit hooks
+$ npm run prepare
 
 # create new migration
-$ npm run typeorm migration:generate migrations/descriptive-name
+$ npm run new-migration descriptive-name && npx prettier --write migrations/*.js
 
 # run pending migrations locally
-$ npm run typeorm migration:run
+$ npm run migrate
 ```
 
 ## Development Process

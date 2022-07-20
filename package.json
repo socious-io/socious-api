@@ -12,10 +12,10 @@
     "docker:run-dev": "docker run -p 8370:8370 -h socious_api --name socious_api --network socious-backend_default socious-api-dev",
     "migrate": "db-migrate up --verbose --config ./migrations/database.json",
     "migrate:undo": "db-migrate down -c 1 --verbose --config ./migrations/database.json",
+    "new-migration": "db-migrate create --sql-file --config ./migrations/database.json",
     "prettier:check": "prettier --check **/*.js",
     "prettier:fix": "prettier --write **/*.js",
     "start": "node serve.js",
-    "start:dev": "nest start --watch",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "test": "jest",
@@ -25,6 +25,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@koa/router": "^10.1.1",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "cockatiel": "^2.0.0",
@@ -75,5 +76,9 @@
     "roots": [
       "<rootDir>/src/"
     ]
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }

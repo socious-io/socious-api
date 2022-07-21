@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: 'socious-pg'
+    image: 'postgres:14.4-alpine'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'changeme'
+      PGDATA: '/data/postgres'
+    volumes:
+      - '../postgres:/data/postgres'
+    ports:
+      - '5432:5432'
+    networks:
+      - 'postgres'
+    restart: 'always'
+
+networks:
+  postgres:
+    driver: bridge

@@ -39,7 +39,7 @@ const throwHandler = async (ctx, next) => {
         ctx.status = 400;
         ctx.body = {error: err.message};
         return;
-      case (EntryError):
+      case EntryError:
         ctx.status = 406;
         ctx.body = {error: err.message};
         return;

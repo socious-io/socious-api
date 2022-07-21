@@ -5,6 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">= 16"
+  },
+  "engineStrict": true,
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
     "docker:build": "docker build -t socious-api .",
     "docker:build-dev": "docker build -t socious-api-dev --target development .",

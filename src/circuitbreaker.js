@@ -1,6 +1,6 @@
 import {Policy, ConsecutiveBreaker} from 'cockatiel';
 import Debug from 'debug';
-
+import {readFile} from 'fs/promises';
 const debug = Debug('socious-api:circuitbreaker');
 
 // Create a retry policy that'll try whatever function we execute 3
@@ -40,11 +40,26 @@ const policies = {
 export const policyByName = (name) => policies[name];
 
 export class DBCircuitBreaker {
+  // TODO: chache this with Redis or etc ...
+  cache = {};
   constructor(pool, policy) {
     this.pool = pool;
     this.policy = policyByName(
       policy || process.env.DEFAULT_DB_CIRCUIT_BREAKER || 'none',
     );
+  }
+
+  async getQueryFromFile(name) {
+    if (this.cache[name]) return this.cache[name];
+
+    const query = await readFile(`src/sql/${name}.sql`);
+    this.cache[name] = query.toString();
+    return this.cache[name];
+  }
+
+  async execute(name, ...args) {
+    const q = await this.getQueryFromFile(name);
+    return this.query(q, args);
   }
 
   query(...args) {

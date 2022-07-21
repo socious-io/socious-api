@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-module.exports = {
+export const Config = {
   port: normalizePort(process.env.PORT),
 };
 

@@ -1,4 +1,12 @@
-import {AuthorizationError, BadRequestError} from './errors.js'
+import {
+  NotMatchedError,
+  AuthorizationError,
+  BadRequestError,
+  ValidationError,
+  EntryError,
+} from './errors.js';
+import compose from 'koa-compose';
+import jwt from 'jsonwebtoken';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -10,22 +18,44 @@ const throwHandler = async (ctx, next) => {
     } else {
       console.log(err);
     }
+
+    switch (err.name) {
+      case 'ValidationError':
+        ctx.status = 400;
+        ctx.body = {error: err.message};
+        return;
+      case 'UnauthorizedError':
+        ctx.status = 401;
+        ctx.body = {error: err.message};
+        return;
+    }
+
     switch (err.constructor) {
-    case(AuthorizationError):
-      ctx.status = 403;
-      ctx.body = {error: err.message};
-      break;
-    case(BadRequestError):
-      ctx.status = 400;
-      ctx.body = {error: err.message};
-      break;
-    default:
-      throw err; 
+      case AuthorizationError:
+        ctx.status = 403;
+        ctx.body = {error: err.message};
+        return;
+      case (BadRequestError, NotMatchedError, ValidationError):
+        ctx.status = 400;
+        ctx.body = {error: err.message};
+        return;
+      case (EntryError):
+        ctx.status = 406;
+        ctx.body = {error: err.message};
+        return;
+      default:
+        throw err;
     }
   }
-}
+};
 
+const decodeToken = async (ctx, next) => {
+  const {authorization} = ctx.request.header;
+  if (authorization) {
+    const {id} = jwt.decode(authorization?.replace('Bearer ', ''));
+    ctx.userId = id;
+  }
+  await next();
+};
 
-export default [
-  throwHandler
-]
+export default compose([decodeToken, throwHandler]);

@@ -1,7 +1,9 @@
 import 'dotenv/config';
 
-export const Config = {
+export default {
   port: normalizePort(process.env.PORT),
+  secret: process.env.SECRET,
+  jwtExpireTime: '2h',
 };
 
 /**

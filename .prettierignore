@@ -1,1 +1,7 @@
 .eslintrc
+node_modules
+*.json
+*.md
+*.yaml
+.*
+!*.js

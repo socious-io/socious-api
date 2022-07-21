@@ -2,6 +2,7 @@ import {Policy, ConsecutiveBreaker} from 'cockatiel';
 import Debug from 'debug';
 import {readFile} from 'fs/promises';
 const debug = Debug('socious-api:circuitbreaker');
+import {NotMatchedError} from './errors.js';
 
 // Create a retry policy that'll try whatever function we execute 3
 // times with a randomized exponential backoff.
@@ -64,6 +65,12 @@ export class DBCircuitBreaker {
 
   query(...args) {
     return this.policy.execute(() => this.pool.query(...args));
+  }
+
+  async get(...args) {
+    const {rows} = await this.query(...args);
+    if (rows.length < 1) throw new NotMatchedError();
+    return rows[0];
   }
 
   async with(fn) {

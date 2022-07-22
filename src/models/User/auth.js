@@ -1,10 +1,16 @@
 import Config from '../../config.js';
 import {getByEmail, getByPhone, getByUsername, getOTP} from './read.js';
-import {insert, createOTP, verifyOTP, verifyEmail, verifyPhone} from './write.js';
+import {
+  insert,
+  createOTP,
+  verifyOTP,
+  verifyEmail,
+  verifyPhone,
+} from './write.js';
 import * as bcrypt from 'bcrypt';
 import {AuthorizationError, NotMatchedError} from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
-import { OTPType, UserStatus } from './enum.js';
+import {OTPType, UserStatus} from './enum.js';
 import {authSchem, registerSchem, newOTPSchem} from './schema.js';
 
 const signin = (user) => {
@@ -29,7 +35,8 @@ export const auth = async (body) => {
 
   if (!matched) throw new NotMatchedError();
 
-  if (user.status === UserStatus.SUSPEND) throw new AuthorizationError('User has been suspended!')
+  if (user.status === UserStatus.SUSPEND)
+    throw new AuthorizationError('User has been suspended!');
 
   return {access_token: signin(user)};
 };
@@ -63,7 +70,7 @@ export const sendOTP = async (body) => {
 
 export const confirmOTP = async (code) => {
   const otp = await getOTP(code);
-  
+
   await verifyOTP(otp.id);
 
   if (otp.type === OTPType.EMAIL) await verifyEmail(otp.user_id);

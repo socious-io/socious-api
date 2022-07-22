@@ -1,7 +1,7 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import { UserStatus } from './enum.js';
+import {UserStatus} from './enum.js';
 
 export const insert = async (username, email, hashedPasswd) => {
   try {
@@ -15,12 +15,16 @@ export const insert = async (username, email, hashedPasswd) => {
 };
 
 export const verifyEmail = async (id) => {
-  await app.db.query(sql`UPDATE users SET email_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`);
-}
+  await app.db.query(
+    sql`UPDATE users SET email_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`,
+  );
+};
 
 export const verifyPhone = async (id) => {
-  await app.db.query(sql`UPDATE users SET phone_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`);
-}
+  await app.db.query(
+    sql`UPDATE users SET phone_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`,
+  );
+};
 
 export const verifyOTP = async (id) => {
   await app.db.query(sql`UPDATE otps SET verified_at=now() WHERE id=${id}`);

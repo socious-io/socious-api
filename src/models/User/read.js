@@ -14,7 +14,7 @@ export const getByEmail = async (email) => {
 };
 
 export const getByPhone = async (phone) => {
-  phone = phone.replace('+', '')
+  phone = phone.replace('+', '');
   return app.db.get(sql`SELECT * FROM users WHERE phone=${phone}`);
 };
 

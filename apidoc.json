@@ -1,7 +1,7 @@
 {
   "name": "Socious API",
   "version": "1.0.0",
-  "description": "apiDoc basic example",
-  "title": "Custom apiDoc browser title",
+  "description": "API solution written for the Socious platform.",
+  "title": "socious API doc",
   "url" : "http://{HOST}:{PORT}"
 }

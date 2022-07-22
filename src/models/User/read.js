@@ -1,5 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
+import { UserStatus } from './enum.js';
 
 export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM users WHERE id=${id}`);
@@ -19,7 +20,11 @@ export const getByPhone = async (phone) => {
 
 export const getOTP = async (code) => {
   return app.db.get(
-    sql`SELECT * FROM otps WHERE code=${code} AND expired_at > now() AND verified_at IS NULL`,
+    sql`
+    SELECT * FROM otps 
+    INNER JOIN users ON users.id=otps.user_id 
+    WHERE 
+      otps.code=${code} AND otps.expired_at > now() AND otps.verified_at IS NULL AND users.status != ${UserStatus.SUSPEND}`,
   );
 };
 

@@ -1,9 +1,10 @@
 import Config from '../../config.js';
 import {getByEmail, getByPhone, getByUsername, getOTP} from './read.js';
-import {insert, createOTP, verifyOTP} from './write.js';
+import {insert, createOTP, verifyOTP, verifyEmail, verifyPhone} from './write.js';
 import * as bcrypt from 'bcrypt';
 import {NotMatchedError} from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
+import { OTPType } from './enum.js';
 import {authSchem, registerSchem, newOTPSchem} from './schema.js';
 
 const signin = (user) => {
@@ -42,10 +43,17 @@ export const register = async (body) => {
 export const sendOTP = async (body) => {
   await newOTPSchem.validate(body);
   let user;
-  if (body.email) user = await getByEmail(body.email);
-  if (body.phone) user = await getByPhone(body.phone);
+  let otpType;
+  if (body.email) {
+    user = await getByEmail(body.email);
+    otpType = OTPType.EMAIL;
+  }
+  if (body.phone) {
+    user = await getByPhone(body.phone);
+    otpType = OTPType.PHONE;
+  }
 
-  const code = await createOTP(user.id);
+  const code = await createOTP(user.id, otpType);
   console.log(`OTP Code generated for ${user.id} => ${code}`);
 
   // TODO: Sending queue for email or sms push
@@ -53,7 +61,11 @@ export const sendOTP = async (body) => {
 
 export const confirmOTP = async (code) => {
   const otp = await getOTP(code);
+  
   await verifyOTP(otp.id);
+
+  if (otp.type === OTPType.EMAIL) await verifyEmail(otp.user_id);
+  if (otp.type === OTPType.PHONE) await verifyPhone(otp.user_id);
 
   return {access_token: signin({id: otp.user_id})};
 };

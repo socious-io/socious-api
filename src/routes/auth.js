@@ -38,3 +38,33 @@ router.post('/login', async (ctx) => {
 router.post('/register', async (ctx) => {
   ctx.body = await User.register(ctx.request.body);
 });
+
+/**
+ * @api {post} /auth/otp Send OTP
+ * @apiGroup Auth
+ * @apiName Send OTP
+ * @apiVersion 1.0.0
+ * @apiDescription sending otp to user email or phone
+ *
+ * @apiBody {String} email Mandatory if phone is empty
+ * @apiBody {String} phone Mandatory if email is empty
+ *
+ */
+router.post('/otp', async (ctx) => {
+  await User.sendOTP(ctx.request.body);
+  ctx.body = {message: 'success'};
+});
+
+/**
+ * @api {get} /auth/otp/:code Confirm OTP
+ * @apiGroup Auth
+ * @apiName Confirm OTP
+ * @apiVersion 1.0.0
+ * @apiDescription confirm otp with code
+ *
+ * @apiParam {Number} code
+ *
+ */
+router.get('/otp/:code', async (ctx) => {
+  ctx.body = await User.confirmOTP(ctx.params.code);
+});

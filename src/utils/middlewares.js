@@ -19,33 +19,33 @@ const throwHandler = async (ctx, next) => {
       console.log(err);
     }
 
-    switch (err.name) {
-      case 'ValidationError':
-        ctx.status = 400;
-        ctx.body = {error: err.message};
-        return;
-      case 'UnauthorizedError':
-        ctx.status = 401;
-        ctx.body = {error: err.message};
-        return;
+    ctx.body = {error: err.message};
+
+    if (err.name === 'ValidationError') {
+      ctx.status = 400;
+      return;
+    }
+    if (err.name === 'UnauthorizedError') {
+      ctx.status = 401;
+      return;
     }
 
-    switch (err.constructor) {
-      case AuthorizationError:
-        ctx.status = 403;
-        ctx.body = {error: err.message};
-        return;
-      case (BadRequestError, NotMatchedError, ValidationError):
-        ctx.status = 400;
-        ctx.body = {error: err.message};
-        return;
-      case EntryError:
-        ctx.status = 406;
-        ctx.body = {error: err.message};
-        return;
-      default:
-        throw err;
+    if (err instanceof AuthorizationError) {
+      ctx.status = 403;
+      return;
     }
+
+    if (err instanceof BadRequestError || NotMatchedError || ValidationError) {
+      ctx.status = 400;
+      return;
+    }
+
+    if (err instanceof EntryError) {
+      ctx.status = 406;
+      return;
+    }
+
+    ctx.status = 500;
   }
 };
 

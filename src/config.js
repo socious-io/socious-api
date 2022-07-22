@@ -4,7 +4,7 @@ export default {
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
   jwtExpireTime: '2h',
-  
+
   mail_smtp: {
     host: process.env.MAIL_SMTP_HOST,
     port: process.env.MAIL_SMTP_PORT ?? 587,
@@ -13,10 +13,9 @@ export default {
     secure: process.env.MAIL_SMTP_SECURE ?? false, // true for 465, false for other ports ref: nodeMailer document
     auth: {
       user: process.env.MAIL_SMTP_USER,
-      pass: process.env.MAIL_SMTP_PASS
-    }
-    
-  }
+      pass: process.env.MAIL_SMTP_PASS,
+    },
+  },
 };
 
 /**

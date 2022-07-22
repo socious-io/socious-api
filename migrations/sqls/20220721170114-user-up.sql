@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.users(
   avatar text,
   cover_image text,
   expiry_date timestamp,
-  status user_status DEFAULT 'INACTIVE',
+  status user_status DEFAULT 'INACTIVE' NOT NULL,
   mission text,
   bio text,
   profile_id varchar(200) DEFAULT NULL,

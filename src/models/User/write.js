@@ -46,7 +46,7 @@ export const createOTP = async (userId, otpType, retried = 0) => {
     retried++;
     console.log(`generated ${code} for OTP duplicated retried ${retried}`);
     if (retried > 5) throw e;
-    createOTP(userId, retried);
+    createOTP(userId, otpType, retried);
   }
   return code;
 };

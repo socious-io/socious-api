@@ -2,9 +2,9 @@ import Config from '../../config.js';
 import {getByEmail, getByPhone, getByUsername, getOTP} from './read.js';
 import {insert, createOTP, verifyOTP, verifyEmail, verifyPhone} from './write.js';
 import * as bcrypt from 'bcrypt';
-import {NotMatchedError} from '../../utils/errors.js';
+import {AuthorizationError, NotMatchedError} from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
-import { OTPType } from './enum.js';
+import { OTPType, UserStatus } from './enum.js';
 import {authSchem, registerSchem, newOTPSchem} from './schema.js';
 
 const signin = (user) => {
@@ -28,6 +28,8 @@ export const auth = async (body) => {
   const matched = await comparePassword(password, user.password);
 
   if (!matched) throw new NotMatchedError();
+
+  if (user.status === UserStatus.SUSPEND) throw new AuthorizationError('User has been suspended!')
 
   return {access_token: signin(user)};
 };

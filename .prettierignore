@@ -3,5 +3,7 @@ node_modules
 *.json
 *.md
 *.yaml
+*.html
+*.css*
 .*
-!*.js
+/statics

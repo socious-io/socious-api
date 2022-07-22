@@ -10,7 +10,7 @@ let abort = false;
  * @api {get} /ping Ping
  * @apiGroup Util
  * @apiName Ping
- *
+ * @apiVersion 1.0.0
  * @apiDescription Ping API to check if its alive.
  *
  * @apiSuccessExample Success-Response:
@@ -31,7 +31,7 @@ router.get('/remote', async (ctx) => {
  * @api {get} /ping/ready Ping
  * @apiGroup Util
  * @apiName Ping
- *
+ * @apiVersion 1.0.0
  * @apiDescription Ping ready API to check if service is up or about to go down
  *
  * @apiSuccessExample Success-Response:
@@ -53,7 +53,7 @@ router.get('/ready', (ctx) => {
  * @api {get} /ping/abort Ping
  * @apiGroup Util
  * @apiName Ping
- *
+ * @apiVersion 1.0.0
  * @apiDescription Mark service as not ready, so kubernetes will take it out of LB
  *
  * @apiSuccessExample Success-Response:

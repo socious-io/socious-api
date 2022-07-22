@@ -35,15 +35,12 @@ app.db.pool.on('error', (err) => {
 
 app.use(middlewares);
 
+app.use(jwt({secret: Config.secret}).unless({path: [/^\/auth/, /^\/ping/]}));
+
 const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
-blueprint.use(
-  '/api/user',
-  jwt({secret: Config.secret}),
-  user.routes(),
-  user.allowedMethods(),
-);
+blueprint.use('/api/user', user.routes(), user.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

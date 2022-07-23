@@ -1,4 +1,4 @@
-import {Config} from './src/config.js'
+import Config from './src/config.js';
 import {app} from './src/index.js';
 import Debug from 'debug';
 

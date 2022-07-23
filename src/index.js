@@ -1,15 +1,17 @@
 import Koa from 'koa';
+import jwt from 'koa-jwt';
 import Router from '@koa/router';
 import morgan from 'koa-morgan';
 import koaBody from 'koa-body';
 import pg from 'pg';
 
-import {DBCircuitBreaker} from './circuitbreaker.js';
+import {DBCircuitBreaker} from './utils/circuitbreaker.js';
 
 import {router as ping} from './routes/ping.js';
 import {router as auth} from './routes/auth.js';
+import {router as user} from './routes/user.js';
 import middlewares from './utils/middlewares.js';
-
+import Config from './config.js';
 export const app = new Koa();
 
 app.use(
@@ -31,11 +33,14 @@ app.db.pool.on('error', (err) => {
   process.exit(-1);
 });
 
-app.use(...middlewares);
+app.use(middlewares);
+
+app.use(jwt({secret: Config.secret}).unless({path: [/^\/auth/, /^\/ping/]}));
 
 const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
+blueprint.use('/api/user', user.routes(), user.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

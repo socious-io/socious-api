@@ -18,9 +18,9 @@
     "docker:run-dev": "docker run -p 8370:8370 -h socious_api --name socious_api --network socious-backend_default socious-api-dev",
     "migrate": "db-migrate up --verbose --config ./migrations/database.json",
     "migrate:undo": "db-migrate down -c 1 --verbose --config ./migrations/database.json",
-    "new-migration": "db-migrate create --sql-file --config ./migrations/database.json",
+    "migrate:new": "db-migrate create --sql-file --config ./migrations/database.json",
     "prettier:check": "prettier --check **/*.js",
-    "prettier:fix": "prettier --write **/*.js",
+    "prettier:fix": "prettier --write .",
     "start": "node serve.js",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
@@ -28,10 +28,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "apidoc": "npx apidoc -i src/routes -o statics/apidoc"
   },
   "dependencies": {
     "@koa/router": "^12.0.0",
+    "apidoc": "^0.52.0",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "cockatiel": "^2.0.2",
@@ -41,8 +43,11 @@
     "debug": "~4.3.4",
     "dotenv": "^16.0.1",
     "http-errors": "~2.0.0",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
+    "koa-jwt": "^4.0.3",
     "koa-morgan": "^1.0.1",
     "luxon": "^3.0.1",
     "morgan": "~1.10.0",
@@ -51,7 +56,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
-    "sql-tag": "^1.0.1",
+    "sql-template-tag": "^5.0.3",
     "supertest-koa-agent": "^0.3.2"
   },
   "devDependencies": {

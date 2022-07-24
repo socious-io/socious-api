@@ -6,10 +6,8 @@ import ejs from 'ejs';
 const defaultMailFrom = `"${config.mail_smtp.from_name}" <${config.mail_smtp.from}>`;
 const smtp = nodeMailer.createTransport(config.mail_smtp);
 
-export const SMTP = 'SMTP';
-
-export const MailSender = {
-  SMTP: {func: smtp.sendMail, name: 'SMTP'},
+export const MailSenderTypes = {
+  SMTP: 'SMTP',
 };
 
 export const sendHtmlEmail = async ({
@@ -18,17 +16,23 @@ export const sendHtmlEmail = async ({
   template,
   from = defaultMailFrom,
   kwargs = {},
-  service = SMTP,
+  sender = MailSenderTypes.SMTP,
 }) => {
-  const sender = MailSender[service];
   const html = await ejs.renderFile(template, kwargs);
-
-  const result = await sender.func({to, from, subject, html});
+  let result = {};
+  try {
+    // TODO: Other types would switch with MailSenderTypes
+    result = await smtp.sendMail({to, from, subject, html});
+  } catch (e) {
+    // TODO: better error handler and retry system
+    console.log(e);
+    return;
+  }
 
   await insert(
     result.messageId,
     {
-      service: sender.name,
+      service: sender,
       template,
       kwargs,
     },

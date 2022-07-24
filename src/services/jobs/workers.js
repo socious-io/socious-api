@@ -15,13 +15,17 @@ const consumer = (handler) => {
     for await (const q of queue) {
       const body = decoder.decode(q.data);
       console.log(
-        `[${subj}]${pad} #${queue.getProcessed()} - ${q.subject} ${body}`,
+        `[${subj}]${pad} #${queue.getProcessed()} - ${
+          q.subject
+        } ${JSON.stringify(body)}`,
       );
+
       handler(body);
     }
   };
 };
 
+// register all queues and handlers
 const register = {
   email: consumer(sendHtmlEmail),
 };

@@ -1,8 +1,8 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 
-export const insert = async (id, options, sent) => {
+export const insert = async (id, options, info) => {
   await app.db.query(
-    sql`INSERT INTO users (message_id, options, sent) VALUES (${id}, ${options}, ${sent})`,
+    sql`INSERT INTO emails (message_id, options, info) VALUES (${id}, ${options}, ${info})`,
   );
 };

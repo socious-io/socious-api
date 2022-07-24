@@ -12,6 +12,7 @@ import {AuthorizationError, NotMatchedError} from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
 import {OTPType, UserStatus} from './enum.js';
 import {authSchem, registerSchem, newOTPSchem} from './schema.js';
+import publish from '../../services/jobs/publish.js';
 
 const signin = (user) => {
   return jwt.sign({id: user.id}, Config.secret, {
@@ -65,7 +66,13 @@ export const sendOTP = async (body) => {
   const code = await createOTP(user.id, otpType);
   console.log(`OTP Code generated for ${user.id} => ${code}`);
 
-  // TODO: Sending queue for email or sms push
+  if (otpType === OTPType.EMAIL)
+    publish('email', {
+      to: '',
+      subject: '',
+      template: 'templates/emails/otp.html',
+      kwargs: {name: 'test', code},
+    });
 };
 
 export const confirmOTP = async (code) => {

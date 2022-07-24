@@ -16,6 +16,10 @@ export default {
       pass: process.env.MAIL_SMTP_PASS,
     },
   },
+  nats: {
+    servers: process.env.NATS_HOSTS.split(','),
+    token: process.env.NATS_TOKEN,
+  },
 };
 
 /**

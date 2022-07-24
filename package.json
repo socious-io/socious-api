@@ -24,12 +24,13 @@
     "start": "node serve.js",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
-    "test": "jest",
+    "test": "jest",    
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "apidoc": "npx apidoc -i src/routes -o statics/apidoc"
+    "apidoc": "npx apidoc -i src/routes -o statics/apidoc",
+    "workers": "node src/services/jobs/workers.js"
   },
   "dependencies": {
     "@koa/router": "^12.0.0",
@@ -53,6 +54,7 @@
     "luxon": "^3.0.1",
     "morgan": "~1.10.0",
     "mutexify": "^1.4.0",
+    "nats": "^2.7.1",
     "nodemailer": "^6.7.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",

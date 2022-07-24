@@ -26,6 +26,12 @@
       ],
       "@app/chat/*": [
         "libs/chat/src/*"
+      ],
+      "@app/search": [
+        "libs/search/src"
+      ],
+      "@app/search/*": [
+        "libs/search/src/*"
       ]
     }
   }

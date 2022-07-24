@@ -10,7 +10,7 @@ export class UsersController {
   public async create(
     @Body("username") username: string,
     @Body("email") email: string,
-    @Body("password") password: string
+    @Body("password") password: string,
   ) {
     await this.users.create(username, email, password);
   }

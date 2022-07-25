@@ -56,7 +56,7 @@ router.post('/otp', async (ctx) => {
 });
 
 /**
- * @api {get} /auth/otp/:code Confirm OTP
+ * @api {get} /auth/otp/confirm Confirm OTP
  * @apiGroup Auth
  * @apiName Confirm OTP
  * @apiVersion 1.0.0

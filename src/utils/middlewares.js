@@ -4,6 +4,7 @@ import {
   BadRequestError,
   ValidationError,
   EntryError,
+  PermissionError,
 } from './errors.js';
 import compose from 'koa-compose';
 import jwt from 'jsonwebtoken';
@@ -30,7 +31,7 @@ const throwHandler = async (ctx, next) => {
       return;
     }
 
-    if (err instanceof AuthorizationError) {
+    if (err instanceof AuthorizationError || PermissionError) {
       ctx.status = 403;
       return;
     }

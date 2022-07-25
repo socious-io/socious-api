@@ -8,3 +8,9 @@ export const OTPType = {
   EMAIL: 'EMAIL',
   PHONE: 'PHONE',
 };
+
+export const OTPPurposeType = {
+  AUTH: 'AUTH',
+  FORGET_PASSWORD: 'FORGET_PASSWORD',
+  ACTIVATION: 'ACTIVATION'
+};

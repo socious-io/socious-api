@@ -13,7 +13,7 @@ const debug = Debug('socious-api:auth');
  * @apiVersion 1.0.0
  * @apiDescription Basic Auth
  *
- * @apiBody {String{min:6 max:20}} username Mandatory
+ * @apiBody {String} email Mandatory
  * @apiBody {String{min:8}} password Mandatory
  *
  * @apiSuccess {String} access_token
@@ -29,9 +29,11 @@ router.post('/login', async (ctx) => {
  * @apiVersion 1.0.0
  * @apiDescription Registeration
  *
+ * @apiBody {String} first_name Mandatory
+ * @apiBody {String} last_name Mandatory
  * @apiBody {String{min:6 max:20}} username Mandatory
- * @apiBody {String{min:8}} password Mandatory
  * @apiBody {String} email Mandatory
+ * @apiBody {String{min:8}} password Mandatory
  *
  * @apiSuccess {String} access_token
  */
@@ -56,15 +58,35 @@ router.post('/otp', async (ctx) => {
 });
 
 /**
- * @api {get} /auth/otp/:code Confirm OTP
+ * @api {get} /auth/otp/confirm Confirm OTP
  * @apiGroup Auth
  * @apiName Confirm OTP
  * @apiVersion 1.0.0
  * @apiDescription confirm otp with code
  *
- * @apiParam {Number} code
+ * @apiQuery {Number} code
+ * @apiQuery {String} email Mandatory if phone is empty
+ * @apiQuery {String} phone Mandatory if email is empty
  *
  */
-router.get('/otp/:code', async (ctx) => {
-  ctx.body = await User.confirmOTP(ctx.params.code);
+router.get('/otp/confirm', async (ctx) => {
+  ctx.body = await User.confirmOTP({
+    code: ctx.query.code, email: ctx.query.email, phone: ctx.query.phone
+  });
+});
+
+/**
+ * @api {post} /auth/forget-password Forget Password
+ * @apiGroup Auth
+ * @apiName Forget Password
+ * @apiVersion 1.0.0
+ * @apiDescription sending otp to user email or phone with expire current password
+ *
+ * @apiBody {String} email Mandatory if phone is empty
+ * @apiBody {String} phone Mandatory if email is empty
+ *
+ */
+router.post('/forget-password', async (ctx) => {
+  await User.forgetPassword(ctx.request.body);
+  ctx.body = {message: 'success'};
 });

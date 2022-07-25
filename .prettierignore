@@ -1,6 +1,4 @@
-.eslintrc
 node_modules
-*.json
 *.md
 *.yaml
 *.html

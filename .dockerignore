@@ -1,7 +1,9 @@
 Dockerfile
+.github
 .dockerignore
+docker-compose.yaml
 node_modules
 npm-debug.log
-dist
-reflected-models
 .vscode
+editorconfig
+template.env

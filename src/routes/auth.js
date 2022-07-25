@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 import Debug from 'debug';
-import User from '../models/User/index.js';
+import User from '../services/user/index.js';
 
 export const router = new Router();
 

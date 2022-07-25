@@ -158,25 +158,22 @@ export const forgetPassword = async (body) => {
   }
 };
 
-export const directChangePassword = async (userId, body) => {
-  const user = await get(userId);
-
+export const directChangePassword = async (user, body) => {
   if (!user.password_expired)
     throw new PermissionError('You can not change password directly');
 
   await diretChangePasswordSchem.validateAsync(body);
   const newPassword = await hashPassword(body.password);
 
-  await updatePassword(userId, newPassword);
+  await updatePassword(user.id, newPassword);
 };
 
-export const changePassword = async (userId, body) => {
+export const changePassword = async (user, body) => {
   await changePasswordSchem.validateAsync(body);
-  const user = await get(userId);
 
   const matched = await comparePassword(body.current_password, user.password);
   if (!matched) throw new NotMatchedError();
 
   const newPassword = await hashPassword(body.password);
-  await updatePassword(userId, newPassword);
+  await updatePassword(user.id, newPassword);
 };

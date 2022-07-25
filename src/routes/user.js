@@ -16,7 +16,7 @@ const debug = Debug('socious-api:user');
  *
  */
 router.get('/profile', async (ctx) => {
-  ctx.body = await User.profile(ctx.userId);
+  ctx.body = await User.profile(ctx.user);
 });
 
 /**
@@ -35,7 +35,7 @@ router.get('/profile', async (ctx) => {
  * @apiBody {String} wallet_address
  */
 router.put('/profile', async (ctx) => {
-  ctx.body = await User.updateProfile(ctx.userId, ctx.request.body);
+  ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 
 /**
@@ -50,7 +50,7 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password', async (ctx) => {
-  await User.changePassword(ctx.userId, ctx.request.body);
+  await User.changePassword(ctx.user.id, ctx.request.body);
   ctx.body = {message: 'success'};
 });
 
@@ -65,7 +65,7 @@ router.put('/change-password', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password-direct', async (ctx) => {
-  await User.directChangePassword(ctx.userId, ctx.request.body);
+  await User.directChangePassword(ctx.user.id, ctx.request.body);
 
   ctx.body = {message: 'success'};
 });

@@ -1,3 +1,7 @@
+import compose from 'koa-compose';
+import jwt from 'jsonwebtoken';
+import User from '../models/User/index.js';
+import config from '../config.js';
 import {
   NotMatchedError,
   AuthorizationError,
@@ -5,9 +9,8 @@ import {
   ValidationError,
   EntryError,
   PermissionError,
+  UnauthorizedError,
 } from './errors.js';
-import compose from 'koa-compose';
-import jwt from 'jsonwebtoken';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -26,7 +29,7 @@ const throwHandler = async (ctx, next) => {
       ctx.status = 400;
       return;
     }
-    if (err.name === 'UnauthorizedError') {
+    if (err instanceof UnauthorizedError) {
       ctx.status = 401;
       return;
     }
@@ -50,13 +53,25 @@ const throwHandler = async (ctx, next) => {
   }
 };
 
-const decodeToken = async (ctx, next) => {
+export const middlewares = compose([throwHandler]);
+
+export const loginRequired = async (ctx, next) => {
   const {authorization} = ctx.request.header;
-  if (authorization) {
-    const {id} = jwt.decode(authorization?.replace('Bearer ', ''));
-    ctx.userId = id;
+  let token;
+
+  if (authorization) token = authorization?.replace('Bearer ', '');
+
+  if (ctx.session.token) token = ctx.session.token;
+
+  const {id} = jwt.verify(token, config.secret);
+
+  if (!id) throw new UnauthorizedError();
+
+  try {
+    ctx.user = await User.get(id);
+  } catch {
+    throw new UnauthorizedError();
   }
+
   await next();
 };
-
-export default compose([decodeToken, throwHandler]);

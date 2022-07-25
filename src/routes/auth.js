@@ -23,6 +23,24 @@ router.post('/login', async (ctx) => {
 });
 
 /**
+ * @api {post} /auth/web/login Login with session
+ * @apiGroup Auth
+ * @apiName Login with session
+ * @apiVersion 1.0.0
+ * @apiDescription Basic Auth with set cookie
+ *
+ * @apiBody {String} email Mandatory
+ * @apiBody {String{min:8}} password Mandatory
+ *
+ * @apiSuccess {String} access_token
+ */
+router.post('/login', async (ctx) => {
+  const response = await User.auth(ctx.request.body);
+  ctx.session.token = response.access_token;
+  ctx.body = {message: 'success'};
+});
+
+/**
  * @api {post} /auth/register Register
  * @apiGroup Auth
  * @apiName Register

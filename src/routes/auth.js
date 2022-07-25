@@ -68,3 +68,19 @@ router.post('/otp', async (ctx) => {
 router.get('/otp/:code', async (ctx) => {
   ctx.body = await User.confirmOTP(ctx.params.code);
 });
+
+/**
+ * @api {post} /auth/otp Send OTP
+ * @apiGroup Auth
+ * @apiName Send OTP
+ * @apiVersion 1.0.0
+ * @apiDescription sending otp to user email or phone
+ *
+ * @apiBody {String} email Mandatory if phone is empty
+ * @apiBody {String} phone Mandatory if email is empty
+ *
+ */
+router.post('/forget-password', async (ctx) => {
+  await User.forgetPassword(ctx.request.body);
+  ctx.body = {message: 'success'};
+});

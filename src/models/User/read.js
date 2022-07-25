@@ -26,7 +26,7 @@ export const getOTP = async (code) => {
     otps.code=${code} AND otps.expired_at > now() AND 
     otps.verified_at IS NULL AND users.status != ${UserStatus.SUSPEND}
   `;
-
+  console.log(query);
   return app.db.get(query);
 };
 

@@ -7,7 +7,7 @@ export const router = new Router();
 const debug = Debug('socious-api:user');
 
 /**
- * @api {get} /api/user/profile Profile
+ * @api {get} /user/profile Profile
  * @apiGroup User
  * @apiName Profile
  * @apiVersion 1.0.0
@@ -16,11 +16,11 @@ const debug = Debug('socious-api:user');
  *
  */
 router.get('/profile', async (ctx) => {
-  ctx.body = await User.profile(ctx.userId);
+  ctx.body = await User.profile(ctx.user);
 });
 
 /**
- * @api {put} /api/user/profile Update Profile
+ * @api {put} /user/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
  * @apiVersion 1.0.0
@@ -35,13 +35,11 @@ router.get('/profile', async (ctx) => {
  * @apiBody {String} wallet_address
  */
 router.put('/profile', async (ctx) => {
-  ctx.body = await User.updateProfile(ctx.userId, ctx.request.body);
+  ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 
-
-
 /**
- * @api {put} /api/user/change-password Change Password
+ * @api {put} /user/change-password Change Password
  * @apiGroup User
  * @apiName ChangePassword
  * @apiVersion 1.0.0
@@ -52,12 +50,12 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password', async (ctx) => {
-  await User.changePassword(ctx.userId, ctx.request.body);
+  await User.changePassword(ctx.user.id, ctx.request.body);
   ctx.body = {message: 'success'};
 });
 
 /**
- * @api {put} /api/user/change-password/direct Change PAssword Directly
+ * @api {put} /user/change-password/direct Change PAssword Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 1.0.0
@@ -67,7 +65,7 @@ router.put('/change-password', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password-direct', async (ctx) => {
-  await User.directChangePassword(ctx.userId, ctx.request.body);
+  await User.directChangePassword(ctx.user.id, ctx.request.body);
 
   ctx.body = {message: 'success'};
 });

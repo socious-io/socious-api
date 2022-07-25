@@ -69,7 +69,11 @@ export const verifyOTP = async (id) => {
   await app.db.query(sql`UPDATE otps SET verified_at=now() WHERE id=${id}`);
 };
 
-export const createOTP = async (userId, otpType, otpPurpose=OTPPurposeType.AUTH) => {
+export const createOTP = async (
+  userId,
+  otpType,
+  otpPurpose = OTPPurposeType.AUTH,
+) => {
   // generate random 6 digit number
   const code = Math.floor(100000 + Math.random() * 900000);
   await app.db.query(

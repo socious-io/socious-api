@@ -12,5 +12,5 @@ export const OTPType = {
 export const OTPPurposeType = {
   AUTH: 'AUTH',
   FORGET_PASSWORD: 'FORGET_PASSWORD',
-  ACTIVATION: 'ACTIVATION'
+  ACTIVATION: 'ACTIVATION',
 };

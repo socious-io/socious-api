@@ -20,6 +20,18 @@ export default {
     servers: process.env.NATS_HOSTS.split(','),
     token: process.env.NATS_TOKEN,
   },
+  session: {
+    key: 'Socious.sess',
+    maxAge: '2h',
+    autoCommit: true,
+    overwrite: true,
+    httpOnly: true,
+    signed: true,
+    rolling: false,
+    renew: true,
+    secure: false, // need do it enviremental (works on https only)
+    sameSite: null,
+  },
 };
 
 /**

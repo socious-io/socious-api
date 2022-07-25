@@ -6,3 +6,6 @@ export class EntryError extends Error {}
 export class NotMatchedError extends Error {
   message = 'not matched';
 }
+export class UnauthorizedError extends Error {
+  message = 'Unauthorized';
+}

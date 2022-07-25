@@ -52,6 +52,7 @@
     "koa-body": "^5.0.0",
     "koa-jwt": "^4.0.3",
     "koa-morgan": "^1.0.1",
+    "koa-session": "^6.2.0",
     "luxon": "^3.0.1",
     "morgan": "~1.10.0",
     "mutexify": "^1.4.0",

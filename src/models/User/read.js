@@ -30,8 +30,12 @@ export const getOTP = async (user_id, code) => {
   return app.db.get(query);
 };
 
-export const profile = async (id) => {
-  const user = await get(id);
+export const profile = async (user) => {
   delete user.password;
   return user;
+};
+
+export const getProfile = async (id) => {
+  const user = await get(id);
+  return profile(user);
 };

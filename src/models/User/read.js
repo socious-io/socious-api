@@ -18,15 +18,15 @@ export const getByPhone = async (phone) => {
   return app.db.get(sql`SELECT * FROM users WHERE phone=${phone}`);
 };
 
-export const getOTP = async (code) => {
+export const getOTP = async (user_id, code) => {
   const query = sql`
   SELECT otps.* FROM otps 
   INNER JOIN users ON users.id=otps.user_id 
   WHERE 
+    otps.user_id=${user_id} AND
     otps.code=${code} AND otps.expired_at > now() AND 
     otps.verified_at IS NULL AND users.status != ${UserStatus.SUSPEND}
   `;
-  console.log(query);
   return app.db.get(query);
 };
 

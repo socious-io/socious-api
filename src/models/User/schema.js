@@ -21,11 +21,24 @@ export const registerSchem = Joi.object({
 export const newOTPSchem = Joi.alternatives().try(
   Joi.object().keys({
     phone: Joi.string().regex(phonePattern).required(),
-    email: Joi.string().email(),
+    email: Joi.string().email()
   }),
   Joi.object().keys({
     phone: Joi.string().regex(phonePattern),
-    email: Joi.string().email().required(),
+    email: Joi.string().email().required()
+  }),
+);
+
+export const confirmOTPSchem = Joi.alternatives().try(
+  Joi.object().keys({
+    code: Joi.string().min(6).max(6),
+    phone: Joi.string().regex(phonePattern).required(),
+    email: Joi.string().email()
+  }),
+  Joi.object().keys({
+    code: Joi.string().min(6).max(6),
+    phone: Joi.string().regex(phonePattern),
+    email: Joi.string().email().required()
   }),
 );
 

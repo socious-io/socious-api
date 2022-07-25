@@ -1,7 +1,7 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import {UserStatus} from './enum.js';
+import {OTPPurposeType, UserStatus} from './enum.js';
 import {updateProfileSchem} from './schema.js';
 
 export const insert = async (
@@ -71,11 +71,11 @@ export const verifyOTP = async (id) => {
   await app.db.query(sql`UPDATE otps SET verified_at=now() WHERE id=${id}`);
 };
 
-export const createOTP = async (userId, otpType) => {
+export const createOTP = async (userId, otpType, otpPurpose=OTPPurposeType.AUTH) => {
   // generate random 6 digit number
   const code = Math.floor(100000 + Math.random() * 900000);
   await app.db.query(
-    sql`INSERT INTO otps (code, user_id, type) VALUES (${code}, ${userId}, ${otpType})`,
+    sql`INSERT INTO otps (code, user_id, type, purpose) VALUES (${code}, ${userId}, ${otpType}, ${otpPurpose})`,
   );
   console.log(`OTP Code generated for ${userId} => ${code}`);
   return code;

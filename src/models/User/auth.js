@@ -16,13 +16,14 @@ import {
   PermissionError,
 } from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
-import {OTPType, UserStatus} from './enum.js';
+import {OTPPurposeType, OTPType, UserStatus} from './enum.js';
 import {
   authSchem,
   registerSchem,
   newOTPSchem,
   changePasswordSchem,
   diretChangePasswordSchem,
+  confirmOTPSchem,
 } from './schema.js';
 import publish from '../../services/jobs/publish.js';
 
@@ -69,7 +70,7 @@ export const register = async (body) => {
   );
 
   // sending OTP to verify user email after registeration
-  const code = await createOTP(user.id, OTPType.EMAIL);
+  const code = await createOTP(user.id, OTPType.EMAIL, OTPPurposeType.ACTIVATION);
   publish('email', {
     to: user.email,
     subject: 'Verify your account',
@@ -104,13 +105,18 @@ export const sendOTP = async (body) => {
   }
 };
 
-export const confirmOTP = async (code) => {
-  const otp = await getOTP(code);
+export const confirmOTP = async (body) => {
+  await confirmOTPSchem.validateAsync(body)
+  const user = body.email ? await getByEmail(body.email) : await getByPhone(body.phone)
+
+  const otp = await getOTP(user.id, body.code);
 
   await verifyOTP(otp.id);
 
   if (otp.type === OTPType.EMAIL) await verifyEmail(otp.user_id);
   if (otp.type === OTPType.PHONE) await verifyPhone(otp.user_id);
+
+  if (otp.purpose === OTPPurposeType.FORGET_PASSWORD) await expirePassword(user.id);
 
   return {access_token: signin({id: otp.user_id})};
 };
@@ -129,7 +135,7 @@ export const forgetPassword = async (body) => {
     otpType = OTPType.PHONE;
   }
 
-  const code = await createOTP(user.id, otpType);
+  const code = await createOTP(user.id, otpType, OTPPurposeType.FORGET_PASSWORD);
 
   if (otpType === OTPType.EMAIL) {
     publish('email', {
@@ -138,9 +144,7 @@ export const forgetPassword = async (body) => {
       template: 'templates/emails/forget_password.html',
       kwargs: {name: 'test', code},
     });
-  }
-
-  await expirePassword(user.id);
+  }  
 };
 
 export const directChangePassword = async (userId, body) => {

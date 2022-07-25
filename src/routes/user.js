@@ -27,10 +27,18 @@ router.get('/profile', async (ctx) => {
  * @apiDescription Update Current User Profile
  * @apiPermission LoginRequired
  *
+ * @apiBody {String} first_name Mandatory
+ * @apiBody {String} last_name Mandatory
+ * @apiBody {String} bio
+ * @apiBody {String} city
+ * @apiBody {String} address
+ * @apiBody {String} wallet_address
  */
 router.put('/profile', async (ctx) => {
   ctx.body = await User.updateProfile(ctx.userId, ctx.request.body);
 });
+
+
 
 /**
  * @api {put} /api/user/change-password Change Password
@@ -49,7 +57,7 @@ router.put('/change-password', async (ctx) => {
 });
 
 /**
- * @api {put} /api/user/change-password/direct
+ * @api {put} /api/user/change-password/direct Change PAssword Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 1.0.0

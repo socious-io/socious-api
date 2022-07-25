@@ -25,10 +25,8 @@ export const updateProfile = async (id, profile) => {
   await updateProfileSchem.validateAsync(profile);
   const query = sql`
     UPDATE users SET 
-      first_name=${profile.first_name}, last_name=${profile.last_name}, phone=${
-    profile.phone
-  }, bio=${profile.bio ?? null},
-      city=${profile.city ?? null}, address=${
+      first_name=${profile.first_name}, last_name=${profile.last_name},
+      bio=${profile.bio ?? null}, city=${profile.city ?? null}, address=${
     profile.address ?? null
   }, wallet_address=${profile.wallet_address ?? null}
     WHERE id=${id} RETURNING *

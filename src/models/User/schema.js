@@ -45,7 +45,6 @@ export const confirmOTPSchem = Joi.alternatives().try(
 export const updateProfileSchem = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
-  phone: Joi.string().regex(phonePattern).required(),
   bio: Joi.string(),
   city: Joi.string(),
   address: Joi.string(),

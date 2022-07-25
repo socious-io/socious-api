@@ -70,11 +70,11 @@ router.get('/otp/:code', async (ctx) => {
 });
 
 /**
- * @api {post} /auth/otp Send OTP
+ * @api {post} /auth/forget-password Forget Password
  * @apiGroup Auth
- * @apiName Send OTP
+ * @apiName Forget Password
  * @apiVersion 1.0.0
- * @apiDescription sending otp to user email or phone
+ * @apiDescription sending otp to user email or phone with expire current password
  *
  * @apiBody {String} email Mandatory if phone is empty
  * @apiBody {String} phone Mandatory if email is empty

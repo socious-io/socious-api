@@ -1,5 +1,5 @@
 import Config from '../../config.js';
-import {get, getByEmail, getByPhone, getByUsername, getOTP} from './read.js';
+import {get, getByEmail, getByPhone, getOTP} from './read.js';
 import {
   insert,
   createOTP,
@@ -14,7 +14,6 @@ import {
   AuthorizationError,
   NotMatchedError,
   PermissionError,
-  ValidationError,
 } from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
 import {OTPType, UserStatus} from './enum.js';

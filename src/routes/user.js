@@ -40,6 +40,8 @@ router.put('/profile', async (ctx) => {
  * @apiDescription Change user password with user current password
  * @apiPermission LoginRequired
  *
+ * @apiBody {String{min:8}} current_password Mandatory
+ * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password', async (ctx) => {
   await User.changePassword(ctx.userId, ctx.request.body);
@@ -51,9 +53,10 @@ router.put('/change-password', async (ctx) => {
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 1.0.0
- * @apiDescription Change user password whithout current password
+ * @apiDescription Change user password whithout current password (available only on forget password request)
  * @apiPermission LoginRequired
  *
+ * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password-direct', async (ctx) => {
   await User.directChangePassword(ctx.userId, ctx.request.body);

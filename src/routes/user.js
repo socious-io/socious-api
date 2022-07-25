@@ -38,8 +38,6 @@ router.put('/profile', async (ctx) => {
   ctx.body = await User.updateProfile(ctx.userId, ctx.request.body);
 });
 
-
-
 /**
  * @api {put} /api/user/change-password Change Password
  * @apiGroup User

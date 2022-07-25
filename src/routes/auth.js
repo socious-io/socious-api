@@ -71,7 +71,9 @@ router.post('/otp', async (ctx) => {
  */
 router.get('/otp/confirm', async (ctx) => {
   ctx.body = await User.confirmOTP({
-    code: ctx.query.code, email: ctx.query.email, phone: ctx.query.phone
+    code: ctx.query.code,
+    email: ctx.query.email,
+    phone: ctx.query.phone,
   });
 });
 

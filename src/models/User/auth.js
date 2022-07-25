@@ -47,6 +47,14 @@ export const register = async (body) => {
   body.password = await hashPassword(body.password);
   const user = await insert(body.username, body.email, body.password);
 
+  // sending OTP to verify user email after registeration
+  const code = await createOTP(user.id, OTPType.EMAIL);
+  publish('email', {
+    to: user.email,
+    subject: 'Verify your account',
+    template: 'templates/emails/active_user.html',
+    kwargs: {name: 'test', code},
+  });
   return {access_token: signin(user)};
 };
 
@@ -66,13 +74,14 @@ export const sendOTP = async (body) => {
   const code = await createOTP(user.id, otpType);
   console.log(`OTP Code generated for ${user.id} => ${code}`);
 
-  if (otpType === OTPType.EMAIL)
+  if (otpType === OTPType.EMAIL) {
     publish('email', {
-      to: '',
-      subject: '',
+      to: user.email,
+      subject: 'OTP',
       template: 'templates/emails/otp.html',
       kwargs: {name: 'test', code},
     });
+  }
 };
 
 export const confirmOTP = async (code) => {

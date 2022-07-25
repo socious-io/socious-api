@@ -7,7 +7,7 @@ export const router = new Router();
 const debug = Debug('socious-api:user');
 
 /**
- * @api {get} /api/user/profile Profile
+ * @api {get} /user/profile Profile
  * @apiGroup User
  * @apiName Profile
  * @apiVersion 1.0.0
@@ -20,7 +20,7 @@ router.get('/profile', async (ctx) => {
 });
 
 /**
- * @api {put} /api/user/profile Update Profile
+ * @api {put} /user/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
  * @apiVersion 1.0.0
@@ -39,7 +39,7 @@ router.put('/profile', async (ctx) => {
 });
 
 /**
- * @api {put} /api/user/change-password Change Password
+ * @api {put} /user/change-password Change Password
  * @apiGroup User
  * @apiName ChangePassword
  * @apiVersion 1.0.0
@@ -55,7 +55,7 @@ router.put('/change-password', async (ctx) => {
 });
 
 /**
- * @api {put} /api/user/change-password/direct Change PAssword Directly
+ * @api {put} /user/change-password/direct Change PAssword Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 1.0.0

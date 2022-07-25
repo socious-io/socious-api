@@ -44,7 +44,7 @@ app.use(session(config.session, app));
 const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
-blueprint.use('/api/user', loginRequired, user.routes(), user.allowedMethods());
+blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

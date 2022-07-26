@@ -82,3 +82,11 @@ export const createOTP = async (
   console.log(`OTP Code generated for ${userId} => ${code}`);
   return code;
 };
+
+export const remove = async (user, reson = null) => {
+  await app.db.query(sql`
+  INSERT INTO deleted_users (user_id, username, reason, registered_at) 
+  VALUES(${user.id}, ${user.username}, ${reson}, ${user.created_at})`);
+
+  await app.db.query(sql`DELETE FROM users WHERE id=${user.id}`);
+};

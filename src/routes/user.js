@@ -69,3 +69,18 @@ router.put('/change-password-direct', async (ctx) => {
 
   ctx.body = {message: 'success'};
 });
+
+/**
+ * @api {post} /user/delete Delete current user
+ * @apiGroup User
+ * @apiName DeleteCurrentUser
+ * @apiVersion 1.0.0
+ * @apiDescription delete current user
+ * @apiPermission LoginRequired
+ *
+ * @apiBody {String} reason
+ */
+router.post('/delete', async (ctx) => {
+  await User.remove(ctx.user, ctx.request.body.reason);
+  ctx.body = {message: 'success'};
+});

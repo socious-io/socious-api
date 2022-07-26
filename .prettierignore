@@ -4,4 +4,5 @@ node_modules
 *.html
 *.css*
 .*
+*.json
 /statics

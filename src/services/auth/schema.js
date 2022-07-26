@@ -42,20 +42,11 @@ export const confirmOTPSchem = Joi.alternatives().try(
   }),
 );
 
-export const updateProfileSchem = Joi.object({
-  first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
-  bio: Joi.string(),
-  city: Joi.string(),
-  address: Joi.string(),
-  wallet_address: Joi.string(),
-});
-
 export const changePasswordSchem = Joi.object({
   current_password: Joi.string().required(),
   password: Joi.string().min(8).required(),
 });
 
-export const diretChangePasswordSchem = Joi.object({
+export const directChangePasswordSchem = Joi.object({
   password: Joi.string().min(8).required(),
 });

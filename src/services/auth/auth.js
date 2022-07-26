@@ -1,14 +1,6 @@
 import Config from '../../config.js';
-import {get, getByEmail, getByPhone, getOTP} from './read.js';
-import {
-  insert,
-  createOTP,
-  verifyOTP,
-  verifyEmail,
-  verifyPhone,
-  updatePassword,
-  expirePassword,
-} from './write.js';
+import User from '../../models/user/index.js';
+
 import * as bcrypt from 'bcrypt';
 import {
   AuthorizationError,
@@ -16,16 +8,16 @@ import {
   PermissionError,
 } from '../../utils/errors.js';
 import jwt from 'jsonwebtoken';
-import {OTPPurposeType, OTPType, UserStatus} from './enum.js';
 import {
   authSchem,
   registerSchem,
   newOTPSchem,
-  changePasswordSchem,
-  diretChangePasswordSchem,
   confirmOTPSchem,
+  changePasswordSchem,
+  directChangePasswordSchem,
 } from './schema.js';
-import publish from '../../services/jobs/publish.js';
+import publish from '../jobs/publish.js';
+import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
 
 const signin = (user) => {
   return jwt.sign({id: user.id}, Config.secret, {
@@ -41,17 +33,17 @@ export const comparePassword = (salt, hashed) => {
   return bcrypt.compare(salt, hashed.replace('$2y$', '$2b$'));
 };
 
-export const auth = async (body) => {
+export const basic = async (body) => {
   await authSchem.validateAsync(body);
   const {email, password} = body;
-  const user = await getByEmail(email);
+  const user = await User.getByEmail(email);
 
   if (user.password_expired) throw new NotMatchedError();
 
   const matched = await comparePassword(password, user.password);
   if (!matched) throw new NotMatchedError();
 
-  if (user.status === UserStatus.SUSPEND)
+  if (user.status === User.StatusType.SUSPEND)
     throw new AuthorizationError('User has been suspended!');
 
   return {access_token: signin(user)};
@@ -61,7 +53,7 @@ export const register = async (body) => {
   await registerSchem.validateAsync(body);
 
   body.password = await hashPassword(body.password);
-  const user = await insert(
+  const user = await User.insert(
     body.first_name,
     body.last_name,
     body.username,
@@ -89,11 +81,11 @@ export const sendOTP = async (body) => {
   let user;
   let otpType;
   if (body.email) {
-    user = await getByEmail(body.email);
+    user = await User.getByEmail(body.email);
     otpType = OTPType.EMAIL;
   }
   if (body.phone) {
-    user = await getByPhone(body.phone);
+    user = await User.getByPhone(body.phone);
     otpType = OTPType.PHONE;
   }
 
@@ -112,18 +104,18 @@ export const sendOTP = async (body) => {
 export const confirmOTP = async (body) => {
   await confirmOTPSchem.validateAsync(body);
   const user = body.email
-    ? await getByEmail(body.email)
-    : await getByPhone(body.phone);
+    ? await User.getByEmail(body.email)
+    : await User.getByPhone(body.phone);
 
   const otp = await getOTP(user.id, body.code);
 
   await verifyOTP(otp.id);
 
-  if (otp.type === OTPType.EMAIL) await verifyEmail(otp.user_id);
-  if (otp.type === OTPType.PHONE) await verifyPhone(otp.user_id);
+  if (otp.type === OTPType.EMAIL) await User.verifyEmail(otp.user_id);
+  if (otp.type === OTPType.PHONE) await User.verifyPhone(otp.user_id);
 
   if (otp.purpose === OTPPurposeType.FORGET_PASSWORD)
-    await expirePassword(user.id);
+    await User.expirePassword(user.id);
 
   return {access_token: signin({id: otp.user_id})};
 };
@@ -134,11 +126,11 @@ export const forgetPassword = async (body) => {
   let otpType;
 
   if (body.email) {
-    user = await getByEmail(body.email);
+    user = await User.getByEmail(body.email);
     otpType = OTPType.EMAIL;
   }
   if (body.phone) {
-    user = await getByPhone(body.phone);
+    user = await User.getByPhone(body.phone);
     otpType = OTPType.PHONE;
   }
 
@@ -162,18 +154,19 @@ export const directChangePassword = async (user, body) => {
   if (!user.password_expired)
     throw new PermissionError('You can not change password directly');
 
-  await diretChangePasswordSchem.validateAsync(body);
+  await directChangePasswordSchem.validateAsync(body);
   const newPassword = await hashPassword(body.password);
 
-  await updatePassword(user.id, newPassword);
+  await User.updatePassword(user.id, newPassword);
 };
 
 export const changePassword = async (user, body) => {
   await changePasswordSchem.validateAsync(body);
+  console.log(body, '-----------', user.password);
 
   const matched = await comparePassword(body.current_password, user.password);
   if (!matched) throw new NotMatchedError();
 
   const newPassword = await hashPassword(body.password);
-  await updatePassword(user.id, newPassword);
+  await User.updatePassword(user.id, newPassword);
 };

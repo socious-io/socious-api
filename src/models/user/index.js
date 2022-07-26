@@ -1,9 +1,9 @@
 import * as write from './write.js';
 import * as read from './read.js';
-import * as auth from './auth.js';
+import * as enums from './enums.js';
 
 export default {
-  ...auth,
+  ...enums,
   ...read,
   ...write,
 };

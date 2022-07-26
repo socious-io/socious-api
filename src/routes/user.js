@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import Debug from 'debug';
-import User from '../services/user/index.js';
+import User from '../models/user/index.js';
+import Auth from '../services/auth/index.js';
 
 export const router = new Router();
 
@@ -50,7 +51,7 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password', async (ctx) => {
-  await User.changePassword(ctx.user.id, ctx.request.body);
+  await Auth.changePassword(ctx.user, ctx.request.body);
   ctx.body = {message: 'success'};
 });
 
@@ -65,7 +66,7 @@ router.put('/change-password', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  */
 router.put('/change-password-direct', async (ctx) => {
-  await User.directChangePassword(ctx.user.id, ctx.request.body);
+  await Auth.directChangePassword(ctx.user, ctx.request.body);
 
   ctx.body = {message: 'success'};
 });

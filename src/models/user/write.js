@@ -1,7 +1,7 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import {OTPPurposeType, UserStatus} from './enum.js';
+import {StatusType} from './enums.js';
 import {updateProfileSchem} from './schema.js';
 
 export const insert = async (
@@ -55,38 +55,12 @@ export const expirePassword = async (id) => {
 
 export const verifyEmail = async (id) => {
   await app.db.query(
-    sql`UPDATE users SET email_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`,
+    sql`UPDATE users SET email_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );
 };
 
 export const verifyPhone = async (id) => {
   await app.db.query(
-    sql`UPDATE users SET phone_verified_at=now(),status=${UserStatus.ACTIVE} WHERE id=${id}`,
+    sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );
-};
-
-export const verifyOTP = async (id) => {
-  await app.db.query(sql`UPDATE otps SET verified_at=now() WHERE id=${id}`);
-};
-
-export const createOTP = async (
-  userId,
-  otpType,
-  otpPurpose = OTPPurposeType.AUTH,
-) => {
-  // generate random 6 digit number
-  const code = Math.floor(100000 + Math.random() * 900000);
-  await app.db.query(
-    sql`INSERT INTO otps (code, user_id, type, purpose) VALUES (${code}, ${userId}, ${otpType}, ${otpPurpose})`,
-  );
-  console.log(`OTP Code generated for ${userId} => ${code}`);
-  return code;
-};
-
-export const remove = async (user, reson = null) => {
-  await app.db.query(sql`
-  INSERT INTO deleted_users (user_id, username, reason, registered_at) 
-  VALUES(${user.id}, ${user.username}, ${reson}, ${user.created_at})`);
-
-  await app.db.query(sql`DELETE FROM users WHERE id=${user.id}`);
 };

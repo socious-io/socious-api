@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 import Debug from 'debug';
-import User from '../services/user/index.js';
+import Auth from '../services/auth/index.js';
 
 export const router = new Router();
 
@@ -19,7 +19,7 @@ const debug = Debug('socious-api:auth');
  * @apiSuccess {String} access_token
  */
 router.post('/login', async (ctx) => {
-  ctx.body = await User.auth(ctx.request.body);
+  ctx.body = await Auth.basic(ctx.request.body);
 });
 
 /**
@@ -35,7 +35,7 @@ router.post('/login', async (ctx) => {
  * @apiSuccess {String} access_token
  */
 router.post('/login', async (ctx) => {
-  const response = await User.auth(ctx.request.body);
+  const response = await Auth.basic(ctx.request.body);
   ctx.session.token = response.access_token;
   ctx.body = {message: 'success'};
 });
@@ -56,7 +56,7 @@ router.post('/login', async (ctx) => {
  * @apiSuccess {String} access_token
  */
 router.post('/register', async (ctx) => {
-  ctx.body = await User.register(ctx.request.body);
+  ctx.body = await Auth.register(ctx.request.body);
 });
 
 /**
@@ -71,7 +71,7 @@ router.post('/register', async (ctx) => {
  *
  */
 router.post('/otp', async (ctx) => {
-  await User.sendOTP(ctx.request.body);
+  await Auth.sendOTP(ctx.request.body);
   ctx.body = {message: 'success'};
 });
 
@@ -88,7 +88,7 @@ router.post('/otp', async (ctx) => {
  *
  */
 router.get('/otp/confirm', async (ctx) => {
-  ctx.body = await User.confirmOTP({
+  ctx.body = await Auth.confirmOTP({
     code: ctx.query.code,
     email: ctx.query.email,
     phone: ctx.query.phone,
@@ -107,6 +107,6 @@ router.get('/otp/confirm', async (ctx) => {
  *
  */
 router.post('/forget-password', async (ctx) => {
-  await User.forgetPassword(ctx.request.body);
+  await Auth.forgetPassword(ctx.request.body);
   ctx.body = {message: 'success'};
 });

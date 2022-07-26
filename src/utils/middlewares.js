@@ -1,6 +1,6 @@
 import compose from 'koa-compose';
 import jwt from 'jsonwebtoken';
-import User from '../services/user/index.js';
+import User from '../models/user/index.js';
 import config from '../config.js';
 import {
   NotMatchedError,

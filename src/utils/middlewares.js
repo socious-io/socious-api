@@ -58,7 +58,9 @@ export const middlewares = compose([throwHandler]);
 export const loginRequired = async (ctx, next) => {
   const {authorization} = ctx.request.header;
 
-  const token = authorization ? authorization?.replace('Bearer ', '') : ctx.session.token
+  const token = authorization
+    ? authorization?.replace('Bearer ', '')
+    : ctx.session.token;
 
   const {id} = jwt.verify(token, config.secret);
 

@@ -3,8 +3,6 @@ import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 
-
-
 export const insert = async (body) => {
   await upsertSchem.validateAsync(body);
 
@@ -39,7 +37,6 @@ export const update = async (id, body) => {
   }
 };
 
-
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM organization WHERE id=${id}`)
+  await app.db.query(sql`DELETE FROM organization WHERE id=${id}`);
 };

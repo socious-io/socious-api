@@ -1,6 +1,5 @@
 import Router from '@koa/router';
 import Org from '../models/organization/index.js';
-import User from '../models/organization/index.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
@@ -92,7 +91,7 @@ router.get('/', paginate, async (ctx) => {
  */
 router.post('/', async (ctx) => {
   ctx.body = await Org.insert(ctx.request.body);
-  await Org.addMember(ctx.body.id, ctx.user)
+  await Org.addMember(ctx.body.id, ctx.user.id);
 });
 
 /**
@@ -132,19 +131,69 @@ router.put('/:id', async (ctx) => {
   ctx.body = await Org.update(ctx.params.id, ctx.request.body);
 });
 
-router.get('/:id/members', async (ctx) => {
-  ctx.body = await Org.members(ctx.params.id);
+/**
+ * @api {post} /orgs/:id/members add member
+ * @apiGroup Organazation.Members
+ * @apiName Update
+ * @apiVersion 1.0.0
+ * @apiDescription update organazation
+ *
+ * @apiParam {String} id
+ *
+ * @apiBody {String} name
+ * @apiBody {String} bio
+ * @apiBody {String} description
+ * @apiBody {String} email
+ * @apiBody {String} phone
+ * @apiBody {Enum} type (SOCIAL, NONPROFIT, COOP, IIF, PUBLIC, INTERGOV, DEPARTMENT, OTHER)
+ * @apiBody {String} city
+ * @apiBody {String} address
+ * @apiBody {Url} website
+ *
+ * @apiSuccess {Number} page
+ * @apiSuccess {Number} limit
+ * @apiSuccess {Number} total_count
+ * @apiSuccess {Object[]} items
+ * @apiSuccess {String} items.id
+ * @apiSuccess {String} items.username
+ * @apiSuccess {String} items.first_name
+ * @apiSuccess {String} items.last_name
+ * @apiSuccess {String} items.email
+ */
+router.get('/:id/members', paginate, async (ctx) => {
+  ctx.body = await Org.members(ctx.params.id, ctx.paginate);
 });
 
+/**
+ * @api {put} /orgs/:id/members/:user_id Add member
+ * @apiGroup Organazation.Members
+ * @apiName Add member
+ * @apiVersion 1.0.0
+ * @apiDescription update organazation
+ *
+ * @apiParam {String} id
+ * @apiParam {String} user_id
+ *
+ */
 router.put('/:id/members/:user_id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  const user = await User.get(ctx.params.user_id)
-  ctx.body = await Org.members(ctx.params.id, user);
+  await Org.addMember(ctx.params.id, ctx.params.user_id);
+  ctx.body = {message: 'success'};
 });
 
-
+/**
+ * @api {delete} /orgs/:id/members/:user_id Delete member
+ * @apiGroup Organazation.Members
+ * @apiName Delete member
+ * @apiVersion 1.0.0
+ * @apiDescription update organazation
+ *
+ * @apiParam {String} id
+ * @apiParam {String} user_id
+ *
+ */
 router.delete('/:id/members/:user_id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  const user = await User.get(ctx.params.user_id)
-  ctx.body = await Org.removeMember(ctx.params.id, user);
+  await Org.removeMember(ctx.params.id, ctx.params.user_id);
+  ctx.body = {message: 'success'};
 });

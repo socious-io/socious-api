@@ -2,15 +2,7 @@ import compose from 'koa-compose';
 import jwt from 'jsonwebtoken';
 import User from '../models/user/index.js';
 import config from '../config.js';
-import {
-  NotMatchedError,
-  AuthorizationError,
-  BadRequestError,
-  ValidationError,
-  EntryError,
-  PermissionError,
-  UnauthorizedError,
-} from './errors.js';
+import {UnauthorizedError} from './errors.js';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -22,34 +14,12 @@ const throwHandler = async (ctx, next) => {
     } else {
       console.log(err);
     }
-
     ctx.body = {error: err.message};
-
     if (err.name === 'ValidationError') {
       ctx.status = 400;
       return;
     }
-    if (err instanceof UnauthorizedError) {
-      ctx.status = 401;
-      return;
-    }
-
-    if (err instanceof AuthorizationError || PermissionError) {
-      ctx.status = 403;
-      return;
-    }
-
-    if (err instanceof BadRequestError || NotMatchedError || ValidationError) {
-      ctx.status = 400;
-      return;
-    }
-
-    if (err instanceof EntryError) {
-      ctx.status = 406;
-      return;
-    }
-
-    ctx.status = 500;
+    ctx.status = err.status || 500;
   }
 };
 
@@ -61,6 +31,8 @@ export const loginRequired = async (ctx, next) => {
   const token = authorization
     ? authorization?.replace('Bearer ', '')
     : ctx.session.token;
+
+  if (!token) throw new UnauthorizedError();
 
   const {id} = jwt.verify(token, config.secret);
 

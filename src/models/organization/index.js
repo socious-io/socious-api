@@ -7,5 +7,5 @@ export default {
   ...enums,
   ...read,
   ...write,
-  ...members
+  ...members,
 };

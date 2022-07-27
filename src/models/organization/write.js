@@ -9,7 +9,7 @@ export const insert = async (body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO organization (name, bio, description, email, phone, type, city, address, website) 
+      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, website) 
         VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email}, 
           ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.website})
         RETURNING *`,
@@ -26,7 +26,7 @@ export const update = async (id, body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      UPDATE organization SET 
+      UPDATE organizations SET 
         name=${body.name}, bio=${body.bio}, description=${body.description}, email=${body.email}, 
         phone=${body.phone}, city=${body.city}, address=${body.address}, website=${body.website}
       WHERE id=${id} RETURNING *`,

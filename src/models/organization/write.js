@@ -3,6 +3,8 @@ import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 
+
+
 export const insert = async (body) => {
   await upsertSchem.validateAsync(body);
 
@@ -35,4 +37,9 @@ export const update = async (id, body) => {
   } catch (err) {
     throw new EntryError(err.message);
   }
+};
+
+
+export const remove = async (id) => {
+  await app.db.query(sql`DELETE FROM organization WHERE id=${id}`)
 };

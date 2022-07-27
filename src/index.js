@@ -46,7 +46,7 @@ const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
-blueprint.use('/org', loginRequired, org.routes(), org.allowedMethods());
+blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

@@ -1,10 +1,11 @@
 import Router from '@koa/router';
 import Org from '../models/organization/index.js';
+import User from '../models/organization/index.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
 /**
- * @api {get} /org/:id Get
+ * @api {get} /orgs/:id Get
  * @apiGroup Organazation
  * @apiName Get
  * @apiVersion 1.0.0
@@ -30,7 +31,7 @@ router.get('/:id', async (ctx) => {
 });
 
 /**
- * @api {get} /org Get all
+ * @api {get} /orgs Get all
  * @apiGroup Organazation
  * @apiName Get all
  * @apiVersion 1.0.0
@@ -60,7 +61,7 @@ router.get('/', paginate, async (ctx) => {
 });
 
 /**
- * @api {post} /org Create new
+ * @api {post} /orgs Create new
  * @apiGroup Organazation
  * @apiName Create new
  * @apiVersion 1.0.0
@@ -91,10 +92,11 @@ router.get('/', paginate, async (ctx) => {
  */
 router.post('/', async (ctx) => {
   ctx.body = await Org.insert(ctx.request.body);
+  await Org.addMember(ctx.body.id, ctx.user)
 });
 
 /**
- * @api {post} /org/:id Update
+ * @api {post} /orgs/:id Update
  * @apiGroup Organazation
  * @apiName Update
  * @apiVersion 1.0.0
@@ -126,5 +128,23 @@ router.post('/', async (ctx) => {
  * @apiSuccess {Datetime} updated_at
  */
 router.put('/:id', async (ctx) => {
+  await Org.permissionedMember(ctx.params.id, ctx.user.id);
   ctx.body = await Org.update(ctx.params.id, ctx.request.body);
+});
+
+router.get('/:id/members', async (ctx) => {
+  ctx.body = await Org.members(ctx.params.id);
+});
+
+router.put('/:id/members/:user_id', async (ctx) => {
+  await Org.permissionedMember(ctx.params.id, ctx.user.id);
+  const user = await User.get(ctx.params.user_id)
+  ctx.body = await Org.members(ctx.params.id, user);
+});
+
+
+router.delete('/:id/members/:user_id', async (ctx) => {
+  await Org.permissionedMember(ctx.params.id, ctx.user.id);
+  const user = await User.get(ctx.params.user_id)
+  ctx.body = await Org.removeMember(ctx.params.id, user);
 });

@@ -10,6 +10,7 @@ import {DBCircuitBreaker} from './utils/circuitbreaker.js';
 import {router as ping} from './routes/ping.js';
 import {router as auth} from './routes/auth.js';
 import {router as user} from './routes/user.js';
+import {router as org} from './routes/organization.js';
 
 import {middlewares, loginRequired} from './utils/middlewares.js';
 
@@ -45,6 +46,7 @@ const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
+blueprint.use('/org', loginRequired, org.routes(), org.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

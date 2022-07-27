@@ -71,7 +71,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiBody {String} description
  * @apiBody {String} email Mandatory
  * @apiBody {String} phone
- * @apiBody {String} type
+ * @apiBody {Enum} type (SOCIAL, NONPROFIT, COOP, IIF, PUBLIC, INTERGOV, DEPARTMENT, OTHER)
  * @apiBody {String} city
  * @apiBody {String} address
  * @apiBody {Url} website
@@ -107,7 +107,7 @@ router.post('/', async (ctx) => {
  * @apiBody {String} description
  * @apiBody {String} email
  * @apiBody {String} phone
- * @apiBody {String} type
+ * @apiBody {Enum} type (SOCIAL, NONPROFIT, COOP, IIF, PUBLIC, INTERGOV, DEPARTMENT, OTHER)
  * @apiBody {String} city
  * @apiBody {String} address
  * @apiBody {Url} website

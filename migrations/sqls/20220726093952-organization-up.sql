@@ -2,7 +2,7 @@ CREATE TYPE organization_type AS ENUM (
   'SOCIAL','NONPROFIT', 'COOP', 'IIF', 'PUBLIC', 'INTERGOV', 'DEPARTMENT', 'OTHER'
 );
 
-CREATE TABLE IF NOT EXISTS public.organization (
+CREATE TABLE IF NOT EXISTS public.organizations (
   id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY NOT NULL,
   name varchar(255),
   bio text,

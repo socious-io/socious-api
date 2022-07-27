@@ -38,5 +38,5 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM organization WHERE id=${id}`);
+  await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`);
 };

@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS public.org_members (
   org_id uuid NOT NULL,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_org FOREIGN KEY (org_id) REFERENCES organization(id) ON DELETE CASCADE
+  CONSTRAINT fk_org FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE
 );

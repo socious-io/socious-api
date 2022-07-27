@@ -1,0 +1,10 @@
+export const Type = {
+  SOCIAL: 'SOCIAL',
+  NONPROFIT: 'NONPROFIT',
+  COOP: 'COOP',
+  IIF: 'IIF',
+  PUBLIC: 'PUBLIC',
+  INTERGOV: 'INTERGOV',
+  DEPARTMENT: 'DEPARTMENT',
+  OTHER: 'OTHER',
+};

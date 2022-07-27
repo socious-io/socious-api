@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "description": "API solution written for the Socious platform.",
   "title": "socious API doc",
-  "url" : "http://{HOST}:{PORT}"
+  "url": "http://{HOST}:{PORT}"
 }

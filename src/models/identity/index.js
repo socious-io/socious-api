@@ -17,8 +17,10 @@ const permissioned = async (identity, userId) => {
     case Types.ORG:
       await Org.permissionedMember(identity.id, userId);
       break;
-    default:
+    case Types.USER:
       if (userId !== identity.id) throw new PermissionError('Not allow');
+    default:
+      throw new PermissionError('Not allow');
   }
 };
 

@@ -1,3 +1,7 @@
+import Org from '../models/organization/index.js';
+import Identity from '../models/identity/index.js';
+import {PermissionError} from './errors.js';
+
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;
   if (page < 1) page = 1;
@@ -22,4 +26,24 @@ export const paginate = async (ctx, next) => {
   }
 
   ctx.body = response;
+};
+
+export const identity = async (ctx, next) => {
+  const {currentidentity} = ctx.request.header;
+
+  const identityId = currentidentity || ctx.session.current_identity;
+
+  const identity = identityId
+    ? await Identity.get(identityId)
+    : await Identity.getByRef(ctx.user.id);
+
+  if (identity.type === Identity.Types.USER && ctx.user.id !== identity.ref)
+    throw new PermissionError('Not allow');
+
+  if (identity.type === Identity.Types.ORG)
+    await Org.permissionedMember(identity.ref, ctx.user.id);
+
+  ctx.identity = identity;
+
+  await next();
 };

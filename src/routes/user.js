@@ -8,6 +8,21 @@ export const router = new Router();
 const debug = Debug('socious-api:user');
 
 /**
+ * @api {get} /user/:id/profile Others Profile
+ * @apiGroup User
+ * @apiName OthersProfile
+ * @apiVersion 1.0.0
+ * @apiDescription Other User Profile
+ * @apiPermission LoginRequired
+ *
+ * @apiParam {String} id
+ */
+router.get('/:id/profile', async (ctx) => {
+  const user = await User.get(ctx.params.id);
+  ctx.body = await User.profile(user);
+});
+
+/**
  * @api {get} /user/profile Profile
  * @apiGroup User
  * @apiName Profile

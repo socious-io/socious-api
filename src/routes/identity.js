@@ -43,7 +43,7 @@ router.get('/', identity, async (ctx) => {
  * @apiName Set Session
  * @apiVersion 1.0.0
  * @apiDescription save session for identities usage
- * 
+ *
  * @apiParam {String} id
  */
 router.get('/set/:id/session', identity, async (ctx) => {

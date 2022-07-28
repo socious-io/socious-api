@@ -1,6 +1,4 @@
-import Org from '../models/organization/index.js';
 import Identity from '../models/identity/index.js';
-import {PermissionError} from './errors.js';
 
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;

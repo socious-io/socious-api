@@ -19,6 +19,7 @@ const permissioned = async (identity, userId) => {
       break;
     case Types.USER:
       if (userId !== identity.id) throw new PermissionError('Not allow');
+      break;
     default:
       throw new PermissionError('Not allow');
   }

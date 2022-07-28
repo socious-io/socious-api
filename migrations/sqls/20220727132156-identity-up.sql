@@ -1,8 +1,8 @@
-CREATE TYPE idetities_type AS ENUM ('users', 'organizations');
+CREATE TYPE identity_type AS ENUM ('users', 'organizations');
 
 CREATE TABLE IF NOT EXISTS public.identities (
   id uuid PRIMARY KEY NOT NULL,
-  type idetities_type NOT NULL,
+  type identity_type NOT NULL,
   meta jsonb,
   created_at timestamp with time zone DEFAULT now() NOT NULL
 );

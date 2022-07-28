@@ -30,18 +30,13 @@ export const paginate = async (ctx, next) => {
 
 export const identity = async (ctx, next) => {
   const {currentidentity} = ctx.request.header;
-
   const identityId = currentidentity || ctx.session.current_identity;
 
   const identity = identityId
     ? await Identity.get(identityId)
-    : await Identity.getByRef(ctx.user.id);
+    : await Identity.get(ctx.user.id);
 
-  if (identity.type === Identity.Types.USER && ctx.user.id !== identity.ref)
-    throw new PermissionError('Not allow');
-
-  if (identity.type === Identity.Types.ORG)
-    await Org.permissionedMember(identity.ref, ctx.user.id);
+  await Identity.permissioned(identity, ctx.user.id);
 
   ctx.identity = identity;
 

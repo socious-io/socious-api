@@ -13,28 +13,23 @@ export const router = new Router();
  * @apiParam {String} id
  *
  * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
+ * @apiSuccess {String} content
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String} identity_id
+ * @apiSuccess {String} identity_type
+ * @apiSuccess {Object} identity_meta
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Post.get(ctx.params.id);
 });
 
 /**
- * @api {get} /orgs Get all
- * @apiGroup Organazation
+ * @api {get} /posts Get all
+ * @apiGroup Post
  * @apiName Get all
  * @apiVersion 1.0.0
- * @apiDescription get organazations
+ * @apiDescription get posts
  *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
@@ -43,93 +38,74 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Number} limit
  * @apiSuccess {Number} total_count
  * @apiSuccess {Object[]} items
- * @apiSuccess {String} items.name
- * @apiSuccess {String} items.bio
- * @apiSuccess {String} items.description
- * @apiSuccess {String} items.email
- * @apiSuccess {String} items.phone
- * @apiSuccess {String} items.type
- * @apiSuccess {String} items.city
- * @apiSuccess {String} items.address
- * @apiSuccess {String} items.website
+ * @apiSuccess {String} items.id
+ * @apiSuccess {String} items.content
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
+ * @apiSuccess {String} items.identity_id
+ * @apiSuccess {String} items.identity_type
+ * @apiSuccess {Object} items.identity_meta
  */
 router.get('/', paginate, async (ctx) => {
   ctx.body = await Post.all(ctx.paginate);
 });
 
 /**
- * @api {post} /orgs Create new
- * @apiGroup Organazation
- * @apiName Create new
+ * @api {post} /posts Create new
+ * @apiGroup Post
+ * @apiName Create
  * @apiVersion 1.0.0
- * @apiDescription create new organazation
+ * @apiDescription create new post
  *
- * @apiBody {String} name Mandatory
- * @apiBody {String} bio
- * @apiBody {String} description
- * @apiBody {String} email Mandatory
- * @apiBody {String} phone
- * @apiBody {Enum} type (SOCIAL, NONPROFIT, COOP, IIF, PUBLIC, INTERGOV, DEPARTMENT, OTHER)
- * @apiBody {String} city
- * @apiBody {String} address
- * @apiBody {Url} website
+ * @apiBody {String} content
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
  *
  * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
+ * @apiSuccess {String} content
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String} identity_id
  */
 router.post('/', identity, async (ctx) => {
   ctx.body = await Post.insert(ctx.identity.id, ctx.request.body);
 });
 
 /**
- * @api {post} /orgs/:id Update
- * @apiGroup Organazation
+ * @api {put} /posts/:id Update
+ * @apiGroup Post
  * @apiName Update
  * @apiVersion 1.0.0
- * @apiDescription update organazation
+ * @apiDescription update post
+ *
+ * @apiBody {String} content
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
  *
- * @apiBody {String} name
- * @apiBody {String} bio
- * @apiBody {String} description
- * @apiBody {String} email
- * @apiBody {String} phone
- * @apiBody {Enum} type (SOCIAL, NONPROFIT, COOP, IIF, PUBLIC, INTERGOV, DEPARTMENT, OTHER)
- * @apiBody {String} city
- * @apiBody {String} address
- * @apiBody {Url} website
- *
  * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
+ * @apiSuccess {String} content
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String} identity_id
  */
 router.put('/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Post.update(ctx.params.id, ctx.request.body);
 });
 
+/**
+ * @api {delete} /posts/:id Delete
+ * @apiGroup Post
+ * @apiName Delete
+ * @apiVersion 1.0.0
+ * @apiDescription delete post
+ *
+ * @apiBody {String} content
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id
+ */
 router.delete('/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   await Post.remove(ctx.params.id);

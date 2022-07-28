@@ -71,7 +71,7 @@ router.put('/change-password', async (ctx) => {
 });
 
 /**
- * @api {put} /user/change-password/direct Change PAssword Directly
+ * @api {put} /user/change-password/direct Change Password Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 1.0.0

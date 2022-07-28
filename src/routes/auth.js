@@ -34,7 +34,7 @@ router.post('/login', async (ctx) => {
  *
  * @apiSuccess {String} access_token
  */
-router.post('/login', async (ctx) => {
+router.post('/web/login', async (ctx) => {
   const response = await Auth.basic(ctx.request.body);
   ctx.session.token = response.access_token;
   ctx.body = {message: 'success'};

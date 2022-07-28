@@ -1,5 +1,7 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
+import {PermissionError} from '../../utils/errors.js';
+import Org from '../organization/index.js';
 
 const Types = {
   ORG: 'organizations',
@@ -10,12 +12,18 @@ const get = async (id) => {
   return app.db.get(sql`SELECT * FROM identities WHERE id=${id}`);
 };
 
-const getByRef = async (refId) => {
-  return app.db.get(sql`SELECT * FROM identities WHERE ref=${refId}`);
+const permissioned = async (identity, userId) => {
+  switch (identity.type) {
+    case Types.ORG:
+      await Org.permissionedMember(identity.id, userId);
+      break;
+    default:
+      if (userId !== identity.id) throw new PermissionError('Not allow');
+  }
 };
 
 export default {
   Types,
   get,
-  getByRef,
+  permissioned,
 };

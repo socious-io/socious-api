@@ -12,6 +12,13 @@ const get = async (id) => {
   return app.db.get(sql`SELECT * FROM identities WHERE id=${id}`);
 };
 
+const getAll = async (ids) => {
+  const {rows} = await app.db.query(
+    sql`SELECT * FROM identities WHERE id IN(${ids.join(',')})`,
+  );
+  return rows;
+};
+
 const permissioned = async (identity, userId) => {
   switch (identity.type) {
     case Types.ORG:
@@ -28,5 +35,6 @@ const permissioned = async (identity, userId) => {
 export default {
   Types,
   get,
+  getAll,
   permissioned,
 };

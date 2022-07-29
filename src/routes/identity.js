@@ -22,6 +22,24 @@ router.get('/:id', async (ctx) => {
 });
 
 /**
+ * @api {post} /identities/batch Get Others Multi
+ * @apiGroup Identity
+ * @apiName GetOthersMulti
+ * @apiVersion 1.0.0
+ * @apiDescription get others identity multi
+ *
+ * @apiParam {String[]{max:10}} ids
+ *
+ * @apiSuccess {Object[]} items
+ * @apiSuccess {String} items.id
+ * @apiSuccess {String} items.type (users, organizations)
+ * @apiSuccess {Object} items.meta
+ */
+router.post('/batch', async (ctx) => {
+  ctx.body = {items: await Identity.getAll(ctx.request.body.ids)};
+});
+
+/**
  * @api {get} /identities Get Current
  * @apiGroup Identity
  * @apiName Current

@@ -6,7 +6,8 @@ import {PermissionError} from '../../utils/errors.js';
 export const all = async ({offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, 
-    posts.*, i.type  as identity_type, i.meta as identity_meta
+      posts.*, i.type  as identity_type, i.meta as identity_meta,
+      array_to_json(posts.causes_tags) as causes_tags
     FROM posts JOIN identities i ON posts.identity_id=i.id
     ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
   );
@@ -15,7 +16,8 @@ export const all = async ({offset = 0, limit = 10}) => {
 
 export const get = async (id) => {
   return app.db.get(sql`
-  SELECT posts.*, i.type as identity_type, i.meta as identity_meta 
+  SELECT posts.*, array_to_json(posts.causes_tags) AS causes_tags,
+    i.type AS identity_type, i.meta AS identity_meta
   FROM posts JOIN identities i ON posts.identity_id=i.id AND posts.id=${id}`);
 };
 

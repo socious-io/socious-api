@@ -49,6 +49,7 @@ router.get('/profile', async (ctx) => {
  * @apiBody {String} city
  * @apiBody {String} address
  * @apiBody {String} wallet_address
+ * @apiBody {String[]} social_causes
  */
 router.put('/profile', async (ctx) => {
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);

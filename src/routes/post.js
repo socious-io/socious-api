@@ -19,6 +19,9 @@ export const router = new Router();
  * @apiSuccess {String} identity_id
  * @apiSuccess {String} identity_type
  * @apiSuccess {Object} identity_meta
+ * @apiSuccess {String[]} hashtags
+ * @apiSuccess {String[]} causes_tags
+ * @apiSuccess {String[]} identity_tags
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Post.get(ctx.params.id);
@@ -45,6 +48,9 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {String} items.identity_id
  * @apiSuccess {String} items.identity_type
  * @apiSuccess {Object} items.identity_meta
+ * @apiSuccess {String[]} items.hashtags
+ * @apiSuccess {String[]} items.causes_tags
+ * @apiSuccess {String[]} items.identity_tags
  */
 router.get('/', paginate, async (ctx) => {
   ctx.body = await Post.all(ctx.paginate);
@@ -58,11 +64,18 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription create new post
  *
  * @apiBody {String} content
+ * @apiBody {String[]} hashtags
+ * @apiBody {String[]} causes_tags
+ * @apiBody {String[]} identity_tags
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} content
+ * @apiSuccess {String[]} hashtags
+ * @apiSuccess {String[]} causes_tags
+ * @apiSuccess {String[]} identity_tags
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  * @apiSuccess {String} identity_id
@@ -79,12 +92,19 @@ router.post('/', identity, async (ctx) => {
  * @apiDescription update post
  *
  * @apiBody {String} content
+ * @apiBody {String[]} hashtags
+ * @apiBody {String[]} causes_tags
+ * @apiBody {String[]} identity_tags
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} content
+ * @apiSuccess {String[]} hashtags
+ * @apiSuccess {String[]} causes_tags
+ * @apiSuccess {String[]} identity_tags
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  * @apiSuccess {String} identity_id
@@ -101,7 +121,6 @@ router.put('/:id', identity, async (ctx) => {
  * @apiVersion 1.0.0
  * @apiDescription delete post
  *
- * @apiBody {String} content
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id

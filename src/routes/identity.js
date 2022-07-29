@@ -28,7 +28,7 @@ router.get('/:id', async (ctx) => {
  * @apiVersion 1.0.0
  * @apiDescription get others identity multi
  *
- * @apiParam {String[]{max:10}} ids
+ * @apiBody {String[]{max:10}} ids
  *
  * @apiSuccess {Object[]} items
  * @apiSuccess {String} items.id
@@ -36,7 +36,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Object} items.meta
  */
 router.post('/batch', async (ctx) => {
-  ctx.body = {items: await Identity.getAll(ctx.request.body.ids)};
+  ctx.body = {items: await Identity.getAll(ctx.request.body)};
 });
 
 /**

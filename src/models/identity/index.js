@@ -20,7 +20,7 @@ const get = async (id) => {
 const getAll = async (body) => {
   await batchSchem.validateAsync(body);
   const {rows} = await app.db.query(
-    sql`SELECT * FROM identities WHERE id IN(${body.ids.join(',')})`,
+    sql`SELECT * FROM identities WHERE id = ANY(${body.ids})`,
   );
   return rows;
 };

@@ -24,6 +24,7 @@ export const router = new Router();
  * @apiSuccess {Url} website
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String[]} social_causes
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
@@ -54,6 +55,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {String} items.website
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
+ * @apiSuccess {String[]} items.social_causes
  */
 router.get('/', paginate, async (ctx) => {
   ctx.body = await Org.all(ctx.paginate);
@@ -75,6 +77,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiBody {String} city
  * @apiBody {String} address
  * @apiBody {Url} website
+ * @apiBody {String[]} social_causes
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} name
@@ -88,6 +91,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiSuccess {Url} website
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String[]} social_causes
  */
 router.post('/', async (ctx) => {
   ctx.body = await Org.insert(ctx.request.body);
@@ -112,6 +116,7 @@ router.post('/', async (ctx) => {
  * @apiBody {String} city
  * @apiBody {String} address
  * @apiBody {Url} website
+ * @apiBody {String[]} social_causes
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} name
@@ -125,6 +130,7 @@ router.post('/', async (ctx) => {
  * @apiSuccess {Url} website
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {String[]} social_causes
  */
 router.put('/:id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);

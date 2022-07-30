@@ -1,5 +1,7 @@
-import {Type} from './enums.js';
 import Joi from 'joi';
+
+import {SocialCauses} from '../../utils/types.js';
+import {Type} from './enums.js';
 
 export const upsertSchem = Joi.object({
   name: Joi.string().required(),
@@ -10,5 +12,8 @@ export const upsertSchem = Joi.object({
   type: Joi.string().valid(...Object.values(Type)),
   city: Joi.string(),
   address: Joi.string(),
+  social_causes: Joi.array().items(
+    Joi.string().valid(...Object.values(SocialCauses)),
+  ),
   website: Joi.string().uri(),
 });

@@ -26,10 +26,9 @@ export const updateProfile = async (id, profile) => {
   const query = sql`
     UPDATE users SET 
       first_name=${profile.first_name}, last_name=${profile.last_name},
-      bio=${profile.bio ?? null}, city=${profile.city ?? null}, address=${
-    profile.address ?? null
-  }, wallet_address=${profile.wallet_address ?? null}
-    WHERE id=${id} RETURNING *
+      bio=${profile.bio}, city=${profile.city}, address=${profile.address}, 
+      wallet_address=${profile.wallet_address}, social_causes=${profile.social_causes}
+    WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {
     const {rows} = await app.db.query(query);

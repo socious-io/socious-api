@@ -9,9 +9,9 @@ export const insert = async (identity_id, body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO posts (content, identity_id) 
-        VALUES (${body.content}, ${identity_id})
-        RETURNING *`,
+      INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags) 
+        VALUES (${body.content}, ${identity_id}, ${body.causes_tags}, ${body.hashtags}, ${body.identity_tags})
+        RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {
@@ -25,7 +25,12 @@ export const update = async (id, body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      UPDATE posts SET content=${body.content} WHERE id=${id} RETURNING *`,
+      UPDATE posts SET
+        content=${body.content},
+        causes_tags=${body.causes_tags},
+        hashtags=${body.hashtags},
+        identity_tags=${body.identity_tags}
+      WHERE id=${id} RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {

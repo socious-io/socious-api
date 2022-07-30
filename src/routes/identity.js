@@ -46,7 +46,7 @@ router.get('/', identity, async (ctx) => {
  *
  * @apiParam {String} id
  */
-router.get('/set/:id/session', identity, async (ctx) => {
+router.get('/set/:id/session', async (ctx) => {
   const identity = await Identity.get(ctx.params.id);
   await Identity.permissioned(identity, ctx.user.id);
 

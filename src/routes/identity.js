@@ -46,6 +46,7 @@ router.post('/batch', async (ctx) => {
  * @apiVersion 1.0.0
  * @apiDescription get others identity
  *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} type (users, organizations)

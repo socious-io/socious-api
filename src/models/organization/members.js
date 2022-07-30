@@ -36,8 +36,8 @@ export const removeMember = async (id, user_id) => {
   );
 };
 
-export const permissionedMember = async (id, user_id) => {
+export const permissionedMember = async (id, userId) => {
   // TODO: we can implement complex permission system
-  const exists = await memberExists(id, user_id);
+  const exists = await memberExists(id, userId);
   if (!exists) throw new PermissionError('Not allow');
 };

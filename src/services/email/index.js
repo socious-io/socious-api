@@ -1,28 +1,68 @@
 import {insert} from './write.js';
 import nodeMailer from 'nodemailer';
+import sendgrid from '@sendgrid/mail';
 import config from '../../config.js';
 import ejs from 'ejs';
+import crypto from 'crypto';
 
-const defaultMailFrom = `"${config.mail_smtp.from_name}" <${config.mail_smtp.from}>`;
-const smtp = nodeMailer.createTransport(config.mail_smtp);
+const smtp = nodeMailer.createTransport(config.mail.smtp);
+sendgrid.setApiKey(config.mail.sendgrid.apiKey);
 
 export const MailSenderTypes = {
   SMTP: 'SMTP',
+  SENDGRID: 'SENDGRID',
+};
+
+const sendBySendgrid = async ({to, subject, html}) => {
+  const body = {
+    personalizations: [{to: [{email: to}]}],
+    subject,
+    from: config.mail.sendgrid.from,
+    content: [
+      {
+        type: 'text/html',
+        value: html,
+      },
+    ],
+  };
+
+  await sendgrid.send(body);
+
+  body.messageId = crypto.randomUUID();
+
+  return body;
 };
 
 export const sendHtmlEmail = async ({
   to,
   subject,
   template,
-  from = defaultMailFrom,
   kwargs = {},
-  sender = MailSenderTypes.SMTP,
+  sender = MailSenderTypes.SENDGRID,
 }) => {
   const html = await ejs.renderFile(template, kwargs);
   let result = {};
   try {
-    // TODO: Other types would switch with MailSenderTypes
-    result = await smtp.sendMail({to, from, subject, html});
+    switch (sender) {
+      case MailSenderTypes.SMTP:
+        result = await smtp.sendMail({
+          to,
+          from: config.mail.smtp.from,
+          subject,
+          html,
+        });
+        break;
+      case MailSenderTypes.SENDGRID:
+        result = await sendBySendgrid({
+          to,
+          from: config.mail.sendgrid.from,
+          subject,
+          html,
+        });
+        break;
+      default:
+        throw Error(`Unkonw sender type ${sender}`);
+    }
   } catch (e) {
     // TODO: better error handler and retry system
     console.log(e);

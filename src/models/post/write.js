@@ -2,9 +2,12 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
+import sanitizeHtml from 'sanitize-html';
 
 export const insert = async (identity_id, body) => {
   await upsertSchem.validateAsync(body);
+  
+  body.content = sanitizeHtml(body.content)
 
   try {
     const {rows} = await app.db.query(
@@ -21,6 +24,8 @@ export const insert = async (identity_id, body) => {
 
 export const update = async (id, body) => {
   await upsertSchem.validateAsync(body);
+  
+  body.content = sanitizeHtml(body.content)
 
   try {
     const {rows} = await app.db.query(

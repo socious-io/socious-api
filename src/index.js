@@ -13,6 +13,7 @@ import {router as user} from './routes/user.js';
 import {router as org} from './routes/organization.js';
 import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
+import {router as follow} from './routes/follow.js';
 
 import {middlewares, loginRequired} from './utils/middlewares.js';
 
@@ -56,6 +57,12 @@ blueprint.use(
 );
 blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
+blueprint.use(
+  '/follows',
+  loginRequired,
+  follow.routes(),
+  follow.allowedMethods(),
+);
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

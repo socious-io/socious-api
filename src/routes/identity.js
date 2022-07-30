@@ -46,6 +46,7 @@ router.post('/batch', async (ctx) => {
  * @apiVersion 1.0.0
  * @apiDescription get others identity
  *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} type (users, organizations)
@@ -64,7 +65,7 @@ router.get('/', identity, async (ctx) => {
  *
  * @apiParam {String} id
  */
-router.get('/set/:id/session', identity, async (ctx) => {
+router.get('/set/:id/session', async (ctx) => {
   const identity = await Identity.get(ctx.params.id);
   await Identity.permissioned(identity, ctx.user.id);
 

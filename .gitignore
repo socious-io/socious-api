@@ -1,5 +1,6 @@
 # compiled output
 /node_modules
+/statics/apidoc
 
 # Logs
 logs

@@ -34,6 +34,7 @@
     "workers:watch": "nodemon --inspect src/services/jobs/workers.js"
   },
   "dependencies": {
+    "@koa/cors": "^3.3.0",
     "@koa/router": "^12.0.0",
     "@sendgrid/mail": "^7.7.0",
     "apidoc": "^0.52.0",
@@ -64,6 +65,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
     "sanitize-html": "^2.7.1",
+    "socket.io": "^4.5.1",
     "sql-template-tag": "^5.0.3",
     "supertest-koa-agent": "^0.3.2"
   },

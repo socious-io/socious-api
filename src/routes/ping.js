@@ -2,6 +2,8 @@ import Router from '@koa/router';
 import axios from 'axios';
 import Debug from 'debug';
 
+import config from '../config.js';
+
 const debug = Debug('socious-api:ping');
 export const router = new Router();
 let abort = false;
@@ -23,7 +25,7 @@ router.get('/', (ctx) => {
 });
 
 router.get('/remote', async (ctx) => {
-  const pingRes = await axios.get('http://localhost:14444/ping');
+  const pingRes = await axios.get(`http://localhost:${config.port}/ping`);
   ctx.body = pingRes.data;
 });
 

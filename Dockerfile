@@ -29,9 +29,14 @@ COPY --chown=node:node . .
 USER node
 
 # Configure app
-ENV DB_HOST socious_mysql
+ENV PORT=5061
+ENV PGHOST=socious-pg
+ENV PGPORT=5432
+ENV PGDATABASE=socious
+ENV PGUSER=socious
+ENV NATS_HOSTS=socious-nats:4222
 
-EXPOSE 8370
+EXPOSE 5061
 
 CMD [ "node", "serve.js" ]
 
@@ -68,16 +73,24 @@ WORKDIR /usr/src/app
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=modules /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=development /usr/src/app/src ./src
-COPY --chown=node:node migrations ./migrations
+COPY --chown=node:node --from=development /usr/src/app/serve.js .
+# The package.json file is needed for the `"type": "module"` statement at least
+COPY --chown=node:node --from=development /usr/src/app/package.json .
+# Also bring in migrations so we can run them on deploy
+COPY --chown=node:node --from=development /usr/src/app/migrations ./migrations
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV production
 
 # Configure app
-ENV DB_HOST socious_mysql
-ENV DB_PORT 3306
+ENV PORT=5061
+ENV PGHOST=socious-pg
+ENV PGPORT=5432
+ENV PGDATABASE=socious
+ENV PGUSER=socious
+ENV NATS_HOSTS=socious-nats:4222
 
-EXPOSE 8370
+EXPOSE 5061
 
 # Start the server using the production build
 CMD [ "node", "serve.js" ]

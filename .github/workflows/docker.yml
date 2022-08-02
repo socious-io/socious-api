@@ -124,11 +124,11 @@ jobs:
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-migrations
-          docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network socious-api_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+          docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
 
       - name: Docker run
         ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ steps.meta.outputs.tags }}
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network socious-api_default --name socious-api ${{ steps.meta.outputs.tags }}
+          docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}

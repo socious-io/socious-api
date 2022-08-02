@@ -113,7 +113,10 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Run DB and NATS
         run: docker-compose up -d
 

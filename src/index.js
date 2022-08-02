@@ -14,6 +14,7 @@ import {router as org} from './routes/organization.js';
 import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
+import {router as project} from './routes/project.js';
 
 import {middlewares, loginRequired} from './utils/middlewares.js';
 
@@ -57,6 +58,7 @@ blueprint.use(
 );
 blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
+blueprint.use('/projects', loginRequired, project.routes(), project.allowedMethods());
 blueprint.use(
   '/follows',
   loginRequired,

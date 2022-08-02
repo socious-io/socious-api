@@ -12,16 +12,16 @@ export const router = new Router();
  *
  * @apiParam {String} id
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} content
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String} identity_id
- * @apiSuccess {String} identity_type
- * @apiSuccess {Object} identity_meta
- * @apiSuccess {String[]} hashtags
- * @apiSuccess {String[]} causes_tags
- * @apiSuccess {String[]} identity_tags
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} content
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String} identity_id
+ * @apiSuccess (200) {String} identity_type
+ * @apiSuccess (200) {Object} identity_meta
+ * @apiSuccess (200) {String[]} hashtags
+ * @apiSuccess (200) {String[]} causes_tags
+ * @apiSuccess (200) {String[]} identity_tags
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Post.get(ctx.params.id);
@@ -37,20 +37,20 @@ router.get('/:id', async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
  *
- * @apiSuccess {Number} page
- * @apiSuccess {Number} limit
- * @apiSuccess {Number} total_count
- * @apiSuccess {Object[]} items
- * @apiSuccess {String} items.id
- * @apiSuccess {String} items.content
- * @apiSuccess {Datetime} items.created_at
- * @apiSuccess {Datetime} items.updated_at
- * @apiSuccess {String} items.identity_id
- * @apiSuccess {String} items.identity_type
- * @apiSuccess {Object} items.identity_meta
- * @apiSuccess {String[]} items.hashtags
- * @apiSuccess {String[]} items.causes_tags
- * @apiSuccess {String[]} items.identity_tags
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.content
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ * @apiSuccess (200) {String} items.identity_id
+ * @apiSuccess (200) {String} items.identity_type
+ * @apiSuccess (200) {Object} items.identity_meta
+ * @apiSuccess (200) {String[]} items.hashtags
+ * @apiSuccess (200) {String[]} items.causes_tags
+ * @apiSuccess (200) {String[]} items.identity_tags
  */
 router.get('/', paginate, async (ctx) => {
   ctx.body = await Post.all(ctx.paginate);
@@ -71,14 +71,14 @@ router.get('/', paginate, async (ctx) => {
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} content
- * @apiSuccess {String[]} hashtags
- * @apiSuccess {String[]} causes_tags
- * @apiSuccess {String[]} identity_tags
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String} identity_id
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} content
+ * @apiSuccess (200) {String[]} hashtags
+ * @apiSuccess (200) {String[]} causes_tags
+ * @apiSuccess (200) {String[]} identity_tags
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String} identity_id
  */
 router.post('/', identity, async (ctx) => {
   ctx.body = await Post.insert(ctx.identity.id, ctx.request.body);
@@ -100,14 +100,14 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiParam {String} id
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} content
- * @apiSuccess {String[]} hashtags
- * @apiSuccess {String[]} causes_tags
- * @apiSuccess {String[]} identity_tags
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String} identity_id
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} content
+ * @apiSuccess (200) {String[]} hashtags
+ * @apiSuccess (200) {String[]} causes_tags
+ * @apiSuccess (200) {String[]} identity_tags
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String} identity_id
  */
 router.put('/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
@@ -124,6 +124,8 @@ router.put('/:id', identity, async (ctx) => {
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
+ *
+ * @apiSuccess (200) {Object} success
  */
 router.delete('/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);

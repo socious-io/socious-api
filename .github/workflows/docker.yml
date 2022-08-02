@@ -203,3 +203,4 @@ jobs:
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-apidoc
           docker run -v "/usr/local/doc/socious-api:/usr/src/app/statics" --name socious-apidoc ${{ steps.meta.outputs.tags }} npm run apidoc
+          docker run -v "/usr/local/doc/socious-api:/usr/src/app/statics" --name socious-apidoc ${{ steps.meta.outputs.tags }} npm run apidoc:openapi

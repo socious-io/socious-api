@@ -16,7 +16,7 @@ const debug = Debug('socious-api:auth');
  * @apiBody {String} email Mandatory
  * @apiBody {String{min:8}} password Mandatory
  *
- * @apiSuccess {String} access_token
+ * @apiSuccess (200) {Object} access_token
  */
 router.post('/login', async (ctx) => {
   ctx.body = await Auth.basic(ctx.request.body);
@@ -32,7 +32,7 @@ router.post('/login', async (ctx) => {
  * @apiBody {String} email Mandatory
  * @apiBody {String{min:8}} password Mandatory
  *
- * @apiSuccess {String} access_token
+ * @apiSuccess (200) {Object} access_token
  */
 router.post('/web/login', async (ctx) => {
   const response = await Auth.basic(ctx.request.body);
@@ -53,7 +53,7 @@ router.post('/web/login', async (ctx) => {
  * @apiBody {String} email Mandatory
  * @apiBody {String{min:8}} password Mandatory
  *
- * @apiSuccess {String} access_token
+ * @apiSuccess (200) {Object} access_token
  */
 router.post('/register', async (ctx) => {
   ctx.body = await Auth.register(ctx.request.body);
@@ -68,6 +68,8 @@ router.post('/register', async (ctx) => {
  *
  * @apiBody {String} email Mandatory if phone is empty
  * @apiBody {String} phone Mandatory if email is empty
+ *
+ * @apiSuccess (200) {Object} success
  *
  */
 router.post('/otp', async (ctx) => {
@@ -85,6 +87,8 @@ router.post('/otp', async (ctx) => {
  * @apiQuery {Number} code
  * @apiQuery {String} email Mandatory if phone is empty
  * @apiQuery {String} phone Mandatory if email is empty
+ *
+ * @apiSuccess (200) {Object} access_token
  *
  */
 router.get('/otp/confirm', async (ctx) => {
@@ -104,6 +108,8 @@ router.get('/otp/confirm', async (ctx) => {
  *
  * @apiBody {String} email Mandatory if phone is empty
  * @apiBody {String} phone Mandatory if email is empty
+ *
+ * @apiSuccess (200) {Object} success
  *
  */
 router.post('/forget-password', async (ctx) => {

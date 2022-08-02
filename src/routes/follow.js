@@ -17,6 +17,8 @@ export const router = new Router();
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
+ * @apiSuccess (200) {Object} follow info object
+ *
  */
 router.put('/:id', identity, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
@@ -35,6 +37,8 @@ router.put('/:id', identity, async (ctx) => {
  * @apiParam {String} id following identity id
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiSuccess (200) {Object} success
  *
  */
 router.delete('/:id', identity, async (ctx) => {

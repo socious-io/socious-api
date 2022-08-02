@@ -12,19 +12,19 @@ export const router = new Router();
  *
  * @apiParam {String} id
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String[]} social_causes
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} name
+ * @apiSuccess (200) {String} bio
+ * @apiSuccess (200) {String} description
+ * @apiSuccess (200) {String} email
+ * @apiSuccess (200) {String} phone
+ * @apiSuccess (200) {String} type
+ * @apiSuccess (200) {String} city
+ * @apiSuccess (200) {String} address
+ * @apiSuccess (200) {Url} website
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String[]} social_causes
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
@@ -40,22 +40,22 @@ router.get('/:id', async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
  *
- * @apiSuccess {Number} page
- * @apiSuccess {Number} limit
- * @apiSuccess {Number} total_count
- * @apiSuccess {Object[]} items
- * @apiSuccess {String} items.name
- * @apiSuccess {String} items.bio
- * @apiSuccess {String} items.description
- * @apiSuccess {String} items.email
- * @apiSuccess {String} items.phone
- * @apiSuccess {String} items.type
- * @apiSuccess {String} items.city
- * @apiSuccess {String} items.address
- * @apiSuccess {String} items.website
- * @apiSuccess {Datetime} items.created_at
- * @apiSuccess {Datetime} items.updated_at
- * @apiSuccess {String[]} items.social_causes
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.name
+ * @apiSuccess (200) {String} items.bio
+ * @apiSuccess (200) {String} items.description
+ * @apiSuccess (200) {String} items.email
+ * @apiSuccess (200) {String} items.phone
+ * @apiSuccess (200) {String} items.type
+ * @apiSuccess (200) {String} items.city
+ * @apiSuccess (200) {String} items.address
+ * @apiSuccess (200) {String} items.website
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ * @apiSuccess (200) {String[]} items.social_causes
  */
 router.get('/', paginate, async (ctx) => {
   ctx.body = await Org.all(ctx.paginate);
@@ -79,19 +79,19 @@ router.get('/', paginate, async (ctx) => {
  * @apiBody {Url} website
  * @apiBody {String[]} social_causes
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String[]} social_causes
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} name
+ * @apiSuccess (200) {String} bio
+ * @apiSuccess (200) {String} description
+ * @apiSuccess (200) {String} email
+ * @apiSuccess (200) {String} phone
+ * @apiSuccess (200) {String} type
+ * @apiSuccess (200) {String} city
+ * @apiSuccess (200) {String} address
+ * @apiSuccess (200) {Url} website
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String[]} social_causes
  */
 router.post('/', async (ctx) => {
   ctx.body = await Org.insert(ctx.request.body);
@@ -118,19 +118,19 @@ router.post('/', async (ctx) => {
  * @apiBody {Url} website
  * @apiBody {String[]} social_causes
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} name
- * @apiSuccess {String} bio
- * @apiSuccess {String} description
- * @apiSuccess {String} email
- * @apiSuccess {String} phone
- * @apiSuccess {String} type
- * @apiSuccess {String} city
- * @apiSuccess {String} address
- * @apiSuccess {Url} website
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {String[]} social_causes
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} name
+ * @apiSuccess (200) {String} bio
+ * @apiSuccess (200) {String} description
+ * @apiSuccess (200) {String} email
+ * @apiSuccess (200) {String} phone
+ * @apiSuccess (200) {String} type
+ * @apiSuccess (200) {String} city
+ * @apiSuccess (200) {String} address
+ * @apiSuccess (200) {Url} website
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String[]} social_causes
  */
 router.put('/:id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
@@ -156,15 +156,15 @@ router.put('/:id', async (ctx) => {
  * @apiBody {String} address
  * @apiBody {Url} website
  *
- * @apiSuccess {Number} page
- * @apiSuccess {Number} limit
- * @apiSuccess {Number} total_count
- * @apiSuccess {Object[]} items
- * @apiSuccess {String} items.id
- * @apiSuccess {String} items.username
- * @apiSuccess {String} items.first_name
- * @apiSuccess {String} items.last_name
- * @apiSuccess {String} items.email
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.username
+ * @apiSuccess (200) {String} items.first_name
+ * @apiSuccess (200) {String} items.last_name
+ * @apiSuccess (200) {String} items.email
  */
 router.get('/:id/members', paginate, async (ctx) => {
   ctx.body = await Org.members(ctx.params.id, ctx.paginate);
@@ -179,6 +179,8 @@ router.get('/:id/members', paginate, async (ctx) => {
  *
  * @apiParam {String} id
  * @apiParam {String} user_id
+ *
+ * @apiSuccess (200) {Object} success
  *
  */
 router.put('/:id/members/:user_id', async (ctx) => {
@@ -196,6 +198,8 @@ router.put('/:id/members/:user_id', async (ctx) => {
  *
  * @apiParam {String} id
  * @apiParam {String} user_id
+ *
+ * @apiSuccess (200) {Object} success
  *
  */
 router.delete('/:id/members/:user_id', async (ctx) => {

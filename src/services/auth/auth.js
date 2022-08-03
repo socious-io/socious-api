@@ -1,6 +1,5 @@
 import Config from '../../config.js';
 import User from '../../models/user/index.js';
-
 import * as bcrypt from 'bcrypt';
 import {
   AuthorizationError,

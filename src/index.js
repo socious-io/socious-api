@@ -5,7 +5,6 @@ import morgan from 'koa-morgan';
 import koaBody from 'koa-body';
 import session from 'koa-session';
 import pg from 'pg';
-import{ Server as Socket } from "socket.io";
 
 import {DBCircuitBreaker} from './utils/circuitbreaker.js';
 
@@ -16,14 +15,22 @@ import {router as org} from './routes/organization.js';
 import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
-import { createReadStream } from 'fs';
-import {middlewares, loginRequired} from './utils/middlewares.js';
+import {createReadStream} from 'fs';
+import {
+  middlewares,
+  loginRequired,
+  socketSessions,
+  socketLoginRequired,
+} from './utils/middlewares.js';
+import {Server as Socket} from 'socket.io';
 
 import config from './config.js';
 
 export const app = new Koa();
 
 app.keys = [config.secret];
+// TODO: move this part to redis or any other memory DBs.
+app.users = [];
 
 app.use(
   morgan(
@@ -47,10 +54,6 @@ app.use(middlewares);
 app.use(session(config.session, app));
 
 const blueprint = new Router();
-blueprint.get('/', async (ctx)=>{ 
-  ctx.type = 'html';
-  ctx.body = createReadStream('socket.html')
-})
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
@@ -72,13 +75,31 @@ blueprint.use(
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());
 
+app.http = http.createServer(app.callback());
+app.listen = app.listen = (...args) => {
+  app.http.listen.call(app.http, ...args);
+  return app.http;
+};
 
-export const server = http.createServer(app.callback())
-const io = new Socket(server, {
-  path: '/socket.io/'
-});
+app.socket = new Socket(app.http, config.socket);
+app.socket.use(socketSessions(app));
+app.socket.use(socketLoginRequired);
 
+/* 
+socket handler will push every auth users connection ids to app.users
+will purge it when connection closed 
+*/
+app.socket.on('connect', (socket) => {
+  const socketId = socket.id;
+  const userId = socket.userId;
 
-io.on('connect', (socket) => {
-  console.log('a user connected', socket);
+  if (!app.users[userId]) app.users[socket.userId] = [];
+  app.users[userId].push(socketId);
+
+  app.socket.to(socketId).emit('chat', socket.userId);
+
+  socket.on('disconnect', () => {
+    const index = app.users[userId].indexOf(socketId);
+    app.users[userId].splice(index, 1);
+  });
 });

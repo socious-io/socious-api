@@ -16,6 +16,14 @@ const debug = Debug('socious-api:user');
  * @apiPermission LoginRequired
  *
  * @apiParam {String} id
+ *
+ * @apiBody (200) {String} first_name Mandatory
+ * @apiBody (200) {String} last_name Mandatory
+ * @apiBody (200) {String} bio
+ * @apiBody (200) {String} city
+ * @apiBody (200) {String} address
+ * @apiBody (200) {String} wallet_address
+ * @apiBody (200) {String[]} social_causes
  */
 router.get('/:id/profile', async (ctx) => {
   const user = await User.get(ctx.params.id);
@@ -30,6 +38,14 @@ router.get('/:id/profile', async (ctx) => {
  * @apiDescription Current User Profile
  * @apiPermission LoginRequired
  *
+ * @apiBody (200) {String} first_name Mandatory
+ * @apiBody (200) {String} last_name Mandatory
+ * @apiBody (200) {String} bio
+ * @apiBody (200) {String} city
+ * @apiBody (200) {String} address
+ * @apiBody (200) {String} wallet_address
+ * @apiBody (200) {String[]} social_causes
+ *
  */
 router.get('/profile', async (ctx) => {
   ctx.body = await User.profile(ctx.user);
@@ -43,13 +59,13 @@ router.get('/profile', async (ctx) => {
  * @apiDescription Update Current User Profile
  * @apiPermission LoginRequired
  *
- * @apiBody {String} first_name Mandatory
- * @apiBody {String} last_name Mandatory
- * @apiBody {String} bio
- * @apiBody {String} city
- * @apiBody {String} address
- * @apiBody {String} wallet_address
- * @apiBody {String[]} social_causes
+ * @apiBody (200) {String} first_name Mandatory
+ * @apiBody (200) {String} last_name Mandatory
+ * @apiBody (200) {String} bio
+ * @apiBody (200) {String} city
+ * @apiBody (200) {String} address
+ * @apiBody (200) {String} wallet_address
+ * @apiBody (200) {String[]} social_causes
  */
 router.put('/profile', async (ctx) => {
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
@@ -65,6 +81,8 @@ router.put('/profile', async (ctx) => {
  *
  * @apiBody {String{min:8}} current_password Mandatory
  * @apiBody {String{min:8}} password Mandatory
+ *
+ * @apiSuccess (200) {Object} success
  */
 router.put('/change-password', async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
@@ -80,6 +98,8 @@ router.put('/change-password', async (ctx) => {
  * @apiPermission LoginRequired
  *
  * @apiBody {String{min:8}} password Mandatory
+ *
+ * @apiSuccess (200) {Object} success
  */
 router.put('/change-password-direct', async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
@@ -96,6 +116,8 @@ router.put('/change-password-direct', async (ctx) => {
  * @apiPermission LoginRequired
  *
  * @apiBody {String} reason
+ *
+ * @apiSuccess (200) {Object} success
  */
 router.post('/delete', async (ctx) => {
   await User.remove(ctx.user, ctx.request.body.reason);

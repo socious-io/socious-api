@@ -13,9 +13,9 @@ export const router = new Router();
  *
  * @apiParam {String} id
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} type (users, organizations)
- * @apiSuccess {Object} meta
+ * @apiSuccess (200) {Object} id
+ * @apiSuccess (200) {Object} type (users, organizations)
+ * @apiSuccess (200) {Object} meta
  */
 router.get('/:id', async (ctx) => {
   ctx.body = await Identity.get(ctx.params.id);
@@ -30,10 +30,10 @@ router.get('/:id', async (ctx) => {
  *
  * @apiBody {String[]{max:10}} ids
  *
- * @apiSuccess {Object[]} items
- * @apiSuccess {String} items.id
- * @apiSuccess {String} items.type (users, organizations)
- * @apiSuccess {Object} items.meta
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.type (users, organizations)
+ * @apiSuccess (200) {Object} items.meta
  */
 router.post('/batch', async (ctx) => {
   ctx.body = {items: await Identity.getAll(ctx.request.body)};
@@ -48,9 +48,9 @@ router.post('/batch', async (ctx) => {
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
- * @apiSuccess {String} id
- * @apiSuccess {String} type (users, organizations)
- * @apiSuccess {Object} meta
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {Object} type (users, organizations)
+ * @apiSuccess (200) {Object} meta
  */
 router.get('/', identity, async (ctx) => {
   ctx.body = ctx.identity;
@@ -64,6 +64,8 @@ router.get('/', identity, async (ctx) => {
  * @apiDescription save session for identities usage
  *
  * @apiParam {String} id
+ *
+ * @apiSuccess (200) {Object} success
  */
 router.get('/set/:id/session', async (ctx) => {
   const identity = await Identity.get(ctx.params.id);

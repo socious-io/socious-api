@@ -15,7 +15,7 @@ import {router as org} from './routes/organization.js';
 import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
-import {createReadStream} from 'fs';
+
 import {
   middlewares,
   loginRequired,

@@ -4,7 +4,7 @@ import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
 /**
- * @api {get} /project/findby-projectid/:id Get
+ * @api {get} /projects/:id Get
  * @apiGroup Project
  * @apiName Get
  * @apiVersion 1.0.0
@@ -18,31 +18,12 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.get('/findby-projectid/:id', async (ctx) => {
+router.get('/:id', async (ctx) => {
   ctx.body = await Project.get(ctx.params.id);
 });
 
 /**
- * @api {get} /project/findby-pageid/:page_id Get
- * @apiGroup Project
- * @apiName Get
- * @apiVersion 1.0.0
- * @apiDescription get project
- *
- * @apiParam {String} page_id
- *
- * @apiSuccess {String} id
- * @apiSuccess {String} title
- * @apiSuccess {String} description
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
- router.get('/findby-pageid/:page_id', async (ctx) => {
-  ctx.body = await Project.getByPageId(ctx.params.page_id);
-});
-
-/**
- * @api {get} /project/get-all Get all
+ * @api {get} /projects Get all
  * @apiGroup Project
  * @apiName Get all
  * @apiVersion 1.0.0
@@ -61,12 +42,12 @@ router.get('/findby-projectid/:id', async (ctx) => {
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
  */
-router.get('/get-all', paginate, async (ctx) => {
+router.get('/', paginate, async (ctx) => {
   ctx.body = await Project.all(ctx.paginate);
 });
 
 /**
- * @api {post} /project/create-project Create new
+ * @api {post} /projects Create new
  * @apiGroup Project
  * @apiName Create
  * @apiVersion 1.0.0
@@ -75,6 +56,7 @@ router.get('/get-all', paginate, async (ctx) => {
  * @apiBody {String} title
  * @apiBody {String} description
  *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiSuccess {String} id
  * @apiSuccess {String} title
@@ -82,19 +64,21 @@ router.get('/get-all', paginate, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/create-project', async (ctx) => {
-  ctx.body = await Project.insert(ctx.request.body);
+router.post('/', identity, async (ctx) => {
+  ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
 });
 
 /**
- * @api {put} /project/update-project/:id Update
- * @apiGroup Post
+ * @api {put} /projects/:id Update
+ * @apiGroup Project
  * @apiName Update
  * @apiVersion 1.0.0
- * @apiDescription update post
+ * @apiDescription update project
  *
  * @apiBody {String} title
  * @apiBody {String} description
+ * 
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
  *
@@ -104,21 +88,24 @@ router.post('/create-project', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/update-project/:id', async (ctx) => {
+router.put('/:id', identity, async (ctx) => {
+  await Project.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Project.update(ctx.params.id, ctx.request.body);
 });
 
 /**
- * @api {delete} /project/delete-project/:id Delete
+ * @api {delete} /projects/:id Delete
  * @apiGroup Project
  * @apiName Delete
  * @apiVersion 1.0.0
  * @apiDescription delete project
- *
+ * 
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
  */
-router.delete('/delete-project/:id', async (ctx) => {
+router.delete('/:id', identity, async (ctx) => {
+  await Project.permissioned(ctx.identity.id, ctx.params.id);
   await Project.remove(ctx.params.id);
   ctx.body = {message: 'success'};
 });

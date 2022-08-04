@@ -7,18 +7,17 @@ export const get = async (id) => {
   );
 };
 
-export const getByPageId = async (page_id) => {
-  return app.db.get(
-    sql`SELECT * FROM projects WHERE page_id=${page_id}`,
-  );
-};
-
 export const all = async ({offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, 
       projects.* FROM projects ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
+};
+
+export const permissioned = async (identity_id, id) => {
+  const project = await get(id);
+  if (project.identity_id !== identity_id) throw new PermissionError('Not allow');
 };
 
 

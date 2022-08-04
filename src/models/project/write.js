@@ -3,14 +3,14 @@ import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 
-export const insert = async (body) => {
+export const insert = async (identity_id, body) => {
   await upsertSchem.validateAsync(body);
   
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO projects (title, description, page_id, country_id, payment_type, payment_scheme, payment_currency, payment_range_lower, payment_range_higher, experience_level, project_status) 
-        VALUES (${body.title}, ${body.description}, ${body.page_id}, ${body.country_id}, ${body.payment_type}, ${body.payment_scheme}, ${body.payment_currency}, ${body.payment_range_lower}, ${body.payment_range_higher}, ${body.experience_level}, ${body.project_status})
+      INSERT INTO projects (title, description, identity_id, country_id, payment_type, payment_scheme, payment_currency, payment_range_lower, payment_range_higher, experience_level, project_status) 
+        VALUES (${body.title}, ${body.description}, ${identity_id}, ${body.country_id}, ${body.payment_type}, ${body.payment_scheme}, ${body.payment_currency}, ${body.payment_range_lower}, ${body.payment_range_higher}, ${body.experience_level}, ${body.project_status})
         RETURNING *`,
     );
     return rows[0];
@@ -28,7 +28,6 @@ export const update = async (id, body) => {
       UPDATE projects SET
         title=${body.title},
         description=${body.description},
-        page_id=${body.page_id},
         country_id=${body.country_id},
         payment_type=${body.payment_type},
         payment_scheme=${body.payment_scheme},

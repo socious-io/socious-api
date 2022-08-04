@@ -15,7 +15,7 @@ export const all = async ({offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const permissioned = async (identity_id, id) => {
+export const permissioned = async (identityId, id) => {
   const project = await get(id);
   if (project.identity_id !== identity_id) throw new PermissionError('Not allow');
 };

@@ -58,7 +58,7 @@ blueprint.use(
 );
 blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
-blueprint.use('/projects', loginRequired, project.routes(), project.allowedMethods());
+blueprint.use('/project', loginRequired, project.routes(), project.allowedMethods());
 blueprint.use(
   '/follows',
   loginRequired,

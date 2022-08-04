@@ -3,6 +3,7 @@ import Joi from 'joi';
 export const upsertSchem = Joi.object({
   title: Joi.string(),
   description: Joi.string(),
+  page_id: Joi.number(),
   country_id: Joi.number().allow(null),
   payment_type: Joi.number(),
   payment_scheme: Joi.number(),

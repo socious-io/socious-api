@@ -7,11 +7,11 @@ export const get = async (id) => {
   );
 };
 
-// export const getByPageId = async (page_id) => {
-//   return app.db.get(
-//     sql`SELECT * FROM projects WHERE page_id=${page_id}`,
-//   );
-// };
+export const getByPageId = async (page_id) => {
+  return app.db.get(
+    sql`SELECT * FROM projects WHERE page_id=${page_id}`,
+  );
+};
 
 export const all = async ({offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(

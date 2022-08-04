@@ -4,7 +4,7 @@ import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
 /**
- * @api {get} /projects/:id Get
+ * @api {get} /project/findby-projectid/:id Get
  * @apiGroup Project
  * @apiName Get
  * @apiVersion 1.0.0
@@ -18,12 +18,31 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.get('/:id', async (ctx) => {
+router.get('/findby-projectid/:id', async (ctx) => {
   ctx.body = await Project.get(ctx.params.id);
 });
 
 /**
- * @api {get} /projects Get all
+ * @api {get} /project/findby-pageid/:page_id Get
+ * @apiGroup Project
+ * @apiName Get
+ * @apiVersion 1.0.0
+ * @apiDescription get project
+ *
+ * @apiParam {String} page_id
+ *
+ * @apiSuccess {String} id
+ * @apiSuccess {String} title
+ * @apiSuccess {String} description
+ * @apiSuccess {Datetime} created_at
+ * @apiSuccess {Datetime} updated_at
+ */
+ router.get('/findby-pageid/:page_id', async (ctx) => {
+  ctx.body = await Project.getByPageId(ctx.params.page_id);
+});
+
+/**
+ * @api {get} /project/get-all Get all
  * @apiGroup Project
  * @apiName Get all
  * @apiVersion 1.0.0
@@ -42,12 +61,12 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/get-all', paginate, async (ctx) => {
   ctx.body = await Project.all(ctx.paginate);
 });
 
 /**
- * @api {post} /projects Create new
+ * @api {post} /project/create-project Create new
  * @apiGroup Project
  * @apiName Create
  * @apiVersion 1.0.0
@@ -63,12 +82,12 @@ router.get('/', paginate, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/', async (ctx) => {
+router.post('/create-project', async (ctx) => {
   ctx.body = await Project.insert(ctx.request.body);
 });
 
 /**
- * @api {put} /projects/:id Update
+ * @api {put} /project/update-project/:id Update
  * @apiGroup Post
  * @apiName Update
  * @apiVersion 1.0.0
@@ -85,12 +104,12 @@ router.post('/', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/:id', async (ctx) => {
+router.put('/update-project/:id', async (ctx) => {
   ctx.body = await Project.update(ctx.params.id, ctx.request.body);
 });
 
 /**
- * @api {delete} /projects/:id Delete
+ * @api {delete} /project/delete-project/:id Delete
  * @apiGroup Project
  * @apiName Delete
  * @apiVersion 1.0.0
@@ -99,7 +118,7 @@ router.put('/:id', async (ctx) => {
  *
  * @apiParam {String} id
  */
-router.delete('/:id', async (ctx) => {
+router.delete('/delete-project/:id', async (ctx) => {
   await Project.remove(ctx.params.id);
   ctx.body = {message: 'success'};
 });

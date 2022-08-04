@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.projects(
   identity_id uuid NOT NULL,
   title varchar(200),
   description text,
-  project_type proj_type DEFAULT NULL,
+  project_type project_type DEFAULT NULL,
   project_length proj_length DEFAULT NULL,
   country_id int DEFAULT NULL,
   payment_type int,

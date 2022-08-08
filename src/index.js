@@ -15,6 +15,7 @@ import {router as org} from './routes/organization.js';
 import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
+import {router as notif} from './routes/notification.js';
 
 import {
   middlewares,
@@ -70,6 +71,12 @@ blueprint.use(
   loginRequired,
   follow.routes(),
   follow.allowedMethods(),
+);
+blueprint.use(
+  '/notifications',
+  loginRequired,
+  notif.routes(),
+  notif.allowedMethods(),
 );
 
 app.use(blueprint.routes());

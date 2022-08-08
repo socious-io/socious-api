@@ -7,7 +7,7 @@ export const router = new Router();
  * @api {get} /orgs/:id Get
  * @apiGroup Organazation
  * @apiName Get
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get organazation
  *
  * @apiParam {String} id
@@ -34,7 +34,7 @@ router.get('/:id', async (ctx) => {
  * @api {get} /orgs Get all
  * @apiGroup Organazation
  * @apiName Get all
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get organazations
  *
  * @apiQuery {Number} page default 1
@@ -65,7 +65,7 @@ router.get('/', paginate, async (ctx) => {
  * @api {post} /orgs Create new
  * @apiGroup Organazation
  * @apiName Create new
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription create new organazation
  *
  * @apiBody {String} name Mandatory
@@ -102,7 +102,7 @@ router.post('/', async (ctx) => {
  * @api {post} /orgs/:id Update
  * @apiGroup Organazation
  * @apiName Update
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update organazation
  *
  * @apiParam {String} id
@@ -141,7 +141,7 @@ router.put('/:id', async (ctx) => {
  * @api {post} /orgs/:id/members add member
  * @apiGroup Organazation.Members
  * @apiName Update
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update organazation
  *
  * @apiParam {String} id
@@ -174,7 +174,7 @@ router.get('/:id/members', paginate, async (ctx) => {
  * @api {put} /orgs/:id/members/:user_id Add member
  * @apiGroup Organazation.Members
  * @apiName Add member
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update organazation
  *
  * @apiParam {String} id
@@ -193,7 +193,7 @@ router.put('/:id/members/:user_id', async (ctx) => {
  * @api {delete} /orgs/:id/members/:user_id Delete member
  * @apiGroup Organazation.Members
  * @apiName Delete member
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update organazation
  *
  * @apiParam {String} id

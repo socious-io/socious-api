@@ -12,7 +12,7 @@ export const router = new Router();
  * @api {put} /follows/:id Follow
  * @apiGroup Follow
  * @apiName Follow
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription follow an identity
  *
  * @apiParam {String} id following identity id
@@ -38,7 +38,7 @@ router.put('/:id', identity, async (ctx) => {
  * @api {delete} /follows/:id Unfollow
  * @apiGroup Follow
  * @apiName Unfollow
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription unfollow an identity
  *
  * @apiParam {String} id following identity id

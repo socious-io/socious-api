@@ -11,7 +11,7 @@ const debug = Debug('socious-api:user');
  * @api {get} /user/:id/profile Others Profile
  * @apiGroup User
  * @apiName OthersProfile
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription Other User Profile
  * @apiPermission LoginRequired
  *
@@ -34,7 +34,7 @@ router.get('/:id/profile', async (ctx) => {
  * @api {get} /user/profile Profile
  * @apiGroup User
  * @apiName Profile
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription Current User Profile
  * @apiPermission LoginRequired
  *
@@ -55,7 +55,7 @@ router.get('/profile', async (ctx) => {
  * @api {put} /user/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription Update Current User Profile
  * @apiPermission LoginRequired
  *
@@ -75,7 +75,7 @@ router.put('/profile', async (ctx) => {
  * @api {put} /user/change-password Change Password
  * @apiGroup User
  * @apiName ChangePassword
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription Change user password with user current password
  * @apiPermission LoginRequired
  *
@@ -93,7 +93,7 @@ router.put('/change-password', async (ctx) => {
  * @api {put} /user/change-password/direct Change Password Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription Change user password whithout current password (available only on forget password request)
  * @apiPermission LoginRequired
  *
@@ -111,7 +111,7 @@ router.put('/change-password-direct', async (ctx) => {
  * @api {post} /user/delete Delete current user
  * @apiGroup User
  * @apiName DeleteCurrentUser
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription delete current user
  * @apiPermission LoginRequired
  *

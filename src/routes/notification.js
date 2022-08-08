@@ -7,7 +7,7 @@ export const router = new Router();
  * @api {get} /notifications/:id Get
  * @apiGroup notifications
  * @apiName Get
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get notification
  *
  * @apiParam {String} id
@@ -31,7 +31,7 @@ router.get('/:id', async (ctx) => {
  * @api {get} /notifications Get all
  * @apiGroup notifications
  * @apiName Get all
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get notifications
  *
  * @apiQuery {Boolean} unreads default false filter only unread messages
@@ -68,7 +68,7 @@ router.get('/', paginate, async (ctx) => {
  * @api {put} /notifications/read/all read all notifications
  * @apiGroup notifications
  * @apiName readAll
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription read all notifications
  *
  */
@@ -81,7 +81,7 @@ router.get('/', paginate, async (ctx) => {
  * @api {put} /notifications/read/:id Read
  * @apiGroup notifications
  * @apiName Read
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription read notification
  *
  * @apiParam {String} id

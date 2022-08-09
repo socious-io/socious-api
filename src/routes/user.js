@@ -1,7 +1,9 @@
 import Router from '@koa/router';
 import Debug from 'debug';
 import User from '../models/user/index.js';
+import Applicant from '../models/applicant/index.js';
 import Auth from '../services/auth/index.js';
+import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
@@ -122,4 +124,23 @@ router.put('/change-password-direct', async (ctx) => {
 router.post('/delete', async (ctx) => {
   await User.remove(ctx.user, ctx.request.body.reason);
   ctx.body = {message: 'success'};
+});
+
+/**
+ * @api {get} /user/:id/applicants set session
+ * @apiGroup User
+ * @apiName GetByUserId
+ * @apiVersion 1.0.0
+ * @apiDescription get applicants by user id
+ *
+ * @apiParam {String} id
+ * 
+ * @apiSuccess {String} id
+ * @apiSuccess {String} project_id
+ * @apiSuccess {String} user_id
+ * @apiSuccess {Datetime} created_at
+ * @apiSuccess {Datetime} updated_at
+ */
+ router.get('/:id/applicants', paginate, async (ctx) => {
+  ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
 });

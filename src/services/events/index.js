@@ -35,8 +35,7 @@ const push = async (eventType, identityId, body) => {
       // TODO: notify with other services
       break;
     case Types.CHAT:
-      // if dest user not live for getting chat message then would push notification
-      if (!emitEvent(eventType, identityId, body)) {
+      if (!emitEvent(eventType, identityId, body) && !body.muted) {
         body.type = Notif.Types.CHAT
         body.refId = body.id
         return push(Types.NOTIFICATION, identityId, body);

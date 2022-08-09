@@ -16,6 +16,7 @@ import {router as identity} from './routes/identity.js';
 import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
 import {router as notif} from './routes/notification.js';
+import {router as project} from './routes/project.js';
 
 import {
   middlewares,
@@ -30,7 +31,6 @@ import config from './config.js';
 export const app = new Koa();
 
 app.keys = [config.secret];
-// TODO: move this part to redis or any other memory DBs.
 app.users = [];
 
 app.use(
@@ -66,6 +66,7 @@ blueprint.use(
 );
 blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
+blueprint.use('/projects', loginRequired, project.routes(), project.allowedMethods());
 blueprint.use(
   '/follows',
   loginRequired,

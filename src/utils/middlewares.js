@@ -1,5 +1,6 @@
 import compose from 'koa-compose';
 import jwt from 'jsonwebtoken';
+import http from 'http';
 import User from '../models/user/index.js';
 import config from '../config.js';
 import {UnauthorizedError} from './errors.js';
@@ -33,16 +34,35 @@ export const loginRequired = async (ctx, next) => {
     : ctx.session.token;
 
   if (!token) throw new UnauthorizedError();
-
-  const {id} = jwt.verify(token, config.secret);
-
-  if (!id) throw new UnauthorizedError();
-
   try {
+    const {id} = jwt.verify(token, config.secret);
     ctx.user = await User.get(id);
   } catch {
     throw new UnauthorizedError();
   }
 
   await next();
+};
+
+export const socketSessions = (app) => {
+  return (socket, next) => {
+    // create a new (fake) Koa context to decrypt the session cookie
+    let ctx = app.createContext(socket.request, new http.OutgoingMessage());
+    socket.session = ctx.session;
+    return next();
+  };
+};
+
+export const socketLoginRequired = async (socket, next) => {
+  const token = socket.handshake.auth.token || socket.session.token;
+  if (!token) return next(new UnauthorizedError());
+  try {
+    const {id} = jwt.verify(token, config.secret);
+    // TODO: we can fetch user if need
+    // socket.user = await User.get(id);
+    socket.userId = id;
+  } catch {
+    return next(new UnauthorizedError());
+  }
+  return next();
 };

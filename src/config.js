@@ -41,6 +41,7 @@ export default {
     secure: false, // need do it enviremental (works on https only)
     sameSite: null,
   },
+  socket: {},
 };
 
 /**

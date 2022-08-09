@@ -101,5 +101,12 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "apidoc": {
+    "name": "Socious API",
+    "version": "2.0.0",
+    "description": "API for the Socious platform.",
+    "title": "Socious API",
+    "url": "https://dev.socious.io/api/v2"
   }
 }

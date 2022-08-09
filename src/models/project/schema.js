@@ -10,6 +10,5 @@ export const upsertSchem = Joi.object({
   payment_range_lower: Joi.string().allow(null),
   payment_range_higher: Joi.string().allow(null),
   experience_level: Joi.number(),
-  project_status: Joi.number()
-
+  project_status: Joi.number(),
 });

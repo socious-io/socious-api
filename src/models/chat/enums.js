@@ -1,10 +1,10 @@
 export const Types = {
-  CHAT: 'CHAT', 
+  CHAT: 'CHAT',
   GROUPED: 'GROUPED',
-  CHANNEL: 'CHANNEL'
-}
+  CHANNEL: 'CHANNEL',
+};
 
 export const MemberTypes = {
   MEMBER: 'MEMBER',
-  ADMIN: 'ADMIN'
-}
+  ADMIN: 'ADMIN',
+};

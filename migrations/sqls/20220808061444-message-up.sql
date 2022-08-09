@@ -1,10 +1,10 @@
-CREATE_TYPE chat_type as ENUM (
+CREATE TYPE chat_type as ENUM (
   'CHAT', 'GROUPED', 'CHANNEL'
-)
+);
 
-CREATE_TYPE chat_member_type as ENUM (
+CREATE TYPE chat_member_type as ENUM (
   'MEMBER', 'ADMIN'
-)
+);
 
 CREATE TABLE chats(
   id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY NOT NULL,
@@ -39,6 +39,7 @@ CREATE TABLE messages(
   chat_id uuid NOT NULL,
   identity_id uuid NOT NULL,
   text text,
+  replied boolean DEFAULT false,
   read_at timestamp,
   updated_at timestamp with time zone DEFAULT now() NOT NULL,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -46,3 +47,22 @@ CREATE TABLE messages(
   CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE,
   CONSTRAINT fk_chat FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
 );
+
+
+CREATE OR REPLACE FUNCTION replied()
+  RETURNS TRIGGER AS
+$$
+BEGIN
+  
+  IF NEW.reply_id IS NOT NULL THEN
+    UPDATE messages SET replied=true WHERE id=NEW.reply_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$
+LANGUAGE PLPGSQL;
+
+
+CREATE TRIGGER new_message
+    BEFORE INSERT ON messages FOR EACH ROW EXECUTE FUNCTION replied();

@@ -4,4 +4,4 @@ node_modules
 *.html
 *.css*
 .*
-/statics
+/apidoc

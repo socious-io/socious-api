@@ -2,9 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 
 export const get = async (id) => {
-  return app.db.get(
-    sql`SELECT * FROM projects WHERE id=${id}`,
-  );
+  return app.db.get(sql`SELECT * FROM projects WHERE id=${id}`);
 };
 
 export const all = async ({offset = 0, limit = 10}) => {
@@ -17,7 +15,6 @@ export const all = async ({offset = 0, limit = 10}) => {
 
 export const permissioned = async (identityId, id) => {
   const project = await get(id);
-  if (project.identity_id !== identityId) throw new PermissionError('Not allow');
+  if (project.identity_id !== identityId)
+    throw new PermissionError('Not allow');
 };
-
-

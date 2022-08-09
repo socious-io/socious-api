@@ -77,7 +77,7 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiBody {String} title
  * @apiBody {String} description
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
@@ -99,7 +99,7 @@ router.put('/:id', identity, async (ctx) => {
  * @apiName Delete
  * @apiVersion 1.0.0
  * @apiDescription delete project
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id

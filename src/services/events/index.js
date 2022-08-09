@@ -2,7 +2,6 @@ import {app} from '../../index.js';
 import Notif from '../../models/notification/index.js';
 import Identity from '../../models/identity/index.js';
 
-
 const Types = {
   CHAT: 'chat',
   NOTIFICATION: 'notification',
@@ -20,11 +19,11 @@ const emitEvent = (eventType, userId, body) => {
     sent = true;
   }
   return sent;
-}
+};
 
 // TODO we should handle all events push here
 const push = async (eventType, identityId, body) => {
-  const identity = await Identity.get(identityId)
+  const identity = await Identity.get(identityId);
   // TODO should handle notifications for organizations skip for now
   if (identity.type === Identity.Types.ORG) return;
 
@@ -36,12 +35,11 @@ const push = async (eventType, identityId, body) => {
       break;
     case Types.CHAT:
       if (!emitEvent(eventType, identityId, body) && !body.muted) {
-        body.type = Notif.Types.CHAT
-        body.refId = body.id
+        body.type = Notif.Types.CHAT;
+        body.refId = body.id;
         return push(Types.NOTIFICATION, identityId, body);
       }
   }
-  
 };
 
 export default {

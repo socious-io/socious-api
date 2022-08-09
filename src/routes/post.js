@@ -7,7 +7,7 @@ export const router = new Router();
  * @api {get} /posts/:id Get
  * @apiGroup Post
  * @apiName Get
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get post
  *
  * @apiParam {String} id
@@ -31,7 +31,7 @@ router.get('/:id', async (ctx) => {
  * @api {get} /posts Get all
  * @apiGroup Post
  * @apiName Get all
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get posts
  *
  * @apiQuery {Number} page default 1
@@ -60,7 +60,7 @@ router.get('/', paginate, async (ctx) => {
  * @api {post} /posts Create new
  * @apiGroup Post
  * @apiName Create
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription create new post
  *
  * @apiBody {String} content
@@ -88,7 +88,7 @@ router.post('/', identity, async (ctx) => {
  * @api {put} /posts/:id Update
  * @apiGroup Post
  * @apiName Update
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update post
  *
  * @apiBody {String} content
@@ -118,7 +118,7 @@ router.put('/:id', identity, async (ctx) => {
  * @api {delete} /posts/:id Delete
  * @apiGroup Post
  * @apiName Delete
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription delete post
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission

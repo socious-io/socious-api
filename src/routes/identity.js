@@ -8,7 +8,7 @@ export const router = new Router();
  * @api {get} /identities/:id Get Others
  * @apiGroup Identity
  * @apiName GetOthers
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get others identity
  *
  * @apiParam {String} id
@@ -25,7 +25,7 @@ router.get('/:id', async (ctx) => {
  * @api {post} /identities/batch Get Others Multi
  * @apiGroup Identity
  * @apiName GetOthersMulti
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get others identity multi
  *
  * @apiBody {String[]{max:10}} ids
@@ -43,7 +43,7 @@ router.post('/batch', async (ctx) => {
  * @api {get} /identities Get Current
  * @apiGroup Identity
  * @apiName Current
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get others identity
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
@@ -60,7 +60,7 @@ router.get('/', identity, async (ctx) => {
  * @api {get} /identities/:id/session set session
  * @apiGroup Identity
  * @apiName Set Session
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription save session for identities usage
  *
  * @apiParam {String} id

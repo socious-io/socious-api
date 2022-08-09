@@ -1,7 +1,6 @@
 import Router from '@koa/router';
 import Identity from '../models/identity/index.js';
-import Applicant from '../models/applicant/index.js';
-import {paginate, identity} from '../utils/requests.js';
+import {identity} from '../utils/requests.js';
 
 export const router = new Router();
 
@@ -77,21 +76,3 @@ router.get('/set/:id/session', async (ctx) => {
   ctx.body = {message: 'success'};
 });
 
-/**
- * @api {get} /identities/:id/applicants set session
- * @apiGroup Identity
- * @apiName GetByUserId
- * @apiVersion 1.0.0
- * @apiDescription get applicants by user id
- *
- * @apiParam {String} id
- * 
- * @apiSuccess {String} id
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
- router.get('/:id/applicants', paginate, async (ctx) => {
-  ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
-});

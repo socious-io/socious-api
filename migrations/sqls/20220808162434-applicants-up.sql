@@ -4,8 +4,6 @@ CREATE TABLE public.applicants (
   project_id uuid NOT NULL,
   user_id uuid NOT NULL,
   cover_letter text,
-  attachment_name varchar(255),
-  attachment_link varchar(255),
   application_status int,
   payment_type int,
   payment_rate int,

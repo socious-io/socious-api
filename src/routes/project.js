@@ -30,8 +30,6 @@ export const router = new Router();
  * @apiVersion 1.0.0
  * @apiDescription get applicants
  *
- * @apiQuery {String} project_id default null
- * @apiQuery {String} user_id default null
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
  *
@@ -42,7 +40,7 @@ export const router = new Router();
  * @apiSuccess {Datetime} updated_at
  */
 router.get('/applicant', paginate, async (ctx) => {
-  ctx.body = await Applicant.all(ctx.request.query.project_id, ctx.request.query.user_id, ctx.paginate);
+  ctx.body = await Applicant.all(ctx.paginate);
 });
 
 /**
@@ -214,4 +212,23 @@ router.delete('/:id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   await Project.remove(ctx.params.id);
   ctx.body = {message: 'success'};
+});
+
+/**
+ * @api {get} /projects/:id/applicants set session
+ * @apiGroup Project
+ * @apiName GetByProjectId
+ * @apiVersion 1.0.0
+ * @apiDescription get applicants by project id
+ *
+ * @apiParam {String} id
+ *
+ * @apiSuccess {String} id
+ * @apiSuccess {String} project_id
+ * @apiSuccess {String} user_id
+ * @apiSuccess {Datetime} created_at
+ * @apiSuccess {Datetime} updated_at
+ */
+ router.get('/:id/applicants', paginate, async (ctx) => {
+  ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
 });

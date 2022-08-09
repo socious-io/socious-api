@@ -29,7 +29,6 @@ import config from './config.js';
 export const app = new Koa();
 
 app.keys = [config.secret];
-// TODO: move this part to redis or any other memory DBs.
 app.users = [];
 
 app.use(

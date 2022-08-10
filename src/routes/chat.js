@@ -93,7 +93,7 @@ router.post('/', identity, async (ctx) => {
  * @apiBody {String} name Mandatory
  * @apiBody {String} description
  * @apiBody {String} type (CHAT, GROUP, CHANNEL)
- * @apiBody {String[]{min:1}} participants Mandatory identities id 
+ * @apiBody {String[]{min:1 max:250}} participants Mandatory identities id 
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} name
@@ -178,7 +178,7 @@ router.get('/:id/participants', paginate, identity, async (ctx) => {
  * 
  * @apiParam {String} id
  * 
- * @apiBody {Datetime} until Mandatory (ADMIN, MEMBER)
+ * @apiBody {Datetime} until Mandatory
 */
 router.put('/:id/participants/mute', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);

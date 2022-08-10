@@ -75,4 +75,3 @@ router.get('/set/:id/session', async (ctx) => {
 
   ctx.body = {message: 'success'};
 });
-

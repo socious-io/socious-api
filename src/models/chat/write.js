@@ -3,6 +3,7 @@ import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem} from './schema.js';
 import {EntryError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
+import {get} from './read.js';
 
 export const create = async (identityId, body) => {
   await newChatSchem.validateAsync(body);
@@ -13,8 +14,8 @@ export const create = async (identityId, body) => {
         VALUES (${body.name}, ${body.description}, ${body.type}, ${identityId})
         RETURNING *
     `);
-    const chat = rows[0];    
-    await addParticipant(chat.id, identityId, identityId, MemberTypes.ADMIN)
+    const chat = rows[0];
+    await addParticipant(chat.id, identityId, identityId, MemberTypes.ADMIN);
     await Promise.all(
       body.participants.map((p) => addParticipant(chat.id, p, identityId)),
     );
@@ -120,19 +121,17 @@ export const newMessage = async (chatId, identityId, text, replyId = null) => {
 };
 
 export const editMessage = async (id, identityId, text) => {
-  try{
-  const {rows} = await app.db.query(sql`
+  try {
+    const {rows} = await app.db.query(sql`
     UPDATE messages 
       SET text=${text}
     WHERE id=${id} AND identity_id=${identityId} 
     RETURNING *
   `);
-  return rows[0]
-  }
-  catch(err) {
+    return rows[0];
+  } catch (err) {
     throw new EntryError(err.message);
   }
-  
 };
 
 export const removeMessage = async (id, identityId) => {
@@ -142,6 +141,29 @@ export const removeMessage = async (id, identityId) => {
   `);
 };
 
-export const readMessage = async (id) => {
-  return app.db.query(sql`UPDATE messages SET read_at=now() WHERE id=${id}`);
+export const getMessage = async (id) => {
+  return app.db.get(sql`SELECT * FROM messages WHERE id=${id}`);
+};
+
+export const readMessage = async (id, identityId) => {
+  const selected = await app.db.get(sql`
+    SELECT c.id AS chat_id, 
+      c.updated_at AS chat_updated_at, 
+      m.created_at AS created_at 
+    FROM messages m JOIN chats c ON c.id=m.chat_id 
+    WHERE m.id=${id}
+  `);
+  try {
+    const {rows} = await app.db.query(sql`
+      UPDATE chats_participants
+      SET last_read_id=${id}, 
+        last_read_at=now(), 
+        all_read=${selected.chat_updated_at <= selected.created_at}
+      WHERE chat_id=${selected.chat_id} AND identity_id=${identityId}
+      RETURNING *
+    `);
+    return rows[0];
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
 };

@@ -24,6 +24,9 @@ CREATE TABLE chats_participants(
   type chat_member_type DEFAULT 'MEMBER',
   muted_until timestamp,
   joined_by uuid NOT NULL,
+  last_read_id uuid,
+  all_read boolean DEFAULT false,
+  last_read_at timestamp,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   updated_at timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE,
@@ -40,7 +43,6 @@ CREATE TABLE messages(
   identity_id uuid NOT NULL,
   text text,
   replied boolean DEFAULT false,
-  read_at timestamp,
   updated_at timestamp with time zone DEFAULT now() NOT NULL,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   deleted_at timestamp,
@@ -49,7 +51,7 @@ CREATE TABLE messages(
 );
 
 
-CREATE OR REPLACE FUNCTION replied()
+CREATE OR REPLACE FUNCTION new_message()
   RETURNS TRIGGER AS
 $$
 BEGIN
@@ -58,6 +60,7 @@ BEGIN
     UPDATE messages SET replied=true WHERE id=NEW.reply_id;
   END IF;
 
+  UPDATE chats SET updated_at=now() WHERE id=NEW.chat_id;
   RETURN NEW;
 END;
 $$
@@ -65,4 +68,4 @@ LANGUAGE PLPGSQL;
 
 
 CREATE TRIGGER new_message
-    BEFORE INSERT ON messages FOR EACH ROW EXECUTE FUNCTION replied();
+    BEFORE INSERT ON messages FOR EACH ROW EXECUTE FUNCTION new_message();

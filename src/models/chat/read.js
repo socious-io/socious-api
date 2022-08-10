@@ -23,7 +23,7 @@ export const messages = async (id, {offset = 0, limit = 10}) => {
     SELECT COUNT(*) OVER () as total_count, * FROM messages WHERE chat_id=${id} AND reply_id IS NULL
     ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}
   `);
-  return rows
+  return rows;
 };
 
 export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
@@ -31,7 +31,7 @@ export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
     SELECT COUNT(*) OVER () as total_count, * FROM messages WHERE reply_id=${id}
     ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}
   `);
-  return rows
+  return rows;
 };
 
 export const permissioned = async (
@@ -54,5 +54,12 @@ export const participants = async (id, {offset = 0, limit = 10}) => {
       WHERE chat_id=${id} 
       ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}
   `);
+  return rows;
+};
+
+export const miniParticipants = async (id) => {
+  const {rows} = await app.db.query(
+    sql`SELECT id, muted_until, identity_id FROM chats_participants WHERE chat_id=${id}`,
+  );
   return rows;
 };

@@ -33,9 +33,9 @@ router.get('/:id', identity, async (ctx) => {
  * @apiName Get all
  * @apiVersion 2.0.0
  * @apiDescription get chats
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
  *
@@ -62,11 +62,11 @@ router.get('/', identity, paginate, async (ctx) => {
  * @apiDescription create new chat
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiBody {String} name Mandatory
  * @apiBody {String} description
  * @apiBody {String} type (CHAT, GROUP, CHANNEL)
- * @apiBody {String[]{min:1}} participants Mandatory identities id 
+ * @apiBody {String[]{min:1}} participants Mandatory identities id
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} name
@@ -79,7 +79,6 @@ router.post('/', identity, async (ctx) => {
   ctx.body = await Chat.create(ctx.identity.id, ctx.request.body);
 });
 
-
 /**
  * @api {put} /chats/:id Update
  * @apiGroup Chat
@@ -89,11 +88,11 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  * @apiParam {String} id
- * 
+ *
  * @apiBody {String} name Mandatory
  * @apiBody {String} description
  * @apiBody {String} type (CHAT, GROUP, CHANNEL)
- * @apiBody {String[]{min:1 max:250}} participants Mandatory identities id 
+ * @apiBody {String[]{min:1 max:250}} participants Mandatory identities id
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} name
@@ -120,7 +119,7 @@ router.put('/:id', identity, async (ctx) => {
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  * @apiParam {String} id
- * 
+ *
  */
 router.delete('/:id', identity, async (ctx) => {
   await Chat.permissioned(
@@ -129,7 +128,7 @@ router.delete('/:id', identity, async (ctx) => {
     Chat.MemberTypes.ADMIN,
   );
   await Chat.delete(ctx.params.id);
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });
 
 /**
@@ -141,9 +140,9 @@ router.delete('/:id', identity, async (ctx) => {
  *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  *
  * @apiSuccess (200) {Number} page
@@ -166,20 +165,19 @@ router.get('/:id/participants', paginate, identity, async (ctx) => {
   ctx.body = await Chat.participants(ctx.params.id, ctx.paginate);
 });
 
-
 /**
  * @api {put} /chats/:id/participants/mute Mute participant
  * @apiGroup Chat
  * @apiName Mute participant
  * @apiVersion 2.0.0
  * @apiDescription mute participant
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
- * 
+ *
  * @apiBody {Datetime} until Mandatory
-*/
+ */
 router.put('/:id/participants/mute', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   await Chat.muteParticipant(
@@ -187,9 +185,8 @@ router.put('/:id/participants/mute', identity, async (ctx) => {
     ctx.identity.id,
     ctx.request.body.until,
   );
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });
-
 
 /**
  * @api {put} /chats/:id/participants/:identity_id/permit Permit participant
@@ -197,14 +194,14 @@ router.put('/:id/participants/mute', identity, async (ctx) => {
  * @apiName Permit participant
  * @apiVersion 2.0.0
  * @apiDescription permit participant
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} identity_id
- * 
+ *
  * @apiBody {String} type Mandatory (ADMIN, MEMBER)
-*/
+ */
 router.put('/:id/participants/:identity_id/permit', identity, async (ctx) => {
   await Chat.permissioned(
     ctx.identity.id,
@@ -224,12 +221,12 @@ router.put('/:id/participants/:identity_id/permit', identity, async (ctx) => {
  * @apiName Add participant
  * @apiVersion 2.0.0
  * @apiDescription add participant
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} identity_id
-*/
+ */
 router.put('/:id/participants/:identity_id', identity, async (ctx) => {
   await Chat.permissioned(
     ctx.identity.id,
@@ -242,7 +239,7 @@ router.put('/:id/participants/:identity_id', identity, async (ctx) => {
     ctx.identity.id,
   );
 
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });
 
 /**
@@ -251,12 +248,12 @@ router.put('/:id/participants/:identity_id', identity, async (ctx) => {
  * @apiName remove participant
  * @apiVersion 2.0.0
  * @apiDescription remove participant
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} identity_id
-*/
+ */
 router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
   await Chat.permissioned(
     ctx.identity.id,
@@ -268,9 +265,8 @@ router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
     ctx.params.identity_id,
     ctx.identity.id,
   );
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });
-
 
 /**
  * @api {get} /chats/:id/messages Messages
@@ -278,9 +274,9 @@ router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
  * @apiName Messages
  * @apiVersion 2.0.0
  * @apiDescription messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  *
  * @apiQuery {Number} page default 1
@@ -299,8 +295,8 @@ router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} items.read_at
  * @apiSuccess (200) {Datetime} items.created_at
  * @apiSuccess (200) {Datetime} items.updated_at
- * 
-*/
+ *
+ */
 router.get('/:id/messages', identity, paginate, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Chat.messages(ctx.params.id, ctx.paginate);
@@ -312,11 +308,11 @@ router.get('/:id/messages', identity, paginate, async (ctx) => {
  * @apiName New Messages
  * @apiVersion 2.0.0
  * @apiDescription new messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
- * 
+ *
  * @apiBody {String} text
  *
  * @apiSuccess (200) {String} id
@@ -328,8 +324,8 @@ router.get('/:id/messages', identity, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
- * 
-*/
+ *
+ */
 router.post('/:id/messages', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
 
@@ -339,13 +335,15 @@ router.post('/:id/messages', identity, async (ctx) => {
     ctx.request.body.text,
   );
 
-  const participants = await Chat.participants(ctx.params.id);
+  const participants = await Chat.miniParticipants(ctx.params.id);
 
   await Promise.all(
     participants.map((p) =>
       Event.push(Event.Types.Chat, p.identity_id, {
         ...ctx.body,
-        muted: p.muted_until ? p.muted_until.getTime() > new Date().getTime() : false,
+        muted: p.muted_until
+          ? p.muted_until.getTime() > new Date().getTime()
+          : false,
       }),
     ),
   );
@@ -357,12 +355,12 @@ router.post('/:id/messages', identity, async (ctx) => {
  * @apiName Reply Messages
  * @apiVersion 2.0.0
  * @apiDescription reply messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} message_id
- * 
+ *
  * @apiBody {String} text
  *
  * @apiSuccess (200) {String} id
@@ -374,8 +372,8 @@ router.post('/:id/messages', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
- * 
-*/
+ *
+ */
 router.post('/:id/messages/:message_id', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Chat.newMessage(
@@ -385,13 +383,15 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
     ctx.params.message_id,
   );
 
-  const participants = await Chat.participants(ctx.params.id);
+  const participants = await Chat.miniParticipants(ctx.params.id);
 
   await Promise.all(
     participants.map((p) =>
       Event.push(Event.Types.Chat, p.identity_id, {
         ...ctx.body,
-        muted: p.muted_until ? p.muted_until.getTime() > new Date().getTime() : false,
+        muted: p.muted_until
+          ? p.muted_until.getTime() > new Date().getTime()
+          : false,
       }),
     ),
   );
@@ -403,12 +403,12 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
  * @apiName Get Reply Messages
  * @apiVersion 2.0.0
  * @apiDescription reply messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} message_id
- * 
+ *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1, max:50}} limit default 10
  *
@@ -425,8 +425,8 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} items.read_at
  * @apiSuccess (200) {Datetime} items.created_at
  * @apiSuccess (200) {Datetime} items.updated_at
- * 
-*/
+ *
+ */
 router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Chat.messagesReplies(ctx.params.message_id, ctx.paginate);
@@ -438,12 +438,12 @@ router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
  * @apiName Edit Messages
  * @apiVersion 2.0.0
  * @apiDescription edit messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} message_id
- * 
+ *
  * @apiBody {String} text
  *
  * @apiSuccess (200) {String} id
@@ -455,8 +455,8 @@ router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
- * 
-*/
+ *
+ */
 router.put('/:id/messages/:message_id', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Chat.editMessage(
@@ -472,20 +472,19 @@ router.put('/:id/messages/:message_id', identity, async (ctx) => {
  * @apiName read Messages
  * @apiVersion 2.0.0
  * @apiDescription read messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} message_id
- * 
- * 
-*/
+ *
+ *
+ */
 router.put('/:id/messages/:message_id/read', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  await Chat.readMessage(ctx.params.message_id);
-  ctx.body = {message: 'success'}
+  await Chat.readMessage(ctx.params.message_id, ctx.identity.id);
+  ctx.body = {message: 'success'};
 });
-
 
 /**
  * @api {put} /chats/:id/messages/:message_id Delete messages
@@ -493,16 +492,16 @@ router.put('/:id/messages/:message_id/read', identity, async (ctx) => {
  * @apiName Delete Messages
  * @apiVersion 2.0.0
  * @apiDescription delete messages
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- * 
+ *
  * @apiParam {String} id
  * @apiParam {String} message_id
- * 
- * 
-*/
+ *
+ *
+ */
 router.delete('/:id/messages/:message_id', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   await Chat.removeMessage(ctx.params.message_id, ctx.identity.id);
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });

@@ -43,7 +43,10 @@ export default {
   },
   socket: {},
   fcm: {
-    key: process.env.FCM_KEY,
+    key: process.env.FCM_KEY
+  },
+  cors: {
+    origins: (process.env.ALLOWED_ORIGINS || '').split(','),
   },
 };
 

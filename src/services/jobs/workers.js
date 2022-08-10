@@ -1,4 +1,5 @@
 import {sendHtmlEmail} from '../email/index.js';
+import {simplePush} from '../fcm/index.js';
 
 import config from '../../config.js';
 import {connect, JSONCodec} from 'nats';
@@ -28,6 +29,7 @@ const consumer = (handler) => {
 // register all queues and handlers
 const register = {
   email: consumer(sendHtmlEmail),
+  fcm: consumer(simplePush),
 };
 
 for await (const [name, handler] of Object.entries(register)) {

@@ -30,7 +30,6 @@ router.put('/:id', identity, async (ctx) => {
   await Event.push(Event.Types.NOTIFICATION, ctx.params.id, {
     type: Notif.Types.FOLLOWED,
     refId: ctx.body.id,
-    data: {message: Notif.Messages.FOLLOWED},
   });
 });
 

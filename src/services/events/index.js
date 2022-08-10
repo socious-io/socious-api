@@ -1,6 +1,9 @@
 import {app} from '../../index.js';
+import publish from '../jobs/publish.js';
+import Device from '../../models/device/index.js';
 import Notif from '../../models/notification/index.js';
 import Identity from '../../models/identity/index.js';
+import Org from '../../models/organization/index.js';
 
 const Types = {
   CHAT: 'chat',
@@ -21,28 +24,66 @@ const emitEvent = (eventType, userId, body) => {
   return sent;
 };
 
-// TODO we should handle all events push here
-const push = async (eventType, identityId, body) => {
-  const identity = await Identity.get(identityId);
-  // TODO should handle notifications for organizations skip for now
-  if (identity.type === Identity.Types.ORG) return;
+const pushNotifications = async (userIds, notification, data) => {
+  const devices = await Device.any(userIds);
+  publish('fcm', {tokens: devices.map((d) => d.token), notification, data});
+};
 
+const _push = async (eventType, userId, body) => {
   switch (eventType) {
     case Types.NOTIFICATION:
-      await Notif.create(identityId, body.refId, body.type, body.data);
-      emitEvent(eventType, identityId, body);
-      // TODO: notify with other services
+      await Notif.create(userId, body.refId, body.type, Notif.Data[body.type]);
+      emitEvent(eventType, userId, body);
+      pushNotifications([userId], Notif.Data[body.type], body);
       break;
     case Types.CHAT:
-      if (!emitEvent(eventType, identityId, body) && !body.muted) {
+      if (!emitEvent(eventType, userId, body) && !body.muted) {
         body.type = Notif.Types.CHAT;
         body.refId = body.id;
-        return push(Types.NOTIFICATION, identityId, body);
+        _push(Types.NOTIFICATION, userId, body);
       }
+      break;
+    default:
+      throw new Error('Unhandled notification');
   }
+};
+
+const batchPush = async (eventType, identityIds, body) => {
+  const identities = await Identity.getByIds(identityIds);
+
+  return Promise.all(
+    identities.map(async (i) => {
+      if (i.type === Identity.Types.ORG) {
+        const members = await Org.miniMembers(i.id);
+        return batchPush(
+          eventType,
+          members.map((m) => m.user_id),
+          body,
+        );
+      }
+
+      return _push(eventType, i.id, body);
+    }),
+  );
+};
+
+const push = async (eventType, identityId, body) => {
+  const identity = await Identity.get(identityId);
+
+  if (identity.type === Identity.Types.ORG) {
+    const members = await Org.miniMembers(identityId.id);
+    return batchPush(
+      eventType,
+      members.map((m) => m.user_id),
+      body,
+    );
+  }
+
+  return _push(eventType, identity.id, body);
 };
 
 export default {
   Types,
+  batchPush,
   push,
 };

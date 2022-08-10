@@ -42,6 +42,9 @@ export default {
     sameSite: null,
   },
   socket: {},
+  fcm: {
+    key: process.env.FCM_KEY,
+  },
 };
 
 /**

@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import http from 'http';
 import Router from '@koa/router';
+import cors from '@koa/cors';
 import morgan from 'koa-morgan';
 import koaBody from 'koa-body';
 import session from 'koa-session';
@@ -44,6 +45,20 @@ app.use(
   ),
 );
 app.use(koaBody());
+app.use(
+  new cors({
+    origin: config.cors.origins.length
+      ? (ctx) => {
+          const origin = ctx.header.origin || ctx.origin;
+          if (origin && config.cors.origins.includes(origin)) {
+            return origin;
+          }
+          return 'https://socious.io';
+        }
+      : undefined,
+    credentials: true,
+  }),
+);
 // configure the database via environment, see:
 // https://www.postgresql.org/docs/9.1/libpq-envars.html
 app.db = new DBCircuitBreaker(new pg.Pool());
@@ -66,7 +81,12 @@ blueprint.use(
 );
 blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
 blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
-blueprint.use('/projects', loginRequired, project.routes(), project.allowedMethods());
+blueprint.use(
+  '/projects',
+  loginRequired,
+  project.routes(),
+  project.allowedMethods(),
+);
 blueprint.use(
   '/follows',
   loginRequired,

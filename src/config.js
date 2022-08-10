@@ -42,6 +42,9 @@ export default {
     sameSite: null,
   },
   socket: {},
+  cors: {
+    origins: (process.env.ALLOWED_ORIGINS || '').split(','),
+  },
 };
 
 /**

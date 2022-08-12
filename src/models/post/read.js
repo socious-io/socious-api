@@ -21,7 +21,7 @@ export const get = async (id) => {
   FROM posts JOIN identities i ON posts.identity_id=i.id AND posts.id=${id}`);
 };
 
-export const permissioned = async (identity_id, id) => {
+export const permissioned = async (identityId, id) => {
   const post = await get(id);
-  if (post.identity_id !== identity_id) throw new PermissionError('Not allow');
+  if (post.identity_id !== identityId) throw new PermissionError('Not allow');
 };

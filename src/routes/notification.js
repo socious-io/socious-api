@@ -23,8 +23,8 @@ export const router = new Router();
  */
 router.get('/:id', async (ctx) => {
   const notif = await Notif.get(ctx.user.id, ctx.params.id);
-  await Notif.read(ctx.user.id, [ctx.params.id])
-  ctx.body = notif
+  await Notif.read(ctx.user.id, [ctx.params.id]);
+  ctx.body = notif;
 });
 
 /**
@@ -52,16 +52,19 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Datetime} items.view_at
  */
 router.get('/', paginate, async (ctx) => {
-  let notifications = []
+  let notifications = [];
   if (JSON.parse(ctx.request.query.unreads || null)) {
     notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
   } else {
-     notifications = await Notif.all(ctx.user.id, ctx.paginate);
+    notifications = await Notif.all(ctx.user.id, ctx.paginate);
   }
 
-  await Notif.viewed(ctx.user.id, notifications.map(n => n.id))
+  await Notif.viewed(
+    ctx.user.id,
+    notifications.map((n) => n.id),
+  );
 
-  ctx.body = notifications
+  ctx.body = notifications;
 });
 
 /**
@@ -72,10 +75,10 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription read all notifications
  *
  */
- router.put('/read/all', async (ctx) => {
-    await Notif.readAll(ctx.user.id);
-    ctx.body = {message: 'success'}
-  });
+router.put('/read/all', async (ctx) => {
+  await Notif.readAll(ctx.user.id);
+  ctx.body = {message: 'success'};
+});
 
 /**
  * @api {put} /notifications/read/:id Read
@@ -89,5 +92,5 @@ router.get('/', paginate, async (ctx) => {
  */
 router.put('/read/:id', async (ctx) => {
   await Notif.read(ctx.user.id, [ctx.params.id]);
-  ctx.body = {message: 'success'}
+  ctx.body = {message: 'success'};
 });

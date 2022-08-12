@@ -19,7 +19,7 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
- router.get('/applicant/:id', async (ctx) => {
+router.get('/applicant/:id', async (ctx) => {
   ctx.body = await Applicant.get(ctx.params.id);
 });
 
@@ -74,7 +74,7 @@ router.post('/applicant', identity, async (ctx) => {
  *
  * @apiBody {String} project_id
  * @apiBody {String} user_id
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
@@ -96,7 +96,7 @@ router.put('/applicant/:id', identity, async (ctx) => {
  * @apiName Delete
  * @apiVersion 1.0.0
  * @apiDescription delete applicant
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
@@ -181,7 +181,7 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiBody {String} title
  * @apiBody {String} description
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
@@ -203,7 +203,7 @@ router.put('/:id', identity, async (ctx) => {
  * @apiName Delete
  * @apiVersion 1.0.0
  * @apiDescription delete project
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
@@ -229,6 +229,6 @@ router.delete('/:id', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
- router.get('/:id/applicants', paginate, async (ctx) => {
+router.get('/:id/applicants', paginate, async (ctx) => {
   ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
 });

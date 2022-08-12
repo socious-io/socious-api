@@ -134,13 +134,13 @@ router.post('/delete', async (ctx) => {
  * @apiDescription get applicants by user id
  *
  * @apiParam {String} id
- * 
+ *
  * @apiSuccess {String} id
  * @apiSuccess {String} project_id
  * @apiSuccess {String} user_id
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
- router.get('/:id/applicants', paginate, async (ctx) => {
+router.get('/:id/applicants', paginate, async (ctx) => {
   ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
 });

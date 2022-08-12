@@ -19,11 +19,7 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db) {
-  var filePath = path.join(
-    __dirname,
-    'sqls',
-    '20220803125641-notifications-up.sql',
-  );
+  var filePath = path.join(__dirname, 'sqls', '20220808061444-message-up.sql');
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
       if (err) return reject(err);
@@ -40,7 +36,7 @@ exports.down = function (db) {
   var filePath = path.join(
     __dirname,
     'sqls',
-    '20220803125641-notifications-down.sql',
+    '20220808061444-message-down.sql',
   );
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {

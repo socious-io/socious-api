@@ -5,7 +5,7 @@ import {upsertSchem} from './schema.js';
 
 export const insert = async (identityId, body) => {
   await upsertSchem.validateAsync(body);
-  
+
   try {
     const {rows} = await app.db.query(
       sql`
@@ -21,7 +21,7 @@ export const insert = async (identityId, body) => {
 
 export const update = async (id, body) => {
   await upsertSchem.validateAsync(body);
-  
+
   try {
     const {rows} = await app.db.query(
       sql`

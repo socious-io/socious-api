@@ -18,6 +18,7 @@ import {router as post} from './routes/post.js';
 import {router as follow} from './routes/follow.js';
 import {router as notif} from './routes/notification.js';
 import {router as project} from './routes/project.js';
+import {router as chat} from './routes/chat.js';
 
 import {
   middlewares,
@@ -99,6 +100,8 @@ blueprint.use(
   notif.routes(),
   notif.allowedMethods(),
 );
+
+blueprint.use('/chats', loginRequired, chat.routes(), chat.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

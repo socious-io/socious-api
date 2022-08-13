@@ -5,7 +5,7 @@ import {PermissionError} from '../../utils/errors.js';
 import Org from '../organization/index.js';
 
 const batchSchem = Joi.object({
-  ids: Joi.array().items(Joi.string()).max(10).required(),
+  ids: Joi.array().items(Joi.string()).max(250).required(),
 });
 
 const Types = {
@@ -17,12 +17,16 @@ const get = async (id) => {
   return app.db.get(sql`SELECT * FROM identities WHERE id=${id}`);
 };
 
-const getAll = async (body) => {
-  await batchSchem.validateAsync(body);
+const getByIds = async (ids) => {
   const {rows} = await app.db.query(
-    sql`SELECT * FROM identities WHERE id = ANY(${body.ids})`,
+    sql`SELECT * FROM identities WHERE id = ANY(${ids})`,
   );
   return rows;
+};
+
+const getAll = async (body) => {
+  await batchSchem.validateAsync(body);
+  return getByIds(body.ids);
 };
 
 const permissioned = async (identity, userId) => {
@@ -42,5 +46,6 @@ export default {
   Types,
   get,
   getAll,
+  getByIds,
   permissioned,
 };

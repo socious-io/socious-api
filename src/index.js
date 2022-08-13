@@ -19,6 +19,7 @@ import {router as follow} from './routes/follow.js';
 import {router as notif} from './routes/notification.js';
 import {router as project} from './routes/project.js';
 import {router as chat} from './routes/chat.js';
+import {router as device} from './routes/device.js';
 
 import {
   middlewares,
@@ -102,6 +103,12 @@ blueprint.use(
 );
 
 blueprint.use('/chats', loginRequired, chat.routes(), chat.allowedMethods());
+blueprint.use(
+  '/devices',
+  loginRequired,
+  device.routes(),
+  device.allowedMethods(),
+);
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

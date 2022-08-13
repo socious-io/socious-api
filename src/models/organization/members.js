@@ -11,6 +11,13 @@ export const members = async (id, {offset = 0, limit = 10}) => {
   return rows;
 };
 
+export const miniMembers = async (id) => {
+  const {rows} = await app.db.query(sql`
+    SELECT user_id FROM org_members 
+    WHERE org_id=${id} ORDER BY created_at`);
+  return rows;
+};
+
 export const memberExists = async (id, user_id) => {
   const {rows} = await app.db.query(
     sql`SELECT id FROM org_members WHERE org_id=${id} AND user_id=${user_id}`,

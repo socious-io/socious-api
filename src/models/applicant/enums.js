@@ -1,0 +1,8 @@
+export const StatusTypes = {
+  PENDING: 'PENDING', 
+  OFFERED: 'OFFERED', 
+  REJECTED: 'REJECTED', 
+  WITHRAWN: 'WITHDRAW',
+  APPROVED: 'APPROVED',
+  HIRED: 'HIRED'
+}

@@ -2,7 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
 import {upsertSchem, offerSchem, rejectSchem} from './schema.js';
-import { StatusTypes } from './enums.js';
+import {StatusTypes} from './enums.js';
 
 export const insert = async (projectId, userId, body) => {
   await upsertSchem.validateAsync(body);
@@ -45,33 +45,40 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM applicants WHERE id=${id} AND status IN (${StatusTypes.PENDING}, ${StatusTypes.WITHRAWN})`);
+  await app.db.query(
+    sql`DELETE FROM applicants WHERE id=${id} AND status IN (${StatusTypes.PENDING}, ${StatusTypes.WITHRAWN})`,
+  );
 };
 
 export const withrawn = async (id) => {
   try {
-  app.db.get(sql`
+    app.db.get(sql`
     UPDATE applicants SET 
       status=${StatusTypes.WITHRAWN} 
     WHERE id=${id} AND STATUS NOT IN (${StatusTypes.APPROVED}, ${StatusTypes.REJECTED}, ${StatusTypes.HIRED})
     RETURNING *
-  `)
+  `);
   } catch {
-    throw PermissionError('not allow')
+    throw PermissionError('not allow');
   }
-}
+};
 
+// TODO: affter this update project owner should start payment flow
 export const approve = async (id) => {
-  return app.db.get(sql`UPDATE applicants SET status=${StatusTypes.APPROVED} WHERE id=${id} AND status=${StatusTypes.OFFERED} RETURNING *`)
-}
+  return app.db.get(
+    sql`UPDATE applicants SET status=${StatusTypes.APPROVED} WHERE id=${id} AND status=${StatusTypes.OFFERED} RETURNING *`,
+  );
+};
 
+// TODO: before this update should finish payment flow
 export const hire = async (id) => {
-  return app.db.get(sql`UPDATE applicants SET status=${StatusTypes.HIRED} WHERE id=${id} AND status=${StatusTypes.APPROVED} RETURNING *`)
-}
-
+  return app.db.get(
+    sql`UPDATE applicants SET status=${StatusTypes.HIRED} WHERE id=${id} AND status=${StatusTypes.APPROVED} RETURNING *`,
+  );
+};
 
 export const offer = async (id, body) => {
-  await offerSchem.validateAsync(body)
+  await offerSchem.validateAsync(body);
 
   try {
     const {rows} = await app.db.query(
@@ -88,10 +95,10 @@ export const offer = async (id, body) => {
   } catch (err) {
     throw new EntryError(err.message);
   }
-}
+};
 
 export const reject = async (id, body) => {
-  await rejectSchem.validateAsync(body)
+  await rejectSchem.validateAsync(body);
 
   try {
     const {rows} = await app.db.query(
@@ -105,4 +112,4 @@ export const reject = async (id, body) => {
   } catch (err) {
     throw new EntryError(err.message);
   }
-}
+};

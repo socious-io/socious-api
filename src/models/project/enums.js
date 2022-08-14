@@ -13,19 +13,17 @@ export const ProjectTypes = {
 };
 
 export const StatusTypes = {
-  DRAFT: 'DRAFT', 
-  EXPIRE: 'EXPIRE', 
-  ACTIVE: 'ACTIVE'
+  DRAFT: 'DRAFT',
+  EXPIRE: 'EXPIRE',
+  ACTIVE: 'ACTIVE',
 };
-
 
 export const PaymentTypes = {
   VOLUNTEER: 'VOLUNTEER',
-  PAID: 'PAID'
-}
-
+  PAID: 'PAID',
+};
 
 export const PaymentSchemeTypes = {
   HOURL: 'HOURLY',
-  FIXED: 'FIXED'
-}
+  FIXED: 'FIXED',
+};

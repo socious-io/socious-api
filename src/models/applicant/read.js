@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import { PermissionError } from '../../utils/errors.js';
+import {PermissionError} from '../../utils/errors.js';
 
 export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM applicants WHERE id=${id}`);
@@ -30,15 +30,15 @@ export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-
 export const mustOwner = async (id, userId) => {
   try {
-    await app.db.get(sql`SELECT * FROM applicants WHERE id=${id} and user_id=${userId}`);
+    await app.db.get(
+      sql`SELECT * FROM applicants WHERE id=${id} and user_id=${userId}`,
+    );
   } catch {
-    throw new PermissionError('not allow')
+    throw new PermissionError('not allow');
   }
-}
-
+};
 
 export const mustProjectOwner = async (id, identityId) => {
   try {
@@ -46,6 +46,6 @@ export const mustProjectOwner = async (id, identityId) => {
       JOIN projects p ON a.project_id=p.id 
       WHERE id=${id} AND p.identity_id=${identityId}`);
   } catch {
-    throw new PermissionError('now allow')
+    throw new PermissionError('now allow');
   }
-}
+};

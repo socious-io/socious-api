@@ -4,7 +4,6 @@ import Applicant from '../models/applicant/index.js';
 import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
-
 /**
  * @api {get} /projects/:id Get
  * @apiGroup Project
@@ -17,6 +16,7 @@ export const router = new Router();
  * @apiSuccess {String} id
  * @apiSuccess {String} title
  * @apiSuccess {String} description
+ * @apiSuccess {String} status
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
@@ -40,6 +40,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Object[]} items
  * @apiSuccess {String} items.id
  * @apiSuccess {String} items.title
+ * @apiSuccess {String} items.status
  * @apiSuccess {String} items.description
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
@@ -57,6 +58,13 @@ router.get('/', paginate, async (ctx) => {
  *
  * @apiBody {String} title
  * @apiBody {String} description
+ * @apiBody {String} status ('DRAFT', 'EXPIRE', 'ACTIVE')
+ * @apiBody {String} payment_type ('VOLUNTEER', 'PAID')
+ * @apiBody {String} payment_scheme ('HOURLY', 'FIXED')
+ * @apiBody {String} payment_currency
+ * @apiBody {String} payment_range_lower
+ * @apiBody {String} payment_range_higher
+ * @apiBody {Number} experience_level
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
@@ -79,6 +87,13 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiBody {String} title
  * @apiBody {String} description
+ * @apiBody {String} status ('DRAFT', 'EXPIRE', 'ACTIVE')
+ * @apiBody {String} payment_type ('VOLUNTEER', 'PAID')
+ * @apiBody {String} payment_scheme ('HOURLY', 'FIXED')
+ * @apiBody {String} payment_currency
+ * @apiBody {String} payment_range_lower
+ * @apiBody {String} payment_range_higher
+ * @apiBody {Number} experience_level
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
@@ -87,6 +102,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess {String} id
  * @apiSuccess {String} title
  * @apiSuccess {String} description
+ * @apiSuccess {String} status
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
@@ -120,7 +136,7 @@ router.delete('/:id', identity, async (ctx) => {
  * @apiDescription get applicants by project id
  *
  * @apiParam {String} id
- * 
+ *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
  * @apiSuccess {Number} total_count
@@ -142,7 +158,6 @@ router.delete('/:id', identity, async (ctx) => {
 router.get('/:id/applicants', paginate, async (ctx) => {
   ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
 });
-
 
 /**
  * @api {get} /projects/applicants/:id Get applicant
@@ -171,7 +186,6 @@ router.get('/applicants/:id', async (ctx) => {
   ctx.body = await Applicant.get(ctx.params.id);
 });
 
-
 /**
  * @api {post} /projects/:id/applicants Apply
  * @apiGroup Project
@@ -180,7 +194,7 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiDescription apply project
  *
  * @apiParam {String} id
- * 
+ *
  * @apiBody {String} cover_letter
  * @apiBody {String} payment_type
  * @apiBody {String} payment_rate
@@ -200,7 +214,11 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiSuccess {Datetime} updated_at
  */
 router.post('/:id/applicants', async (ctx) => {
-  ctx.body = await Applicant.insert(ctx.params.id, ctx.user.id, ctx.request.body);
+  ctx.body = await Applicant.insert(
+    ctx.params.id,
+    ctx.user.id,
+    ctx.request.body,
+  );
 });
 
 /**
@@ -237,11 +255,11 @@ router.put('/applicants/:id/withrawn', async (ctx) => {
  * @apiName OfferApplicant
  * @apiVersion 1.0.0
  * @apiDescription offer for applicant must be project owner
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
- * 
+ *
  * @apiBody {String} offer_rate
  * @apiBody {String} offer_message
  * @apiBody {Number} assignment_total
@@ -272,11 +290,11 @@ router.put('/applicants/:id/offer', identity, async (ctx) => {
  * @apiName RejectApplicant
  * @apiVersion 1.0.0
  * @apiDescription offer for applicant must be project owner
- * 
+ *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiParam {String} id
- * 
+ *
  * @apiBody {String} feedback
  *
  * @apiSuccess {String} status
@@ -297,7 +315,6 @@ router.put('/applicants/:id/reject', identity, async (ctx) => {
   await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
 });
-
 
 /**
  * @api {put} /projects/applicants/:id/approve Approve Offer
@@ -327,7 +344,6 @@ router.put('/applicants/:id/approve', identity, async (ctx) => {
   ctx.body = await Applicant.approve(ctx.params.id);
 });
 
-
 /**
  * @api {put} /projects/applicants/:id Update Applicant
  * @apiGroup Project
@@ -355,7 +371,6 @@ router.put('/applicants/:id', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   ctx.body = await Applicant.update(ctx.params.id, ctx.request.body);
 });
-
 
 /**
  * @api {delete} /projects/applicants/:id Remove Applicant

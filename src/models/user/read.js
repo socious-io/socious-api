@@ -15,7 +15,7 @@ export const getByUsername = async (username) => {
 
 export const getByEmail = async (email) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE email=${email}`,
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE email=${email.toLowerCase()}`,
   );
 };
 

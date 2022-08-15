@@ -13,7 +13,7 @@ export const insert = async (
 ) => {
   try {
     const {rows} = await app.db.query(sql`
-    INSERT INTO users (first_name, last_name, username, email, password) VALUES (${first_name}, ${last_name}, ${username}, ${email}, ${hashedPasswd}) RETURNING *
+    INSERT INTO users (first_name, last_name, username, email, password) VALUES (${first_name}, ${last_name}, ${username}, ${email.toLowerCase()}, ${hashedPasswd}) RETURNING *
   `);
     return rows[0];
   } catch (err) {

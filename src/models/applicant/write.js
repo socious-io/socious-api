@@ -46,15 +46,15 @@ export const update = async (id, body) => {
 
 export const remove = async (id) => {
   await app.db.query(
-    sql`DELETE FROM applicants WHERE id=${id} AND status IN (${StatusTypes.PENDING}, ${StatusTypes.WITHRAWN})`,
+    sql`DELETE FROM applicants WHERE id=${id} AND status IN (${StatusTypes.PENDING}, ${StatusTypes.WITHDRAW})`,
   );
 };
 
-export const withrawn = async (id) => {
+export const withdraw = async (id) => {
   try {
     app.db.get(sql`
     UPDATE applicants SET 
-      status=${StatusTypes.WITHRAWN} 
+      status=${StatusTypes.WITHDRAWN}
     WHERE id=${id} AND STATUS NOT IN (${StatusTypes.APPROVED}, ${StatusTypes.REJECTED}, ${StatusTypes.HIRED})
     RETURNING *
   `);

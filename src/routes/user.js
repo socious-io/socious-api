@@ -28,8 +28,7 @@ const debug = Debug('socious-api:user');
  * @apiBody (200) {String[]} social_causes
  */
 router.get('/:id/profile', async (ctx) => {
-  const user = await User.get(ctx.params.id);
-  ctx.body = await User.profile(user);
+  ctx.body = await User.getProfile(ctx.params.id);
 });
 
 /**
@@ -50,7 +49,7 @@ router.get('/:id/profile', async (ctx) => {
  *
  */
 router.get('/profile', async (ctx) => {
-  ctx.body = await User.profile(ctx.user);
+  ctx.body = await User.getProfile(ctx.user.id);
 });
 
 /**
@@ -65,6 +64,8 @@ router.get('/profile', async (ctx) => {
  * @apiBody (200) {String} last_name Mandatory
  * @apiBody (200) {String} bio
  * @apiBody (200) {String} city
+ * @apiBody (200) {String} avatar media uuid
+ * @apiBody (200) {String} cover_image media uuid
  * @apiBody (200) {String} address
  * @apiBody (200) {String} wallet_address
  * @apiBody (200) {String[]} social_causes

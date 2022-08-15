@@ -1,5 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
+import {PermissionError} from '../../utils/errors.js';
 
 export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM projects WHERE id=${id}`);

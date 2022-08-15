@@ -1,12 +1,18 @@
 import Joi from 'joi';
 
 export const upsertSchem = Joi.object({
-  project_id: Joi.string().required(),
-  user_id: Joi.string().required(),
-  cover_letter: Joi.string(),
-  application_status: Joi.number(),
+  cover_letter: Joi.string().required(),
   payment_type: Joi.number(),
   payment_rate: Joi.number(),
-  offer_rate: Joi.string(),
-  offer_message: Joi.string(),
+});
+
+export const offerSchem = Joi.object({
+  offer_rate: Joi.string().required(),
+  offer_message: Joi.string().required(),
+  due_date: Joi.string().isoDate(),
+  assignment_total: Joi.number(),
+});
+
+export const rejectSchem = Joi.object({
+  feedback: Joi.string(),
 });

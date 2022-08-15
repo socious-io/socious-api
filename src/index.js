@@ -20,6 +20,7 @@ import {router as notif} from './routes/notification.js';
 import {router as project} from './routes/project.js';
 import {router as chat} from './routes/chat.js';
 import {router as device} from './routes/device.js';
+import {router as media} from './routes/media.js';
 
 import {
   middlewares,
@@ -109,6 +110,8 @@ blueprint.use(
   device.routes(),
   device.allowedMethods(),
 );
+
+blueprint.use('/media', loginRequired, media.routes(), media.allowedMethods());
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

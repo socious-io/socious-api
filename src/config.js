@@ -41,6 +41,15 @@ export default {
     secure: false, // need do it enviremental (works on https only)
     sameSite: null,
   },
+  aws: {
+    cdn_url:
+      process.env.AWS_CDN_URL ||
+      'https://soscious.s3.ap-northeast-1.amazonaws.com/',
+    bucket: process.env.AWS_BUCKET || 'socious',
+    key_id: process.env.AWS_ACCESS_KEY_ID,
+    secret_key: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1',
+  },
   socket: {},
   fcm: {
     key: process.env.FCM_KEY,

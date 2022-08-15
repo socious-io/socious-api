@@ -31,6 +31,15 @@ export const profile = async (user) => {
 };
 
 export const getProfile = async (id) => {
-  const user = await get(id);
+  const user = await app.db.get(
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`,
+  );
+  const {rows} = await app.db.query(
+    sql`SELECT * FROM media WHERE id IN (${user.avatar}, ${user.cover_image})`,
+  );
+  for (const media of rows) {
+    if (media.id === user.avatar) user.avatar = media;
+    if (media.id === user.cover_image) user.cover_image = media;
+  }
   return profile(user);
 };

@@ -64,6 +64,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription create new post
  *
  * @apiBody {String} content
+ * @apiBody {String} image
  * @apiBody {String[]} hashtags
  * @apiBody {String[]} causes_tags
  * @apiBody {String[]} identity_tags
@@ -93,6 +94,7 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiBody {String} content
  * @apiBody {String[]} hashtags
+ * @apiBody {String} image
  * @apiBody {String[]} causes_tags
  * @apiBody {String[]} identity_tags
  *

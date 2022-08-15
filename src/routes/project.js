@@ -191,7 +191,7 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiGroup Project
  * @apiName Apply
  * @apiVersion 1.0.0
- * @apiDescription apply project
+ * @apiDescription apply to project
  *
  * @apiParam {String} id
  *
@@ -222,11 +222,11 @@ router.post('/:id/applicants', async (ctx) => {
 });
 
 /**
- * @api {put} /projects/applicants/:id/withrawn Withrawn Applicant
+ * @api {put} /projects/applicants/:id/withdraw Withdraw Application
  * @apiGroup Project
- * @apiName WithrawnApplicant
+ * @apiName WithdrawApplicant
  * @apiVersion 1.0.0
- * @apiDescription withrawn must be applicant owner
+ * @apiDescription withdraw application; must be applicant (owner)
  *
  * @apiParam {String} id
  *
@@ -244,9 +244,9 @@ router.post('/:id/applicants', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/applicants/:id/withrawn', async (ctx) => {
+router.put('/applicants/:id/withdraw', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
-  ctx.body = await Applicant.withrawn(ctx.params.id);
+  ctx.body = await Applicant.withdraw(ctx.params.id);
 });
 
 /**

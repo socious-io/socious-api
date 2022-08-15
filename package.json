@@ -42,7 +42,7 @@
     "apidoc": "^0.52.0",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
-    "cockatiel": "^2.0.2",
+    "cockatiel": "^3.0.0",
     "cookie-parser": "~1.4.6",
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",

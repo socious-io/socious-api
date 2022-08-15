@@ -5,10 +5,9 @@ import Upload from '../utils/upload.js';
 
 import {identity} from '../utils/requests.js';
 
-const koaBody = Body({multipart: true, uploadDir: '.'})
+const koaBody = Body({multipart: true, uploadDir: '.'});
 
 export const router = new Router();
-
 
 /**
  * @api {post} /media/upload Upload
@@ -19,16 +18,16 @@ export const router = new Router();
  * @apiPermission LoginRequired
  *
  * @apiBody {File} file
- * 
+ *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} filename
  * @apiSuccess (200) {String} url
  * @apiSuccess (200) {Datetime} created_at
  */
 
-router.post('/upload', koaBody, identity, async(ctx) => {
-  const {originalFilename, filepath, mimetype} = ctx.request.files.file
-  const mediaUrl = await Upload(filepath, mimetype)
+router.post('/upload', koaBody, identity, async (ctx) => {
+  const {originalFilename, filepath, mimetype} = ctx.request.files.file;
+  const mediaUrl = await Upload(filepath, mimetype);
 
-  ctx.body = await Media.insert(ctx.identity.id, originalFilename, mediaUrl)
-})
+  ctx.body = await Media.insert(ctx.identity.id, originalFilename, mediaUrl);
+});

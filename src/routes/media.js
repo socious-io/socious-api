@@ -32,8 +32,6 @@ router.post('/upload', koaBody, identity, async (ctx) => {
   ctx.body = await Media.insert(ctx.identity.id, originalFilename, mediaUrl);
 });
 
-
-
 /**
  * @api {get} /media/:id Get
  * @apiGroup Media
@@ -50,11 +48,9 @@ router.post('/upload', koaBody, identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  */
 
- router.get('/:id', async (ctx) => {
+router.get('/:id', async (ctx) => {
   ctx.body = await Media.get(ctx.params.id);
 });
-
-
 
 /**
  * @api {POST} /media Get all
@@ -73,6 +69,6 @@ router.post('/upload', koaBody, identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} items.created_at
  */
 
- router.post('/', async (ctx) => {
-  ctx.body = {items: await Media.getAll(ctx.request.body.ids)}
+router.post('/', async (ctx) => {
+  ctx.body = {items: await Media.getAll(ctx.request.body.ids)};
 });

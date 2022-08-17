@@ -1,7 +1,5 @@
 import Joi from 'joi';
-
-const usernamePattern =
-  /^(?=.{6,20}$)(?![_.@])(?!.*[_.@]{2})[a-zA-Z0-9._@]+(?<![_.])$/;
+import {usernamePattern} from '../../models/user/schema.js';
 
 const phonePattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
@@ -13,7 +11,7 @@ export const authSchem = Joi.object({
 export const registerSchem = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
-  username: Joi.string().regex(usernamePattern).required(),
+  username: Joi.string().regex(usernamePattern),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
 });

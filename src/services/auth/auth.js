@@ -52,6 +52,13 @@ export const register = async (body) => {
   await registerSchem.validateAsync(body);
 
   body.password = await hashPassword(body.password);
+
+  // Generate username with email user and 4 random digit number if username not provided
+  if (!body.username) {
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    body.username = `${body.email.replace(/@.*$/, '')}${rand}`;
+  }
+
   const user = await User.insert(
     body.first_name,
     body.last_name,

@@ -22,7 +22,10 @@ const searchSchema = Joi.object({
 const find = async (body, {offset = 0, limit = 10}) => {
   await searchSchema.validateAsync(body);
 
-  const query = body.q.replaceAll(/[^A-Za-z0-9 ]/gi, '');
+  const query = body.q.replaceAll(
+    /[^\p{Letter}\p{Number}\p{Separator}]/gu,
+    ' ',
+  );
   const name = `search/${body.type}`;
 
   const params = [

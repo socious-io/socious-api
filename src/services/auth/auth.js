@@ -67,7 +67,7 @@ export const register = async (body) => {
       // generated username already exists recursivly retry
       return register(body)
     } catch {
-      // ignore it
+      body.username = username
     }
   }
 

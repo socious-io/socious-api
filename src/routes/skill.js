@@ -4,8 +4,6 @@ import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
-
-
 /**
  * @api {get} /skills Get all
  * @apiGroup Skill
@@ -14,7 +12,7 @@ export const router = new Router();
  * @apiDescription get skills
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
@@ -25,5 +23,5 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  */
 router.get('/', paginate, async (ctx) => {
-  ctx.body = await Skill.all(ctx.paginate)
-})
+  ctx.body = await Skill.all(ctx.paginate);
+});

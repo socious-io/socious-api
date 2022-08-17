@@ -38,7 +38,7 @@ router.get('/:id', async (ctx) => {
  * @apiDescription get organazations
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit

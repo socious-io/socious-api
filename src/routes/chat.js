@@ -37,7 +37,7 @@ router.get('/:id', identity, async (ctx) => {
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
@@ -139,7 +139,7 @@ router.delete('/:id', identity, async (ctx) => {
  * @apiDescription get chat participants
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
@@ -280,7 +280,7 @@ router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
  * @apiParam {String} id
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
@@ -410,7 +410,7 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
  * @apiParam {String} message_id
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit

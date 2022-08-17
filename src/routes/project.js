@@ -32,7 +32,7 @@ router.get('/:id', async (ctx) => {
  * @apiDescription get projects
  *
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit

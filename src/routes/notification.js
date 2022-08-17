@@ -36,7 +36,7 @@ router.get('/:id', async (ctx) => {
  *
  * @apiQuery {Boolean} unreads default false filter only unread messages
  * @apiQuery {Number} page default 1
- * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * @apiQuery {Number{min: 1}} limit=10
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit

@@ -3,6 +3,7 @@ import Debug from 'debug';
 import User from '../models/user/index.js';
 import Applicant from '../models/applicant/index.js';
 import Auth from '../services/auth/index.js';
+import Skill from '../models/skill/index.js';
 import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
@@ -19,13 +20,13 @@ const debug = Debug('socious-api:user');
  *
  * @apiParam {String} id
  *
- * @apiBody (200) {String} first_name Mandatory
- * @apiBody (200) {String} last_name Mandatory
- * @apiBody (200) {String} bio
- * @apiBody (200) {String} city
- * @apiBody (200) {String} address
- * @apiBody (200) {String} wallet_address
- * @apiBody (200) {String[]} social_causes
+ * @apiBody  {String} first_name Mandatory
+ * @apiBody  {String} last_name Mandatory
+ * @apiBody  {String} bio
+ * @apiBody  {String} city
+ * @apiBody  {String} address
+ * @apiBody  {String} wallet_address
+ * @apiBody  {String[]} social_causes
  */
 router.get('/:id/profile', async (ctx) => {
   ctx.body = await User.getProfile(ctx.params.id);
@@ -39,13 +40,13 @@ router.get('/:id/profile', async (ctx) => {
  * @apiDescription Current User Profile
  * @apiPermission LoginRequired
  *
- * @apiBody (200) {String} first_name Mandatory
- * @apiBody (200) {String} last_name Mandatory
- * @apiBody (200) {String} bio
- * @apiBody (200) {String} city
- * @apiBody (200) {String} address
- * @apiBody (200) {String} wallet_address
- * @apiBody (200) {String[]} social_causes
+ * @apiBody  {String} first_name Mandatory
+ * @apiBody  {String} last_name Mandatory
+ * @apiBody  {String} bio
+ * @apiBody  {String} city
+ * @apiBody  {String} address
+ * @apiBody  {String} wallet_address
+ * @apiBody  {String[]} social_causes
  *
  */
 router.get('/profile', async (ctx) => {
@@ -60,17 +61,20 @@ router.get('/profile', async (ctx) => {
  * @apiDescription Update Current User Profile
  * @apiPermission LoginRequired
  *
- * @apiBody (200) {String} first_name Mandatory
- * @apiBody (200) {String} last_name Mandatory
- * @apiBody (200) {String} bio
- * @apiBody (200) {String} city
- * @apiBody (200) {String} avatar media uuid
- * @apiBody (200) {String} cover_image media uuid
- * @apiBody (200) {String} address
- * @apiBody (200) {String} wallet_address
- * @apiBody (200) {String[]} social_causes
+ * @apiBody  {String} first_name Mandatory
+ * @apiBody  {String} last_name Mandatory
+ * @apiBody  {String} bio
+ * @apiBody  {String} city
+ * @apiBody  {String} avatar media uuid
+ * @apiBody  {String} cover_image media uuid
+ * @apiBody  {String} address
+ * @apiBody  {String} wallet_address
+ * @apiBody  {String[]} social_causes
+ * @apiBody  {String[]} skills skills names
  */
 router.put('/profile', async (ctx) => {
+  const skills = await Skill.getAllByNames(ctx.request.body.skills);
+  ctx.request.body.skills = skills.map(s => s.name);
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 
@@ -85,7 +89,6 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} current_password Mandatory
  * @apiBody {String{min:8}} password Mandatory
  *
- * @apiSuccess (200) {Object} success
  */
 router.put('/change-password', async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
@@ -102,7 +105,6 @@ router.put('/change-password', async (ctx) => {
  *
  * @apiBody {String{min:8}} password Mandatory
  *
- * @apiSuccess (200) {Object} success
  */
 router.put('/change-password-direct', async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
@@ -120,7 +122,7 @@ router.put('/change-password-direct', async (ctx) => {
  *
  * @apiBody {String} reason
  *
- * @apiSuccess (200) {Object} success
+ * @apiSuccess  {Object} success
  */
 router.post('/delete', async (ctx) => {
   await User.remove(ctx.user, ctx.request.body.reason);

@@ -4,7 +4,6 @@ import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
-
 /**
  * @api {get} /search Search
  * @apiGroup Search

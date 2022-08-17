@@ -5,7 +5,7 @@ export const paginate = async (ctx, next) => {
   if (page < 1) page = 1;
 
   let limit = parseInt(ctx.query.limit) || 10;
-  if (limit > 50 || limit < 1) limit = 10;
+  if (limit > 500 || limit < 1) limit = 10;
 
   // TODO: we can handle ordering system here
 

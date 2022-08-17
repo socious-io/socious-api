@@ -16,15 +16,15 @@ const insert = async (identityId, filename, url) => {
 };
 
 const get = async (id) => {
-  return app.db.get(sql`SELECT * FROM media WHERE id=${id}`)
-}
+  return app.db.get(sql`SELECT * FROM media WHERE id=${id}`);
+};
 
 const getAll = async (ids) => {
-  return app.db.get(sql`SELECT * FROM media WHERE id=ANY(${ids})`)
-}
+  return app.db.get(sql`SELECT * FROM media WHERE id=ANY(${ids})`);
+};
 
 export default {
   insert,
   get,
-  getAll
+  getAll,
 };

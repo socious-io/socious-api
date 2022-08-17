@@ -8,5 +8,5 @@ export const upsertSchem = Joi.object({
     .required(),
   hashtags: Joi.array().items(Joi.string()),
   identity_tags: Joi.array().items(Joi.string()),
-  media: Joi.string().uuid()
+  media: Joi.string().uuid(),
 });

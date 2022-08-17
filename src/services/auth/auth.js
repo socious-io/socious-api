@@ -24,6 +24,11 @@ const signin = (user) => {
   });
 };
 
+const generateUsername = (email) => {
+  const rand = Math.floor(1000 + Math.random() * 9000);
+    return `${email.replace(/@.*$/, '')}${rand}`;
+}
+
 export const hashPassword = (salt) => {
   return bcrypt.hash(salt, 12);
 };
@@ -52,6 +57,20 @@ export const register = async (body) => {
   await registerSchem.validateAsync(body);
 
   body.password = await hashPassword(body.password);
+
+  // Generate username with email user and 4 random digit number if username not provided
+  if (!body.username) {
+    const username = generateUsername(body.email)
+    
+    try {
+      await User.getByUsername(username)
+      // generated username already exists recursivly retry
+      return register(body)
+    } catch {
+      body.username = username
+    }
+  }
+
   const user = await User.insert(
     body.first_name,
     body.last_name,

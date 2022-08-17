@@ -1,17 +1,15 @@
 SELECT
   COUNT(*) OVER () as total_count,
-  p.*, i.type  as identity_type, i.meta as identity_meta,
-  array_to_json(p.causes_tags) as causes_tags
-FROM posts p
+  p.*, i.type  as identity_type, i.meta as identity_meta
+FROM projects p
 JOIN identities i ON i.id=p.identity_id
 LEFT JOIN users u ON u.id=i.id and i.type='users'
 LEFT JOIN organizations o ON o.id=i.id and i.type='organizations'
-WHERE  
+WHERE
+  p.status = 'ACTIVE' AND
   to_tsvector(
     'english', 
-    p.content || ' ' || 
-    array_to_string(p.hashtags, ' ') ||  ' ' ||
-    array_to_string(p.causes_tags, ' ') || ' ' ||
+    p.title || ' ' || p.description || ' ' ||
     COALESCE(u.username, '') || ' ' ||
     COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '') || COALESCE(o.name, '')
     )

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 export default {
+  debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
   jwtExpireTime: '2h',

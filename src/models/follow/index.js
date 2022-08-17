@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
+import {BadRequestError, EntryError} from '../../utils/errors.js';
 
 const followed = async (follower, following) => {
   const {rows} = await app.db.query(
@@ -10,6 +10,8 @@ const followed = async (follower, following) => {
 };
 
 const follow = async (follower, following) => {
+  if (follower === following)
+    throw new BadRequestError('follower and following could not be same');
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO follows (follower_identity_id, following_identity_id) 

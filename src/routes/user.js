@@ -74,7 +74,7 @@ router.get('/profile', async (ctx) => {
  */
 router.put('/profile', async (ctx) => {
   const skills = await Skill.getAllByNames(ctx.request.body.skills);
-  ctx.request.body.skills = skills.map(s => s.name);
+  ctx.request.body.skills = skills.map((s) => s.name);
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 

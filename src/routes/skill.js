@@ -4,8 +4,6 @@ import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
-
-
 /**
  * @api {get} /skills Get all
  * @apiGroup Skill
@@ -25,5 +23,5 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  */
 router.get('/', paginate, async (ctx) => {
-  ctx.body = await Skill.all(ctx.paginate)
-})
+  ctx.body = await Skill.all(ctx.paginate);
+});

@@ -13,5 +13,5 @@ export const updateProfileSchem = Joi.object({
   social_causes: Joi.array().items(
     Joi.string().valid(...Object.values(SocialCauses)),
   ),
-  skills: Joi.array().items(Joi.string())
+  skills: Joi.array().items(Joi.string()),
 });

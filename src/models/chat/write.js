@@ -3,7 +3,6 @@ import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem} from './schema.js';
 import {EntryError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
-import {get} from './read.js';
 
 export const create = async (identityId, body) => {
   await newChatSchem.validateAsync(body);

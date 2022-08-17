@@ -8,7 +8,7 @@ export const router = new Router();
  * @api {get} /projects/:id Get
  * @apiGroup Project
  * @apiName Get
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get project
  *
  * @apiParam {String} id
@@ -28,7 +28,7 @@ router.get('/:id', async (ctx) => {
  * @api {get} /projects Get all
  * @apiGroup Project
  * @apiName Get all
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get projects
  *
  * @apiQuery {Number} page default 1
@@ -53,7 +53,7 @@ router.get('/', paginate, async (ctx) => {
  * @api {post} /projects Create new
  * @apiGroup Project
  * @apiName Create
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription create new project
  *
  * @apiBody {String} title
@@ -82,7 +82,7 @@ router.post('/', identity, async (ctx) => {
  * @api {put} /projects/:id Update
  * @apiGroup Project
  * @apiName Update
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription update project
  *
  * @apiBody {String} title
@@ -115,7 +115,7 @@ router.put('/:id', identity, async (ctx) => {
  * @api {delete} /projects/:id Delete
  * @apiGroup Project
  * @apiName Delete
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription delete project
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
@@ -132,7 +132,7 @@ router.delete('/:id', identity, async (ctx) => {
  * @api {get} /projects/:id/applicants Get all applicants
  * @apiGroup Project
  * @apiName GetAllApplicants
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get applicants by project id
  *
  * @apiParam {String} id
@@ -163,7 +163,7 @@ router.get('/:id/applicants', paginate, async (ctx) => {
  * @api {get} /projects/applicants/:id Get applicant
  * @apiGroup Project
  * @apiName GetApplicants
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription get applicant by id
  *
  * @apiParam {String} id
@@ -190,7 +190,7 @@ router.get('/applicants/:id', async (ctx) => {
  * @api {post} /projects/:id/applicants Apply
  * @apiGroup Project
  * @apiName Apply
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription apply to project
  *
  * @apiParam {String} id
@@ -225,7 +225,7 @@ router.post('/:id/applicants', async (ctx) => {
  * @api {put} /projects/applicants/:id/withdraw Withdraw Application
  * @apiGroup Project
  * @apiName WithdrawApplicant
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription withdraw application; must be applicant (owner)
  *
  * @apiParam {String} id
@@ -253,7 +253,7 @@ router.put('/applicants/:id/withdraw', async (ctx) => {
  * @api {put} /projects/applicants/:id/offer Offer Applicant
  * @apiGroup Project
  * @apiName OfferApplicant
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription offer for applicant must be project owner
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
@@ -288,7 +288,7 @@ router.put('/applicants/:id/offer', identity, async (ctx) => {
  * @api {put} /projects/applicants/:id/reject Reject Applicant
  * @apiGroup Project
  * @apiName RejectApplicant
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription offer for applicant must be project owner
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
@@ -320,7 +320,7 @@ router.put('/applicants/:id/reject', identity, async (ctx) => {
  * @api {put} /projects/applicants/:id/approve Approve Offer
  * @apiGroup Project
  * @apiName ApproveOffer
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription approve offer must be applicant owner
  *
  * @apiParam {String} id
@@ -348,7 +348,7 @@ router.put('/applicants/:id/approve', identity, async (ctx) => {
  * @api {put} /projects/applicants/:id Update Applicant
  * @apiGroup Project
  * @apiName UpdateApplicant
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription approve offer must be applicant owner
  *
  * @apiParam {String} id
@@ -376,7 +376,7 @@ router.put('/applicants/:id', async (ctx) => {
  * @api {delete} /projects/applicants/:id Remove Applicant
  * @apiGroup Project
  * @apiName RemoveApplicant
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiDescription approve offer must be applicant owner
  *
  * @apiParam {String} id

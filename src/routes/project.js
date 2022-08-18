@@ -61,6 +61,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiBody {String} status ('DRAFT', 'EXPIRE', 'ACTIVE')
  * @apiBody {String} payment_type ('VOLUNTEER', 'PAID')
  * @apiBody {String} payment_scheme ('HOURLY', 'FIXED')
+ * @apiBody {String} remote_preference ('ONSITE', 'REMOOTE', 'HYBRID')
  * @apiBody {String} payment_currency
  * @apiBody {String} payment_range_lower
  * @apiBody {String} payment_range_higher
@@ -90,6 +91,7 @@ router.post('/', identity, async (ctx) => {
  * @apiBody {String} status ('DRAFT', 'EXPIRE', 'ACTIVE')
  * @apiBody {String} payment_type ('VOLUNTEER', 'PAID')
  * @apiBody {String} payment_scheme ('HOURLY', 'FIXED')
+ * @apiBody {String} remote_preference ('ONSITE', 'REMOOTE', 'HYBRID')
  * @apiBody {String} payment_currency
  * @apiBody {String} payment_range_lower
  * @apiBody {String} payment_range_higher

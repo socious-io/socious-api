@@ -12,6 +12,7 @@ export const upsertSchem = Joi.object({
   type: Joi.string().valid(...Object.values(Type)),
   city: Joi.string(),
   address: Joi.string(),
+  country: Joi.string().min(2).max(3),
   social_causes: Joi.array().items(
     Joi.string().valid(...Object.values(SocialCauses)),
   ),

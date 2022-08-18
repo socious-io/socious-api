@@ -11,6 +11,8 @@ export const updateProfileSchem = Joi.object({
   bio: Joi.string(),
   city: Joi.string(),
   address: Joi.string(),
+  country: Joi.string().min(2).max(3),
+  phone: Joi.string(),
   wallet_address: Joi.string(),
   avatar: Joi.string().uuid(),
   cover_image: Joi.string().uuid(),

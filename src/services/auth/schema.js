@@ -16,6 +16,11 @@ export const registerSchem = Joi.object({
   password: Joi.string().min(8).required(),
 });
 
+export const preregisterSchem = Joi.object({
+  username: Joi.string().regex(usernamePattern),
+  email: Joi.string().email().required(),
+});
+
 export const newOTPSchem = Joi.alternatives().try(
   Joi.object().keys({
     phone: Joi.string().regex(phonePattern).required(),

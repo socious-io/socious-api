@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import {
   authSchem,
   registerSchem,
+  preregisterSchem,
   newOTPSchem,
   confirmOTPSchem,
   changePasswordSchem,
@@ -26,8 +27,8 @@ const signin = (user) => {
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
-    return `${email.replace(/@.*$/, '')}${rand}`;
-}
+  return `${email.replace(/@.*$/, '')}${rand}`;
+};
 
 export const hashPassword = (salt) => {
   return bcrypt.hash(salt, 12);
@@ -60,14 +61,14 @@ export const register = async (body) => {
 
   // Generate username with email user and 4 random digit number if username not provided
   if (!body.username) {
-    const username = generateUsername(body.email)
-    
+    const username = generateUsername(body.email);
+
     try {
-      await User.getByUsername(username)
+      await User.getByUsername(username);
       // generated username already exists recursivly retry
-      return register(body)
+      return register(body);
     } catch {
-      body.username = username
+      body.username = username;
     }
   }
 
@@ -187,4 +188,34 @@ export const changePassword = async (user, body) => {
 
   const newPassword = await hashPassword(body.password);
   await User.updatePassword(user.id, newPassword);
+};
+
+export const preregister = async (body) => {
+  const res = {};
+  const {error} = await preregisterSchem.validate(body, {
+    abortEarly: false,
+  });
+  if (error)
+    for (const errorDetails of error.details)
+      res[errorDetails.path] = errorDetails.message;
+
+  if (body.username && !res.username) {
+    try {
+      await User.getByUsername(body.username);
+      res.username = 'EXISTS';
+    } catch {
+      res.username = null;
+    }
+  }
+
+  if (body.email && !res.email) {
+    try {
+      await User.getByEmail(body.email);
+      res.email = 'EXISTS';
+    } catch {
+      res.email = null;
+    }
+  }
+
+  return res;
 };

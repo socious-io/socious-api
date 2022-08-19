@@ -116,3 +116,21 @@ router.post('/forget-password', async (ctx) => {
   await Auth.forgetPassword(ctx.request.body);
   ctx.body = {message: 'success'};
 });
+
+/**
+ * @api {post} /auth/preregister Check Email or Username
+ * @apiGroup Auth
+ * @apiName Check Email or Username
+ * @apiVersion 2.0.0
+ * @apiDescription check if email or username is valid and if already registered
+ *
+ * @apiBody {String} email Mandatory if username is empty
+ * @apiBody {String} username Mandatory if email is empty
+ *
+ * @apiSuccess (200) {String} username Null if ok, 'EXISTS' if already registered, or validation error message
+ * @apiSuccess (200) {String} email Null if ok, 'EXISTS' if already registered, or validation error message
+ *
+ */
+router.post('/preregister', async (ctx) => {
+  ctx.body = await Auth.preregister(ctx.request.body);
+});

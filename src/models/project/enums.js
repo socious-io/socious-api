@@ -12,6 +12,12 @@ export const ProjectTypes = {
   FULL_TIME: 'FULL_TIME',
 };
 
+export const RemotePreferenceTypes = {
+  ONSITE: 'ONSITE', 
+  REMOOTE: 'REMOOTE', 
+  HYBRID: 'HYBRID'
+}
+
 export const StatusTypes = {
   DRAFT: 'DRAFT',
   EXPIRE: 'EXPIRE',

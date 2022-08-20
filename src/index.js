@@ -22,6 +22,7 @@ import {router as chat} from './routes/chat.js';
 import {router as device} from './routes/device.js';
 import {router as media} from './routes/media.js';
 import {router as skill} from './routes/skill.js';
+import {router as search} from './routes/search.js';
 
 import {
   middlewares,
@@ -114,6 +115,12 @@ blueprint.use(
 
 blueprint.use('/media', loginRequired, media.routes(), media.allowedMethods());
 blueprint.use('/skills', loginRequired, skill.routes(), skill.allowedMethods());
+blueprint.use(
+  '/search',
+  loginRequired,
+  search.routes(),
+  search.allowedMethods(),
+);
 
 app.use(blueprint.routes());
 app.use(blueprint.allowedMethods());

@@ -3,14 +3,21 @@ import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 
 export const get = async (id) => {
-  return app.db.get(sql`SELECT * FROM projects WHERE id=${id}`);
+  return app.db.get(sql`
+  SELECT p.*, i.type  as identity_type, i.meta as identity_meta
+    FROM projects p
+    JOIN identities i ON i.id=p.identity_id
+  WHERE p.id=${id}
+  `);
 };
 
 export const all = async ({offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(
-    sql`SELECT COUNT(*) OVER () as total_count, 
-      projects.* FROM projects ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
-  );
+  const {rows} = await app.db.query(sql`
+      SELECT COUNT(*) OVER () as total_count, p.*,
+      i.type  as identity_type, i.meta as identity_meta
+      FROM projects p
+      JOIN identities i ON i.id=p.identity_id
+      ORDER BY p.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
   return rows;
 };
 

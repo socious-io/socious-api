@@ -1,5 +1,6 @@
 import {Policy, ConsecutiveBreaker} from 'cockatiel';
 import Debug from 'debug';
+import Config from '../config.js';
 import {readFile} from 'fs/promises';
 const debug = Debug('socious-api:circuitbreaker');
 import {NotMatchedError} from './errors.js';
@@ -51,7 +52,7 @@ export class DBCircuitBreaker {
   }
 
   async getQueryFromFile(name) {
-    if (this.cache[name]) return this.cache[name];
+    if (this.cache[name] && Config.debug === false) return this.cache[name];
 
     const query = await readFile(`src/sql/${name}.sql`);
     this.cache[name] = query.toString();

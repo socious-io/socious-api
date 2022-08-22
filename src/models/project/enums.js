@@ -13,10 +13,10 @@ export const ProjectTypes = {
 };
 
 export const RemotePreferenceTypes = {
-  ONSITE: 'ONSITE', 
-  REMOOTE: 'REMOOTE', 
-  HYBRID: 'HYBRID'
-}
+  ONSITE: 'ONSITE',
+  REMOOTE: 'REMOOTE',
+  HYBRID: 'HYBRID',
+};
 
 export const StatusTypes = {
   DRAFT: 'DRAFT',

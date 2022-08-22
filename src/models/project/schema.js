@@ -1,10 +1,17 @@
 import Joi from 'joi';
-import {PaymentTypes, PaymentSchemeTypes, StatusTypes, RemotePreferenceTypes} from './enums.js';
+import {
+  PaymentTypes,
+  PaymentSchemeTypes,
+  StatusTypes,
+  RemotePreferenceTypes,
+} from './enums.js';
 
 export const upsertSchem = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
-  remote_preference: Joi.string().valid(...Object.values(RemotePreferenceTypes)).required(),
+  remote_preference: Joi.string()
+    .valid(...Object.values(RemotePreferenceTypes))
+    .required(),
   payment_type: Joi.string().valid(...Object.values(PaymentTypes)),
   payment_scheme: Joi.string().valid(...Object.values(PaymentSchemeTypes)),
   payment_currency: Joi.string().allow(null),

@@ -10,3 +10,8 @@ export const upsertSchem = Joi.object({
   identity_tags: Joi.array().items(Joi.string()),
   media: Joi.string().uuid(),
 });
+
+export const upsertCommentSchem = Joi.object({
+  content: Joi.string().required(),
+  reply_id: Joi.string().uuid(),
+});

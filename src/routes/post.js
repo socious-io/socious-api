@@ -134,3 +134,146 @@ router.delete('/:id', identity, async (ctx) => {
   await Post.remove(ctx.params.id);
   ctx.body = {message: 'success'};
 });
+
+/**
+ * @api {get} /posts/:id/comments Comments
+ * @apiGroup Post.Comment
+ * @apiName Comments
+ * @apiVersion 2.0.0
+ * @apiDescription comments
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ *
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} reply_id
+ * @apiSuccess (200) {Boolean} replied
+ * @apiSuccess (200) {String} identity_id
+ * @apiSuccess (200) {String} identity_type
+ * @apiSuccess (200) {Object} identity_meta
+ *
+ */
+router.get('/:id/comments', paginate, async (ctx) => {
+  ctx.body = await Post.comments(ctx.params.id, ctx.paginate);
+});
+
+/**
+ * @api {post} /posts/comments/:id Replied Comments
+ * @apiGroup Post.Comment
+ * @apiName RepliedComments
+ * @apiVersion 2.0.0
+ * @apiDescription comments
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id comment id
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ *
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} reply_id
+ * @apiSuccess (200) {Boolean} replied
+ * @apiSuccess (200) {String} identity_id
+ * @apiSuccess (200) {String} identity_type
+ * @apiSuccess (200) {Object} identity_meta
+ *
+ */
+router.get('/comments/:id', paginate, async (ctx) => {
+  ctx.body = await Post.commentsReplies(ctx.params.id, ctx.paginate);
+});
+
+/**
+ * @api {delete} /posts/comments/:id Delete
+ * @apiGroup Post.Comment
+ * @apiName Delete
+ * @apiVersion 2.0.0
+ * @apiDescription delete comment
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id comment
+ *
+ * @apiSuccess (200) {Object} success
+ */
+router.delete('/comments/:id', identity, async (ctx) => {
+  await Post.removeComment(ctx.params.id, ctx.identity.id);
+  ctx.body = {message: 'success'};
+});
+
+/**
+ * @api {post} /posts/:id/comments New Comment
+ * @apiGroup Post.Comment
+ * @apiName NewComment
+ * @apiVersion 2.0.0
+ * @apiDescription new comment
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ *
+ * @apiBody {String} content
+ * @apiBody {String} reply_id comment replied id
+ *
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} reply_id
+ * @apiSuccess (200) {Boolean} replied
+ * @apiSuccess (200) {String} identity_id
+ * @apiSuccess (200) {String} identity_type
+ * @apiSuccess (200) {Object} identity_meta
+ *
+ */
+router.post('/:id/comments', identity, async (ctx) => {
+  ctx.body = await Post.newComment(
+    ctx.params.id,
+    ctx.identity.id,
+    ctx.request.body,
+  );
+});
+
+/**
+ * @api {put} /posts/comments/:id Update Comment
+ * @apiGroup Post.Comment
+ * @apiName UpdateComment
+ * @apiVersion 2.0.0
+ * @apiDescription update comment
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id comment id
+ *
+ * @apiBody {String} content
+ *
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} reply_id
+ * @apiSuccess (200) {Boolean} replied
+ * @apiSuccess (200) {String} identity_id
+ * @apiSuccess (200) {String} identity_type
+ * @apiSuccess (200) {Object} identity_meta
+ *
+ */
+router.put('/comments/:id', identity, async (ctx) => {
+  ctx.body = await Post.updateComment(
+    ctx.params.id,
+    ctx.identity.id,
+    ctx.request.body,
+  );
+});

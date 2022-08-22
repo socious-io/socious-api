@@ -27,7 +27,7 @@ const signin = (user) => {
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
-  return `${email.replace(/@.*$/, '')}${rand}`;
+  return `${email.replace(/@.*$/, '').slice(0, 20)}${rand}`;
 };
 
 export const hashPassword = (salt) => {

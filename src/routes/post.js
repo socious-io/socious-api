@@ -16,7 +16,7 @@ export const router = new Router();
  * @apiSuccess (200) {String} content
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
- * @apiSuccess (200) {String} likes liked count
+ * @apiSuccess (200) {Number} likes liked count
  * @apiSuccess (200) {Boolean} liked current user liked
  * @apiSuccess (200) {String} identity_id
  * @apiSuccess (200) {String} identity_type
@@ -45,7 +45,7 @@ router.get('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Number} total_count
  * @apiSuccess (200) {Object[]} items
  * @apiSuccess (200) {String} items.id
- * @apiSuccess (200) {String} items.likes liked count
+ * @apiSuccess (200) {Number} items.likes liked count
  * @apiSuccess (200) {Boolean} items.liked current user liked
  * @apiSuccess (200) {String} items.content
  * @apiSuccess (200) {Datetime} items.created_at

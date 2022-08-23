@@ -14,7 +14,6 @@ export const create = async (identityId, body) => {
         RETURNING *
     `);
     const chat = rows[0];
-    await addParticipant(chat.id, identityId, identityId, MemberTypes.ADMIN);
     await Promise.all(
       body.participants.map((p) => addParticipant(chat.id, p, identityId)),
     );

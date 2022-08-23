@@ -16,15 +16,18 @@ export const router = new Router();
  * @apiSuccess (200) {String} content
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String} likes liked count
+ * @apiSuccess (200) {Boolean} liked current user liked
  * @apiSuccess (200) {String} identity_id
  * @apiSuccess (200) {String} identity_type
  * @apiSuccess (200) {Object} identity_meta
+ * @apiSuccess (200) {String[]} media
  * @apiSuccess (200) {String[]} hashtags
  * @apiSuccess (200) {String[]} causes_tags
  * @apiSuccess (200) {String[]} identity_tags
  */
-router.get('/:id', async (ctx) => {
-  ctx.body = await Post.get(ctx.params.id);
+router.get('/:id', identity, async (ctx) => {
+  ctx.body = await Post.get(ctx.params.id, ctx.identity.id);
 });
 
 /**
@@ -42,18 +45,21 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Number} total_count
  * @apiSuccess (200) {Object[]} items
  * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.likes liked count
+ * @apiSuccess (200) {Boolean} items.liked current user liked
  * @apiSuccess (200) {String} items.content
  * @apiSuccess (200) {Datetime} items.created_at
  * @apiSuccess (200) {Datetime} items.updated_at
  * @apiSuccess (200) {String} items.identity_id
  * @apiSuccess (200) {String} items.identity_type
  * @apiSuccess (200) {Object} items.identity_meta
+ * @apiSuccess (200) {String[]} items.media
  * @apiSuccess (200) {String[]} items.hashtags
  * @apiSuccess (200) {String[]} items.causes_tags
  * @apiSuccess (200) {String[]} items.identity_tags
  */
-router.get('/', paginate, async (ctx) => {
-  ctx.body = await Post.all(ctx.paginate);
+router.get('/', paginate, identity, async (ctx) => {
+  ctx.body = await Post.all(ctx.identity.id, ctx.paginate);
 });
 
 /**
@@ -64,7 +70,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription create new post
  *
  * @apiBody {String} content
- * @apiBody {String} image
+ * @apiBody {String[]} media
  * @apiBody {String[]} hashtags
  * @apiBody {String[]} causes_tags
  * @apiBody {String[]} identity_tags
@@ -74,6 +80,7 @@ router.get('/', paginate, async (ctx) => {
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} content
+ * @apiSuccess (200) {String[]} media
  * @apiSuccess (200) {String[]} hashtags
  * @apiSuccess (200) {String[]} causes_tags
  * @apiSuccess (200) {String[]} identity_tags
@@ -94,7 +101,7 @@ router.post('/', identity, async (ctx) => {
  *
  * @apiBody {String} content
  * @apiBody {String[]} hashtags
- * @apiBody {String} image
+ * @apiBody {String[]} media
  * @apiBody {String[]} causes_tags
  * @apiBody {String[]} identity_tags
  *
@@ -107,6 +114,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess (200) {String[]} hashtags
  * @apiSuccess (200) {String[]} causes_tags
  * @apiSuccess (200) {String[]} identity_tags
+ * @apiSuccess (200) {String[]} media
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
@@ -276,4 +284,40 @@ router.put('/comments/:id', identity, async (ctx) => {
     ctx.identity.id,
     ctx.request.body,
   );
+});
+
+/**
+ * @api {put} /posts/:id/like Like Post
+ * @apiGroup Post
+ * @apiName LikePost
+ * @apiVersion 2.0.0
+ * @apiDescription like a post
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ *
+ *
+ */
+router.put('/:id/like', identity, async (ctx) => {
+  ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
+});
+
+/**
+ * @api {delete} /posts/:id/like UnLike Post
+ * @apiGroup Post
+ * @apiName UnLikePost
+ * @apiVersion 2.0.0
+ * @apiDescription unlike liked post
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ *
+ *
+ *
+ */
+router.delete('/:id/like', identity, async (ctx) => {
+  await Post.unlike(ctx.params.id, ctx.identity.id);
+  ctx.body = {message: 'success'};
 });

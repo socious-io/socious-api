@@ -12,8 +12,8 @@ export const insert = async (identity_id, body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags, image) 
-        VALUES (${body.content}, ${identity_id}, ${body.causes_tags}, ${body.hashtags}, ${body.identity_tags}, ${body.image})
+      INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags, media) 
+        VALUES (${body.content}, ${identity_id}, ${body.causes_tags}, ${body.hashtags}, ${body.identity_tags}, ${body.media})
         RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
     );
     return rows[0];
@@ -35,7 +35,7 @@ export const update = async (id, body) => {
         causes_tags=${body.causes_tags},
         hashtags=${body.hashtags},
         identity_tags=${body.identity_tags},
-        image=${body.image}
+        media=${body.media}
       WHERE id=${id} RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
     );
     return rows[0];

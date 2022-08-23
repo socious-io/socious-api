@@ -8,7 +8,7 @@ export const upsertSchem = Joi.object({
     .required(),
   hashtags: Joi.array().items(Joi.string()),
   identity_tags: Joi.array().items(Joi.string()),
-  media: Joi.string().uuid(),
+  media: Joi.array().max(10).items(Joi.string().uuid()),
 });
 
 export const upsertCommentSchem = Joi.object({

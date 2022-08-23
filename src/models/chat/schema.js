@@ -18,3 +18,8 @@ export const updateChatSchem = Joi.object({
   description: Joi.string(),
   type: Joi.string().valid(...Object.values(Types)),
 });
+
+export const messageUpsertSchem = Joi.object({
+  text: Joi.string().required(),
+  media: Joi.string().uuid(),
+});

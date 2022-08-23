@@ -332,7 +332,7 @@ router.post('/:id/messages', identity, async (ctx) => {
   ctx.body = await Chat.newMessage(
     ctx.params.id,
     ctx.identity.id,
-    ctx.request.body.text,
+    ctx.request.body,
   );
 
   const participants = await Chat.miniParticipants(ctx.params.id);
@@ -362,6 +362,7 @@ router.post('/:id/messages', identity, async (ctx) => {
  * @apiParam {String} message_id
  *
  * @apiBody {String} text
+ * @apiBody {String} media media ref id
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} reply_id
@@ -379,7 +380,7 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
   ctx.body = await Chat.newMessage(
     ctx.params.id,
     ctx.identity.id,
-    ctx.request.body.text,
+    ctx.request.body,
     ctx.params.message_id,
   );
 
@@ -445,6 +446,7 @@ router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
  * @apiParam {String} message_id
  *
  * @apiBody {String} text
+ * @apiBody {String} media media ref id
  *
  * @apiSuccess (200) {String} id
  * @apiSuccess (200) {String} reply_id
@@ -462,7 +464,7 @@ router.put('/:id/messages/:message_id', identity, async (ctx) => {
   ctx.body = await Chat.editMessage(
     ctx.params.message_id,
     ctx.identity.id,
-    ctx.request.body.text,
+    ctx.request.body,
   );
 });
 

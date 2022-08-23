@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {newChatSchem, updateChatSchem} from './schema.js';
+import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
 import {EntryError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
 
@@ -106,11 +106,12 @@ export const removeParticipant = async (chatId, participantId) => {
   }
 };
 
-export const newMessage = async (chatId, identityId, text, replyId = null) => {
+export const newMessage = async (chatId, identityId, body, replyId = null) => {
+  await messageUpsertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
-    INSERT INTO messages (identity_id, chat_id, text, reply_id)
-    VALUES (${identityId}, ${chatId}, ${text}, ${replyId}) RETURNING *
+    INSERT INTO messages (identity_id, chat_id, text, reply_id, media)
+    VALUES (${identityId}, ${chatId}, ${body.text}, ${replyId}, ${body.media}) RETURNING *
   `);
     return rows[0];
   } catch (err) {
@@ -118,11 +119,13 @@ export const newMessage = async (chatId, identityId, text, replyId = null) => {
   }
 };
 
-export const editMessage = async (id, identityId, text) => {
+export const editMessage = async (id, identityId, body) => {
+  await messageUpsertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
     UPDATE messages 
-      SET text=${text}
+      SET text=${body.text},
+      media=${body.media}
     WHERE id=${id} AND identity_id=${identityId} 
     RETURNING *
   `);

@@ -170,11 +170,16 @@ jobs:
           docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
 
       - name: Docker run
-        ## docker run -p 8000:8000 -d -v "/etc/socious-api/env:/.env" --restart always --name socious-api ${{ steps.meta.outputs.tags }}
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
           docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+
+      - name: Docker run workers
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
+          docker run -d --restart always -p 5061:5061 -h socious-workers -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }}
 
   deploy-doc:
     needs: build-dev

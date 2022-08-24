@@ -37,10 +37,10 @@ $ npm run test:cov
 
 ```bash
 # set up commit hooks
-$ npm run prepare
+$ npx husky install
 
 # create new migration
-$ npm run new-migration descriptive-name && npx prettier --write migrations/*.js
+$ npm run migrate:new descriptive-name && npx prettier --write migrations/*.js
 
 # run pending migrations locally
 $ npm run migrate

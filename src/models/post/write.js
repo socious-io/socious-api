@@ -44,6 +44,20 @@ export const update = async (id, body) => {
   }
 };
 
+export const share = async (id, identityId) => {
+  try {
+    const {rows} = await app.db.query(
+      sql`
+      INSERT INTO posts (shared_id, identity_id)
+        VALUES (${id}, ${identityId})
+        RETURNING *`,
+    );
+    return rows[0];
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};
+
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM posts WHERE id=${id}`);
 };

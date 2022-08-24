@@ -321,3 +321,20 @@ router.delete('/:id/like', identity, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id);
   ctx.body = {message: 'success'};
 });
+
+/**
+ * @api {post} /posts/:id/share Share
+ * @apiGroup Post
+ * @apiName Share
+ * @apiVersion 2.0.0
+ * @apiDescription like a post
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ *
+ *
+ */
+router.post('/:id/share', identity, async (ctx) => {
+  ctx.body = await Post.share(ctx.params.id, ctx.identity.id);
+});

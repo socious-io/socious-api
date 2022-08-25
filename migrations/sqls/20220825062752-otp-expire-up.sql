@@ -1,1 +1,1 @@
-ALTER TABLE otps ALTER COLUMN expired_at SET DEFAULT now() + INTERVAL '2 minute';
+ALTER TABLE otps ALTER COLUMN expired_at SET DEFAULT now() + INTERVAL '10 minute';

@@ -137,7 +137,7 @@ jobs:
 
   deploy-dev:
     needs: build
-    name: Deploy
+    name: Deploy to Dev
     if: github.ref == 'refs/heads/main'
     runs-on: ["backend-dev"]
     steps:
@@ -213,8 +213,8 @@ jobs:
 
   deploy-prod:
     needs: build
-    name: Deploy
-    if: github.ref == 'refs/heads/main'
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/production'
     runs-on: ["backend-prod"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

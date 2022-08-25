@@ -210,3 +210,49 @@ jobs:
           docker rm -fv socious-apidoc-openapi
           docker run -v "/usr/local/doc/socious-api/apidoc:/usr/src/app/apidoc" --name socious-apidoc ${{ steps.meta.outputs.tags }} npm run apidoc
           docker run -v "/usr/local/doc/socious-api:/usr/src/app/apidoc" --name socious-apidoc-openapi ${{ steps.meta.outputs.tags }} npm run apidoc:openapi
+
+  deploy-prod:
+    needs: build
+    name: Deploy
+    if: github.ref == 'refs/heads/main'
+    runs-on: ["backend-prod"]
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run DB and NATS
+        run: docker-compose up -d
+
+      - name: Run DB migrations
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker rm -fv socious-migrations
+          docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+
+      - name: Docker run
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
+          docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+
+      - name: Docker run workers
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
+          docker run -d --restart always -h socious-workers -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers

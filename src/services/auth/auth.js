@@ -90,7 +90,7 @@ export const register = async (body) => {
     to: user.email,
     subject: 'Verify your account',
     template: 'templates/emails/active_user.html',
-    kwargs: {name: 'test', code},
+    kwargs: {name: `${user.first_name} ${user.last_name}`, code},
   });
   return {access_token: signin(user)};
 };
@@ -115,7 +115,7 @@ export const sendOTP = async (body) => {
       to: user.email,
       subject: 'OTP',
       template: 'templates/emails/otp.html',
-      kwargs: {name: 'test', code},
+      kwargs: {name: `${user.first_name} ${user.last_name}`, code},
     });
   }
 };

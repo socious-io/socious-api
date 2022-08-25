@@ -181,7 +181,6 @@ export const directChangePassword = async (user, body) => {
 
 export const changePassword = async (user, body) => {
   await changePasswordSchem.validateAsync(body);
-  console.log(body, '-----------', user.password);
 
   const matched = await comparePassword(body.current_password, user.password);
   if (!matched) throw new NotMatchedError();

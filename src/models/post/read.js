@@ -12,6 +12,7 @@ export const all = async (currentIdentity, {offset = 0, limit = 10}) => {
         WHEN posts.shared_id IS NOT NULL THEN sp.content
         ELSE posts.content
       END) AS content,
+      array_to_json(posts.causes_tags) as causes_tags,
       EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
       (SELECT ARRAY(SELECT url FROM media m WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media))) as media,
       row_to_json(sp.*) AS shared_post,
@@ -31,6 +32,7 @@ export const get = async (id, currentIdentity) => {
       WHEN posts.shared_id IS NOT NULL THEN sp.content
       ELSE posts.content
     END) AS content,
+    array_to_json(posts.causes_tags) as causes_tags,
     i.type AS identity_type, i.meta AS identity_meta, 
     EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
     (SELECT ARRAY(SELECT url FROM media m WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media))) as media,

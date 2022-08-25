@@ -74,6 +74,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node --from=modules /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=development /usr/src/app/src ./src
 COPY --chown=node:node --from=development /usr/src/app/serve.js .
+COPY --chown=node:node --from=development /usr/src/app/templates ./templates
 # The package.json file is needed for the `"type": "module"` statement at least
 COPY --chown=node:node --from=development /usr/src/app/package.json .
 # Also bring in migrations so we can run them on deploy

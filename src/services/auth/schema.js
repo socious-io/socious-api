@@ -34,12 +34,12 @@ export const newOTPSchem = Joi.alternatives().try(
 
 export const confirmOTPSchem = Joi.alternatives().try(
   Joi.object().keys({
-    code: Joi.string().min(6).max(6),
+    code: Joi.string().min(4).max(4),
     phone: Joi.string().regex(phonePattern).required(),
     email: Joi.string().email(),
   }),
   Joi.object().keys({
-    code: Joi.string().min(6).max(6),
+    code: Joi.string().min(4).max(4),
     phone: Joi.string().regex(phonePattern),
     email: Joi.string().email().required(),
   }),

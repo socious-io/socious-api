@@ -5,11 +5,11 @@ import {identity} from '../utils/requests.js';
 export const router = new Router();
 
 /**
- * @api {get} /identities Get Current
+ * @api {get} /identities Get Allowed
  * @apiGroup Identity
- * @apiName Current
+ * @apiName Allowed
  * @apiVersion 2.0.0
- * @apiDescription get others identity
+ * @apiDescription get all identities the current authentication can access
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
@@ -22,11 +22,11 @@ router.get('/', identity, async (ctx) => {
 });
 
 /**
- * @api {get} /identities/:id Get Others
+ * @api {get} /identities/:id Get
  * @apiGroup Identity
- * @apiName GetOthers
+ * @apiName Get
  * @apiVersion 2.0.0
- * @apiDescription get others identity
+ * @apiDescription get identity
  *
  * @apiParam {String} id
  *

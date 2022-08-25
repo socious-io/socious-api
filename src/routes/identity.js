@@ -34,8 +34,8 @@ router.get('/', identity, async (ctx) => {
  * @apiSuccess (200) {Object} type (users, organizations)
  * @apiSuccess (200) {Object} meta
  */
-router.get('/:id', async (ctx) => {
-  ctx.body = await Identity.get(ctx.params.id);
+router.get('/:id', identity, async (ctx) => {
+  ctx.body = await Identity.get(ctx.params.id, ctx.identity.id);
 });
 
 /**

@@ -82,6 +82,11 @@ export class DBCircuitBreaker {
         query: (...args) => {
           return this.policy.execute(() => client.query(...args));
         },
+        async get(...args) {
+          const {rows} = await this.query(...args);
+          if (rows.length < 1) throw new NotMatchedError();
+          return rows[0];
+        },
       });
     } finally {
       client.release();

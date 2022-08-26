@@ -158,7 +158,7 @@ export const readMessage = async (id, identityId) => {
     const {rows} = await app.db.query(sql`
       UPDATE chats_participants
       SET last_read_id=${id}, 
-        last_read_at=now(), 
+        last_read_at=${selected.created_at}, 
         all_read=${selected.chat_updated_at <= selected.created_at}
       WHERE chat_id=${selected.chat_id} AND identity_id=${identityId}
       RETURNING *

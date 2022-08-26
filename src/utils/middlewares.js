@@ -34,7 +34,7 @@ export const loginRequired = async (ctx, next) => {
 
   if (!token) throw new UnauthorizedError();
   try {
-    const {id} = Auth.verifyToken(token);
+    const {id} = await Auth.verifyToken(token);
     ctx.user = await User.get(id);
   } catch {
     throw new UnauthorizedError();
@@ -56,7 +56,7 @@ export const socketLoginRequired = async (socket, next) => {
   const token = socket.handshake.auth.token || socket.session.token;
   if (!token) return next(new UnauthorizedError());
   try {
-    const {id} = Auth.verifyToken(token);
+    const {id} = await Auth.verifyToken(token);
     // TODO: we can fetch user if need
     // socket.user = await User.get(id);
     socket.userId = id;

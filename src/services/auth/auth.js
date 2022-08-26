@@ -1,12 +1,11 @@
-import Config from '../../config.js';
 import User from '../../models/user/index.js';
 import * as bcrypt from 'bcrypt';
+import {signin} from './jwt.js';
 import {
   AuthorizationError,
   NotMatchedError,
   PermissionError,
 } from '../../utils/errors.js';
-import jwt from 'jsonwebtoken';
 import {
   authSchem,
   registerSchem,
@@ -18,12 +17,6 @@ import {
 } from './schema.js';
 import publish from '../jobs/publish.js';
 import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
-
-const signin = (user) => {
-  return jwt.sign({id: user.id}, Config.secret, {
-    expiresIn: Config.jwtExpireTime,
-  });
-};
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
@@ -51,7 +44,7 @@ export const basic = async (body) => {
   if (user.status === User.StatusType.SUSPEND)
     throw new AuthorizationError('User has been suspended!');
 
-  return {access_token: signin(user)};
+  return signin(user.id);
 };
 
 export const register = async (body) => {
@@ -92,7 +85,7 @@ export const register = async (body) => {
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
   });
-  return {access_token: signin(user)};
+  return signin(user.id);
 };
 
 export const sendOTP = async (body) => {

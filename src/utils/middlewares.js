@@ -1,8 +1,7 @@
 import compose from 'koa-compose';
-import jwt from 'jsonwebtoken';
+import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
-import config from '../config.js';
 import {UnauthorizedError} from './errors.js';
 
 const throwHandler = async (ctx, next) => {
@@ -35,7 +34,7 @@ export const loginRequired = async (ctx, next) => {
 
   if (!token) throw new UnauthorizedError();
   try {
-    const {id} = jwt.verify(token, config.secret);
+    const {id} = Auth.verifyToken(token);
     ctx.user = await User.get(id);
   } catch {
     throw new UnauthorizedError();
@@ -57,7 +56,7 @@ export const socketLoginRequired = async (socket, next) => {
   const token = socket.handshake.auth.token || socket.session.token;
   if (!token) return next(new UnauthorizedError());
   try {
-    const {id} = jwt.verify(token, config.secret);
+    const {id} = Auth.verifyToken(token);
     // TODO: we can fetch user if need
     // socket.user = await User.get(id);
     socket.userId = id;

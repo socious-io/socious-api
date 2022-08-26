@@ -23,6 +23,22 @@ router.post('/login', async (ctx) => {
 });
 
 /**
+ * @api {get} /auth/refresh Refresh Token
+ * @apiGroup Auth
+ * @apiName Refresh
+ * @apiVersion 2.0.0
+ * @apiDescription Refresh jwt token would expire current refresh token
+ *
+ * @apiHeader {string} RefreshToken
+ *
+ * @apiSuccess (200) {Object} access_token
+ */
+router.get('/refresh', async (ctx) => {
+  const {refreshtoken} = ctx.request.header;
+  ctx.body = await Auth.refreshToken(refreshtoken, true);
+});
+
+/**
  * @api {post} /auth/web/login Login with session
  * @apiGroup Auth
  * @apiName Login with session

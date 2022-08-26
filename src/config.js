@@ -5,6 +5,7 @@ export default {
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
   jwtExpireTime: '2h',
+  jwtRefreshExpireTime: '30d',
   mail: {
     sendgrid: {
       from: {

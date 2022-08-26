@@ -35,7 +35,23 @@ router.post('/login', async (ctx) => {
  */
 router.get('/refresh', async (ctx) => {
   const {refreshtoken} = ctx.request.header;
-  ctx.body = await Auth.refreshToken(refreshtoken, true);
+  ctx.body = await Auth.refreshToken(refreshtoken);
+});
+
+/**
+ * @api {delete} /auth/logout Logout 
+ * @apiGroup Auth
+ * @apiName Logout
+ * @apiVersion 2.0.0
+ * @apiDescription expire the refresh token
+ *
+ * @apiHeader {string} RefreshToken
+ *
+ */
+ router.delete('/logout', async (ctx) => {
+  const {refreshtoken} = ctx.request.header;
+  await Auth.expireRefreshToken(refreshtoken);
+  ctx.body = {message: 'success'}
 });
 
 /**

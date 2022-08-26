@@ -6,6 +6,33 @@ import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
 /**
+ * @api {get} /chats Get summary
+ * @apiGroup Chat
+ * @apiName Get summary
+ * @apiVersion 2.0.0
+ * @apiDescription get chats with additional information
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.name
+ * @apiSuccess (200) {String} items.description
+ * @apiSuccess (200) {String} items.type
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ */
+router.get('/summary', identity, paginate, async (ctx) => {
+  ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate);
+});
+
+/**
  * @api {get} /chats/:id Get
  * @apiGroup Chat
  * @apiName Get

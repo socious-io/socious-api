@@ -32,12 +32,17 @@ export const loginRequired = async (ctx, next) => {
     ? authorization?.replace('Bearer ', '')
     : ctx.session.token;
 
-  if (!token) throw new UnauthorizedError();
+  if (!token) throw new UnauthorizedError('No authentication');
+  let id;
   try {
-    const {id} = await Auth.verifyToken(token);
+    {id} = await Auth.verifyToken(token);
+  } catch {
+    throw new UnauthorizedError('Invalid token');
+  }
+  try {
     ctx.user = await User.get(id);
   } catch {
-    throw new UnauthorizedError();
+    throw new UnauthorizedError('Unknown user');
   }
 
   await next();

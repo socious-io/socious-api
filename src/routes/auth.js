@@ -131,6 +131,32 @@ router.get('/otp/confirm', async (ctx) => {
   });
 });
 
+
+/**
+ * @api {get} /auth/otp/confirm/web Confirm OTP Web
+ * @apiGroup Auth
+ * @apiName Confirm OTP Web
+ * @apiVersion 2.0.0
+ * @apiDescription confirm otp with code and create session
+ *
+ * @apiQuery {Number} code
+ * @apiQuery {String} email Mandatory if phone is empty
+ * @apiQuery {String} phone Mandatory if email is empty
+ *
+ */
+ router.get('/otp/confirm/web', async (ctx) => {
+  
+  const response = await Auth.confirmOTP({
+    code: ctx.query.code,
+    email: ctx.query.email,
+    phone: ctx.query.phone,
+  });
+
+  ctx.session.token = response.access_token;
+  ctx.body = {message: 'success'};  
+});
+
+
 /**
  * @api {post} /auth/forget-password Forget Password
  * @apiGroup Auth

@@ -129,7 +129,7 @@ export const confirmOTP = async (body) => {
   if (otp.purpose === OTPPurposeType.FORGET_PASSWORD)
     await User.expirePassword(user.id);
 
-  return {access_token: await signin({id: otp.user_id})};
+  return signin(otp.user_id);
 };
 
 export const forgetPassword = async (body) => {

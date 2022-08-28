@@ -323,6 +323,48 @@ router.delete('/:id/like', identity, async (ctx) => {
 });
 
 /**
+ * @api {put} /posts/:id/comments/:comment_id/like Like Comment
+ * @apiGroup Post.Comment
+ * @apiName LikeComment
+ * @apiVersion 2.0.0
+ * @apiDescription like a comment
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ * @apiParam {String} comment_id comment id
+ *
+ *
+ */
+router.put('/:id/comments/:comment_id/like', identity, async (ctx) => {
+  ctx.body = await Post.like(
+    ctx.params.id,
+    ctx.identity.id,
+    ctx.params.comment_id,
+  );
+});
+
+/**
+ * @api {delete} /posts/:id/comments/:comment_id/like UnLike Comment
+ * @apiGroup Post.Comment
+ * @apiName UnLikeComment
+ * @apiVersion 2.0.0
+ * @apiDescription unlike liked post
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiParam {String} id post id
+ * @apiParam {String} comment_id comment id
+ *
+ *
+ *
+ */
+router.delete('/:id/comments/:comment_id/like', identity, async (ctx) => {
+  await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id);
+  ctx.body = {message: 'success'};
+});
+
+/**
  * @api {post} /posts/:id/share Share
  * @apiGroup Post
  * @apiName Share

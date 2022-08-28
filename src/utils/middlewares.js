@@ -35,7 +35,7 @@ export const loginRequired = async (ctx, next) => {
   if (!token) throw new UnauthorizedError('No authentication');
   let id;
   try {
-    {id} = await Auth.verifyToken(token);
+    id = (await Auth.verifyToken(token)).id;
   } catch {
     throw new UnauthorizedError('Invalid token');
   }

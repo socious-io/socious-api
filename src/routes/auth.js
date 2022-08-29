@@ -50,7 +50,8 @@ router.get('/refresh', async (ctx) => {
  */
 router.delete('/logout', async (ctx) => {
   const {refreshtoken} = ctx.request.header;
-  await Auth.expireRefreshToken(refreshtoken);
+  if (refreshtoken) await Auth.expireRefreshToken(refreshtoken);
+  delete ctx.session.token;
   ctx.body = {message: 'success'};
 });
 

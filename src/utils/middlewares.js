@@ -2,7 +2,7 @@ import compose from 'koa-compose';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
-import {UnauthorizedError} from './errors.js';
+import {UnauthorizedError, TooManyRequestsError} from './errors.js';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -69,4 +69,52 @@ export const socketLoginRequired = async (socket, next) => {
     return next(new UnauthorizedError());
   }
   return next();
+};
+
+const retryBlockerData = {};
+/**
+ * this would work on all routes that use this middlware would block and send 429 http error
+ * after retryCount exceed would refresh ip after reset timer
+ */
+export const retryBlocker = async (ctx, next) => {
+  let error;
+  // 30 Minutes to reset retry
+  const resetTimer = 30 * 60 * 1000;
+  // 2 Hours block after retry count exceed
+  const blockerTimer = 2 * 60 * 60 * 1000;
+  // would block after this count exceed
+  const retryCount = 20;
+  // Note: This must be overide on Nginx
+  const ip = ctx.request.header['x-real-ip'] || ctx.request.ip;
+  const now = new Date();
+
+  if (
+    retryBlockerData[ip]?.blocked <
+    new Date(now.getTime() + blockerTimer).getTime()
+  )
+    throw new TooManyRequestsError();
+
+  if (
+    retryBlockerData[ip]?.blocked ||
+    retryBlockerData[ip]?.reset < now.getTime()
+  )
+    delete retryBlockerData[ip];
+
+  try {
+    await next();
+  } catch (err) {
+    error = err;
+  }
+
+  if (!retryBlockerData[ip]?.retry) {
+    retryBlockerData[ip] = {};
+    retryBlockerData[ip].retry = 0;
+  }
+  retryBlockerData[ip].reset = now.getTime() + resetTimer;
+  retryBlockerData[ip].retry++;
+
+  if (retryBlockerData[ip].retry > retryCount)
+    retryBlockerData[ip].blocked = now.getTime() + blockerTimer;
+
+  if (error) throw error;
 };

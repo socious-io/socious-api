@@ -2,7 +2,7 @@ import compose from 'koa-compose';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
-import {UnauthorizedError, ManyRequestsError} from './errors.js';
+import {UnauthorizedError, TooManyRequestsError} from './errors.js';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -89,13 +89,13 @@ export const retryBlocker = async (ctx, next) => {
   const now = new Date();
 
   if (
-    retryBlockerData[ip]?.bloked <
+    retryBlockerData[ip]?.blocked <
     new Date(now.getTime() + blockerTimer).getTime()
   )
-    throw new ManyRequestsError();
+    throw new TooManyRequestsError();
 
   if (
-    retryBlockerData[ip]?.bloked ||
+    retryBlockerData[ip]?.blocked ||
     retryBlockerData[ip]?.reset < now.getTime()
   )
     delete retryBlockerData[ip];
@@ -114,7 +114,7 @@ export const retryBlocker = async (ctx, next) => {
   retryBlockerData[ip].retry++;
 
   if (retryBlockerData[ip].retry > retryCount)
-    retryBlockerData[ip].bloked = now.getTime() + blockerTimer;
+    retryBlockerData[ip].blocked = now.getTime() + blockerTimer;
 
   if (error) throw error;
 };

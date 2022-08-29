@@ -22,7 +22,7 @@ export class UnauthorizedError extends Error {
   status = 401;
 }
 
-export class ManyRequestsError extends Error {
-  message = 'many requests';
+export class TooManyRequestsError extends Error {
+  message = 'too many requests';
   status = 429;
 }

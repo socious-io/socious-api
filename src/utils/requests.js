@@ -1,5 +1,4 @@
 import Identity from '../models/identity/index.js';
-import {ManyRequestsError} from './errors.js';
 
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;

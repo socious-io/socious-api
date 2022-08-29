@@ -2,7 +2,7 @@ import compose from 'koa-compose';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
-import {UnauthorizedError} from './errors.js';
+import {UnauthorizedError, ManyRequestsError} from './errors.js';
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -64,4 +64,41 @@ export const socketLoginRequired = async (socket, next) => {
     return next(new UnauthorizedError());
   }
   return next();
+};
+
+const retryBlockerData = {};
+
+export const retryBlocker = async (ctx, next) => {
+  let error;
+  const blockerTimer = 2 * 60 * 60 * 1000;
+  const countBlockAfter = 10;
+  // Note: This must be overide on Nginx
+  const ip = ctx.request.header['x-real-ip'] || ctx.request.ip;
+  const now = new Date();
+
+  if (
+    retryBlockerData[ip]?.bloked <
+    new Date(now.getTime() + blockerTimer).getTime()
+  )
+    throw new ManyRequestsError();
+
+  if (retryBlockerData[ip]?.bloked) delete retryBlockerData[ip];
+
+  try {
+    await next();
+  } catch (err) {
+    error = err;
+  }
+
+  if (!retryBlockerData[ip]?.retry) {
+    retryBlockerData[ip] = {};
+    retryBlockerData[ip].retry = 0;
+  }
+
+  retryBlockerData[ip].retry++;
+
+  if (retryBlockerData[ip].retry > countBlockAfter)
+    retryBlockerData[ip].bloked = now.getTime() + blockerTimer;
+
+  if (error) throw error;
 };

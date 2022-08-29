@@ -27,9 +27,11 @@ import {router as search} from './routes/search.js';
 import {
   middlewares,
   loginRequired,
+  retryBlocker,
   socketSessions,
   socketLoginRequired,
 } from './utils/middlewares.js';
+
 import {Server as Socket} from 'socket.io';
 
 import config from './config.js';
@@ -76,7 +78,7 @@ app.use(session(config.session, app));
 
 const blueprint = new Router();
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
-blueprint.use('/auth', auth.routes(), auth.allowedMethods());
+blueprint.use('/auth', retryBlocker, auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
 blueprint.use(
   '/identities',

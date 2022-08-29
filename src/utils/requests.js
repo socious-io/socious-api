@@ -1,4 +1,5 @@
 import Identity from '../models/identity/index.js';
+import {ManyRequestsError} from './errors.js';
 
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;
@@ -27,7 +28,9 @@ export const paginate = async (ctx, next) => {
 };
 
 export const identity = async (ctx, next) => {
-  const {currentidentity} = ctx.request.header;
+  const currentidentity =
+    ctx.request.header['currentidentity'] ||
+    ctx.request.header['current-identity'];
   const identityId = currentidentity || ctx.session.current_identity;
 
   const identity = identityId

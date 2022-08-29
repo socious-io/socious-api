@@ -50,7 +50,8 @@ router.get('/refresh', async (ctx) => {
  */
 router.delete('/logout', async (ctx) => {
   const {refreshtoken} = ctx.request.header;
-  await Auth.expireRefreshToken(refreshtoken);
+  if (refreshtoken) await Auth.expireRefreshToken(refreshtoken);
+  delete ctx.session.token;
   ctx.body = {message: 'success'};
 });
 
@@ -131,7 +132,6 @@ router.get('/otp/confirm', async (ctx) => {
   });
 });
 
-
 /**
  * @api {get} /auth/otp/confirm/web Confirm OTP Web
  * @apiGroup Auth
@@ -144,8 +144,7 @@ router.get('/otp/confirm', async (ctx) => {
  * @apiQuery {String} phone Mandatory if email is empty
  *
  */
- router.get('/otp/confirm/web', async (ctx) => {
-  
+router.get('/otp/confirm/web', async (ctx) => {
   const response = await Auth.confirmOTP({
     code: ctx.query.code,
     email: ctx.query.email,
@@ -153,9 +152,8 @@ router.get('/otp/confirm', async (ctx) => {
   });
 
   ctx.session.token = response.access_token;
-  ctx.body = {message: 'success'};  
+  ctx.body = {message: 'success'};
 });
-
 
 /**
  * @api {post} /auth/forget-password Forget Password

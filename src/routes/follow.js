@@ -44,8 +44,6 @@ router.get('/followers', paginate, identity, async (ctx) => {
  *
  * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
  *
- * @apiSuccess (200) {Object}
- *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *

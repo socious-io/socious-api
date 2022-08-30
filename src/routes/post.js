@@ -163,7 +163,7 @@ router.delete('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Number} total_count
  * @apiSuccess (200) {Object[]} items
  * @apiSuccess (200) {String} id
- * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} content
  * @apiSuccess (200) {String} reply_id
  * @apiSuccess (200) {Boolean} replied
  * @apiSuccess (200) {String} identity_id
@@ -195,7 +195,7 @@ router.get('/:id/comments', paginate, async (ctx) => {
  * @apiSuccess (200) {Number} total_count
  * @apiSuccess (200) {Object[]} items
  * @apiSuccess (200) {String} id
- * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} content
  * @apiSuccess (200) {String} reply_id
  * @apiSuccess (200) {Boolean} replied
  * @apiSuccess (200) {String} identity_id
@@ -240,7 +240,7 @@ router.delete('/comments/:id', identity, async (ctx) => {
  * @apiBody {String} reply_id comment replied id
  *
  * @apiSuccess (200) {String} id
- * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} content
  * @apiSuccess (200) {String} reply_id
  * @apiSuccess (200) {Boolean} replied
  * @apiSuccess (200) {String} identity_id
@@ -270,7 +270,7 @@ router.post('/:id/comments', identity, async (ctx) => {
  * @apiBody {String} content
  *
  * @apiSuccess (200) {String} id
- * @apiSuccess (200) {String} conetnt
+ * @apiSuccess (200) {String} content
  * @apiSuccess (200) {String} reply_id
  * @apiSuccess (200) {Boolean} replied
  * @apiSuccess (200) {String} identity_id

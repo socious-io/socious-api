@@ -31,7 +31,7 @@ export const updateProfile = async (id, profile) => {
       avatar=${profile.avatar}, cover_image=${profile.cover_image}, phone=${profile.phone},
       bio=${profile.bio}, city=${profile.city}, address=${profile.address}, country=${profile.country},
       wallet_address=${profile.wallet_address}, social_causes=${profile.social_causes},
-      skills=${profile.skills}
+      skills=${profile.skills}, mission=${profile.mission}, language=${profile.language}
     WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {

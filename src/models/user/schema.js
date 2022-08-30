@@ -4,11 +4,15 @@ import {SocialCauses} from '../../utils/types.js';
 export const usernamePattern =
   /^(?=.{6,24}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
 
+export const languagePattern = /^[a-z][a-z](-[a-z][a-z])?$/;
+
 export const updateProfileSchem = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
   username: Joi.string().regex(usernamePattern).required(),
   bio: Joi.string(),
+  mission: Joi.string(),
+  language: Joi.string().regex(languagePattern),
   city: Joi.string(),
   address: Joi.string(),
   country: Joi.string().min(2).max(3),

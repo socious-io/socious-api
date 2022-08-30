@@ -1,13 +1,11 @@
-import { config } from 'dotenv';
+import {config} from 'dotenv';
 
-const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env'
+const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env';
 
-config({path: envFile})
-
-
+config({path: envFile});
 
 export default {
-  env: process.env.ENV,
+  env: process.env.ENV || 'development',
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
@@ -39,7 +37,7 @@ export default {
     port: process.env.PGPORT,
     db: process.env.PGDATABASE,
     user: process.env.PGUSER,
-    password: process.env.PGPASSWORD
+    password: process.env.PGPASSWORD,
   },
   nats: {
     servers: process.env.NATS_HOSTS.split(','),

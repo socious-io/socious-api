@@ -1,6 +1,6 @@
 {
-  "defaultEnv": "fromenv",
-  "fromenv": {
+  "defaultEnv": "testenv",
+  "testenv": {
     "driver": "pg",
     "user": "socious",
     "password": "passwd",

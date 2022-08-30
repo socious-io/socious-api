@@ -24,8 +24,8 @@
     "start": "node serve.js",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
-    "pretest": "db-migrate up --config ./migrations/database_test.json",
-    "test": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit",
+    "pretest": "ENV=testing node scripts/createdb.js || db-migrate up --config ./migrations/database_test.json",
+    "test": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit || ENV=testing node scripts/dropdb.js",
     "test:watch": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --watch",
     "test:cov": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --coverage",
     "test:debug": "ENV=testing node --inspect-brk node_modules/.bin/jest --runInBand",
@@ -90,7 +90,13 @@
     "*.{js,css,md}": "prettier --write"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "jsx", "json", "ts", "tsx"],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/*.{ts,js}",

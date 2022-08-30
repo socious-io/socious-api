@@ -1,6 +1,13 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
+const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env'
+
+config({path: envFile})
+
+
 
 export default {
+  env: process.env.ENV,
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
@@ -26,6 +33,13 @@ export default {
         pass: process.env.MAIL_SMTP_PASS,
       },
     },
+  },
+  database: {
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    db: process.env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD
   },
   nats: {
     servers: process.env.NATS_HOSTS.split(','),

@@ -366,7 +366,7 @@ router.post('/:id/messages', identity, async (ctx) => {
 
   await Promise.all(
     participants.map((p) =>
-      Event.push(Event.Types.Chat, p.identity_id, {
+      Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()

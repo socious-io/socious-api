@@ -1,6 +1,6 @@
 import Crypto from 'crypto';
 import AWS from 'aws-sdk';
-import fs from 'fs/promises';
+import fs from 'fs';
 import Config from '../config.js';
 
 const s3 = new AWS.S3();

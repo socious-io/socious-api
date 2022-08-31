@@ -17,4 +17,5 @@ export const upsertSchem = Joi.object({
     Joi.string().valid(...Object.values(SocialCauses)),
   ),
   website: Joi.string().uri(),
+  mobile_country_code: Joi.string().regex(/^\+[0-9 -]+/),
 });

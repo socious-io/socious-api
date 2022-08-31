@@ -9,9 +9,10 @@ export const insert = async (body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, country, website, social_causes) 
+      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, country, website, social_causes, mobile_country_code) 
         VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email},
-          ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country}, ${body.website}, ${body.social_causes})
+          ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country},
+          ${body.website}, ${body.social_causes}, ${body.mobile_country_code})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];
@@ -29,7 +30,8 @@ export const update = async (id, body) => {
       UPDATE organizations SET 
         name=${body.name}, bio=${body.bio}, description=${body.description}, email=${body.email}, 
         phone=${body.phone}, city=${body.city}, address=${body.address}, website=${body.website},
-        social_causes=${body.social_causes}
+        social_causes=${body.social_causes},
+        mobile_country_code=${body.mobile_country_code}
       WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];

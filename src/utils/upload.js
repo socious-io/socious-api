@@ -32,7 +32,7 @@ export default async (file, contentType = ContentTypes.JPEG) => {
   const params = {
     Bucket: Config.aws.bucket,
     Key: filename,
-    Body: file,
+    Body: buffer,
     ContentType: contentType,
   };
 

@@ -87,7 +87,10 @@ export const summary = async (identityId, {offset = 0, limit = 10}) => {
       if (chat.participation.last_read_at) {
         chat.unread_count = (
           await client.get(sql`
-          SELECT COUNT(*) FROM messages WHERE chat_id=${chat.id} AND created_at > ${chat.participation.last_read_at} AND deleted_at IS NULL
+          SELECT COUNT(*) FROM messages
+          WHERE chat_id=${chat.id}
+          AND created_at > ${chat.participation.last_read_at} AND id != ${chat.participation.last_read_id}
+          AND deleted_at IS NULL
         `)
         ).count;
       } else chat.unread_count = chat.message_count;

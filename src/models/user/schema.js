@@ -24,4 +24,5 @@ export const updateProfileSchem = Joi.object({
     Joi.string().valid(...Object.values(SocialCauses)),
   ),
   skills: Joi.array().items(Joi.string()),
+  mobile_country_code: Joi.string().regex(/^\+[0-9 -]+/),
 });

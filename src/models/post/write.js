@@ -45,7 +45,6 @@ export const update = async (id, body) => {
 };
 
 export const share = async (id, identityId, body) => {
-
   body.content = sanitizeHtml(body.content);
 
   try {

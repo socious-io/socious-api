@@ -1,6 +1,5 @@
 import Crypto from 'crypto';
 import AWS from 'aws-sdk';
-import fs from 'fs';
 import Config from '../config.js';
 
 const s3 = new AWS.S3();
@@ -25,8 +24,7 @@ const makeExtention = (contentType) => {
 };
 
 export default async (file, contentType = ContentTypes.JPEG) => {
-  const buffer =
-    typeof file === 'string' ? await fs.createReadStream(file) : file;
+  const buffer = typeof file === 'string' ? Buffer.from(file) : file;
 
   const shasum = Crypto.createHash('md5');
   shasum.update(buffer);
@@ -34,7 +32,7 @@ export default async (file, contentType = ContentTypes.JPEG) => {
   const params = {
     Bucket: Config.aws.bucket,
     Key: filename,
-    Body: buffer,
+    Body: file,
     ContentType: contentType,
   };
 

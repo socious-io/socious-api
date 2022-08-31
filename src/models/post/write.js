@@ -44,12 +44,15 @@ export const update = async (id, body) => {
   }
 };
 
-export const share = async (id, identityId) => {
+export const share = async (id, identityId, body) => {
+
+  body.content = sanitizeHtml(body.content);
+
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO posts (shared_id, identity_id)
-        VALUES (${id}, ${identityId})
+      INSERT INTO posts (shared_id, identity_id, content)
+        VALUES (${id}, ${identityId}, ${body.content})
         RETURNING *`,
     );
     return rows[0];

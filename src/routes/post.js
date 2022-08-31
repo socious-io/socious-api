@@ -375,8 +375,9 @@ router.delete('/:id/comments/:comment_id/like', identity, async (ctx) => {
  *
  * @apiParam {String} id post id
  *
+ * @apiBody {String} content
  *
  */
 router.post('/:id/share', identity, async (ctx) => {
-  ctx.body = await Post.share(ctx.params.id, ctx.identity.id);
+  ctx.body = await Post.share(ctx.params.id, ctx.identity.id, ctx.request.body);
 });

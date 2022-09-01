@@ -20,16 +20,22 @@ export const get = async (id) => {
 
 export const messages = async (id, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
-    SELECT COUNT(*) OVER () as total_count, * FROM messages WHERE chat_id=${id} AND reply_id IS NULL AND deleted_at IS NULL
-    ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}
+    SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url
+    FROM messages
+    LEFT JOIN media AS media ON media.id = media
+    WHERE chat_id=${id} AND reply_id IS NULL AND deleted_at IS NULL
+    ORDER BY messages.created_at DESC LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
 };
 
 export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
-    SELECT COUNT(*) OVER () as total_count, * FROM messages WHERE reply_id=${id} AND deleted_at IS NULL
-    ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}
+    SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url
+    FROM messages
+    LEFT JOIN media AS media ON media.id = media
+    WHERE reply_id=${id} AND deleted_at IS NULL
+    ORDER BY messages.created_at DESC LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
 };

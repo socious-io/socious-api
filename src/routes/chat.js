@@ -16,6 +16,7 @@ export const router = new Router();
  *
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
+ * @apiQuery {String} filter to search for other participants by name
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
@@ -29,7 +30,8 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} items.updated_at
  */
 router.get('/summary', identity, paginate, async (ctx) => {
-  ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate);
+  const {filter} = ctx.query;
+  ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate, filter);
 });
 
 /**

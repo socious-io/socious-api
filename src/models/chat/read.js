@@ -14,6 +14,25 @@ export const all = async (identityId, {offset = 0, limit = 10}) => {
   return rows;
 };
 
+export const filtered = async (
+  identityId,
+  {offset = 0, limit = 10},
+  filter,
+) => {
+  const {rows} = await app.db.query(
+    sql`
+    SELECT COUNT(*) OVER () as total_count, chats.*
+    FROM chats
+    JOIN chats_participants p ON p.chat_id=chats.id
+    JOIN chats_participants p2 ON (p2.chat_id=chats.id and p.id!=p2.id)
+    JOIN identities i ON i.id=p2.identity_id 
+    WHERE p.identity_id=${identityId}
+    AND position(${filter.toLowerCase()} IN lower(i.meta->>'name')) > 0
+    ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+  );
+  return rows;
+};
+
 export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM chats WHERE id=${id}`);
 };
@@ -70,8 +89,10 @@ export const miniParticipants = async (id) => {
   return rows;
 };
 
-export const summary = async (identityId, {offset = 0, limit = 10}) => {
-  const chats = await all(identityId, {offset, limit});
+export const summary = async (identityId, {offset = 0, limit = 10}, filter) => {
+  const chats = await (filter
+    ? filtered(identityId, {offset, limit}, filter)
+    : all(identityId, {offset, limit}));
 
   await app.db.with(async (client) => {
     for (const chat of chats) {

@@ -27,7 +27,7 @@ export const filtered = async (
     JOIN chats_participants p2 ON (p2.chat_id=chats.id and p.id!=p2.id)
     JOIN identities i ON i.id=p2.identity_id 
     WHERE p.identity_id=${identityId}
-    AND position(${filter} IN i.meta->>'name') > 0
+    AND position(${filter.toLowerCase()} IN lower(i.meta->>'name')) > 0
     ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;

@@ -4,7 +4,7 @@ import Media from '../models/media/index.js';
 import Upload from '../utils/upload.js';
 
 import {identity} from '../utils/requests.js';
-import { BadRequestError } from '../utils/errors.js';
+import {BadRequestError} from '../utils/errors.js';
 
 const koaBody = Body({multipart: true, uploadDir: '.'});
 
@@ -27,8 +27,7 @@ export const router = new Router();
  */
 
 router.post('/upload', koaBody, identity, async (ctx) => {
-  if (!ctx.request.files.file) 
-    throw new BadRequestError('file is required')
+  if (!ctx.request.files.file) throw new BadRequestError('file is required');
   const {originalFilename, filepath, mimetype} = ctx.request.files.file;
   const mediaUrl = await Upload(filepath, mimetype);
 

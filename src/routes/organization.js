@@ -94,7 +94,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiSuccess (200) {String[]} social_causes
  */
 router.post('/', async (ctx) => {
-  ctx.body = await Org.insert(ctx.request.body);
+  ctx.body = await Org.insert(ctx.user.id, ctx.request.body);
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
 

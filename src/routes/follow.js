@@ -20,6 +20,8 @@ export const router = new Router();
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
+ * @apiQuery {String} name
+ *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
  * @apiSuccess (200) {Number} total_count
@@ -32,7 +34,13 @@ export const router = new Router();
  *
  */
 router.get('/followers', paginate, identity, async (ctx) => {
-  ctx.body = await Follow.followers(ctx.identity.id, ctx.paginate);
+  ctx.body = ctx.query.name
+    ? await Follow.followersByName(
+        ctx.identity.id,
+        ctx.query.name,
+        ctx.paginate,
+      )
+    : await Follow.followers(ctx.identity.id, ctx.paginate);
 });
 
 /**
@@ -47,6 +55,8 @@ router.get('/followers', paginate, identity, async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
+ * @apiQuery {String} name
+ *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
  * @apiSuccess (200) {Number} total_count
@@ -59,7 +69,13 @@ router.get('/followers', paginate, identity, async (ctx) => {
  *
  */
 router.get('/followings', paginate, identity, async (ctx) => {
-  ctx.body = await Follow.followings(ctx.identity.id, ctx.paginate);
+  ctx.body = ctx.query.name
+    ? await Follow.followingsByName(
+        ctx.identity.id,
+        ctx.query.name,
+        ctx.paginate,
+      )
+    : await Follow.followings(ctx.identity.id, ctx.paginate);
 });
 
 /**

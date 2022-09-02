@@ -10,7 +10,9 @@ const followings = async (identityId, {offset = 0, limit = 10}) => {
     i.id AS identity_id,
     i.type AS identity_type,
     i.meta AS identity_meta,
-    f.created_at
+    EXISTS (SELECT id FROM follows WHERE following_identity_id=${identityId} AND follower_identity_id=i.id) AS mutual,
+    true AS following,
+    f.created_at,
   FROM follows f
   JOIN identities i ON i.id=f.following_identity_id
   WHERE follower_identity_id=${identityId}
@@ -27,10 +29,52 @@ const followers = async (identityId, {offset = 0, limit = 10}) => {
     i.id AS identity_id,
     i.type AS identity_type,
     i.meta AS identity_meta,
+    EXISTS (SELECT id FROM follows WHERE follower_identity_id=${identityId} AND following_identity_id=i.id) AS mutual,
+    true AS follower,
     f.created_at
   FROM follows f
   JOIN identities i ON i.id=f.follower_identity_id
   WHERE following_identity_id=${identityId}
+  ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
+
+  return rows;
+};
+
+const followingsByName = async (identityId, name, {offset = 0, limit = 10}) => {
+  const {rows} = await app.db.query(sql`
+  SELECT 
+    COUNT(*) OVER () as total_count,
+    f.id,
+    i.id AS identity_id,
+    i.type AS identity_type,
+    i.meta AS identity_meta,
+    EXISTS (SELECT id FROM follows WHERE following_identity_id=${identityId} AND follower_identity_id=i.id) AS mutual,
+    true AS following,
+    f.created_at
+  FROM follows f
+  JOIN identities i ON i.id=f.following_identity_id
+  WHERE follower_identity_id=${identityId}
+  AND position(${name.toLowerCase()} IN lower(i.meta->>'name')) > 0
+  ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
+
+  return rows;
+};
+
+const followersByName = async (identityId, name, {offset = 0, limit = 10}) => {
+  const {rows} = await app.db.query(sql`
+  SELECT 
+    COUNT(*) OVER () as total_count,
+    f.id,
+    i.id AS identity_id,
+    i.type AS identity_type,
+    i.meta AS identity_meta,
+    EXISTS (SELECT id FROM follows WHERE follower_identity_id=${identityId} AND following_identity_id=i.id) AS mutual,
+    true AS follower,
+    f.created_at
+  FROM follows f
+  JOIN identities i ON i.id=f.follower_identity_id
+  WHERE following_identity_id=${identityId}
+  AND position(${name.toLowerCase()} IN lower(i.meta->>'name')) > 0
   ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
 
   return rows;
@@ -69,4 +113,6 @@ export default {
   unfollow,
   followings,
   followers,
+  followingsByName,
+  followersByName,
 };

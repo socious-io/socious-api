@@ -40,6 +40,8 @@ router.get('/:id', identity, async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
+ * @apiQuery {String} identity filter by identity posted
+ *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit
  * @apiSuccess (200) {Number} total_count
@@ -59,7 +61,13 @@ router.get('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {String[]} items.identity_tags
  */
 router.get('/', paginate, identity, async (ctx) => {
-  ctx.body = await Post.all(ctx.identity.id, ctx.paginate);
+  ctx.body = ctx.query.identity
+    ? await Post.allByIdentity(
+        ctx.identity.id,
+        ctx.query.identity,
+        ctx.paginate,
+      )
+    : await Post.all(ctx.identity.id, ctx.paginate);
 });
 
 /**

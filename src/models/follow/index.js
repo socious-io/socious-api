@@ -12,7 +12,7 @@ const followings = async (identityId, {offset = 0, limit = 10}) => {
     i.meta AS identity_meta,
     EXISTS (SELECT id FROM follows WHERE following_identity_id=${identityId} AND follower_identity_id=i.id) AS mutual,
     true AS following,
-    f.created_at,
+    f.created_at
   FROM follows f
   JOIN identities i ON i.id=f.following_identity_id
   WHERE follower_identity_id=${identityId}

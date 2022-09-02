@@ -179,8 +179,8 @@ router.delete('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/:id/comments', paginate, async (ctx) => {
-  ctx.body = await Post.comments(ctx.params.id, ctx.paginate);
+router.get('/:id/comments', paginate, identity, async (ctx) => {
+  ctx.body = await Post.comments(ctx.params.id, ctx.identity.id, ctx.paginate);
 });
 
 /**
@@ -211,8 +211,12 @@ router.get('/:id/comments', paginate, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/comments/:id', paginate, async (ctx) => {
-  ctx.body = await Post.commentsReplies(ctx.params.id, ctx.paginate);
+router.get('/comments/:id', paginate, identity, async (ctx) => {
+  ctx.body = await Post.commentsReplies(
+    ctx.params.id,
+    ctx.identity.id,
+    ctx.paginate,
+  );
 });
 
 /**

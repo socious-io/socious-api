@@ -39,11 +39,20 @@ export const removeComment = async (id, identityId) => {
   );
 };
 
-export const comments = async (id, {offset = 0, limit = 10}) => {
+export const comments = async (
+  id,
+  currentIdentity,
+  {offset = 0, limit = 10},
+) => {
   const {rows} = await app.db.query(sql`
   SELECT 
   COUNT(*) OVER () as total_count,
-  c.*, i.type  as identity_type, i.meta as identity_meta
+  c.*, i.type  as identity_type, i.meta as identity_meta,
+  EXISTS (
+    SELECT id FROM likes WHERE post_id=${id} AND 
+    identity_id=${currentIdentity} AND
+    comment_id=c.id
+  ) AS liked
   FROM comments c JOIN identities i ON c.identity_id=i.id
   WHERE post_id=${id} AND reply_id IS NULL
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
@@ -51,10 +60,19 @@ export const comments = async (id, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const commentsReplies = async (id, {offset = 0, limit = 10}) => {
+export const commentsReplies = async (
+  id,
+  currentIdentity,
+  {offset = 0, limit = 10},
+) => {
   const {rows} = await app.db.query(sql`
   SELECT COUNT(*) OVER () as total_count,
-  c.*, i.type  as identity_type, i.meta as identity_meta
+  c.*, i.type  as identity_type, i.meta as identity_meta,
+  EXISTS (
+    SELECT id FROM likes WHERE post_id=${id} AND 
+    identity_id=${currentIdentity} AND
+    comment_id=c.id
+  ) AS liked
   FROM comments c JOIN identities i ON c.identity_id=i.id
   WHERE reply_id=${id}
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}

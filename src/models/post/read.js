@@ -1,7 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
-import {filtering} from '../../utils/filters.js';
 
 // TODO: we can add filters
 export const all = async (currentIdentity, {offset = 0, limit = 10}) => {

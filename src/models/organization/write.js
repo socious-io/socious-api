@@ -3,16 +3,19 @@ import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 
-export const insert = async (body) => {
+export const insert = async (identityId, body) => {
   await upsertSchem.validateAsync(body);
 
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, country, website, social_causes, mobile_country_code) 
+      INSERT INTO organizations (
+        name, bio, description, email, phone, 
+        type, city, address, country, website, 
+        social_causes, mobile_country_code, created_by) 
         VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email},
           ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country},
-          ${body.website}, ${body.social_causes}, ${body.mobile_country_code})
+          ${body.website}, ${body.social_causes}, ${body.mobile_country_code}, ${identityId})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];

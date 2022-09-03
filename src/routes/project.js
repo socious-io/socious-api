@@ -34,6 +34,8 @@ router.get('/:id', async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
+ * @apiQuery {String} identity
+ *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
  * @apiSuccess {Number} total_count
@@ -46,7 +48,9 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Datetime} items.updated_at
  */
 router.get('/', paginate, async (ctx) => {
-  ctx.body = await Project.all(ctx.paginate);
+  ctx.body = ctx.query.identity
+    ? await Project.allByIdentity(ctx.query.identity, ctx.paginate)
+    : await Project.all(ctx.paginate);
 });
 
 /**

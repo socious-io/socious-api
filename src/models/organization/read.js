@@ -26,6 +26,5 @@ export const get = async (id) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    WHERE org.id=${id}`,
-  );
+    WHERE org.id=${id}`);
 };

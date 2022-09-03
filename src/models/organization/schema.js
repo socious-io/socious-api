@@ -18,4 +18,8 @@ export const upsertSchem = Joi.object({
   ),
   website: Joi.string().uri(),
   mobile_country_code: Joi.string().regex(/^\+[0-9 -]+/),
+  image: Joi.string().uuid(),
+  cover_image: Joi.string().uuid(),
+  mission: Joi.string(),
+  culture: Joi.string(),
 });

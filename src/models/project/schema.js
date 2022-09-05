@@ -4,7 +4,11 @@ import {
   PaymentSchemeTypes,
   StatusTypes,
   RemotePreferenceTypes,
+  ProjectTypes,
+  ProjectLengthTypes,
 } from './enums.js';
+
+import {SocialCauses} from '../../utils/types.js';
 
 export const upsertSchem = Joi.object({
   title: Joi.string().required(),
@@ -19,4 +23,11 @@ export const upsertSchem = Joi.object({
   payment_range_higher: Joi.string().allow(null),
   experience_level: Joi.number(),
   status: Joi.string().valid(...Object.values(StatusTypes)),
+  project_type: Joi.string().valid(...Object.values(ProjectTypes)),
+  project_length: Joi.string().valid(...Object.values(ProjectLengthTypes)),
+  skills: Joi.array().items(Joi.string()),
+  causes_tags: Joi.array().items(
+    Joi.string().valid(...Object.values(SocialCauses)),
+  ),
+  country: Joi.string().min(2).max(3)
 });

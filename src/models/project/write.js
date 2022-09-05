@@ -10,19 +10,21 @@ export const insert = async (identityId, body) => {
     const {rows} = await app.db.query(
       sql`
       INSERT INTO projects (
-        title, description, identity_id, country_id, 
+        title, description, identity_id, 
         payment_type, payment_scheme, payment_currency, 
         payment_range_lower, payment_range_higher, experience_level,
-        status, remote_preference
+        status, remote_preference, project_type, project_length,
+        skills, causes_tags, country
       )
       VALUES (
         ${body.title}, ${body.description}, ${identityId}, 
-        ${body.country_id}, ${body.payment_type}, ${body.payment_scheme}, 
+        ${body.payment_type}, ${body.payment_scheme}, 
         ${body.payment_currency}, ${body.payment_range_lower},
         ${body.payment_range_higher}, ${body.experience_level}, ${body.status},
-        ${body.remote_preference}
+        ${body.remote_preference}, ${body.project_type}, ${body.project_length},
+        ${body.skills}, ${body.causes_tags}, ${body.country}
       )
-      RETURNING *`,
+      RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {
@@ -39,7 +41,6 @@ export const update = async (id, body) => {
       UPDATE projects SET
         title=${body.title},
         description=${body.description},
-        country_id=${body.country_id},
         payment_type=${body.payment_type},
         payment_scheme=${body.payment_scheme},
         payment_currency=${body.payment_currency},
@@ -47,8 +48,13 @@ export const update = async (id, body) => {
         payment_range_higher=${body.payment_range_higher},
         experience_level=${body.experience_level},
         remote_preference=${body.remote_preference},
-        status=${body.status}
-      WHERE id=${id} RETURNING *`,
+        status=${body.status},
+        project_type=${body.project_type}, 
+        project_length=${body.project_length},
+        skills=${body.skills},
+        causes_tags=${body.causes_tags},
+        country=${body.country}
+      WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {

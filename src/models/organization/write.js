@@ -2,8 +2,22 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
+import {shortNameExists} from './read.js';
+
+const generateShortname = (name, website) => {
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  if (website)
+    return `${website.split(/([^.]+)\.[^.]+$/)[1].slice(0, 20)}${rand}`;
+  return `${name.replaceAll(' ', '_')}${rand}`;
+};
 
 export const insert = async (identityId, body) => {
+  // temp logic
+  if (!body.shortname) {
+    const shortname = generateShortname(body.name, body.website);
+    if (await shortNameExists(shortname)) return insert(identityId, body);
+    body.shortname = shortname;
+  }
   await upsertSchem.validateAsync(body);
 
   try {
@@ -27,6 +41,13 @@ export const insert = async (identityId, body) => {
 };
 
 export const update = async (id, body) => {
+  // temp logic
+  if (!body.shortname) {
+    const shortname = generateShortname(body.name, body.website);
+    if (await shortNameExists(shortname)) return update(id, body);
+    body.shortname = shortname;
+  }
+
   await upsertSchem.validateAsync(body);
 
   try {

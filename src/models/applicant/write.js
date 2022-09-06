@@ -113,7 +113,6 @@ export const reject = async (id, body) => {
   }
 };
 
-
 export const giveAnswer = async (id, projectId, body) => {
   await answerSchema.validateAsync(body);
   try {

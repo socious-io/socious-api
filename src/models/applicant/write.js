@@ -113,12 +113,6 @@ export const reject = async (id, body) => {
   }
 };
 
-export const answers = async (id) => {
-  const {rows} = await app.db.query(
-    sql`SELECT * FROM answers WHERE applicant_id=${id}`,
-  );
-  return rows;
-};
 
 export const giveAnswer = async (id, projectId, body) => {
   await answerSchema.validateAsync(body);

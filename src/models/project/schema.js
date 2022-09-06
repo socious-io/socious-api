@@ -29,5 +29,11 @@ export const upsertSchem = Joi.object({
   causes_tags: Joi.array().items(
     Joi.string().valid(...Object.values(SocialCauses)),
   ),
-  country: Joi.string().min(2).max(3)
+  country: Joi.string().min(2).max(3),
+});
+
+export const questionSchema = Joi.object({
+  question: Joi.string().required(),
+  required: Joi.boolean(),
+  options: Joi.array().min(2).max(5).items(Joi.string()),
 });

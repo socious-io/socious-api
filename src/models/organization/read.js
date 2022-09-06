@@ -29,7 +29,6 @@ export const get = async (id) => {
     WHERE org.id=${id}`);
 };
 
-
 export const getByShortname = async (shortname) => {
   return app.db.get(sql`
     SELECT org.*,
@@ -42,12 +41,13 @@ export const getByShortname = async (shortname) => {
     WHERE org.shortname=${shortname}`);
 };
 
-
 export const shortNameExists = async (shortname) => {
   try {
-    app.db.get(sql`SELECT * FROM organizations WHERE shortname=${shortname}`)
-    return true
+    await app.db.get(
+      sql`SELECT * FROM organizations WHERE shortname=${shortname}`,
+    );
+    return true;
   } catch {
-    return false
+    return false;
   }
-}
+};

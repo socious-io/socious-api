@@ -99,7 +99,6 @@ router.post('/', async (ctx) => {
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
 
-
 /**
  * @api {get} /orgs/check Check uniques
  * @apiGroup Organazation
@@ -107,14 +106,14 @@ router.post('/', async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription check organazation unique columns
  *
- * @apiQuest {String} shortname 
+ * @apiQuest {String} shortname
  */
 
 router.get('/check', async (ctx) => {
   ctx.body = {
-    shortname_exists: await Org.shortNameExists(ctx.query.shortname)
-  }
-})
+    shortname_exists: await Org.shortNameExists(ctx.query.shortname),
+  };
+});
 
 /**
  * @api {post} /orgs/:id Update

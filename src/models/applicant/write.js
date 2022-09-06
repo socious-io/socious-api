@@ -1,12 +1,11 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
-import {upsertSchem, offerSchem, rejectSchem} from './schema.js';
+import {upsertSchem, offerSchem, rejectSchem, answerSchema} from './schema.js';
 import {StatusTypes} from './enums.js';
 
 export const insert = async (projectId, userId, body) => {
   await upsertSchem.validateAsync(body);
-
   try {
     const {rows} = await app.db.query(
       sql`
@@ -35,7 +34,7 @@ export const update = async (id, body) => {
       UPDATE applicants SET
         cover_letter=${body.cover_letter},
         payment_type=${body.payment_type},
-        payment_rate=${body.payment_rate},
+        payment_rate=${body.payment_rate}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -110,6 +109,84 @@ export const reject = async (id, body) => {
     );
     return rows[0];
   } catch (err) {
+    throw new EntryError(err.message);
+  }
+};
+
+export const answers = async (id) => {
+  const {rows} = await app.db.query(
+    sql`SELECT * FROM answers WHERE applicant_id=${id}`,
+  );
+  return rows;
+};
+
+export const giveAnswer = async (id, projectId, body) => {
+  await answerSchema.validateAsync(body);
+  try {
+    const {rows} = await app.db.query(sql`
+      INSERT INTO answers 
+        (project_id, question_id, applicant_id, answer, selected_option)
+        VALUES(${projectId}, ${body.id}, ${id}, ${body.answer}, ${body.selected_option})
+        RETURNING *
+      `);
+    return rows[0];
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};
+
+export const apply = async (projectId, userId, body) => {
+  const {rows} = await app.db.query(sql`
+    SELECT count(*) FROM questions WHERE project_id=${projectId} and required=true
+  `);
+
+  if (parseInt(rows[0]?.count) > body.answers?.length)
+    throw new EntryError('answers are not sufficient');
+
+  await app.db.query('BEGIN');
+  try {
+    const applicant = await insert(projectId, userId, body);
+
+    let answers = [];
+    // not worked on promise all
+    for (const a of body.answers)
+      answers.push(await giveAnswer(applicant.id, projectId, a));
+
+    applicant.answers = answers;
+
+    await app.db.query('COMMIT');
+    return applicant;
+  } catch (err) {
+    await app.db.query('ROLLBACK');
+    throw new EntryError(err.message);
+  }
+};
+
+export const editApply = async (id, body) => {
+  await app.db.query('BEGIN');
+  try {
+    const applicant = await update(id, body);
+
+    const {rows} = await app.db.query(sql`
+    SELECT count(*) FROM questions WHERE project_id=${applicant.project_id} and required=true
+    `);
+
+    if (parseInt(rows[0]?.count) > body.answers?.length)
+      throw new EntryError('answers are not sufficient');
+
+    await app.db.query(sql`DELETE FROM answers WHERE applicant_id=${id}`);
+
+    let answers = [];
+    // not worked on promise all
+    for (const a of body.answers)
+      answers.push(await giveAnswer(applicant.id, applicant.project_id, a));
+
+    applicant.answers = answers;
+
+    await app.db.query('COMMIT');
+    return applicant;
+  } catch (err) {
+    await app.db.query('ROLLBACK');
     throw new EntryError(err.message);
   }
 };

@@ -68,6 +68,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription create new organazation
  *
+ * @apiBody {String} shortname Mandatory Unique
  * @apiBody {String} name Mandatory
  * @apiBody {String} bio
  * @apiBody {String} description
@@ -98,6 +99,23 @@ router.post('/', async (ctx) => {
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
 
+
+/**
+ * @api {get} /orgs/check Check uniques
+ * @apiGroup Organazation
+ * @apiName Check uniques
+ * @apiVersion 2.0.0
+ * @apiDescription check organazation unique columns
+ *
+ * @apiQuest {String} shortname 
+ */
+
+router.get('/check', async (ctx) => {
+  ctx.body = {
+    shortname_exists: await Org.shortNameExists(ctx.query.shortname)
+  }
+})
+
 /**
  * @api {post} /orgs/:id Update
  * @apiGroup Organazation
@@ -107,6 +125,7 @@ router.post('/', async (ctx) => {
  *
  * @apiParam {String} id
  *
+ * @apiBody {String} shortname Mandatory Unique
  * @apiBody {String} name
  * @apiBody {String} bio
  * @apiBody {String} description

@@ -3,7 +3,11 @@ import Joi from 'joi';
 import {SocialCauses} from '../../utils/types.js';
 import {Type} from './enums.js';
 
+export const shortnamePattern =
+  /^(?=.{6,24}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
+
 export const upsertSchem = Joi.object({
+  shortname: Joi.string().regex(shortnamePattern).required(),
   name: Joi.string().required(),
   bio: Joi.string(),
   description: Joi.string(),

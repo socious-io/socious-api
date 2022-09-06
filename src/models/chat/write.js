@@ -11,19 +11,20 @@ export const create = async (identityId, body) => {
   if (existing.length > 0) return existing[0];
 
   await newChatSchem.validateAsync(body);
-  if (!body.participants.includes(identityId))
-    body.participants.push(identityId);
-  body.participants.sort();
+  const participants = body.participants.map((id) => id.toLowerCase());
+  if (!participants.includes(identityId)) participants.push(identityId);
+  participants.sort();
+
   await app.db.query('BEGIN');
   try {
     const {rows} = await app.db.query(sql`
       INSERT INTO chats (name, description, type, participants, created_by)
-        VALUES (${body.name}, ${body.description}, ${body.type}, ${body.participants}, ${identityId})
+        VALUES (${body.name}, ${body.description}, ${body.type}, ${participants}, ${identityId})
         RETURNING *
     `);
     const chat = rows[0];
     await Promise.all(
-      body.participants.map((p) => addParticipant(chat.id, p, identityId)),
+      participants.map((p) => addParticipant(chat.id, p, identityId)),
     );
     await app.db.query('COMMIT');
     return chat;

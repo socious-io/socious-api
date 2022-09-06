@@ -36,14 +36,16 @@ export const filtered = async (
 
 export const find = async (identityId, body) => {
   await findChatSchem.validateAsync(body);
-  if (!body.participants.includes(identityId))
-    body.participants.push(identityId);
-  body.participants.sort();
+
+  const participants = body.participants.map((id) => id.toLowerCase());
+  if (!participants.includes(identityId)) participants.push(identityId);
+  participants.sort();
+
   const {rows} = await app.db.query(
     sql`
     SELECT COUNT(*) OVER () as total_count, chats.*
     FROM chats
-    WHERE participants=${body.participants}
+    WHERE participants=${participants}
     ORDER BY created_at`,
   );
   return rows;

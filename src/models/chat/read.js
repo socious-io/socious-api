@@ -2,6 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
+import {findChatSchem} from './schema.js';
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
@@ -29,6 +30,21 @@ export const filtered = async (
     WHERE p.identity_id=${identityId}
     AND position(${filter.toLowerCase()} IN lower(i.meta->>'name')) > 0
     ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+  );
+  return rows;
+};
+
+export const find = async (identityId, body) => {
+  await findChatSchem.validateAsync(body);
+  if (!body.participants.includes(identityId))
+    body.participants.push(identityId);
+  body.participants.sort();
+  const {rows} = await app.db.query(
+    sql`
+    SELECT COUNT(*) OVER () as total_count, chats.*
+    FROM chats
+    WHERE participants=${body.participants}
+    ORDER BY created_at`,
   );
   return rows;
 };

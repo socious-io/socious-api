@@ -1,16 +1,24 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
-import {EntryError} from '../../utils/errors.js';
-import {MemberTypes} from './enums.js';
+import {EntryError, NotImplementedError} from '../../utils/errors.js';
+import {MemberTypes, Types} from './enums.js';
+import {find} from './read.js';
 
 export const create = async (identityId, body) => {
+  if (body.type !== Types.CHAT) throw new NotImplementedError();
+  const existing = find(identityId, body);
+  if (existing.length > 0) return existing[0];
+
   await newChatSchem.validateAsync(body);
+  if (!body.participants.includes(identityId))
+    body.participants.push(identityId);
+  body.participants.sort();
   await app.db.query('BEGIN');
   try {
     const {rows} = await app.db.query(sql`
-      INSERT INTO chats (name, description, type, created_by)
-        VALUES (${body.name}, ${body.description}, ${body.type}, ${identityId})
+      INSERT INTO chats (name, description, type, participants, created_by)
+        VALUES (${body.name}, ${body.description}, ${body.type}, ${body.participants}, ${identityId})
         RETURNING *
     `);
     const chat = rows[0];
@@ -31,8 +39,7 @@ export const update = async (id, body) => {
     const {rows} = await app.db.query(sql`
       UPDATE chats
         SET name=${body.name}, 
-          description=${body.description},
-          type=${body.type}
+          description=${body.description}
         WHERE id=${id}
         RETURNING *
     `);

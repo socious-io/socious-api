@@ -7,7 +7,7 @@ import {shortNameExists} from './read.js';
 const generateShortname = (name, website) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
   if (website)
-    return `${website.split(/([^.]+)\.[^.]+$/)[1].slice(0, 20)}${rand}`;
+    return `${website.split(/([^.]+)\.[^.]+$/)[1].slice(0, 36)}${rand}`;
   return `${name.replaceAll(' ', '_')}${rand}`;
 };
 

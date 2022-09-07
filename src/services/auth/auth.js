@@ -20,7 +20,12 @@ import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
-  return `${email.replace(/@.*$/, '').slice(0, 20)}${rand}`;
+  return `${email
+    .replace(/@.*$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/, '-')
+    .replace(/[._-]{2,}/, '-')
+    .slice(0, 20)}${rand}`;
 };
 
 export const hashPassword = (salt) => {

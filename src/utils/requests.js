@@ -34,7 +34,7 @@ export const identity = async (ctx, next) => {
     ? await Identity.get(identityId)
     : await Identity.get(ctx.user.id);
 
-  await Identity.permissioned(identity, ctx.user.id);
+  if (identityId) await Identity.permissioned(identity, ctx.user.id);
 
   ctx.identity = identity;
 

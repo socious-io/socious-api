@@ -129,7 +129,11 @@ router.post('/', identity, async (ctx) => {
  */
 router.put('/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Post.update(ctx.params.id, ctx.request.body);
+  ctx.body = await Post.update(
+    ctx.params.id,
+    ctx.identity.id,
+    ctx.request.body,
+  );
 });
 
 /**

@@ -8,10 +8,6 @@ export const all = async (currentIdentity, {offset = 0, limit = 10}) => {
     sql`SELECT 
       COUNT(*) OVER () as total_count,
       posts.*, i.type  as identity_type, i.meta as identity_meta,
-      (CASE
-        WHEN posts.shared_id IS NOT NULL THEN sp.content
-        ELSE posts.content
-      END) AS content,
       array_to_json(posts.causes_tags) as causes_tags,
       EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
       (SELECT ARRAY(SELECT url FROM media m WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media))) as media,
@@ -36,10 +32,6 @@ export const allByIdentity = async (
     sql`SELECT 
       COUNT(*) OVER () as total_count,
       posts.*, i.type  as identity_type, i.meta as identity_meta,
-      (CASE
-        WHEN posts.shared_id IS NOT NULL THEN sp.content
-        ELSE posts.content
-      END) AS content,
       array_to_json(posts.causes_tags) as causes_tags,
       EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
       (SELECT ARRAY(SELECT url FROM media m WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media))) as media,
@@ -58,10 +50,7 @@ export const allByIdentity = async (
 
 export const get = async (id, currentIdentity) => {
   return app.db.get(sql`
-  SELECT posts.*, (CASE
-      WHEN posts.shared_id IS NOT NULL THEN sp.content
-      ELSE posts.content
-    END) AS content,
+  SELECT posts.*,
     array_to_json(posts.causes_tags) as causes_tags,
     i.type AS identity_type, i.meta AS identity_meta, 
     EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,

@@ -8,6 +8,7 @@ const generateShortname = (name, website) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
   if (website)
     return `${website
+      .split(/([^.]+)\.[^.]+$/)[1]
       .replace(/@.*$/, '')
       .toLowerCase()
       .replace(/[^a-z0-9._-]/, '-')

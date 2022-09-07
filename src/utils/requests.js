@@ -36,7 +36,7 @@ export const identity = async (ctx, next) => {
 
   await Identity.permissioned(identity, ctx.user.id);
 
-  if (identity) ctx.identity = identity.toLowerCase();
+  ctx.identity = identity;
 
   await next();
 };

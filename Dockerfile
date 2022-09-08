@@ -24,17 +24,10 @@ RUN npm ci
 
 # Bundle app source
 COPY --chown=node:node . .
+COPY --chown=node:node docker.env .env
 
 # Use the node user from the image (instead of the root user)
 USER node
-
-# Configure app
-ENV PORT=5061
-ENV PGHOST=socious-pg
-ENV PGPORT=5432
-ENV PGDATABASE=socious
-ENV PGUSER=socious
-ENV NATS_HOSTS=socious-nats:4222
 
 EXPOSE 5061
 
@@ -79,17 +72,10 @@ COPY --chown=node:node --from=development /usr/src/app/templates ./templates
 COPY --chown=node:node --from=development /usr/src/app/package.json .
 # Also bring in migrations so we can run them on deploy
 COPY --chown=node:node --from=development /usr/src/app/migrations ./migrations
+COPY --chown=node:node --from=development /usr/src/app/.env .
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV production
-
-# Configure app
-ENV PORT=5061
-ENV PGHOST=socious-pg
-ENV PGPORT=5432
-ENV PGDATABASE=socious
-ENV PGUSER=socious
-ENV NATS_HOSTS=socious-nats:4222
 
 EXPOSE 5061
 

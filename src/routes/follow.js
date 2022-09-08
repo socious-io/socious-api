@@ -97,9 +97,11 @@ router.put('/:id', identity, async (ctx) => {
   if (followed) throw new BadRequestError('Already followed');
 
   ctx.body = await Follow.follow(ctx.identity.id, ctx.params.id);
+
   await Event.push(Event.Types.NOTIFICATION, ctx.params.id, {
     type: Notif.Types.FOLLOWED,
     refId: ctx.body.id,
+    identity: ctx.identity,
   });
 });
 

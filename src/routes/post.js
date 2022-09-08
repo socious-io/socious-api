@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import Post from '../models/post/index.js';
+import Notif from '../models/notification/index.js';
+import Event from '../services/events/index.js';
 import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
@@ -270,6 +272,13 @@ router.post('/:id/comments', identity, async (ctx) => {
     ctx.identity.id,
     ctx.request.body,
   );
+
+  const post = await Post.miniGet(ctx.params.id);
+  await Event.push(Event.Types.NOTIFICATION, post.identity_id, {
+    type: Notif.Types.COMMENT,
+    refId: ctx.body.id,
+    identity: ctx.identity,
+  });
 });
 
 /**
@@ -317,6 +326,14 @@ router.put('/comments/:id', identity, async (ctx) => {
  */
 router.put('/:id/like', identity, async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
+
+  const post = await Post.miniGet(ctx.params.id);
+
+  await Event.push(Event.Types.NOTIFICATION, post.identity_id, {
+    type: Notif.Types.POST_LIKE,
+    refId: ctx.body.id,
+    identity: ctx.identity,
+  });
 });
 
 /**
@@ -358,6 +375,14 @@ router.put('/:id/comments/:comment_id/like', identity, async (ctx) => {
     ctx.identity.id,
     ctx.params.comment_id,
   );
+
+  const comment = await Post.getComment(ctx.params.comment_id);
+
+  await Event.push(Event.Types.NOTIFICATION, comment.identity_id, {
+    type: Notif.Types.COMMENT_LIKE,
+    refId: ctx.body.id,
+    identity: ctx.identity,
+  });
 });
 
 /**

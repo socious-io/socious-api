@@ -27,14 +27,14 @@ export const paginate = async (ctx, next) => {
 };
 
 export const identity = async (ctx, next) => {
-  const {currentidentity} = ctx.request.header;
+  const currentidentity = ctx.request.header['current-identity'];
   const identityId = currentidentity || ctx.session.current_identity;
 
   const identity = identityId
     ? await Identity.get(identityId)
     : await Identity.get(ctx.user.id);
 
-  await Identity.permissioned(identity, ctx.user.id);
+  if (identityId) await Identity.permissioned(identity, ctx.user.id);
 
   ctx.identity = identity;
 

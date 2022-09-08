@@ -12,7 +12,7 @@
       "type": "node"
     },
     {
-      "name": "Launch via NPM",
+      "name": "Launch with debug",
       "request": "launch",
       "runtimeArgs": ["run-script", "start:debug"],
       "runtimeExecutable": "npm",

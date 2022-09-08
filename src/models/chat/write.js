@@ -1,21 +1,35 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
-import {EntryError} from '../../utils/errors.js';
-import {MemberTypes} from './enums.js';
+import {EntryError, NotImplementedError} from '../../utils/errors.js';
+import {MemberTypes, Types} from './enums.js';
+import {find} from './read.js';
 
 export const create = async (identityId, body) => {
+  if (body.type !== Types.CHAT) throw new NotImplementedError();
+
   await newChatSchem.validateAsync(body);
+  const participants = body.participants.map((id) => id.toLowerCase());
+  if (!participants.includes(identityId)) participants.push(identityId);
+  participants.sort();
+
+  const existing = await find(identityId, {participants});
+  if (existing.length > 0) return existing[0];
+
   await app.db.query('BEGIN');
   try {
     const {rows} = await app.db.query(sql`
-      INSERT INTO chats (name, description, type, created_by)
-        VALUES (${body.name}, ${body.description}, ${body.type}, ${identityId})
+      INSERT INTO chats (name, description, type, participants, created_by)
+        VALUES (${body.name}, ${body.description}, ${body.type}, ${participants}, ${identityId})
         RETURNING *
     `);
     const chat = rows[0];
+    console.log(participants);
     await Promise.all(
-      body.participants.map((p) => addParticipant(chat.id, p, identityId)),
+      participants
+        // current Identity will add automaticly as ADMIN
+        .filter((p) => p !== identityId)
+        .map((p) => addParticipant(chat.id, p, identityId)),
     );
     await app.db.query('COMMIT');
     return chat;
@@ -31,8 +45,7 @@ export const update = async (id, body) => {
     const {rows} = await app.db.query(sql`
       UPDATE chats
         SET name=${body.name}, 
-          description=${body.description},
-          type=${body.type}
+          description=${body.description}
         WHERE id=${id}
         RETURNING *
     `);
@@ -158,7 +171,7 @@ export const readMessage = async (id, identityId) => {
     const {rows} = await app.db.query(sql`
       UPDATE chats_participants
       SET last_read_id=${id}, 
-        last_read_at=now(), 
+        last_read_at=${selected.created_at}, 
         all_read=${selected.chat_updated_at <= selected.created_at}
       WHERE chat_id=${selected.chat_id} AND identity_id=${identityId}
       RETURNING *

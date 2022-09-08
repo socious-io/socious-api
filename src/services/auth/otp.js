@@ -34,8 +34,8 @@ export const createOTP = async (
   otpType,
   otpPurpose = OTPPurposeType.AUTH,
 ) => {
-  // generate random 6 digit number
-  const code = Math.floor(100000 + Math.random() * 900000);
+  // generate random 4 digit number
+  const code = Math.floor(1000 + Math.random() * 9000);
   await app.db.query(
     sql`INSERT INTO otps (code, user_id, type, purpose) VALUES (${code}, ${userId}, ${otpType}, ${otpPurpose})`,
   );

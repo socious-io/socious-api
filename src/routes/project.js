@@ -34,6 +34,8 @@ router.get('/:id', async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
+ * @apiQuery {String} identity
+ *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
  * @apiSuccess {Number} total_count
@@ -46,7 +48,9 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess {Datetime} items.updated_at
  */
 router.get('/', paginate, async (ctx) => {
-  ctx.body = await Project.all(ctx.paginate);
+  ctx.body = ctx.query.identity
+    ? await Project.allByIdentity(ctx.query.identity, ctx.paginate)
+    : await Project.all(ctx.paginate);
 });
 
 /**
@@ -111,6 +115,61 @@ router.post('/', identity, async (ctx) => {
 router.put('/:id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Project.update(ctx.params.id, ctx.request.body);
+});
+
+/**
+ * @api {get} /projects/questions Get Questions
+ * @apiGroup Project
+ * @apiName Get Questions
+ * @apiVersion 2.0.0
+ * @apiDescription get question
+ *
+ * @apiSuccess {Object[]} questions
+ * @apiSuccess {String} questions.id
+ * @apiSuccess {String} questions.question
+ * @apiSuccess {String[]} questions.options
+ * @apiSuccess {Boolean} questions.required
+ * @apiSuccess {Datetime} questions.created_at
+ */
+
+router.get('/:id/questions', identity, async (ctx) => {
+  await Project.permissioned(ctx.identity.id, ctx.params.id);
+  ctx.body = {questions: await Project.getQuestions(ctx.params.id)};
+});
+
+/**
+ * @api {post} /projects/questions New Questions
+ * @apiGroup Project
+ * @apiName New Questions
+ * @apiVersion 2.0.0
+ * @apiDescription Add new question
+ *
+ * @apiBody {String} question
+ * @apiBody {String[]} options
+ * @apiBody {Boolean} required
+ */
+router.post('/:id/questions', identity, async (ctx) => {
+  await Project.permissioned(ctx.identity.id, ctx.params.id);
+  ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body);
+});
+
+/**
+ * @api {post} /projects/questions Get Questions
+ * @apiGroup Project
+ * @apiName Get Questions
+ * @apiVersion 2.0.0
+ * @apiDescription get projects
+ *
+ * @apiBody {String} question
+ * @apiBody {String[]} options
+ * @apiBody {Boolean} required
+ */
+router.put('/:id/questions/:question_id', identity, async (ctx) => {
+  await Project.permissioned(ctx.identity.id, ctx.params.id);
+  ctx.body = await Project.updateQuestion(
+    ctx.params.question_id,
+    ctx.request.body,
+  );
 });
 
 /**
@@ -195,11 +254,15 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription apply to project
  *
- * @apiParam {String} id
+ * @apiParam {String} id project id
  *
  * @apiBody {String} cover_letter
  * @apiBody {String} payment_type
  * @apiBody {String} payment_rate
+ * @apiBody {Object[]} answers
+ * @apiBody {String} answers.id
+ * @apiBody {String} answers.answer
+ * @apiBody {Number} answers.selected_option
  *
  * @apiSuccess {String} status
  * @apiSuccess {String} cover_letter
@@ -214,9 +277,13 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiSuccess {String} user_id
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {Object[]} answers
+ * @apiSuccess {String} answers.id
+ * @apiSuccess {String} answers.answer
+ * @apiSuccess {Number} answers.selected_option
  */
 router.post('/:id/applicants', async (ctx) => {
-  ctx.body = await Applicant.insert(
+  ctx.body = await Applicant.apply(
     ctx.params.id,
     ctx.user.id,
     ctx.request.body,
@@ -353,7 +420,15 @@ router.put('/applicants/:id/approve', identity, async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription approve offer must be applicant owner
  *
- * @apiParam {String} id
+ * @apiParam {String} id applicant
+ *
+ * @apiBody {String} cover_letter
+ * @apiBody {String} payment_type
+ * @apiBody {String} payment_rate
+ * @apiBody {Object[]} answers
+ * @apiBody {String} answers.id
+ * @apiBody {String} answers.answer
+ * @apiBody {Number} answers.selected_option
  *
  * @apiSuccess {String} status
  * @apiSuccess {String} cover_letter
@@ -368,10 +443,14 @@ router.put('/applicants/:id/approve', identity, async (ctx) => {
  * @apiSuccess {String} user_id
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
+ * @apiSuccess {Object[]} answers
+ * @apiSuccess {String} answers.id
+ * @apiSuccess {String} answers.answer
+ * @apiSuccess {Number} answers.selected_option
  */
 router.put('/applicants/:id', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
-  ctx.body = await Applicant.update(ctx.params.id, ctx.request.body);
+  ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
 });
 
 /**
@@ -383,19 +462,6 @@ router.put('/applicants/:id', async (ctx) => {
  *
  * @apiParam {String} id
  *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
  */
 router.delete('/applicants/:id', identity, async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);

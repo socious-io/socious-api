@@ -1,9 +1,40 @@
+/* eslint-disable no-unreachable */
 import Router from '@koa/router';
 import Event from '../services/events/index.js';
 import Chat from '../models/chat/index.js';
 import {paginate, identity} from '../utils/requests.js';
+import {NotImplementedError} from '../utils/errors.js';
 
 export const router = new Router();
+
+/**
+ * @api {get} /chats Get summary
+ * @apiGroup Chat
+ * @apiName Get summary
+ * @apiVersion 2.0.0
+ * @apiDescription get chats with additional information
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ * @apiQuery {String} filter to search for other participants by name
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.name
+ * @apiSuccess (200) {String} items.description
+ * @apiSuccess (200) {String} items.type
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ */
+router.get('/summary', identity, paginate, async (ctx) => {
+  const {filter} = ctx.query;
+  ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate, filter);
+});
 
 /**
  * @api {get} /chats/:id Get
@@ -55,6 +86,29 @@ router.get('/', identity, paginate, async (ctx) => {
 });
 
 /**
+ * @api {post} /chats Find
+ * @apiGroup Chat
+ * @apiName Find by participants
+ * @apiVersion 2.0.0
+ * @apiDescription find chat(s) with the given set of participants
+ *
+ * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
+ *
+ * @apiBody {String[]{min:1}} participants Mandatory identities id
+ *
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.name
+ * @apiSuccess (200) {String} items.description
+ * @apiSuccess (200) {String} items.type
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ */
+router.post('/find', identity, async (ctx) => {
+  ctx.body = {items: await Chat.find(ctx.identity.id, ctx.request.body)};
+});
+
+/**
  * @api {post} /chats Create new
  * @apiGroup Chat
  * @apiName Create
@@ -101,13 +155,14 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
  */
-router.put('/:id', identity, async (ctx) => {
-  await Chat.permissioned(
-    ctx.identity.id,
-    ctx.params.id,
-    Chat.MemberTypes.ADMIN,
-  );
-  ctx.body = await Chat.update(ctx.params.id, ctx.request.body);
+router.put('/:id', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(
+  //   ctx.identity.id,
+  //   ctx.params.id,
+  //   Chat.MemberTypes.ADMIN,
+  // );
+  // ctx.body = await Chat.update(ctx.params.id, ctx.request.body);
 });
 
 /**
@@ -121,14 +176,15 @@ router.put('/:id', identity, async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.delete('/:id', identity, async (ctx) => {
-  await Chat.permissioned(
-    ctx.identity.id,
-    ctx.params.id,
-    Chat.MemberTypes.ADMIN,
-  );
-  await Chat.delete(ctx.params.id);
-  ctx.body = {message: 'success'};
+router.delete('/:id', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(
+  //   ctx.identity.id,
+  //   ctx.params.id,
+  //   Chat.MemberTypes.ADMIN,
+  // );
+  // await Chat.delete(ctx.params.id);
+  // ctx.body = {message: 'success'};
 });
 
 /**
@@ -178,14 +234,15 @@ router.get('/:id/participants', paginate, identity, async (ctx) => {
  *
  * @apiBody {Datetime} until Mandatory
  */
-router.put('/:id/participants/mute', identity, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  await Chat.muteParticipant(
-    ctx.params.id,
-    ctx.identity.id,
-    ctx.request.body.until,
-  );
-  ctx.body = {message: 'success'};
+router.put('/:id/participants/mute', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(ctx.identity.id, ctx.params.id);
+  // await Chat.muteParticipant(
+  //   ctx.params.id,
+  //   ctx.identity.id,
+  //   ctx.request.body.until,
+  // );
+  // ctx.body = {message: 'success'};
 });
 
 /**
@@ -202,17 +259,18 @@ router.put('/:id/participants/mute', identity, async (ctx) => {
  *
  * @apiBody {String} type Mandatory (ADMIN, MEMBER)
  */
-router.put('/:id/participants/:identity_id/permit', identity, async (ctx) => {
-  await Chat.permissioned(
-    ctx.identity.id,
-    ctx.params.id,
-    Chat.MemberTypes.ADMIN,
-  );
-  ctx.body = await Chat.permitParticipant(
-    ctx.params.id,
-    ctx.params.identity_id,
-    ctx.request.body.type,
-  );
+router.put('/:id/participants/:identity_id/permit', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(
+  //   ctx.identity.id,
+  //   ctx.params.id,
+  //   Chat.MemberTypes.ADMIN,
+  // );
+  // ctx.body = await Chat.permitParticipant(
+  //   ctx.params.id,
+  //   ctx.params.identity_id,
+  //   ctx.request.body.type,
+  // );
 });
 
 /**
@@ -227,19 +285,20 @@ router.put('/:id/participants/:identity_id/permit', identity, async (ctx) => {
  * @apiParam {String} id
  * @apiParam {String} identity_id
  */
-router.put('/:id/participants/:identity_id', identity, async (ctx) => {
-  await Chat.permissioned(
-    ctx.identity.id,
-    ctx.params.id,
-    Chat.MemberTypes.ADMIN,
-  );
-  await Chat.addParticipant(
-    ctx.params.id,
-    ctx.params.identity_id,
-    ctx.identity.id,
-  );
+router.put('/:id/participants/:identity_id', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(
+  //   ctx.identity.id,
+  //   ctx.params.id,
+  //   Chat.MemberTypes.ADMIN,
+  // );
+  // await Chat.addParticipant(
+  //   ctx.params.id,
+  //   ctx.params.identity_id,
+  //   ctx.identity.id,
+  // );
 
-  ctx.body = {message: 'success'};
+  // ctx.body = {message: 'success'};
 });
 
 /**
@@ -254,18 +313,19 @@ router.put('/:id/participants/:identity_id', identity, async (ctx) => {
  * @apiParam {String} id
  * @apiParam {String} identity_id
  */
-router.delete('/:id/participants/:identity_id', identity, async (ctx) => {
-  await Chat.permissioned(
-    ctx.identity.id,
-    ctx.params.id,
-    Chat.MemberTypes.ADMIN,
-  );
-  await Chat.removeParticipant(
-    ctx.params.id,
-    ctx.params.identity_id,
-    ctx.identity.id,
-  );
-  ctx.body = {message: 'success'};
+router.delete('/:id/participants/:identity_id', identity, async (_ctx) => {
+  throw new NotImplementedError();
+  // await Chat.permissioned(
+  //   ctx.identity.id,
+  //   ctx.params.id,
+  //   Chat.MemberTypes.ADMIN,
+  // );
+  // await Chat.removeParticipant(
+  //   ctx.params.id,
+  //   ctx.params.identity_id,
+  //   ctx.identity.id,
+  // );
+  // ctx.body = {message: 'success'};
 });
 
 /**
@@ -339,7 +399,7 @@ router.post('/:id/messages', identity, async (ctx) => {
 
   await Promise.all(
     participants.map((p) =>
-      Event.push(Event.Types.Chat, p.identity_id, {
+      Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()

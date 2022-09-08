@@ -25,9 +25,7 @@ const makeExtention = (contentType) => {
 };
 
 export default async (file, contentType = ContentTypes.JPEG) => {
-  const buffer =
-    typeof file === 'string' ? await fs.createReadStream(file) : file;
-
+  const buffer = typeof file === 'string' ? await fs.readFile(file) : file;
   const shasum = Crypto.createHash('md5');
   shasum.update(buffer);
   const filename = `${shasum.digest('hex')}${makeExtention(contentType)}`;

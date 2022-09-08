@@ -1,12 +1,11 @@
-import Config from '../../config.js';
 import User from '../../models/user/index.js';
 import * as bcrypt from 'bcrypt';
+import {signin} from './jwt.js';
 import {
   AuthorizationError,
   NotMatchedError,
   PermissionError,
 } from '../../utils/errors.js';
-import jwt from 'jsonwebtoken';
 import {
   authSchem,
   registerSchem,
@@ -19,15 +18,14 @@ import {
 import publish from '../jobs/publish.js';
 import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
 
-const signin = (user) => {
-  return jwt.sign({id: user.id}, Config.secret, {
-    expiresIn: Config.jwtExpireTime,
-  });
-};
-
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
-  return `${email.replace(/@.*$/, '').slice(0, 20)}${rand}`;
+  return `${email
+    .replace(/@.*$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/, '-')
+    .replace(/[._-]{2,}/, '-')
+    .slice(0, 20)}${rand}`;
 };
 
 export const hashPassword = (salt) => {
@@ -51,7 +49,7 @@ export const basic = async (body) => {
   if (user.status === User.StatusType.SUSPEND)
     throw new AuthorizationError('User has been suspended!');
 
-  return {access_token: signin(user)};
+  return signin(user.id);
 };
 
 export const register = async (body) => {
@@ -90,9 +88,9 @@ export const register = async (body) => {
     to: user.email,
     subject: 'Verify your account',
     template: 'templates/emails/active_user.html',
-    kwargs: {name: 'test', code},
+    kwargs: {name: user.first_name, code},
   });
-  return {access_token: signin(user)};
+  return signin(user.id);
 };
 
 export const sendOTP = async (body) => {
@@ -115,7 +113,7 @@ export const sendOTP = async (body) => {
       to: user.email,
       subject: 'OTP',
       template: 'templates/emails/otp.html',
-      kwargs: {name: 'test', code},
+      kwargs: {name: user.first_name, code},
     });
   }
 };
@@ -136,7 +134,7 @@ export const confirmOTP = async (body) => {
   if (otp.purpose === OTPPurposeType.FORGET_PASSWORD)
     await User.expirePassword(user.id);
 
-  return {access_token: signin({id: otp.user_id})};
+  return signin(otp.user_id);
 };
 
 export const forgetPassword = async (body) => {
@@ -164,7 +162,7 @@ export const forgetPassword = async (body) => {
       to: user.email,
       subject: 'OTP',
       template: 'templates/emails/forget_password.html',
-      kwargs: {name: 'test', code},
+      kwargs: {name: user.first_name, code},
     });
   }
 };
@@ -181,7 +179,6 @@ export const directChangePassword = async (user, body) => {
 
 export const changePassword = async (user, body) => {
   await changePasswordSchem.validateAsync(body);
-  console.log(body, '-----------', user.password);
 
   const matched = await comparePassword(body.current_password, user.password);
   if (!matched) throw new NotMatchedError();

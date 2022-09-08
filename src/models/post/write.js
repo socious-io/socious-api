@@ -3,8 +3,9 @@ import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 import sanitizeHtml from 'sanitize-html';
+import {get} from './read.js';
 
-export const insert = async (identity_id, body) => {
+export const insert = async (identityId, body) => {
   await upsertSchem.validateAsync(body);
 
   body.content = sanitizeHtml(body.content);
@@ -13,16 +14,16 @@ export const insert = async (identity_id, body) => {
     const {rows} = await app.db.query(
       sql`
       INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags, media) 
-        VALUES (${body.content}, ${identity_id}, ${body.causes_tags}, ${body.hashtags}, ${body.identity_tags}, ${body.media})
-        RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
+        VALUES (${body.content}, ${identityId}, ${body.causes_tags}, ${body.hashtags}, ${body.identity_tags}, ${body.media})
+        RETURNING id`,
     );
-    return rows[0];
+    return get(rows[0].id, identityId);
   } catch (err) {
     throw new EntryError(err.message);
   }
 };
 
-export const update = async (id, body) => {
+export const update = async (id, identityId, body) => {
   await upsertSchem.validateAsync(body);
 
   body.content = sanitizeHtml(body.content);
@@ -36,23 +37,25 @@ export const update = async (id, body) => {
         hashtags=${body.hashtags},
         identity_tags=${body.identity_tags},
         media=${body.media}
-      WHERE id=${id} RETURNING *, array_to_json(posts.causes_tags) AS causes_tags`,
+      WHERE id=${id} RETURNING id`,
     );
-    return rows[0];
+    return get(rows[0].id, identityId);
   } catch (err) {
     throw new EntryError(err.message);
   }
 };
 
-export const share = async (id, identityId) => {
+export const share = async (id, identityId, body) => {
+  body.content = sanitizeHtml(body.content);
+
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO posts (shared_id, identity_id)
-        VALUES (${id}, ${identityId})
-        RETURNING *`,
+      INSERT INTO posts (shared_id, identity_id, content)
+        VALUES (${id}, ${identityId}, ${body.content})
+        RETURNING id`,
     );
-    return rows[0];
+    return get(rows[0].id, identityId);
   } catch (err) {
     throw new EntryError(err.message);
   }

@@ -23,6 +23,39 @@ router.post('/login', async (ctx) => {
 });
 
 /**
+ * @api {post} /auth/refresh Refresh Token
+ * @apiGroup Auth
+ * @apiName Refresh
+ * @apiVersion 2.0.0
+ * @apiDescription Refresh jwt token would expire current refresh token
+ *
+ * @apiBody {string} RefreshToken
+ *
+ * @apiSuccess (200) {Object} access_token
+ */
+router.post('/refresh', async (ctx) => {
+  const {refresh_token} = ctx.request.body;
+  ctx.body = await Auth.refreshToken(refresh_token);
+});
+
+/**
+ * @api {post} /auth/logout Logout
+ * @apiGroup Auth
+ * @apiName Logout
+ * @apiVersion 2.0.0
+ * @apiDescription expire the refresh token
+ *
+ * @apiBody {string} refresh_token
+ *
+ */
+router.post('/logout', async (ctx) => {
+  const {refresh_token} = ctx.request.body;
+  if (refresh_token) await Auth.expireRefreshToken(refresh_token);
+  delete ctx.session.token;
+  ctx.body = {message: 'success'};
+});
+
+/**
  * @api {post} /auth/web/login Login with session
  * @apiGroup Auth
  * @apiName Login with session
@@ -97,6 +130,29 @@ router.get('/otp/confirm', async (ctx) => {
     email: ctx.query.email,
     phone: ctx.query.phone,
   });
+});
+
+/**
+ * @api {get} /auth/otp/confirm/web Confirm OTP Web
+ * @apiGroup Auth
+ * @apiName Confirm OTP Web
+ * @apiVersion 2.0.0
+ * @apiDescription confirm otp with code and create session
+ *
+ * @apiQuery {Number} code
+ * @apiQuery {String} email Mandatory if phone is empty
+ * @apiQuery {String} phone Mandatory if email is empty
+ *
+ */
+router.get('/otp/confirm/web', async (ctx) => {
+  const response = await Auth.confirmOTP({
+    code: ctx.query.code,
+    email: ctx.query.email,
+    phone: ctx.query.phone,
+  });
+
+  ctx.session.token = response.access_token;
+  ctx.body = {message: 'success'};
 });
 
 /**

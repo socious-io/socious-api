@@ -2,8 +2,19 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 
+export const getAnswers = async (id) => {
+  const {rows} = await app.db.query(
+    sql`SELECT * FROM answers WHERE applicant_id=${id}`,
+  );
+  return rows;
+};
+
 export const get = async (id) => {
-  return app.db.get(sql`SELECT * FROM applicants WHERE id=${id}`);
+  const applicant = await app.db.get(
+    sql`SELECT * FROM applicants WHERE id=${id}`,
+  );
+  applicant.answers = await getAnswers(id);
+  return applicant;
 };
 
 export const all = async ({offset = 0, limit = 10}) => {
@@ -30,7 +41,7 @@ export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const mustOwner = async (id, userId) => {
+export const mustOwner = async (userId, id) => {
   try {
     await app.db.get(
       sql`SELECT * FROM applicants WHERE id=${id} and user_id=${userId}`,
@@ -40,7 +51,7 @@ export const mustOwner = async (id, userId) => {
   }
 };
 
-export const mustProjectOwner = async (id, identityId) => {
+export const mustProjectOwner = async (identityId, id) => {
   try {
     await app.db.get(sql`SELECT * FROM applicants a 
       JOIN projects p ON a.project_id=p.id 

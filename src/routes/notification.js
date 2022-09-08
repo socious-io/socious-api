@@ -4,6 +4,40 @@ import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
 /**
+ * @api {get} /notifications/unreads Get unreads
+ * @apiGroup notifications
+ * @apiName Get unreads
+ * @apiVersion 2.0.0
+ * @apiDescription get unread notifications
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.ref_id
+ * @apiSuccess (200) {String} items.type ('FOLLOWED', 'COMMENT_LIKE', 'POST_LIKE', 'CHAT', 'SHARE_POST', 'SHARE_PROJECT', 'COMMENT', 'APPLICATION')
+ * @apiSuccess (200) {Object} items.data
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ * @apiSuccess (200) {Datetime} items.read_at
+ * @apiSuccess (200) {Datetime} items.view_at
+ */
+router.get('/unreads', paginate, async (ctx) => {
+  const notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
+
+  await Notif.viewed(
+    ctx.user.id,
+    notifications.map((n) => n.id),
+  );
+
+  ctx.body = notifications;
+});
+
+/**
  * @api {get} /notifications/:id Get
  * @apiGroup notifications
  * @apiName Get

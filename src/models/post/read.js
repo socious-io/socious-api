@@ -64,7 +64,11 @@ export const get = async (id, currentIdentity) => {
   WHERE posts.id=${id}`);
 };
 
+export const miniGet = async (id) => {
+  return app.db.get(sql`SELECT * FROM POSTS WHERE id=${id}`);
+};
+
 export const permissioned = async (identityId, id) => {
-  const post = await get(id);
+  const post = await miniGet(id);
   if (post.identity_id !== identityId) throw new PermissionError('Not allow');
 };

@@ -79,3 +79,7 @@ export const commentsReplies = async (
   `);
   return rows;
 };
+
+export const getComment = async (id) => {
+  return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`);
+};

@@ -5,6 +5,8 @@ import Notif from '../../models/notification/index.js';
 import Identity from '../../models/identity/index.js';
 import Org from '../../models/organization/index.js';
 
+import {makeMessage} from './message.js';
+
 const Types = {
   CHAT: 'chat',
   NOTIFICATION: 'notification',
@@ -32,9 +34,14 @@ const pushNotifications = async (userIds, notification, data) => {
 const _push = async (eventType, userId, body) => {
   switch (eventType) {
     case Types.NOTIFICATION:
-      await Notif.create(userId, body.refId, body.type, Notif.Data[body.type]);
+      var message = makeMessage(body.type, body);
+      await Notif.create(userId, body.refId, body.type, {
+        ...body,
+        body: message,
+      });
+
       emitEvent(eventType, userId, body);
-      pushNotifications([userId], Notif.Data[body.type], body);
+      pushNotifications([userId], message, body);
       break;
     case Types.CHAT:
       if (!emitEvent(eventType, userId, body) && !body.muted) {

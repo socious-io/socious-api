@@ -13,12 +13,15 @@ export const simplePush = async ({
   data = {},
   options = {},
 }) => {
+  if (tokens.length < 1) return;
+
   const body = {
     ...options,
     registration_ids: tokens,
     notification,
     data,
   };
+
   try {
     await axios.post(URL, body, {headers: HEADERS});
   } catch (err) {

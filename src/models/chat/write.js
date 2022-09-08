@@ -7,13 +7,14 @@ import {find} from './read.js';
 
 export const create = async (identityId, body) => {
   if (body.type !== Types.CHAT) throw new NotImplementedError();
-  const existing = find(identityId, body);
-  if (existing.length > 0) return existing[0];
 
   await newChatSchem.validateAsync(body);
   const participants = body.participants.map((id) => id.toLowerCase());
   if (!participants.includes(identityId)) participants.push(identityId);
   participants.sort();
+
+  const existing = await find(identityId, {participants});
+  if (existing.length > 0) return existing[0];
 
   await app.db.query('BEGIN');
   try {
@@ -23,8 +24,12 @@ export const create = async (identityId, body) => {
         RETURNING *
     `);
     const chat = rows[0];
+    console.log(participants);
     await Promise.all(
-      participants.map((p) => addParticipant(chat.id, p, identityId)),
+      participants
+        // current Identity will add automaticly as ADMIN
+        .filter((p) => p !== identityId)
+        .map((p) => addParticipant(chat.id, p, identityId)),
     );
     await app.db.query('COMMIT');
     return chat;

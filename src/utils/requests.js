@@ -31,8 +31,6 @@ export const identity = async (ctx, next) => {
   const currentidentity = ctx.request.header['current-identity'];
   const identityId = currentidentity || ctx.session.current_identity;
 
-  if (identityId) await Joi.string().uuid().validateAsync(identityId);
-
   const identity = identityId
     ? await Identity.get(identityId)
     : await Identity.get(ctx.user.id);

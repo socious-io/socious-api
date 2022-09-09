@@ -2,17 +2,18 @@ import axios from 'axios';
 import https from 'https';
 import http from 'http';
 
-import sql from 'sql-template-tag';
-import {app} from './src/index.js';
+//axios.defaults.timeout = 60000;
+//axios.defaults.httpsAgent = new https.Agent({keepAlive: true});
 
-import organization from './src/models/organization/index.js';
-import {exit} from 'process';
-
-const sinceTimstamp = '2022-09-09 01:22:07';
+const sinceTimstamp = '2022-09-07 22:02:07';
 const ttlStart = 10;
 const idealistToken = '743e1f3940484d7680130c748ed22758';
 
+//import sql from 'sql-template-tag';
+//import {app} from './src/index.js';
+
 const all_projects = {jobs: [], volops: [], internships: []};
+//const all = {jobs: [], volops: [], internships: []};
 
 const getAllIds = async () => {
   return new Promise((resolve, reject) => {
@@ -31,8 +32,11 @@ const getAllIds = async () => {
 };
 
 const getAllProjects = async (ids) => {
+  //const all = {jobs: [], volops: [], internships: []};
+
   for (let [key, val] of Object.entries(ids)) {
     //for each type of project (job, volop and intenrship)
+    //console.log(key, val);
     let res = 0;
     let count = 0;
 
@@ -44,23 +48,23 @@ const getAllProjects = async (ids) => {
       let p = await project(key, id); //here to use the queue?
 
       let project_type;
-
+      //use the p to parse and save to database
       if (key === 'jobs') {
         project_type = 'job'; //we need singular object property later
       } else if (key === 'volops') {
         project_type = 'volop';
-      } else if (key === 'internships') {
+      } else if (key === 'intenrships') {
         project_type = 'internship';
       }
 
       if (p && p[project_type]) {
         // its like obj.job or obj.volop
-        if ((await processProject(p[project_type], project_type)) === true) {
-          res++;
-        }
+        // if ((await processProject(p[project_type])) === true) {
+        //   res++;
+        // }
 
-        //res++;
-        //console.log(p[project_type].name, res);
+        res++;
+        console.log(p[project_type].name, res);
       }
 
       if (count > 50) {
@@ -70,14 +74,75 @@ const getAllProjects = async (ids) => {
       }
     }
 
+    // val.forEach(async (id) => {
+    //   //use the id to get the project,
+    //   let p = await project(key, id); //here to use the queue?
+    //   //console.log(p);
+    //   let project_type;
+    //   //use the p to parse and save to database
+    //   if (key === 'jobs') {
+    //     project_type = 'job'; //we need singular object property later
+    //     //console.log('JOB:');
+    //     //console.log(p.job);
+    //     //parseProject(p.job);
+    //   } else if (key === 'volops') {
+    //     project_type = 'volop';
+    //     //console.log('VOLOP:');
+    //     //console.log(p.volop);
+    //   } else if (key === 'intenrships') {
+    //     project_type = 'internship';
+    //     //console.log('INTENSHIP:');
+    //     //console.log(p.intenrship);
+    //   }
+
+    //   if (p && p[project_type]) {
+    //     // its like obj.job or obj.volop
+    //     // if ((await processProject(p[project_type])) === true) {
+    //     //   res++;
+    //     // }
+
+    //     res++;
+    //     console.log(p[project_type].name, res);
+    //   }
+
+    //   count++;
+    //   if (count > 100) {
+    //     console.log('SHOULD SLEEP!!!');
+    //     await sleep(10000);
+    //     count = 0;
+    //   }
+    //   console.log('Count is: ' + count);
+    //   //all[key].push(p); //do we need this?
+    //   //console.log(key, all[key].length);
+    // });
+
     console.log(`${res} ${key} projects processed from Idealist.`);
   }
+
+  //console.log(`${res} projects processed from Idealist.`);
+
+  //return res; //this returns empty array!!!
 };
 
-//Call the functionality...
+// const getAllProjects = async (ids) => {
+//   //return new Promise((resolve, reject) => {
+//   //const all = {};
+//   for (let [key, val] of Object.entries(ids)) {
+//     console.log(key, val);
+
+//     val.forEach(async (id) => {
+//       all[key].push(await project(key, id));
+//     });
+
+//     return all;
+//     //resolve(all);
+//   }
+//   //});
+// };
+
 (async () => {
   const project_ids = await getAllIds();
-
+  //console.log(idss);
   await getAllProjects(project_ids);
 
   console.log('_________________END OF PROJECT PROCESSING_______________');
@@ -170,135 +235,44 @@ async function project(project_types, id) {
 //   //return row.updated_at;
 // };
 
-async function processProject(project, type) {
-  console.log(project.name, type);
-
+async function processProject(project) {
   try {
-    let page_id;
+    let page_id, group_id;
     //create organization or get ID of existing one
+    if (project.org) {
+      page_id = await organizationFromProject(project.org);
+    }
 
-    page_id = await organizationFromProject(project);
-    console.log(`Org ID that we got in processProject is: ${page_id}`);
-    return true;
     //if project is volop, can have a group (create or find and get ID)
-    // if (project.group) {
-    //   group_id = await groupFromProject(project.group);
-    // }
+    if (project.group) {
+      group_id = await groupFromProject(project.group);
+    }
 
-    //if (page_id) return await saveProject(project); //return true or false
+    if (page_id || group_id) return await saveProject(project); //return true or false
   } catch (err) {
     console.log(err.message);
   }
 }
 
-async function organizationFromProject(project) {
-  const org = project.org || null;
-
-  if (!org) return false;
-
+async function organizationFromProject(org) {
   const id = await getOrganization(org);
-
-  console.log(`organization ID from database is: ${id}`);
 
   if (id) {
     return id;
   } else {
     //create new organization
-
-    try {
-      const orgBio = await organizationBio(org);
-      console.log(`Org bio is: ${orgBio}`);
-
-      const body = {
-        name: org.name,
-        ...(orgBio && {bio: orgBio}),
-        ...(orgBio && {description: orgBio}),
-        email: project.applyEmail ? project.applyEmail : 'no@email.com',
-        type: org.orgType ? org.orgType : 'OTHER',
-        ...(org.address && org.address.city && {city: org.address.city}),
-        ...(org.address && org.address.full && {address: org.address.full}),
-        ...(org.address &&
-          org.address.country && {country: org.address.country}),
-        ...(org.url && org.url.en && {website: org.url.en}),
-        social_causes: [],
-      };
-
-      console.log(body);
-
-      // const body = {
-      //   name: org.name,
-      //   bio: orgBio || 'No data',
-      //   description: orgBio || 'No data',
-      //   email: project.applyEmail ? project.applyEmail : '',
-      //   phone: undefined,
-      //   type: org.orgType ? org.orgType : 'OTHER',
-      //   city: org.address ? (org.address.city ? org.address.city : '') : '',
-      //   address: org.address
-      //     ? org.address.full
-      //       ? org.address.full
-      //       : null
-      //     : null,
-      //   country: org.address
-      //     ? org.address.country
-      //       ? org.address.country
-      //       : null
-      //     : null,
-      //   website: org.url ? (org.url.en ? org.url.en : null) : null,
-      //   social_causes: [],
-      //   mobile_country_code: '',
-      //   //image: null,
-      // };
-
-      const newOrg = await organization.insert(body);
-
-      return newOrg.id;
-    } catch (err) {
-      console.log(err.message);
-      return false;
-    }
   }
 }
 
-/**
- * return formatted organization bio from "areasOfFocus", "orgType" and "url"
- *
- * @param org
- * @return string
- */
-async function organizationBio(org) {
-  let output = '';
-  if (org.areasOfFocus) {
-    output = 'Areas of focus: ';
-    if (Array.isArray(org.areasOfFocus)) {
-      output += org.areasOfFocus.join(', ');
-    } else if (typeof org.areasOfFocus === 'string') {
-      output += org.areasOfFocus;
-    }
-    output += '\n';
-  }
-  if (org.orgType) {
-    output += ' Organization type: ' + org.orgType + '\n';
-  }
+async function groupFromProject(group) {
+  const id = await getOrganization(group);
 
-  if (org.url && org.url.en) {
-    output += ' Organization url: ' + org.url.en;
+  if (id) {
+    return id;
+  } else {
+    //create new organization
   }
-
-  return output;
 }
-
-// async function groupFromProject(project) {
-
-//   const group = project.group || null;
-
-//   const id = await getOrganization(group);
-
-//   if (id) {
-//     return id;
-//   } else {
-//     //create new organization
-//   }
-// }
 
 async function saveProject(project) {}
 
@@ -316,14 +290,13 @@ async function getOrganization(org) {
 
     //check if org egsist in database by its name
     const orgInDatabase = await app.db.get(
-      sql`SELECT id FROM organizations WHERE name = ${name} LIMIT 1`,
+      sql`select id from organizations where name = ${name} limit 1`,
     );
-    console.log(`Organization from database: ${orgInDatabase}`);
+
     //if organization egsists, return its ID, else, create new org
     if (orgInDatabase) return orgInDatabase.id;
   } catch (err) {
     console.log(err.message);
-    return false;
   }
 }
 

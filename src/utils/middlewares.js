@@ -19,6 +19,9 @@ const throwHandler = async (ctx, next) => {
       ctx.status = 400;
       return;
     }
+
+    if (err.message.includes('uuid')) err.status = 400;
+
     ctx.status = err.status || 500;
   }
 };
@@ -78,12 +81,12 @@ const retryBlockerData = {};
  */
 export const retryBlocker = async (ctx, next) => {
   let error;
-  // 30 Minutes to reset retry
-  const resetTimer = 30 * 60 * 1000;
+  // 1 Minute to reset retry
+  const resetTimer = 60 * 1000;
   // 2 Hours block after retry count exceed
   const blockerTimer = 2 * 60 * 60 * 1000;
   // would block after this count exceed
-  const retryCount = 20;
+  const retryCount = 10;
   // Note: This must be overide on Nginx
   const ip = ctx.request.header['x-real-ip'] || ctx.request.ip;
   const now = new Date();
@@ -110,8 +113,11 @@ export const retryBlocker = async (ctx, next) => {
     retryBlockerData[ip] = {};
     retryBlockerData[ip].retry = 0;
   }
-  retryBlockerData[ip].reset = now.getTime() + resetTimer;
-  retryBlockerData[ip].retry++;
+
+  if (ctx.status < 500) {
+    retryBlockerData[ip].reset = now.getTime() + resetTimer;
+    retryBlockerData[ip].retry++;
+  }
 
   if (retryBlockerData[ip].retry > retryCount)
     retryBlockerData[ip].blocked = now.getTime() + blockerTimer;

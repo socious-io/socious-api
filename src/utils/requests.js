@@ -1,4 +1,5 @@
 import Identity from '../models/identity/index.js';
+import Joi from 'joi';
 
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;
@@ -29,6 +30,8 @@ export const paginate = async (ctx, next) => {
 export const identity = async (ctx, next) => {
   const currentidentity = ctx.request.header['current-identity'];
   const identityId = currentidentity || ctx.session.current_identity;
+
+  if (identityId) await Joi.string().uuid().validateAsync(identityId);
 
   const identity = identityId
     ? await Identity.get(identityId)

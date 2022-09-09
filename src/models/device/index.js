@@ -14,6 +14,7 @@ const insertSchem = Joi.object({
 });
 
 const insert = async (userId, body) => {
+  await Joi.string().uuid().validateAsync(userId);
   await insertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -28,6 +29,7 @@ const insert = async (userId, body) => {
 };
 
 const update = async (userId, body) => {
+  await Joi.string().uuid().validateAsync(userId);
   await insertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -43,10 +45,12 @@ const update = async (userId, body) => {
 };
 
 const get = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`SELECT * FROM devices WHERE id=${id}`);
 };
 
 const all = async (userId) => {
+  await Joi.string().uuid().validateAsync(userId);
   const {rows} = await app.db.query(
     sql`SELECT * FROM devices WHERE user_id=${userId}`,
   );
@@ -54,6 +58,7 @@ const all = async (userId) => {
 };
 
 const any = async (userIds) => {
+  await Joi.array().items(Joi.string().uuid()).validateAsync(userIds);
   const {rows} = await app.db.query(
     sql`SELECT * FROM devices WHERE user_id=ANY(${userIds})`,
   );
@@ -61,6 +66,7 @@ const any = async (userIds) => {
 };
 
 const remove = async (userId, token) => {
+  await Joi.string().uuid().validateAsync(userId);
   return app.db.query(
     sql`DELETE FROM devices WHERE user_id=${userId} AND token=${token}`,
   );

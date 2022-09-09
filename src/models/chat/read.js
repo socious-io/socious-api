@@ -1,10 +1,12 @@
 import sql from 'sql-template-tag';
+import Joi from 'joi';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
 import {findChatSchem} from './schema.js';
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(
     sql`
     SELECT COUNT(*) OVER () as total_count, chats.*
@@ -20,6 +22,7 @@ export const filtered = async (
   {offset = 0, limit = 10},
   filter,
 ) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(
     sql`
     SELECT COUNT(*) OVER () as total_count, chats.*
@@ -35,6 +38,7 @@ export const filtered = async (
 };
 
 export const find = async (identityId, body) => {
+  await Joi.string().uuid().validateAsync(identityId);
   await findChatSchem.validateAsync(body);
 
   const participants = body.participants.map((id) => id.toLowerCase());
@@ -52,6 +56,7 @@ export const find = async (identityId, body) => {
 };
 
 export const get = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`SELECT * FROM chats WHERE id=${id}`);
 };
 
@@ -67,6 +72,7 @@ export const messages = async (id, {offset = 0, limit = 10}) => {
 };
 
 export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(id);
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url
     FROM messages
@@ -82,6 +88,8 @@ export const permissioned = async (
   id,
   type = MemberTypes.MEMBER,
 ) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) from chats_participants
     WHERE chat_id=${id} AND identity_id=${identityId} AND type=${type}
@@ -101,6 +109,7 @@ export const participants = async (id, {offset = 0, limit = 10}) => {
 };
 
 export const miniParticipants = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   const {rows} = await app.db.query(
     sql`SELECT id, muted_until, identity_id FROM chats_participants WHERE chat_id=${id}`,
   );
@@ -108,6 +117,7 @@ export const miniParticipants = async (id) => {
 };
 
 export const summary = async (identityId, {offset = 0, limit = 10}, filter) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const chats = await (filter
     ? filtered(identityId, {offset, limit}, filter)
     : all(identityId, {offset, limit}));

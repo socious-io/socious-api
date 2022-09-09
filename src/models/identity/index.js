@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
@@ -9,6 +10,8 @@ const Types = {
 };
 
 const get = async (id, identityId) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   return app.db.get(sql`
     SELECT i.*,
     (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
@@ -21,6 +24,7 @@ const get = async (id, identityId) => {
 };
 
 const getByIds = async (ids) => {
+  await Joi.array().items(Joi.string().uuid()).validateAsync(ids);
   const {rows} = await app.db.query(
     sql`SELECT * FROM identities WHERE id = ANY(${ids})`,
   );
@@ -28,6 +32,9 @@ const getByIds = async (ids) => {
 };
 
 const getAll = async (userId, identityId) => {
+  await Joi.string().uuid().validateAsync(userId);
+  await Joi.string().uuid().validateAsync(identityId);
+
   const {rows} = await app.db.query(sql`
     SELECT i.*, false AS primary,
       (CASE
@@ -50,6 +57,7 @@ const getAll = async (userId, identityId) => {
 };
 
 const permissioned = async (identity, userId) => {
+  await Joi.string().uuid().validateAsync(userId);
   switch (identity.type) {
     case Types.ORG:
       await Org.permissionedMember(identity.id, userId);

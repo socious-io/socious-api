@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
@@ -26,6 +27,7 @@ export const insert = async (projectId, userId, body) => {
 };
 
 export const update = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await upsertSchem.validateAsync(body);
 
   try {
@@ -44,12 +46,14 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(
     sql`DELETE FROM applicants WHERE id=${id} AND status IN (${StatusTypes.PENDING}, ${StatusTypes.WITHDRAW})`,
   );
 };
 
 export const withdraw = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   try {
     app.db.get(sql`
     UPDATE applicants SET 
@@ -64,6 +68,7 @@ export const withdraw = async (id) => {
 
 // TODO: affter this update project owner should start payment flow
 export const approve = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(
     sql`UPDATE applicants SET status=${StatusTypes.APPROVED} WHERE id=${id} AND status=${StatusTypes.OFFERED} RETURNING *`,
   );
@@ -71,12 +76,14 @@ export const approve = async (id) => {
 
 // TODO: before this update should finish payment flow
 export const hire = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(
     sql`UPDATE applicants SET status=${StatusTypes.HIRED} WHERE id=${id} AND status=${StatusTypes.APPROVED} RETURNING *`,
   );
 };
 
 export const offer = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await offerSchem.validateAsync(body);
 
   try {
@@ -97,6 +104,7 @@ export const offer = async (id, body) => {
 };
 
 export const reject = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await rejectSchem.validateAsync(body);
 
   try {
@@ -114,6 +122,8 @@ export const reject = async (id, body) => {
 };
 
 export const giveAnswer = async (id, projectId, body) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(projectId);
   await answerSchema.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -129,6 +139,8 @@ export const giveAnswer = async (id, projectId, body) => {
 };
 
 export const apply = async (projectId, userId, body) => {
+  await Joi.string().uuid().validateAsync(projectId);
+  await Joi.string().uuid().validateAsync(userId);
   const {rows} = await app.db.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${projectId} and required=true
   `);
@@ -156,6 +168,7 @@ export const apply = async (projectId, userId, body) => {
 };
 
 export const editApply = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query('BEGIN');
   try {
     const applicant = await update(id, body);

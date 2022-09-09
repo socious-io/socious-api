@@ -1,9 +1,11 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
 
 export const insert = async (identityId, body) => {
+  await Joi.string().uuid().validateAsync(identityId);
   await upsertSchem.validateAsync(body);
 
   try {
@@ -33,6 +35,7 @@ export const insert = async (identityId, body) => {
 };
 
 export const update = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await upsertSchem.validateAsync(body);
 
   try {
@@ -63,5 +66,6 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(sql`DELETE FROM projects WHERE id=${id}`);
 };

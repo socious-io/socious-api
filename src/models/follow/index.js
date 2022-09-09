@@ -1,8 +1,10 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {BadRequestError, EntryError} from '../../utils/errors.js';
 
 const followings = async (identityId, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
@@ -22,6 +24,7 @@ const followings = async (identityId, {offset = 0, limit = 10}) => {
 };
 
 const followers = async (identityId, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
@@ -41,6 +44,7 @@ const followers = async (identityId, {offset = 0, limit = 10}) => {
 };
 
 const followingsByName = async (identityId, name, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
@@ -61,6 +65,7 @@ const followingsByName = async (identityId, name, {offset = 0, limit = 10}) => {
 };
 
 const followersByName = async (identityId, name, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
@@ -81,6 +86,8 @@ const followersByName = async (identityId, name, {offset = 0, limit = 10}) => {
 };
 
 const followed = async (follower, following) => {
+  await Joi.string().uuid().validateAsync(follower);
+  await Joi.string().uuid().validateAsync(following);
   const {rows} = await app.db.query(
     sql`SELECT id FROM follows WHERE follower_identity_id=${follower} AND following_identity_id=${following}`,
   );
@@ -88,6 +95,8 @@ const followed = async (follower, following) => {
 };
 
 const follow = async (follower, following) => {
+  await Joi.string().uuid().validateAsync(follower);
+  await Joi.string().uuid().validateAsync(following);
   if (follower === following)
     throw new BadRequestError('follower and following could not be same');
   try {
@@ -102,6 +111,8 @@ const follow = async (follower, following) => {
 };
 
 const unfollow = async (follower, following) => {
+  await Joi.string().uuid().validateAsync(follower);
+  await Joi.string().uuid().validateAsync(following);
   return app.db.query(sql`
     DELETE FROM follows WHERE follower_identity_id=${follower} AND following_identity_id=${following}
   `);

@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
@@ -16,6 +17,7 @@ export const create = async (userId, refId, notifType, data) => {
 };
 
 export const readAll = async (userId) => {
+  await Joi.string().uuid().validateAsync(userId);
   return app.db.query(sql`
     UPDATE notifications 
       SET read_at=now() 
@@ -24,6 +26,8 @@ export const readAll = async (userId) => {
 };
 
 export const read = async (userId, ids) => {
+  await Joi.string().uuid().validateAsync(userId);
+  await Joi.array().items(Joi.string().uuid()).validateAsync(ids);
   return app.db.query(sql`
     UPDATE notifications 
       SET read_at=now() 
@@ -33,6 +37,8 @@ export const read = async (userId, ids) => {
 };
 
 export const viewed = async (userId, ids) => {
+  await Joi.string().uuid().validateAsync(userId);
+  await Joi.array().items(Joi.string().uuid()).validateAsync(ids);
   return app.db.query(sql`
     UPDATE notifications 
       SET view_at=now() 
@@ -42,6 +48,7 @@ export const viewed = async (userId, ids) => {
 };
 
 export const unreadCount = async (userId) => {
+  await Joi.string().uuid().validateAsync(userId);
   return app.db.get(sql`
     SELECT COUNT(*) FROM notifications 
       WHERE user_id=${userId} AND read_at IS NULL`);

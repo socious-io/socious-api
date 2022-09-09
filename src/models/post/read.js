@@ -1,6 +1,7 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
+import Joi from 'joi';
 
 // TODO: we can add filters
 export const all = async (currentIdentity, {offset = 0, limit = 10}) => {
@@ -28,6 +29,7 @@ export const allByIdentity = async (
   identityId,
   {offset = 0, limit = 10},
 ) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(
     sql`SELECT 
       COUNT(*) OVER () as total_count,
@@ -49,6 +51,8 @@ export const allByIdentity = async (
 };
 
 export const get = async (id, currentIdentity) => {
+  await Joi.string().uuid().validateAsync(id);
+
   return app.db.get(sql`
   SELECT posts.*,
     array_to_json(posts.causes_tags) as causes_tags,
@@ -65,10 +69,13 @@ export const get = async (id, currentIdentity) => {
 };
 
 export const miniGet = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`SELECT * FROM POSTS WHERE id=${id}`);
 };
 
 export const permissioned = async (identityId, id) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   const post = await miniGet(id);
   if (post.identity_id !== identityId) throw new PermissionError('Not allow');
 };

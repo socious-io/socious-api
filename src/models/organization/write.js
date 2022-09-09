@@ -1,4 +1,5 @@
 import sql from 'sql-template-tag';
+import Joi from 'joi';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {upsertSchem} from './schema.js';
@@ -18,6 +19,7 @@ const generateShortname = (name, website) => {
 };
 
 export const insert = async (identityId, body) => {
+  await Joi.string().uuid().validateAsync(identityId);
   // temp logic
   if (!body.shortname) {
     const shortname = generateShortname(body.name, body.website);
@@ -47,6 +49,7 @@ export const insert = async (identityId, body) => {
 };
 
 export const update = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   // temp logic
   if (!body.shortname) {
     const shortname = generateShortname(body.name, body.website);
@@ -84,5 +87,6 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`);
 };

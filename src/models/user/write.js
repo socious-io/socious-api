@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
@@ -24,6 +25,7 @@ export const insert = async (
 };
 
 export const updateProfile = async (id, profile) => {
+  await Joi.string().uuid().validateAsync(id);
   await updateProfileSchem.validateAsync(profile);
   const query = sql`
     UPDATE users SET 
@@ -46,24 +48,28 @@ export const updateProfile = async (id, profile) => {
 };
 
 export const updatePassword = async (id, newPassword) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(
     sql`UPDATE users SET password=${newPassword}, password_expired=false WHERE id=${id}`,
   );
 };
 
 export const expirePassword = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(
     sql`UPDATE users SET password_expired=true WHERE id=${id}`,
   );
 };
 
 export const verifyEmail = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(
     sql`UPDATE users SET email_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );
 };
 
 export const verifyPhone = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   await app.db.query(
     sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );

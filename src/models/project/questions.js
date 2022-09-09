@@ -1,9 +1,11 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {questionSchema} from './schema.js';
 
 export const addQuestion = async (projectId, body) => {
+  await Joi.string().uuid().validateAsync(projectId);
   await questionSchema.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`INSERT INTO questions 
@@ -18,6 +20,7 @@ export const addQuestion = async (projectId, body) => {
 };
 
 export const updateQuestion = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await questionSchema.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -35,6 +38,7 @@ export const updateQuestion = async (id, body) => {
 };
 
 export const getQuestions = async (projectId) => {
+  await Joi.string().uuid().validateAsync(projectId);
   const {rows} = await app.db.query(
     sql`SELECT * FROM questions WHERE project_id=${projectId}`,
   );

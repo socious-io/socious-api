@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 
@@ -18,6 +19,7 @@ export const all = async ({offset = 0, limit = 10}) => {
 };
 
 export const get = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,

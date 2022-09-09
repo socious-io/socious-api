@@ -1,4 +1,5 @@
 import sql from 'sql-template-tag';
+import Joi from 'joi';
 import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
 import {EntryError, NotImplementedError} from '../../utils/errors.js';
@@ -7,6 +8,8 @@ import {find} from './read.js';
 
 export const create = async (identityId, body) => {
   if (body.type !== Types.CHAT) throw new NotImplementedError();
+
+  await Joi.string().uuid().validateAsync(identityId);
 
   await newChatSchem.validateAsync(body);
   const participants = body.participants.map((id) => id.toLowerCase());
@@ -40,6 +43,7 @@ export const create = async (identityId, body) => {
 };
 
 export const update = async (id, body) => {
+  await Joi.string().uuid().validateAsync(id);
   await updateChatSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -56,6 +60,7 @@ export const update = async (id, body) => {
 };
 
 export const remove = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   try {
     const {rows} = await app.db.query(sql`DELETE FROM chats WHERE id=${id}`);
     return rows[0];
@@ -70,6 +75,9 @@ export const addParticipant = async (
   joinedById,
   type = MemberTypes.MEMBER,
 ) => {
+  await Joi.string().uuid().validateAsync(chatId);
+  await Joi.string().uuid().validateAsync(participantId);
+  await Joi.string().uuid().validateAsync(joinedById);
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO chats_participants (identity_id, chat_id, type, joined_by)
@@ -82,6 +90,8 @@ export const addParticipant = async (
 };
 
 export const permitParticipant = async (chatId, participantId, type) => {
+  await Joi.string().uuid().validateAsync(chatId);
+  await Joi.string().uuid().validateAsync(participantId);
   try {
     const {rows} = await app.db.query(sql`
     UPDATE chats_participants 
@@ -95,6 +105,8 @@ export const permitParticipant = async (chatId, participantId, type) => {
 };
 
 export const muteParticipant = async (chatId, participantId, until) => {
+  await Joi.string().uuid().validateAsync(chatId);
+  await Joi.string().uuid().validateAsync(participantId);
   try {
     const {rows} = await app.db.query(sql`
     UPDATE chats_participants 
@@ -108,6 +120,8 @@ export const muteParticipant = async (chatId, participantId, until) => {
 };
 
 export const removeParticipant = async (chatId, participantId) => {
+  await Joi.string().uuid().validateAsync(chatId);
+  await Joi.string().uuid().validateAsync(participantId);
   try {
     const {rows} = await app.db.query(sql`
     DELETE FROM chats_participants 
@@ -120,6 +134,8 @@ export const removeParticipant = async (chatId, participantId) => {
 };
 
 export const newMessage = async (chatId, identityId, body, replyId = null) => {
+  await Joi.string().uuid().validateAsync(chatId);
+  await Joi.string().uuid().validateAsync(identityId);
   await messageUpsertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -133,6 +149,8 @@ export const newMessage = async (chatId, identityId, body, replyId = null) => {
 };
 
 export const editMessage = async (id, identityId, body) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   await messageUpsertSchem.validateAsync(body);
   try {
     const {rows} = await app.db.query(sql`
@@ -149,6 +167,8 @@ export const editMessage = async (id, identityId, body) => {
 };
 
 export const removeMessage = async (id, identityId) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   return app.db.query(sql`
     DELETE FROM messages
     WHERE id=${id} AND identity_id=${identityId} 
@@ -156,10 +176,13 @@ export const removeMessage = async (id, identityId) => {
 };
 
 export const getMessage = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`SELECT * FROM messages WHERE id=${id}`);
 };
 
 export const readMessage = async (id, identityId) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   const selected = await app.db.get(sql`
     SELECT c.id AS chat_id, 
       c.updated_at AS chat_updated_at, 

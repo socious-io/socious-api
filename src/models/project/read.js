@@ -1,8 +1,10 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 
 export const get = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags
@@ -24,6 +26,7 @@ export const all = async ({offset = 0, limit = 10}) => {
 };
 
 export const allByIdentity = async (identityId, {offset = 0, limit = 10}) => {
+  await Joi.string().uuid().validateAsync(identityId);
   const {rows} = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       i.type  as identity_type, i.meta as identity_meta,
@@ -36,6 +39,8 @@ export const allByIdentity = async (identityId, {offset = 0, limit = 10}) => {
 };
 
 export const permissioned = async (identityId, id) => {
+  await Joi.string().uuid().validateAsync(id);
+  await Joi.string().uuid().validateAsync(identityId);
   const project = await get(id);
   if (project.identity_id !== identityId)
     throw new PermissionError('Not allow');

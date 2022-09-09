@@ -1,7 +1,9 @@
+import Joi from 'joi';
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 
 export const get = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   return app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`,
   );
@@ -31,6 +33,7 @@ export const profile = async (user) => {
 };
 
 export const getProfile = async (id) => {
+  await Joi.string().uuid().validateAsync(id);
   const user = await app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`,
   );

@@ -106,7 +106,7 @@ router.post('/', async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription check organazation unique columns
  *
- * @apiQuest {String} shortname
+ * @apiQuery {String} shortname
  */
 
 router.get('/check', async (ctx) => {

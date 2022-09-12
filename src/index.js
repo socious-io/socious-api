@@ -24,6 +24,8 @@ import {router as media} from './routes/media.js';
 import {router as skill} from './routes/skill.js';
 import {router as search} from './routes/search.js';
 
+import fs from 'fs/promises'
+
 import {
   middlewares,
   loginRequired,
@@ -51,6 +53,7 @@ app.use(
     },
   ),
 );
+
 app.use(koaBody());
 app.use(
   new cors({
@@ -73,10 +76,18 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err);
   process.exit(-1);
 });
+
+
 app.use(middlewares);
 app.use(session(config.session, app));
 
 const blueprint = new Router();
+
+blueprint.get('/', async (ctx) => {
+  const f = await fs.readFile('./index.html')
+  ctx.body = f.toString()
+})
+
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', retryBlocker, auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
@@ -142,6 +153,7 @@ socket handler will push every auth users connection ids to app.users
 will purge it when connection closed 
 */
 app.socket.on('connect', (socket) => {
+  console.log('----------------')
   const socketId = socket.id;
   const userId = socket.userId;
 

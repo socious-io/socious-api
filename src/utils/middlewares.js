@@ -61,7 +61,10 @@ export const socketSessions = (app) => {
 };
 
 export const socketLoginRequired = async (socket, next) => {
-  const token = socket.handshake.auth.token || socket.session.token;
+  const token = socket.handshake.auth.token || socket.handshake.headers.token || socket.session.token;
+
+  console.log(token, '-------',)
+
   if (!token) return next(new UnauthorizedError());
   try {
     const {id} = await Auth.verifyToken(token);

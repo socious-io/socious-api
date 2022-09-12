@@ -31,6 +31,33 @@ router.get('/:id', async (ctx) => {
 });
 
 /**
+ * @api {get} /orgs/by-shortname/:shortname Get By shortname
+ * @apiGroup Organazation
+ * @apiName Get By shortname
+ * @apiVersion 2.0.0
+ * @apiDescription get organazation by shortname
+ *
+ * @apiParam {String} shortname
+ *
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} name
+ * @apiSuccess (200) {String} bio
+ * @apiSuccess (200) {String} description
+ * @apiSuccess (200) {String} email
+ * @apiSuccess (200) {String} phone
+ * @apiSuccess (200) {String} type
+ * @apiSuccess (200) {String} city
+ * @apiSuccess (200) {String} address
+ * @apiSuccess (200) {Url} website
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String[]} social_causes
+ */
+router.get('/by-shortname/:shortname', async (ctx) => {
+  ctx.body = await Org.getByShortname(ctx.params.shortname);
+});
+
+/**
  * @api {get} /orgs Get all
  * @apiGroup Organazation
  * @apiName Get all

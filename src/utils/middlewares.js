@@ -61,16 +61,18 @@ export const socketSessions = (app) => {
 };
 
 export const socketLoginRequired = async (socket, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.headers.token || socket.session.token;
+  const token = socket.handshake.auth.token
+    || socket.handshake.headers.authorization 
+    || socket.session.token;
 
-  console.log(token, '-------',)
 
   if (!token) return next(new UnauthorizedError());
+
   try {
     const {id} = await Auth.verifyToken(token);
     // TODO: we can fetch user if need
     // socket.user = await User.get(id);
-    socket.userId = id;
+    socket.userId = id;    
   } catch {
     return next(new UnauthorizedError());
   }

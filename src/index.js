@@ -153,7 +153,6 @@ socket handler will push every auth users connection ids to app.users
 will purge it when connection closed 
 */
 app.socket.on('connect', (socket) => {
-  console.log('----------------')
   const socketId = socket.id;
   const userId = socket.userId;
 

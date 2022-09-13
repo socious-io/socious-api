@@ -31,7 +31,7 @@ const consumer = (handler) => {
 const register = {
   email: consumer(sendHtmlEmail),
   fcm: consumer(simplePush),
-  notify: consumer(eventsWorker)
+  notify: consumer(eventsWorker),
 };
 
 for await (const [name, handler] of Object.entries(register)) {

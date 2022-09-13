@@ -43,6 +43,10 @@ export default {
     secure: false, // need do it enviremental (works on https only)
     sameSite: null,
   },
+  webhooks: {
+    token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
+    addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks',
+  },
   aws: {
     cdn_url:
       process.env.AWS_CDN_URL ||

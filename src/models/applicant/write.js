@@ -20,7 +20,7 @@ export const insert = async (projectId, userId, body) => {
         )
         RETURNING id`,
     );
-    return get(rows[0].id)
+    return get(rows[0].id);
   } catch (err) {
     throw new EntryError(err.message);
   }

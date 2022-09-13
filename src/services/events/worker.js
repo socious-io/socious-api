@@ -1,29 +1,67 @@
-import {app} from '../../index.js';
+import Config from '../../config.js';
 import publish from '../jobs/publish.js';
 import Device from '../../models/device/index.js';
 import Notif from '../../models/notification/index.js';
 import Identity from '../../models/identity/index.js';
 import Org from '../../models/organization/index.js';
-
 import {makeMessage} from './message.js';
+import axios from 'axios';
 
 const Types = {
   CHAT: 'chat',
   NOTIFICATION: 'notification',
 };
 
-const emitEvent = (eventType, userId, body) => {
-  const connections = app.users[userId];
-
-  if (connections === undefined) return false;
-
-  let sent = false;
-
-  for (const conn of connections) {
-    app.socket.to(conn).emit(eventType, body);
-    sent = true;
+const emitEvent = async (eventType, userId, id) => {
+  console.log(Config.webhooks.addr);
+  try {
+    const res = await axios.post(
+      `${Config.webhooks.addr}/notify`,
+      {eventType, id, user_id: userId},
+      {headers: {token: Config.webhooks.token}},
+    );
+    return res.data.sent;
+  } catch {
+    return false;
   }
-  return sent;
+};
+
+const coordinateNotifs = async (userId, body) => {
+  const consolidateExceptions = [Notif.Types.APPLICATION];
+
+  let name = body.identity?.meta?.username || body.identity?.meta?.shortname;
+  let message = makeMessage(body.type, name);
+  const consolidateTime = 30 * 60 * 1000;
+  const now = new Date();
+  const latest = await Notif.latest(
+    userId,
+    body.type,
+    new Date(now.getTime() - consolidateTime),
+  );
+
+  if (latest && !consolidateExceptions.includes(body.type)) {
+    let consolidateNumbs = latest.data.consolidate_number + 1;
+    if (consolidateNumbs < 2) consolidateNumbs = 2;
+
+    message = makeMessage(body.type, `${consolidateNumbs} people`);
+
+    await Notif.update(latest.id, userId, body.refId, body.type, {
+      ...body,
+      body: message,
+      consolidate_number: consolidateNumbs,
+    });
+    await emitEvent(Types.NOTIFICATION, userId, latest.id);
+    return;
+  }
+
+  var notifId = await Notif.create(userId, body.refId, body.type, {
+    ...body,
+    body: message,
+    consolidate_number: 0,
+  });
+
+  await emitEvent(Types.NOTIFICATION, userId, notifId);
+  await pushNotifications([userId], message, body);
 };
 
 const pushNotifications = async (userIds, notification, data) => {
@@ -34,17 +72,10 @@ const pushNotifications = async (userIds, notification, data) => {
 const _push = async (eventType, userId, body) => {
   switch (eventType) {
     case Types.NOTIFICATION:
-      var message = makeMessage(body.type, body);
-      await Notif.create(userId, body.refId, body.type, {
-        ...body,
-        body: message,
-      });
-
-      emitEvent(eventType, userId, body);
-      pushNotifications([userId], message, body);
+      await coordinateNotifs(userId, body);
       break;
     case Types.CHAT:
-      if (!emitEvent(eventType, userId, body) && !body.muted) {
+      if (!emitEvent(eventType, userId, body.id) && !body.muted) {
         body.type = Notif.Types.CHAT;
         body.refId = body.id;
         _push(Types.NOTIFICATION, userId, body);
@@ -74,8 +105,6 @@ const batchPush = async (eventType, identityIds, body) => {
   );
 };
 
-
-
 export const worker = async ({eventType, identityId, body}) => {
   const identity = await Identity.get(identityId);
 
@@ -89,4 +118,4 @@ export const worker = async ({eventType, identityId, body}) => {
   }
 
   return _push(eventType, identity.id, body);
-}
+};

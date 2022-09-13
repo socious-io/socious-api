@@ -66,6 +66,16 @@ export const messages = async (id, {offset = 0, limit = 10}) => {
   return rows;
 };
 
+export const getMessage = async (id) => {
+  const {rows} = await app.db.query(sql`
+    SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url
+    FROM messages
+    LEFT JOIN media AS media ON media.id = media
+    WHERE id=${id}
+  `);
+  return rows;
+};
+
 export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url

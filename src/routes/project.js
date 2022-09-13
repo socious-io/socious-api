@@ -291,14 +291,13 @@ router.post('/:id/applicants', identity, async (ctx) => {
     ctx.request.body,
   );
 
-  const project = await Project.get(ctx.body.project_id)
+  const project = await Project.get(ctx.body.project_id);
 
   Event.push(Event.Types.NOTIFICATION, project.identity_id, {
     type: Notif.Types.APPLICATION,
     refId: ctx.body.id,
-    identity: ctx.identity
+    identity: ctx.identity,
   });
-
 });
 
 /**

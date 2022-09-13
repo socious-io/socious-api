@@ -26,12 +26,14 @@ export const getByPhone = async (phone) => {
 };
 
 export const currentProfile = async (user) => {
-  const {rows} = await app.db.query(`SELECT * FROM media where id IN (${user.avatar},${user.cover_image})`)
+  const {rows} = await app.db.query(
+    `SELECT * FROM media WHERE id IN (${user.avatar},${user.cover_image})`,
+  );
   delete user.password;
 
   for (const row of rows) {
-    if (row.id == user.avatar) user.avatar = row
-    if (row.id == user.cover_image) user.cover_image = row
+    if (row.id == user.avatar) user.avatar = row;
+    if (row.id == user.cover_image) user.cover_image = row;
   }
 
   return user;
@@ -40,9 +42,9 @@ export const currentProfile = async (user) => {
 export const getProfile = async (id) => {
   return app.db.get(
     sql`
-    SELECT id, username, first_name, last_name,
+    SELECT u.id, username, first_name, last_name,
     city, country, mission, bio, impact_score, skills,
-    followers, followings, created_at,
+    followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image
@@ -57,9 +59,9 @@ export const getProfile = async (id) => {
 export const getProfileByUsername = async (username) => {
   return app.db.get(
     sql`
-    SELECT id, username, first_name, last_name,
+    SELECT u.id, username, first_name, last_name,
     city, country, mission, bio, impact_score, skills,
-    followers, followings, created_at,
+    followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image

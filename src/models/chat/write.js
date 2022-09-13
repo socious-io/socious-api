@@ -156,7 +156,12 @@ export const removeMessage = async (id, identityId) => {
 };
 
 export const getMessage = async (id) => {
-  return app.db.get(sql`SELECT * FROM messages WHERE id=${id}`);
+  return app.db.get(sql`
+  SELECT m.*, i.type AS identity_type, i.meta AS identity_meta
+  FROM messages m
+  JOIN identities i ON i.id=m.identity_id
+  WHERE m.id=${id}
+  `);
 };
 
 export const readMessage = async (id, identityId) => {

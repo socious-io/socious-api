@@ -1,7 +1,6 @@
 import Notif from '../../models/notification/index.js';
 
-export const makeMessage = (type, body) => {
-  const name = body.identity?.meta?.username || body.identity?.meta?.shortname;
+export const makeMessage = (type, name) => {
   switch (type) {
     case Notif.Types.FOLLOWED:
       return {title: Notif.Title.FOLLOWED, body: `${name} followed you`};

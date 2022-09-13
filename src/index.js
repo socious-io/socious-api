@@ -23,6 +23,7 @@ import {router as device} from './routes/device.js';
 import {router as media} from './routes/media.js';
 import {router as skill} from './routes/skill.js';
 import {router as search} from './routes/search.js';
+import {router as webhook} from './routes/webhook.js';
 
 import {
   middlewares,
@@ -30,6 +31,7 @@ import {
   retryBlocker,
   socketSessions,
   socketLoginRequired,
+  accessWebhooks,
 } from './utils/middlewares.js';
 
 import {Server as Socket} from 'socket.io';
@@ -39,7 +41,7 @@ import config from './config.js';
 export const app = new Koa();
 
 app.keys = [config.secret];
-app.users = [];
+app.users = {};
 
 app.use(
   morgan(
@@ -51,6 +53,7 @@ app.use(
     },
   ),
 );
+
 app.use(koaBody());
 app.use(
   new cors({
@@ -73,10 +76,18 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err);
   process.exit(-1);
 });
+
 app.use(middlewares);
 app.use(session(config.session, app));
 
 const blueprint = new Router();
+
+blueprint.use(
+  '/webhooks',
+  accessWebhooks,
+  webhook.routes(),
+  webhook.allowedMethods(),
+);
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', retryBlocker, auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
@@ -141,14 +152,12 @@ app.socket.use(socketLoginRequired);
 socket handler will push every auth users connection ids to app.users
 will purge it when connection closed 
 */
-app.socket.on('connect', (socket) => {
+app.socket.on('connect', async (socket) => {
   const socketId = socket.id;
   const userId = socket.userId;
 
   if (!app.users[userId]) app.users[socket.userId] = [];
   app.users[userId].push(socketId);
-
-  app.socket.to(socketId).emit('chat', socket.userId);
 
   socket.on('disconnect', () => {
     const index = app.users[userId].indexOf(socketId);

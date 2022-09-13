@@ -1,9 +1,26 @@
 import compose from 'koa-compose';
+import Cors from '@koa/cors';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
 import Config from '../config.js';
 import {UnauthorizedError, TooManyRequestsError} from './errors.js';
+
+const cors = new Cors({
+  origin: Config.cors.origins.length
+    ? (ctx) => {
+        const origin = ctx.header.origin || ctx.origin;
+        if (origin) {
+          const url = new URL(origin);
+          for (const allowed of Config.cors.origins) {
+            if (url.host.endsWith(allowed)) return origin;
+          }
+        }
+        return 'https://socious.io';
+      }
+    : undefined,
+  credentials: true,
+});
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -27,7 +44,7 @@ const throwHandler = async (ctx, next) => {
   }
 };
 
-export const middlewares = compose([throwHandler]);
+export const middlewares = compose([cors, throwHandler]);
 
 export const loginRequired = async (ctx, next) => {
   const {authorization} = ctx.request.header;

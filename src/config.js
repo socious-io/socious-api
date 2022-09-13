@@ -40,8 +40,8 @@ export default {
     signed: true,
     rolling: false,
     renew: true,
-    secure: false, // need do it enviremental (works on https only)
-    sameSite: null,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : null,
   },
   webhooks: {
     token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
@@ -61,7 +61,7 @@ export default {
     key: process.env.FCM_KEY,
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || '').split(','),
+    origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
   },
 };
 

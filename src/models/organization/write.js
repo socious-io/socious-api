@@ -9,10 +9,10 @@ export const insert = async (body) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, country, website, social_causes, mobile_country_code, image) 
+      INSERT INTO organizations (name, bio, description, email, phone, type, city, address, country, website, social_causes, mobile_country_code) 
         VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email},
           ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country},
-          ${body.website}, ${body.social_causes}, ${body.mobile_country_code}, ${body.image})
+          ${body.website}, ${body.social_causes}, ${body.mobile_country_code})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];

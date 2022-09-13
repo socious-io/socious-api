@@ -30,6 +30,11 @@ export const upsertSchem = Joi.object({
     Joi.string().valid(...Object.values(SocialCauses)),
   ),
   country: Joi.string().min(2).max(3),
+  expires_at: Joi.string().allow(null),
+  other_party_id: Joi.string(),
+  other_party_title: Joi.string(),
+  other_party_url: Joi.string(),
+  updated_at: Joi.string(),
 });
 
 export const questionSchema = Joi.object({

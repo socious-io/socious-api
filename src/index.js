@@ -37,7 +37,7 @@ import {Server as Socket} from 'socket.io';
 
 import config from './config.js';
 
-export const app = new Koa();
+export const app = new Koa({proxy: true});
 
 app.keys = [config.secret];
 app.users = {};

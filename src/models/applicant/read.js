@@ -11,7 +11,10 @@ export const getAnswers = async (id) => {
 
 export const get = async (id) => {
   const applicant = await app.db.get(
-    sql`SELECT * FROM applicants WHERE id=${id}`,
+    sql`SELECT a.*, i.meta as user
+    FROM applicants a
+    JOIN identities i ON i.id=a.user_id
+    WHERE id=${id}`,
   );
   applicant.answers = await getAnswers(id);
   return applicant;

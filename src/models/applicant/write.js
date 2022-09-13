@@ -3,6 +3,7 @@ import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
 import {upsertSchem, offerSchem, rejectSchem, answerSchema} from './schema.js';
 import {StatusTypes} from './enums.js';
+import {get} from './read.js';
 
 export const insert = async (projectId, userId, body) => {
   await upsertSchem.validateAsync(body);
@@ -17,9 +18,9 @@ export const insert = async (projectId, userId, body) => {
           ${body.payment_type},
           ${body.payment_rate}
         )
-        RETURNING *`,
+        RETURNING id`,
     );
-    return rows[0];
+    return get(rows[0].id);
   } catch (err) {
     throw new EntryError(err.message);
   }

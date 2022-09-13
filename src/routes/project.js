@@ -1,6 +1,8 @@
 import Router from '@koa/router';
 import Project from '../models/project/index.js';
 import Applicant from '../models/applicant/index.js';
+import Notif from '../models/notification/index.js';
+import Event from '../services/events/index.js';
 import {paginate, identity} from '../utils/requests.js';
 export const router = new Router();
 
@@ -282,12 +284,20 @@ router.get('/applicants/:id', async (ctx) => {
  * @apiSuccess {String} answers.answer
  * @apiSuccess {Number} answers.selected_option
  */
-router.post('/:id/applicants', async (ctx) => {
+router.post('/:id/applicants', identity, async (ctx) => {
   ctx.body = await Applicant.apply(
     ctx.params.id,
     ctx.user.id,
     ctx.request.body,
   );
+
+  const project = await Project.get(ctx.body.project_id);
+
+  Event.push(Event.Types.NOTIFICATION, project.identity_id, {
+    type: Notif.Types.APPLICATION,
+    refId: ctx.body.id,
+    identity: ctx.identity,
+  });
 });
 
 /**

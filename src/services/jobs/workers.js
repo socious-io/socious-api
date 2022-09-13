@@ -1,5 +1,6 @@
 import {sendHtmlEmail} from '../email/index.js';
 import {simplePush} from '../fcm/index.js';
+import {worker as eventsWorker} from '../events/worker.js';
 
 import config from '../../config.js';
 import {connect, JSONCodec} from 'nats';
@@ -30,6 +31,7 @@ const consumer = (handler) => {
 const register = {
   email: consumer(sendHtmlEmail),
   fcm: consumer(simplePush),
+  notify: consumer(eventsWorker),
 };
 
 for await (const [name, handler] of Object.entries(register)) {

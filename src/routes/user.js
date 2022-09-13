@@ -33,6 +33,28 @@ router.get('/:id/profile', async (ctx) => {
 });
 
 /**
+ * @api {get} /user/by-username/:username/profile Others Profile by Username
+ * @apiGroup User
+ * @apiName OthersProfilebyUsername
+ * @apiVersion 2.0.0
+ * @apiDescription Other User Profile by username
+ * @apiPermission LoginRequired
+ *
+ * @apiParam {String} username
+ *
+ * @apiBody  {String} first_name Mandatory
+ * @apiBody  {String} last_name Mandatory
+ * @apiBody  {String} bio
+ * @apiBody  {String} city
+ * @apiBody  {String} address
+ * @apiBody  {String} wallet_address
+ * @apiBody  {String[]} social_causes
+ */
+router.get('/by-username/:username/profile', async (ctx) => {
+  ctx.body = await User.getProfileByUsername(ctx.params.username);
+});
+
+/**
  * @api {get} /user/profile Profile
  * @apiGroup User
  * @apiName Profile

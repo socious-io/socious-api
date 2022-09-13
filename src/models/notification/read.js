@@ -25,3 +25,20 @@ export const get = async (userId, id) => {
     SELECT * FROM notifications WHERE id=${id} AND user_id=${userId}
   `);
 };
+
+export const getById = async (id) => {
+  return app.db.get(sql`
+    SELECT * FROM notifications WHERE id=${id}
+  `);
+};
+
+export const latest = async (userId, type, fromDate) => {
+  const {rows} = await app.db.query(sql`
+    SELECT * FROM notifications 
+    WHERE user_id=${userId} 
+    AND type=${type}
+    AND (created_at >= ${fromDate} OR updated_at >= ${fromDate})
+    ORDER BY updated_at DESC
+  `);
+  return rows[0];
+};

@@ -32,14 +32,30 @@ export const profile = async (user) => {
 
 export const getProfile = async (id) => {
   const user = await app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`,
+    sql`
+    SELECT u.*, array_to_json(u.social_causes) AS social_causes,
+    row_to_json(avatar.*) AS avatar,
+    row_to_json(cover.*) AS cover_image
+    FROM users u 
+    LEFT JOIN media avatar ON avatar.id=u.avatar
+    LEFT JOIN media cover ON cover.id=u.cover_image
+    WHERE u.id=${id}
+    `,
   );
-  const {rows} = await app.db.query(
-    sql`SELECT * FROM media WHERE id IN (${user.avatar}, ${user.cover_image})`,
+  return profile(user);
+};
+
+export const getProfileByUsername = async (username) => {
+  const user = await app.db.get(
+    sql`
+    SELECT u.*, array_to_json(u.social_causes) AS social_causes,
+    row_to_json(avatar.*) AS avatar,
+    row_to_json(cover.*) AS cover_image    
+    FROM users u 
+    LEFT JOIN media avatar ON avatar.id=u.avatar
+    LEFT JOIN media cover ON cover.id=u.cover_image
+    WHERE u.username=${username}
+    `,
   );
-  for (const media of rows) {
-    if (media.id === user.avatar) user.avatar = media;
-    if (media.id === user.cover_image) user.cover_image = media;
-  }
   return profile(user);
 };

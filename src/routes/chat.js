@@ -401,6 +401,7 @@ router.post('/:id/messages', identity, async (ctx) => {
     participants.map((p) =>
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
+        identity: ctx.identity,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()
           : false,
@@ -450,6 +451,7 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
     participants.map((p) =>
       Event.push(Event.Types.Chat, p.identity_id, {
         ...ctx.body,
+        identity: ctx.identity,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()
           : false,

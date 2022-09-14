@@ -72,7 +72,7 @@ router.get('/by-username/:username/profile', async (ctx) => {
  *
  */
 router.get('/profile', async (ctx) => {
-  ctx.body = await User.getProfile(ctx.user.id);
+  ctx.body = await User.currentProfile(ctx.user);
 });
 
 /**

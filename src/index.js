@@ -26,7 +26,6 @@ import {router as webhook} from './routes/webhook.js';
 
 import {
   middlewares,
-  loginRequired,
   retryBlocker,
   socketSessions,
   socketLoginRequired,
@@ -70,49 +69,44 @@ blueprint.use(
   webhook.routes(),
   webhook.allowedMethods(),
 );
+
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', retryBlocker, auth.routes(), auth.allowedMethods());
-blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
+blueprint.use('/user', user.routes(), user.allowedMethods());
 blueprint.use(
   '/identities',
-  loginRequired,
   identity.routes(),
   identity.allowedMethods(),
 );
-blueprint.use('/orgs', loginRequired, org.routes(), org.allowedMethods());
-blueprint.use('/posts', loginRequired, post.routes(), post.allowedMethods());
+blueprint.use('/orgs', org.routes(), org.allowedMethods());
+blueprint.use('/posts', post.routes(), post.allowedMethods());
 blueprint.use(
   '/projects',
-  loginRequired,
   project.routes(),
   project.allowedMethods(),
 );
 blueprint.use(
   '/follows',
-  loginRequired,
   follow.routes(),
   follow.allowedMethods(),
 );
 blueprint.use(
   '/notifications',
-  loginRequired,
   notif.routes(),
   notif.allowedMethods(),
 );
 
-blueprint.use('/chats', loginRequired, chat.routes(), chat.allowedMethods());
+blueprint.use('/chats', chat.routes(), chat.allowedMethods());
 blueprint.use(
   '/devices',
-  loginRequired,
   device.routes(),
   device.allowedMethods(),
 );
 
-blueprint.use('/media', loginRequired, media.routes(), media.allowedMethods());
-blueprint.use('/skills', loginRequired, skill.routes(), skill.allowedMethods());
+blueprint.use('/media', media.routes(), media.allowedMethods());
+blueprint.use('/skills', skill.routes(), skill.allowedMethods());
 blueprint.use(
   '/search',
-  loginRequired,
   search.routes(),
   search.allowedMethods(),
 );

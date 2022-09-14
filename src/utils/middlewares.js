@@ -3,6 +3,7 @@ import Cors from '@koa/cors';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
+import Identity from '../models/identity/index.js';
 import Config from '../config.js';
 import {UnauthorizedError, TooManyRequestsError} from './errors.js';
 
@@ -44,9 +45,7 @@ const throwHandler = async (ctx, next) => {
   }
 };
 
-export const middlewares = compose([cors, throwHandler]);
-
-export const loginRequired = async (ctx, next) => {
+export const loginRequired = async (ctx) => {
   const {authorization} = ctx.request.header;
 
   const token = authorization
@@ -69,8 +68,50 @@ export const loginRequired = async (ctx, next) => {
   // Auto refresh on sessions
   if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token;
 
-  await next();
 };
+
+export const currentIdentity = async (ctx) => {
+  const currentidentity = ctx.request.header['current-identity'];
+  const identityId = currentidentity || ctx.session.current_identity;
+
+  const identity = identityId
+    ? await Identity.get(identityId)
+    : await Identity.get(ctx.user.id);
+
+  if (identityId) await Identity.permissioned(identity, ctx.user.id);
+
+  ctx.identity = identity;
+};
+
+
+export const authorization = async (ctx, next) => {
+  const publicRoutes = [
+    /^\/auth/,
+    /^\/posts\/?$/,
+    /^\/user\/.+\/profile\/?$/,
+    /^\/orgs\/by-shortname\/[a-z0-9._-]+\/?$/,
+    /^\/orgs\/[a-z0-9-]+\/?$/,
+    /^\/projects\/?$/,
+    /^\/projects\/[a-z0-9-]+\/?$/
+  ]
+
+  const loginOptional = publicRoutes.some(ex => ex.test(ctx.path))
+
+  try {
+    await loginRequired(ctx)
+  } catch (e) {
+    if (!loginOptional) throw e
+    ctx.user = await User.getByUsername('guest')
+  }
+
+  await currentIdentity(ctx)
+
+  await next()
+}
+
+export const middlewares = compose([cors, throwHandler, authorization]);
+
+
 
 export const socketSessions = (app) => {
   return (socket, next) => {

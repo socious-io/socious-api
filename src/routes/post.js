@@ -2,7 +2,7 @@ import Router from '@koa/router';
 import Post from '../models/post/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
-import {paginate, identity} from '../utils/requests.js';
+import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
 /**
@@ -28,7 +28,7 @@ export const router = new Router();
  * @apiSuccess (200) {String[]} causes_tags
  * @apiSuccess (200) {String[]} identity_tags
  */
-router.get('/:id', identity, async (ctx) => {
+router.get('/:id', async (ctx) => {
   ctx.body = await Post.get(ctx.params.id, ctx.identity.id);
 });
 
@@ -62,7 +62,7 @@ router.get('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {String[]} items.causes_tags
  * @apiSuccess (200) {String[]} items.identity_tags
  */
-router.get('/', paginate, identity, async (ctx) => {
+router.get('/', paginate, async (ctx) => {
   ctx.body = ctx.query.identity
     ? await Post.allByIdentity(
         ctx.identity.id,
@@ -73,7 +73,7 @@ router.get('/', paginate, identity, async (ctx) => {
 });
 
 /**
- * @api {post} /posts Create new
+ * @api {post} /posts/create Create new
  * @apiGroup Post
  * @apiName Create
  * @apiVersion 2.0.0
@@ -98,7 +98,7 @@ router.get('/', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
  */
-router.post('/', identity, async (ctx) => {
+router.post('/create', async (ctx) => {
   ctx.body = await Post.insert(ctx.identity.id, ctx.request.body);
 });
 
@@ -129,7 +129,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
  */
-router.post('/update/:id', identity, async (ctx) => {
+router.post('/update/:id', async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Post.update(
     ctx.params.id,
@@ -151,7 +151,7 @@ router.post('/update/:id', identity, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/remove/:id', identity, async (ctx) => {
+router.get('/remove/:id', async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   await Post.remove(ctx.params.id);
   ctx.body = {message: 'success'};
@@ -185,7 +185,7 @@ router.get('/remove/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/:id/comments', paginate, identity, async (ctx) => {
+router.get('/:id/comments', paginate, async (ctx) => {
   ctx.body = await Post.comments(ctx.params.id, ctx.identity.id, ctx.paginate);
 });
 
@@ -217,7 +217,7 @@ router.get('/:id/comments', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/comments/:id', paginate, identity, async (ctx) => {
+router.get('/comments/:id', paginate, async (ctx) => {
   ctx.body = await Post.commentsReplies(
     ctx.params.id,
     ctx.identity.id,
@@ -238,7 +238,7 @@ router.get('/comments/:id', paginate, identity, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/remove/comments/:id', identity, async (ctx) => {
+router.get('/remove/comments/:id', async (ctx) => {
   await Post.removeComment(ctx.params.id, ctx.identity.id);
   ctx.body = {message: 'success'};
 });
@@ -266,7 +266,7 @@ router.get('/remove/comments/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.post('/:id/comments', identity, async (ctx) => {
+router.post('/:id/comments', async (ctx) => {
   ctx.body = await Post.newComment(
     ctx.params.id,
     ctx.identity.id,
@@ -303,7 +303,7 @@ router.post('/:id/comments', identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.post('/update/comments/:id', identity, async (ctx) => {
+router.post('/update/comments/:id', async (ctx) => {
   ctx.body = await Post.updateComment(
     ctx.params.id,
     ctx.identity.id,
@@ -324,7 +324,7 @@ router.post('/update/comments/:id', identity, async (ctx) => {
  *
  *
  */
-router.post('/update/:id/like', identity, async (ctx) => {
+router.post('/update/:id/like', async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
 
   const post = await Post.miniGet(ctx.params.id);
@@ -350,7 +350,7 @@ router.post('/update/:id/like', identity, async (ctx) => {
  *
  *
  */
-router.get('/remove/:id/like', identity, async (ctx) => {
+router.get('/remove/:id/like', async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id);
   ctx.body = {message: 'success'};
 });
@@ -369,7 +369,7 @@ router.get('/remove/:id/like', identity, async (ctx) => {
  *
  *
  */
-router.post('/update/:id/comments/:comment_id/like', identity, async (ctx) => {
+router.post('/update/:id/comments/:comment_id/like', async (ctx) => {
   ctx.body = await Post.like(
     ctx.params.id,
     ctx.identity.id,
@@ -400,7 +400,7 @@ router.post('/update/:id/comments/:comment_id/like', identity, async (ctx) => {
  *
  *
  */
-router.get('/remove/:id/comments/:comment_id/like', identity, async (ctx) => {
+router.get('/remove/:id/comments/:comment_id/like', async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id);
   ctx.body = {message: 'success'};
 });
@@ -419,6 +419,6 @@ router.get('/remove/:id/comments/:comment_id/like', identity, async (ctx) => {
  * @apiBody {String} content
  *
  */
-router.post('/:id/share', identity, async (ctx) => {
+router.post('/:id/share', async (ctx) => {
   ctx.body = await Post.share(ctx.params.id, ctx.identity.id, ctx.request.body);
 });

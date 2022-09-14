@@ -4,7 +4,7 @@ import {BadRequestError} from '../utils/errors.js';
 import Follow from '../models/follow/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
-import {identity, paginate} from '../utils/requests.js';
+import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
@@ -33,7 +33,7 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} items.created_at
  *
  */
-router.get('/followers', paginate, identity, async (ctx) => {
+router.get('/followers', paginate, async (ctx) => {
   ctx.body = ctx.query.name
     ? await Follow.followersByName(
         ctx.identity.id,
@@ -68,7 +68,7 @@ router.get('/followers', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} items.created_at
  *
  */
-router.get('/followings', paginate, identity, async (ctx) => {
+router.get('/followings', paginate, async (ctx) => {
   ctx.body = ctx.query.name
     ? await Follow.followingsByName(
         ctx.identity.id,
@@ -92,7 +92,7 @@ router.get('/followings', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Object} follow info object
  *
  */
-router.post('/:id', identity, async (ctx) => {
+router.post('/:id', async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (followed) throw new BadRequestError('Already followed');
 
@@ -119,7 +119,7 @@ router.post('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.get('/remove/:id', identity, async (ctx) => {
+router.get('/remove/:id', async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (!followed) throw new BadRequestError('Not followed');
 

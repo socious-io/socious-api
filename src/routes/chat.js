@@ -129,7 +129,7 @@ router.post('/find', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  */
 router.post('/', identity, async (ctx) => {
-  ctx.body = await Chat.create(ctx.identity.id, ctx.request.body);
+  ctx.body = await Chat.create(ctx.identity, ctx.request.body);
 });
 
 /**

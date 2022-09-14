@@ -3,7 +3,7 @@ import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
 import {EntryError, NotImplementedError} from '../../utils/errors.js';
 import {MemberTypes, Types} from './enums.js';
-import {find, addparticipantPermission} from './read.js';
+import {find, addParticipantPermission} from './read.js';
 
 export const create = async (identity, body) => {
   if (body.type !== Types.CHAT) throw new NotImplementedError();
@@ -14,7 +14,7 @@ export const create = async (identity, body) => {
   await Promise.all(
     participants
       .filter((p) => p !== identity.id)
-      .map((p) => addparticipantPermission(identity, p)),
+      .map((p) => addParticipantPermission(identity, p)),
   );
 
   if (!participants.includes(identity.id)) participants.push(identity.id);

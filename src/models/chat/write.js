@@ -3,33 +3,39 @@ import {app} from '../../index.js';
 import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
 import {EntryError, NotImplementedError} from '../../utils/errors.js';
 import {MemberTypes, Types} from './enums.js';
-import {find} from './read.js';
+import {find, addParticipantPermission} from './read.js';
 
-export const create = async (identityId, body) => {
+export const create = async (identity, body) => {
   if (body.type !== Types.CHAT) throw new NotImplementedError();
 
   await newChatSchem.validateAsync(body);
   const participants = body.participants.map((id) => id.toLowerCase());
-  if (!participants.includes(identityId)) participants.push(identityId);
+
+  await Promise.all(
+    participants
+      .filter((p) => p !== identity.id)
+      .map((p) => addParticipantPermission(identity, p)),
+  );
+
+  if (!participants.includes(identity.id)) participants.push(identity.id);
   participants.sort();
 
-  const existing = await find(identityId, {participants});
+  const existing = await find(identity.id, {participants});
   if (existing.length > 0) return existing[0];
 
   await app.db.query('BEGIN');
   try {
     const {rows} = await app.db.query(sql`
       INSERT INTO chats (name, description, type, participants, created_by)
-        VALUES (${body.name}, ${body.description}, ${body.type}, ${participants}, ${identityId})
+        VALUES (${body.name}, ${body.description}, ${body.type}, ${participants}, ${identity.id})
         RETURNING *
     `);
     const chat = rows[0];
-    console.log(participants);
     await Promise.all(
       participants
         // current Identity will add automaticly as ADMIN
-        .filter((p) => p !== identityId)
-        .map((p) => addParticipant(chat.id, p, identityId)),
+        .filter((p) => p !== identity.id)
+        .map((p) => addParticipant(chat.id, p, identity.id)),
     );
     await app.db.query('COMMIT');
     return chat;

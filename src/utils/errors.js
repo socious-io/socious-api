@@ -2,6 +2,7 @@ export class AuthorizationError extends Error {
   status = 401;
 }
 export class PermissionError extends Error {
+  message = 'Not allow';
   status = 403;
 }
 export class BadRequestError extends Error {

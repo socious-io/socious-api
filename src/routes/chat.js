@@ -133,7 +133,7 @@ router.post('/', identity, async (ctx) => {
 });
 
 /**
- * @api {put} /chats/:id Update
+ * @api {post} /chats/update/:id Update
  * @apiGroup Chat
  * @apiName Update
  * @apiVersion 2.0.0
@@ -165,7 +165,7 @@ router.post('/update/:id', identity, async (_ctx) => {
 });
 
 /**
- * @api {delete} /chats/:id Delete
+ * @api {get} /chats/remove/:id Delete
  * @apiGroup Chat
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -221,7 +221,7 @@ router.get('/:id/participants', paginate, identity, async (ctx) => {
 });
 
 /**
- * @api {put} /chats/:id/participants/mute Mute participant
+ * @api {post} /chats/update/:id/participants/mute Mute participant
  * @apiGroup Chat
  * @apiName Mute participant
  * @apiVersion 2.0.0
@@ -245,7 +245,7 @@ router.post('/update/:id/participants/mute', identity, async (_ctx) => {
 });
 
 /**
- * @api {put} /chats/:id/participants/:identity_id/permit Permit participant
+ * @api {post} /chats/update/:id/participants/:identity_id/permit Permit participant
  * @apiGroup Chat
  * @apiName Permit participant
  * @apiVersion 2.0.0
@@ -273,7 +273,7 @@ router.post('/update/:id/participants/:identity_id/permit', identity, async (_ct
 });
 
 /**
- * @api {put} /chats/:id/participants/:identity_id Add participant
+ * @api {post} /chats/update/:id/participants/:identity_id Add participant
  * @apiGroup Chat
  * @apiName Add participant
  * @apiVersion 2.0.0
@@ -301,7 +301,7 @@ router.post('/update/:id/participants/:identity_id', identity, async (_ctx) => {
 });
 
 /**
- * @api {delete} /chats/:id/participants/:identity_id remove participant
+ * @api {get} /chats/remove/:id/participants/:identity_id remove participant
  * @apiGroup Chat
  * @apiName remove participant
  * @apiVersion 2.0.0
@@ -495,7 +495,7 @@ router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
 });
 
 /**
- * @api {put} /chats/:id/messages/:message_id Edit Messages
+ * @api {post} /chats/update/:id/messages/:message_id Edit Messages
  * @apiGroup Chat
  * @apiName Edit Messages
  * @apiVersion 2.0.0
@@ -530,7 +530,7 @@ router.post('/update/:id/messages/:message_id', identity, async (ctx) => {
 });
 
 /**
- * @api {put} /chats/:id/messages/:message_id/read read Messages
+ * @api {post} /chats/update/:id/messages/:message_id/read read Messages
  * @apiGroup Chat
  * @apiName read Messages
  * @apiVersion 2.0.0
@@ -550,7 +550,7 @@ router.post('/update/:id/messages/:message_id/read', identity, async (ctx) => {
 });
 
 /**
- * @api {put} /chats/:id/messages/:message_id Delete messages
+ * @api {post} /chats/update/:id/messages/:message_id Delete messages
  * @apiGroup Chat
  * @apiName Delete Messages
  * @apiVersion 2.0.0

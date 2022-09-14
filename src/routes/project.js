@@ -86,7 +86,7 @@ router.post('/', identity, async (ctx) => {
 });
 
 /**
- * @api {put} /projects/:id Update
+ * @api {post} /projects/:id Update
  * @apiGroup Project
  * @apiName Update
  * @apiVersion 2.0.0
@@ -114,7 +114,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/:id', identity, async (ctx) => {
+router.post('/:id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Project.update(ctx.params.id, ctx.request.body);
 });
@@ -301,7 +301,7 @@ router.post('/:id/applicants', identity, async (ctx) => {
 });
 
 /**
- * @api {put} /projects/applicants/:id/withdraw Withdraw Application
+ * @api {post} /projects/applicants/:id/withdraw Withdraw Application
  * @apiGroup Project
  * @apiName WithdrawApplicant
  * @apiVersion 2.0.0
@@ -323,13 +323,13 @@ router.post('/:id/applicants', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/applicants/:id/withdraw', async (ctx) => {
+router.post('/applicants/:id/withdraw', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   ctx.body = await Applicant.withdraw(ctx.params.id);
 });
 
 /**
- * @api {put} /projects/applicants/:id/offer Offer Applicant
+ * @api {post} /projects/applicants/:id/offer Offer Applicant
  * @apiGroup Project
  * @apiName OfferApplicant
  * @apiVersion 2.0.0
@@ -358,13 +358,13 @@ router.post('/update/applicants/:id/withdraw', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/applicants/:id/offer', identity, async (ctx) => {
+router.post('/applicants/:id/offer', identity, async (ctx) => {
   await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
 });
 
 /**
- * @api {put} /projects/applicants/:id/reject Reject Applicant
+ * @api {post} /projects/applicants/:id/reject Reject Applicant
  * @apiGroup Project
  * @apiName RejectApplicant
  * @apiVersion 2.0.0
@@ -390,13 +390,13 @@ router.post('/update/applicants/:id/offer', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/applicants/:id/reject', identity, async (ctx) => {
+router.post('/applicants/:id/reject', identity, async (ctx) => {
   await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
 });
 
 /**
- * @api {put} /projects/applicants/:id/approve Approve Offer
+ * @api {post} /projects/applicants/:id/approve Approve Offer
  * @apiGroup Project
  * @apiName ApproveOffer
  * @apiVersion 2.0.0
@@ -418,13 +418,13 @@ router.post('/update/applicants/:id/reject', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/applicants/:id/approve', identity, async (ctx) => {
+router.post('/applicants/:id/approve', identity, async (ctx) => {
   await Applicant.mustOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.approve(ctx.params.id);
 });
 
 /**
- * @api {put} /projects/applicants/:id Update Applicant
+ * @api {post} /projects/applicants/:id Update Applicant
  * @apiGroup Project
  * @apiName UpdateApplicant
  * @apiVersion 2.0.0
@@ -458,13 +458,13 @@ router.post('/update/applicants/:id/approve', identity, async (ctx) => {
  * @apiSuccess {String} answers.answer
  * @apiSuccess {Number} answers.selected_option
  */
-router.post('/update/applicants/:id', async (ctx) => {
+router.post('/applicants/:id', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
 });
 
 /**
- * @api {delete} /projects/applicants/:id Remove Applicant
+ * @api {get} /projects/remove/applicants/:id Remove Applicant
  * @apiGroup Project
  * @apiName RemoveApplicant
  * @apiVersion 2.0.0

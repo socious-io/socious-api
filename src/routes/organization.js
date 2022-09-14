@@ -216,7 +216,7 @@ router.get('/:id/members', paginate, async (ctx) => {
 });
 
 /**
- * @api {put} /orgs/:id/members/:user_id Add member
+ * @api {post} /orgs/:id/members/:user_id Add member
  * @apiGroup Organazation.Members
  * @apiName Add member
  * @apiVersion 2.0.0
@@ -228,7 +228,7 @@ router.get('/:id/members', paginate, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.post('/update/:id/members/:user_id', async (ctx) => {
+router.post('/:id/members/:user_id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
   await Org.addMember(ctx.params.id, ctx.params.user_id);
   ctx.body = {message: 'success'};

@@ -79,7 +79,7 @@ router.get('/followings', paginate, identity, async (ctx) => {
 });
 
 /**
- * @api {put} /follows/:id Follow
+ * @api {post} /follows/:id Follow
  * @apiGroup Follow
  * @apiName Follow
  * @apiVersion 2.0.0
@@ -92,7 +92,7 @@ router.get('/followings', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Object} follow info object
  *
  */
-router.post('/update/:id', identity, async (ctx) => {
+router.post('/:id', identity, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (followed) throw new BadRequestError('Already followed');
 

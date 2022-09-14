@@ -45,9 +45,9 @@ router.post('/', async (ctx) => {
 });
 
 /**
- * @api {put} /devices Add
+ * @api {post} /devices/update Update
  * @apiGroup Device
- * @apiName Add
+ * @apiName Update
  * @apiVersion 2.0.0
  * @apiDescription update current user token meta
  *
@@ -63,7 +63,7 @@ router.post('/', async (ctx) => {
  * @apiSuccess (200) {Object} meta
  * @apiSuccess (200) {String} created_at
  */
-router.post('/update/', async (ctx) => {
+router.post('/update', async (ctx) => {
   ctx.body = await Device.update(ctx.user.id, ctx.request.body);
 });
 

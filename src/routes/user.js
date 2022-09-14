@@ -76,7 +76,7 @@ router.get('/profile', async (ctx) => {
 });
 
 /**
- * @api {put} /user/profile Update Profile
+ * @api {post} /user/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
  * @apiVersion 2.0.0
@@ -101,7 +101,7 @@ router.post('/update/profile', async (ctx) => {
 });
 
 /**
- * @api {put} /user/change-password Change Password
+ * @api {post} /user/change-password Change Password
  * @apiGroup User
  * @apiName ChangePassword
  * @apiVersion 2.0.0
@@ -118,7 +118,7 @@ router.post('/update/change-password', async (ctx) => {
 });
 
 /**
- * @api {put} /user/change-password/direct Change Password Directly
+ * @api {post} /user/change-password/direct Change Password Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 2.0.0

@@ -4,7 +4,6 @@ import Event from '../services/events/index.js';
 import Chat from '../models/chat/index.js';
 import {paginate, identity} from '../utils/requests.js';
 import {NotImplementedError} from '../utils/errors.js';
-
 export const router = new Router();
 
 /**

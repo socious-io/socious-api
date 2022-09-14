@@ -27,7 +27,7 @@ export const getByPhone = async (phone) => {
 
 export const currentProfile = async (user) => {
   const {rows} = await app.db.query(
-    `SELECT * FROM media WHERE id IN (${user.avatar},${user.cover_image})`,
+    sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`,
   );
   delete user.password;
 

@@ -175,7 +175,7 @@ router.post('/update/:id/questions/:question_id', identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /projects/:id Delete
+ * @api {get} /projects/remove/:id Delete
  * @apiGroup Project
  * @apiName Delete
  * @apiVersion 2.0.0

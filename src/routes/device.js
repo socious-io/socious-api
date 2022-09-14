@@ -68,7 +68,7 @@ router.post('/update', async (ctx) => {
 });
 
 /**
- * @api {delete} /devices/:token Delete
+ * @api {get} /devices/remove/:token Delete
  * @apiGroup Device
  * @apiName DElete
  * @apiVersion 2.0.0

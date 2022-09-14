@@ -106,7 +106,7 @@ router.post('/:id', identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /follows/:id Unfollow
+ * @api {get} /follows/remove/:id Unfollow
  * @apiGroup Follow
  * @apiName Unfollow
  * @apiVersion 2.0.0

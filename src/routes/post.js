@@ -139,7 +139,7 @@ router.post('/update/:id', identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /posts/:id Delete
+ * @api {get} /posts/remove/:id Delete
  * @apiGroup Post
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -226,7 +226,7 @@ router.get('/comments/:id', paginate, identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /posts/comments/:id Delete
+ * @api {get} /posts/remove/comments/:id Delete
  * @apiGroup Post.Comment
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -337,7 +337,7 @@ router.post('/update/:id/like', identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /posts/:id/like UnLike Post
+ * @api {get} /posts/remove/:id/like UnLike Post
  * @apiGroup Post
  * @apiName UnLikePost
  * @apiVersion 2.0.0
@@ -386,7 +386,7 @@ router.post('/update/:id/comments/:comment_id/like', identity, async (ctx) => {
 });
 
 /**
- * @api {delete} /posts/:id/comments/:comment_id/like UnLike Comment
+ * @api {get} /posts/remove/:id/comments/:comment_id/like UnLike Comment
  * @apiGroup Post.Comment
  * @apiName UnLikeComment
  * @apiVersion 2.0.0

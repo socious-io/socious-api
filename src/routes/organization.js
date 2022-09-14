@@ -235,7 +235,7 @@ router.post('/:id/members/:user_id', async (ctx) => {
 });
 
 /**
- * @api {delete} /orgs/:id/members/:user_id Delete member
+ * @api {get} /orgs/remove/:id/members/:user_id Delete member
  * @apiGroup Organazation.Members
  * @apiName Delete member
  * @apiVersion 2.0.0

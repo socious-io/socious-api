@@ -109,7 +109,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription read all notifications
  *
  */
-router.put('/read/all', async (ctx) => {
+router.post('/update/read/all', async (ctx) => {
   await Notif.readAll(ctx.user.id);
   ctx.body = {message: 'success'};
 });
@@ -124,7 +124,7 @@ router.put('/read/all', async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.put('/read/:id', async (ctx) => {
+router.post('/update/read/:id', async (ctx) => {
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = {message: 'success'};
 });

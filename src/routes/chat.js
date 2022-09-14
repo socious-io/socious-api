@@ -154,7 +154,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
  */
-router.put('/:id', identity, async (_ctx) => {
+router.post('/update/:id', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -175,7 +175,7 @@ router.put('/:id', identity, async (_ctx) => {
  * @apiParam {String} id
  *
  */
-router.delete('/:id', identity, async (_ctx) => {
+router.get('/remove/:id', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -233,7 +233,7 @@ router.get('/:id/participants', paginate, identity, async (ctx) => {
  *
  * @apiBody {Datetime} until Mandatory
  */
-router.put('/:id/participants/mute', identity, async (_ctx) => {
+router.post('/update/:id/participants/mute', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(ctx.identity.id, ctx.params.id);
   // await Chat.muteParticipant(
@@ -258,7 +258,7 @@ router.put('/:id/participants/mute', identity, async (_ctx) => {
  *
  * @apiBody {String} type Mandatory (ADMIN, MEMBER)
  */
-router.put('/:id/participants/:identity_id/permit', identity, async (_ctx) => {
+router.post('/update/:id/participants/:identity_id/permit', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -284,7 +284,7 @@ router.put('/:id/participants/:identity_id/permit', identity, async (_ctx) => {
  * @apiParam {String} id
  * @apiParam {String} identity_id
  */
-router.put('/:id/participants/:identity_id', identity, async (_ctx) => {
+router.post('/update/:id/participants/:identity_id', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -312,7 +312,7 @@ router.put('/:id/participants/:identity_id', identity, async (_ctx) => {
  * @apiParam {String} id
  * @apiParam {String} identity_id
  */
-router.delete('/:id/participants/:identity_id', identity, async (_ctx) => {
+router.get('/remove/:id/participants/:identity_id', identity, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -520,7 +520,7 @@ router.get('/:id/messages/:message_id', identity, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  *
  */
-router.put('/:id/messages/:message_id', identity, async (ctx) => {
+router.post('/update/:id/messages/:message_id', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Chat.editMessage(
     ctx.params.message_id,
@@ -543,7 +543,7 @@ router.put('/:id/messages/:message_id', identity, async (ctx) => {
  *
  *
  */
-router.put('/:id/messages/:message_id/read', identity, async (ctx) => {
+router.post('/update/:id/messages/:message_id/read', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   await Chat.readMessage(ctx.params.message_id, ctx.identity.id);
   ctx.body = {message: 'success'};
@@ -563,7 +563,7 @@ router.put('/:id/messages/:message_id/read', identity, async (ctx) => {
  *
  *
  */
-router.delete('/:id/messages/:message_id', identity, async (ctx) => {
+router.get('/remove/:id/messages/:message_id', identity, async (ctx) => {
   await Chat.permissioned(ctx.identity.id, ctx.params.id);
   await Chat.removeMessage(ctx.params.message_id, ctx.identity.id);
   ctx.body = {message: 'success'};

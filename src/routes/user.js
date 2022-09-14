@@ -94,7 +94,7 @@ router.get('/profile', async (ctx) => {
  * @apiBody  {String[]} social_causes
  * @apiBody  {String[]} skills skills names
  */
-router.put('/profile', async (ctx) => {
+router.post('/update/profile', async (ctx) => {
   const skills = await Skill.getAllByNames(ctx.request.body.skills);
   ctx.request.body.skills = skills.map((s) => s.name);
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
@@ -112,7 +112,7 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.put('/change-password', async (ctx) => {
+router.post('/update/change-password', async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
   ctx.body = {message: 'success'};
 });
@@ -128,7 +128,7 @@ router.put('/change-password', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.put('/change-password-direct', async (ctx) => {
+router.post('/update/change-password-direct', async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
 
   ctx.body = {message: 'success'};

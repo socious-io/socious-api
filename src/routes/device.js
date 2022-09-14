@@ -63,7 +63,7 @@ router.post('/', async (ctx) => {
  * @apiSuccess (200) {Object} meta
  * @apiSuccess (200) {String} created_at
  */
-router.put('/', async (ctx) => {
+router.post('/update/', async (ctx) => {
   ctx.body = await Device.update(ctx.user.id, ctx.request.body);
 });
 
@@ -77,7 +77,7 @@ router.put('/', async (ctx) => {
  * @apiParam {String} token
  *
  */
-router.delete('/:token', async (ctx) => {
+router.get('/remove/:token', async (ctx) => {
   await Device.delete(ctx.user.id, ctx.params.token);
   ctx.body = {message: 'success'};
 });

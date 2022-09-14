@@ -114,7 +114,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/:id', identity, async (ctx) => {
+router.post('/update/:id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Project.update(ctx.params.id, ctx.request.body);
 });
@@ -166,7 +166,7 @@ router.post('/:id/questions', identity, async (ctx) => {
  * @apiBody {String[]} options
  * @apiBody {Boolean} required
  */
-router.put('/:id/questions/:question_id', identity, async (ctx) => {
+router.post('/update/:id/questions/:question_id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Project.updateQuestion(
     ctx.params.question_id,
@@ -185,7 +185,7 @@ router.put('/:id/questions/:question_id', identity, async (ctx) => {
  *
  * @apiParam {String} id
  */
-router.delete('/:id', identity, async (ctx) => {
+router.get('/remove/:id', identity, async (ctx) => {
   await Project.permissioned(ctx.identity.id, ctx.params.id);
   await Project.remove(ctx.params.id);
   ctx.body = {message: 'success'};
@@ -323,7 +323,7 @@ router.post('/:id/applicants', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/applicants/:id/withdraw', async (ctx) => {
+router.post('/update/applicants/:id/withdraw', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   ctx.body = await Applicant.withdraw(ctx.params.id);
 });
@@ -358,7 +358,7 @@ router.put('/applicants/:id/withdraw', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/applicants/:id/offer', identity, async (ctx) => {
+router.post('/update/applicants/:id/offer', identity, async (ctx) => {
   await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
 });
@@ -390,7 +390,7 @@ router.put('/applicants/:id/offer', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/applicants/:id/reject', identity, async (ctx) => {
+router.post('/update/applicants/:id/reject', identity, async (ctx) => {
   await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
 });
@@ -418,7 +418,7 @@ router.put('/applicants/:id/reject', identity, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.put('/applicants/:id/approve', identity, async (ctx) => {
+router.post('/update/applicants/:id/approve', identity, async (ctx) => {
   await Applicant.mustOwner(ctx.identity.id, ctx.params.id);
   ctx.body = await Applicant.approve(ctx.params.id);
 });
@@ -458,7 +458,7 @@ router.put('/applicants/:id/approve', identity, async (ctx) => {
  * @apiSuccess {String} answers.answer
  * @apiSuccess {Number} answers.selected_option
  */
-router.put('/applicants/:id', async (ctx) => {
+router.post('/update/applicants/:id', async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
 });
@@ -473,7 +473,7 @@ router.put('/applicants/:id', async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.delete('/applicants/:id', identity, async (ctx) => {
+router.get('/remove/applicants/:id', identity, async (ctx) => {
   await Applicant.mustOwner(ctx.user.id, ctx.params.id);
   await Applicant.remove(ctx.params.id);
   ctx.body = {message: 'success'};

@@ -129,7 +129,7 @@ router.post('/', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
  */
-router.put('/:id', identity, async (ctx) => {
+router.post('/update/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Post.update(
     ctx.params.id,
@@ -151,7 +151,7 @@ router.put('/:id', identity, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.delete('/:id', identity, async (ctx) => {
+router.get('/remove/:id', identity, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   await Post.remove(ctx.params.id);
   ctx.body = {message: 'success'};
@@ -238,7 +238,7 @@ router.get('/comments/:id', paginate, identity, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.delete('/comments/:id', identity, async (ctx) => {
+router.get('/remove/comments/:id', identity, async (ctx) => {
   await Post.removeComment(ctx.params.id, ctx.identity.id);
   ctx.body = {message: 'success'};
 });
@@ -303,7 +303,7 @@ router.post('/:id/comments', identity, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.put('/comments/:id', identity, async (ctx) => {
+router.post('/update/comments/:id', identity, async (ctx) => {
   ctx.body = await Post.updateComment(
     ctx.params.id,
     ctx.identity.id,
@@ -324,7 +324,7 @@ router.put('/comments/:id', identity, async (ctx) => {
  *
  *
  */
-router.put('/:id/like', identity, async (ctx) => {
+router.post('/update/:id/like', identity, async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
 
   const post = await Post.miniGet(ctx.params.id);
@@ -350,7 +350,7 @@ router.put('/:id/like', identity, async (ctx) => {
  *
  *
  */
-router.delete('/:id/like', identity, async (ctx) => {
+router.get('/remove/:id/like', identity, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id);
   ctx.body = {message: 'success'};
 });
@@ -369,7 +369,7 @@ router.delete('/:id/like', identity, async (ctx) => {
  *
  *
  */
-router.put('/:id/comments/:comment_id/like', identity, async (ctx) => {
+router.post('/update/:id/comments/:comment_id/like', identity, async (ctx) => {
   ctx.body = await Post.like(
     ctx.params.id,
     ctx.identity.id,
@@ -400,7 +400,7 @@ router.put('/:id/comments/:comment_id/like', identity, async (ctx) => {
  *
  *
  */
-router.delete('/:id/comments/:comment_id/like', identity, async (ctx) => {
+router.get('/remove/:id/comments/:comment_id/like', identity, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id);
   ctx.body = {message: 'success'};
 });

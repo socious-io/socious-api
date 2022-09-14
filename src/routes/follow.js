@@ -92,7 +92,7 @@ router.get('/followings', paginate, identity, async (ctx) => {
  * @apiSuccess (200) {Object} follow info object
  *
  */
-router.put('/:id', identity, async (ctx) => {
+router.post('/update/:id', identity, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (followed) throw new BadRequestError('Already followed');
 
@@ -119,7 +119,7 @@ router.put('/:id', identity, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.delete('/:id', identity, async (ctx) => {
+router.get('/remove/:id', identity, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (!followed) throw new BadRequestError('Not followed');
 

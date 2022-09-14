@@ -177,7 +177,7 @@ router.get('/check', async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.put('/:id', async (ctx) => {
+router.post('/update/:id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
   ctx.body = await Org.update(ctx.params.id, ctx.request.body);
 });
@@ -228,7 +228,7 @@ router.get('/:id/members', paginate, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.put('/:id/members/:user_id', async (ctx) => {
+router.post('/update/:id/members/:user_id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
   await Org.addMember(ctx.params.id, ctx.params.user_id);
   ctx.body = {message: 'success'};
@@ -247,7 +247,7 @@ router.put('/:id/members/:user_id', async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.delete('/:id/members/:user_id', async (ctx) => {
+router.get('/remove/:id/members/:user_id', async (ctx) => {
   await Org.permissionedMember(ctx.params.id, ctx.user.id);
   await Org.removeMember(ctx.params.id, ctx.params.user_id);
   ctx.body = {message: 'success'};

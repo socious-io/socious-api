@@ -20,6 +20,7 @@ export const verifyToken = async (token, refresh = false) => {
   }
 
   const verfied = Jwt.verify(token, Config.secret);
+
   if (verfied.refresh != refresh) throw new UnauthorizedError();
 
   return verfied;
@@ -38,7 +39,7 @@ export const expireRefreshToken = async (token) => {
   return verified;
 };
 
-export const signin = async (id) => {
+export const signin = (id) => {
   return {
     access_token: getToken(id),
     refresh_token: getToken(id, true),

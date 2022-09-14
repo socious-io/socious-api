@@ -66,6 +66,9 @@ export const loginRequired = async (ctx, next) => {
     throw new UnauthorizedError('Unknown user');
   }
 
+  // Auto refresh on sessions
+  if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token;
+
   await next();
 };
 

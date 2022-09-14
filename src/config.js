@@ -4,7 +4,7 @@ export default {
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
-  jwtExpireTime: '2h',
+  jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
   mail: {
     sendgrid: {

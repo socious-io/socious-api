@@ -52,7 +52,7 @@ export const lastIdealistProject = async function (project_type) {
       sql`SELECT updated_at FROM projects WHERE other_party_title = ${project_type} ORDER BY updated_at DESC LIMIT 1`,
     );
 
-    return row.updated_at;
+    return new Date(row.updated_at).toISOString();
   } catch (err) {
     if (err.status !== 400)
       console.log('\x1b[31m%s\x1b[0m', err.status + ' ' + err.message);

@@ -12,8 +12,9 @@ import {
   checkUnprocessedIds,
 } from './src/services/idealist/helpers.js';
 
-// uncomment bellow in case existing idealist projects has empty column 'other_party_title'
-//const sinceTimstamp = '2022-09-14 17:30:07'; //last updated_at info
+// change null bellow with timestamp for testing purposes
+const sinceTimstamp = null; // '2022-09-14 17:30:07';
+
 const idealistToken = '743e1f3940484d7680130c748ed22758';
 
 //Call the Idealist functionality...
@@ -32,6 +33,7 @@ const idealistToken = '743e1f3940484d7680130c748ed22758';
 
   //get all projects again with unsuccessfull ids...
   const unprocessedIds = await checkUnprocessedIds(remain_ids);
+
   if (unprocessedIds > 0) {
     console.log('Repeating the process for not processed projects...');
 
@@ -142,7 +144,7 @@ async function getListings(project_types) {
     //get the last project from Idealist of this type from database
     let since = await lastIdealistProject(project_types); //get from database
 
-    //let since = sinceTimstamp;
+    if (sinceTimstamp) since = sinceTimstamp;
 
     if (!since) since = '';
 

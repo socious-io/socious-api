@@ -33,11 +33,12 @@ export const insert = async (identityId, body) => {
         name, bio, description, email, phone, 
         type, city, address, country, website, 
         social_causes, mobile_country_code, created_by, image, cover_image,
-        mission, culture) 
+        mission, culture, shortname) 
         VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email},
           ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country},
           ${body.website}, ${body.social_causes}, ${body.mobile_country_code},
-          ${identityId}, ${body.image}, ${body.cover_image}, ${body.mission}, ${body.culture})
+          ${identityId}, ${body.image}, ${body.cover_image}, ${body.mission}, ${body.culture},
+          ${body.shortname})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];
@@ -61,6 +62,7 @@ export const update = async (id, body) => {
       sql`
       UPDATE organizations SET 
         name=${body.name}, 
+        shortname=${body.shortname},
         bio=${body.bio}, 
         description=${body.description}, 
         email=${body.email}, 

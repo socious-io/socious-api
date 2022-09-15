@@ -15,9 +15,8 @@ export const organizationFromProject = async function (project) {
 
   if (!org) return false;
 
+  //check if org exist in database
   const id = await getOrganization(org);
-
-  //console.log(`organization ID from database is: ${id}`);
 
   if (id) {
     return id;
@@ -26,19 +25,22 @@ export const organizationFromProject = async function (project) {
 
     try {
       const orgBio = await organizationBio(org);
-      //console.log(`Org bio is: ${orgBio}`);
 
       let type = 'OTHER';
       if (org.orgType && Object.values(Type).includes(org.orgType)) {
         type = org.orgType;
       }
 
+      let sh_name = null;
+      sh_name = await shortname(org);
+
       //add dynamically properties to the request
       const body = {
         name: org.name,
+        ...(sh_name && {shortname: sh_name}),
         ...(orgBio && {bio: orgBio}),
         ...(orgBio && {description: orgBio}),
-        email: project.applyEmail ? project.applyEmail : 'no@email.com', //not good - beter to change in model validation
+        //email: project.applyEmail ? project.applyEmail : 'no@email.com', //not good - beter to change in model validation
         type: type,
         ...(org.address && org.address.city && {city: org.address.city}),
         ...(org.address && org.address.full && {address: org.address.full}),
@@ -49,26 +51,21 @@ export const organizationFromProject = async function (project) {
       };
 
       //save organization to database
-      const newOrg = await organization.insert(body);
+      const identityId = null;
+      const newOrg = await organization.insert(identityId, body);
 
       if (org.logo) {
         // save logo image
         const newMedia = await media.insert(newOrg.id, 'logo', org.logo);
 
-        //update organization, save to column image the newMedia.id
-        const body = {
-          name: newOrg.name,
-          email: newOrg.email,
-          image: newMedia.id,
-        };
-        await organization.update(newOrg.id, body);
-
-        //console.log(`Organization Logo saved`);
+        //save logo uuid into organizations table
+        await app.db.query(sql`UPDATE organizations 
+        SET image = ${newMedia.id} WHERE id = ${newOrg.id}`);
       }
 
       return newOrg.id;
     } catch (err) {
-      console.log('\x1b[31m%s\x1b[0m', err.message);
+      console.log('\x1b[31m%s\x1b[0m', err.message, err);
       return false;
     }
   }
@@ -123,7 +120,6 @@ async function getOrganization(org) {
     const orgInDatabase = await app.db.get(
       sql`SELECT id FROM organizations WHERE name = ${name} LIMIT 1`,
     );
-    //console.log(`Organization from database: ${orgInDatabase.id}`);
 
     return orgInDatabase.id;
   } catch (err) {
@@ -131,4 +127,33 @@ async function getOrganization(org) {
       console.log('\x1b[31m%s\x1b[0m', err.status + ' ' + err.message);
     return false;
   }
+}
+
+async function shortname(org) {
+  let shortname = null;
+
+  if (org.url && org.url.en) {
+    //get from org url
+    const chunks = org.url.en.split('/');
+    shortname = chunks[chunks.length - 1];
+    shortname = shortname.substr(-32);
+  } else {
+    //get from org name
+    shortname = org.name
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replace(/[^a-zA-Z_-]/g, '');
+  }
+
+  while (shortname.match(/_{2,}|-{2,}|_-|-_/g)) {
+    shortname = shortname.replace(/_{2,}|-{2,}|_-|-_/g, '_');
+  }
+
+  while (!shortname[0].match(/[a-zA-Z0-9]/) && shortname.length > 0) {
+    shortname = shortname.substring(1);
+  }
+
+  shortname = shortname.slice(0, 32) + Math.floor(1000 + Math.random() * 9000);
+
+  return shortname;
 }

@@ -12,7 +12,8 @@ import {
   checkUnprocessedIds,
 } from './src/services/idealist/helpers.js';
 
-const sinceTimstamp = '2022-09-13 01:22:07'; // erase this later
+// uncomment bellow in case existing idealist projects has empty column 'other_party_title'
+//const sinceTimstamp = '2022-09-14 17:30:07'; //last updated_at info
 const idealistToken = '743e1f3940484d7680130c748ed22758';
 
 //Call the Idealist functionality...
@@ -21,19 +22,13 @@ const idealistToken = '743e1f3940484d7680130c748ed22758';
   console.log('Getting lists of projects from Idealist...');
   const project_ids = await getIds();
 
-  //console.log(project_ids);
-
   //get the projects and organizations
   console.log('Getting projects from Idealist...');
   await getAllProjects(project_ids);
 
-  //console.log(project_ids);
-
   //check if there are not processed projects in the listing
   console.log('Checking if all the projects are successfully loaded...');
   const remain_ids = await removeProcessedProjectIds(project_ids);
-
-  console.log(remain_ids);
 
   //get all projects again with unsuccessfull ids...
   const unprocessedIds = await checkUnprocessedIds(remain_ids);
@@ -44,12 +39,17 @@ const idealistToken = '743e1f3940484d7680130c748ed22758';
 
     await getAllProjects(remain_ids);
   } else {
-    console.log('\x1b[32m%s\x1b[0m', 'All projects successfully saved.');
+    console.log('\x1b[32m%s\x1b[0m', 'Projects successfully saved.');
   }
 
   process.exit(0);
 })();
 
+/**
+ * Get a list (object) of all the ID of all the projects
+ *
+ * @returns object
+ */
 async function getIds() {
   const types = ['jobs', 'internships', 'volops'];
   let res = {jobs: [], volops: [], internships: []};
@@ -59,24 +59,25 @@ async function getIds() {
   return res;
 }
 
+/**
+ * Process each project fro the given list
+ *
+ * @param object ids
+ * @returns void
+ */
 async function getAllProjects(ids) {
   for (let [types, val] of Object.entries(ids)) {
     //for each type of project (job, volop and intenrship)
     let res = 0;
     let count = 0;
 
-    // console.log(val);
-
-    // if (!val || val === undefined) continue;
-
     console.log(`Loading ${types} projects...`);
 
-    process.stdout.write(`Processed ${types} projects: \n`);
+    //process.stdout.write(`Processed ${types} projects: \n`);
 
     for (let x = 0; x < val.length; x++) {
       let obj = val[x]; //object {id , processed}
       count++;
-      //console.log(x + ': ' + types, obj);
 
       //get project from Idealist
       let p = await getProject(types, obj.id); //use queue?...
@@ -102,15 +103,16 @@ async function getAllProjects(ids) {
           process.stdout.clearLine(0);
           process.stdout.cursorTo(0);
           process.stdout.write(`${res} ${types}`);
-          //process.stdout.write('\n'); // end the line
         }
       }
 
       //wait some time after each 50th project
       if (count > 50) {
-        console.log('Waiting 10 seconds...');
+        console.log('\nWaiting 10 seconds...');
         await sleep(10000);
         count = 0;
+      } else {
+        await sleep(1000);
       }
     }
 
@@ -138,11 +140,10 @@ async function getListings(project_types) {
     let hasMore = true;
 
     //get the last project from Idealist of this type from database
-    //let since = await lastIdealistProject(project_types); //get from database
+    let since = await lastIdealistProject(project_types); //get from database
 
-    let since = sinceTimstamp;
+    //let since = sinceTimstamp;
 
-    //console.log(project_types, since);
     if (!since) since = '';
 
     while (ttl > 0 && hasMore === true) {
@@ -163,8 +164,6 @@ async function getListings(project_types) {
         hasMore = response.data.hasMore;
 
         let projects = response.data[project_types]; //array
-
-        //console.log(project_types, projects.length);
 
         if (projects.length > 0) {
           //get the since from this stack of project listing
@@ -190,5 +189,3 @@ async function getListings(project_types) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
   }
 }
-
-//console.log('________________THIS IS END OF LINE_________');

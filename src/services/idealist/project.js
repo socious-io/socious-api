@@ -61,14 +61,11 @@ export const lastIdealistProject = async function (project_type) {
 };
 
 export const processProject = async function (p, type) {
-  //console.log(p.name, type);
-
   try {
     let org_id;
 
     //create organization or get ID of existing one
     org_id = await organizationFromProject(p);
-    //console.log(`Org ID that we got in processProject is: ${org_id}`);
 
     //if project is volop, can have a group (create or find and get ID)
     // if (project.group) {
@@ -93,8 +90,7 @@ async function saveProject(pro, type, org_id) {
     const body = {
       title: pro.name ? pro.name : 'Untitled',
       description: pro.description ? pro.description : 'No information',
-      ...(pro.address &&
-        pro.address.country && {country_id: pro.address.country}), //column name is country
+      ...(pro.address && pro.address.country && {country: pro.address.country}),
       remote_preference: remote_preference,
       payment_type: payment_type,
       payment_scheme: payment_scheme,
@@ -123,21 +119,14 @@ async function saveProject(pro, type, org_id) {
     if (projFromDb) {
       //update project
       await project.update(projFromDb.id, body);
-      //console.log('PROJECT UPDATED');
     } else {
       //create new project
       await project.insert(org_id, body);
-      //console.log('PROJECT CREATED');
     }
-
-    // console.log(
-    //   '\x1b[32m%s\x1b[0m',
-    //   `CREATED Project with Title: ${pro.name}, Type: ${type}, Organization ID: ${org_id}`,
-    // );
 
     return true;
   } catch (err) {
-    console.log('\x1b[31m%s\x1b[0m', err.message);
+    console.log('\x1b[31m%s\x1b[0m', err.message, err);
     return false;
   }
 }

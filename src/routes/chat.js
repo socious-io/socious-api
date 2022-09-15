@@ -4,7 +4,6 @@ import Event from '../services/events/index.js';
 import Chat from '../models/chat/index.js';
 import {paginate, identity} from '../utils/requests.js';
 import {NotImplementedError} from '../utils/errors.js';
-
 export const router = new Router();
 
 /**
@@ -130,7 +129,7 @@ router.post('/find', identity, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  */
 router.post('/', identity, async (ctx) => {
-  ctx.body = await Chat.create(ctx.identity.id, ctx.request.body);
+  ctx.body = await Chat.create(ctx.identity, ctx.request.body);
 });
 
 /**
@@ -401,6 +400,7 @@ router.post('/:id/messages', identity, async (ctx) => {
     participants.map((p) =>
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
+        identity: ctx.identity,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()
           : false,
@@ -450,6 +450,7 @@ router.post('/:id/messages/:message_id', identity, async (ctx) => {
     participants.map((p) =>
       Event.push(Event.Types.Chat, p.identity_id, {
         ...ctx.body,
+        identity: ctx.identity,
         muted: p.muted_until
           ? p.muted_until.getTime() > new Date().getTime()
           : false,

@@ -1,7 +1,6 @@
 import Koa from 'koa';
 import http from 'http';
 import Router from '@koa/router';
-import cors from '@koa/cors';
 import morgan from 'koa-morgan';
 import koaBody from 'koa-body';
 import session from 'koa-session';
@@ -23,6 +22,7 @@ import {router as device} from './routes/device.js';
 import {router as media} from './routes/media.js';
 import {router as skill} from './routes/skill.js';
 import {router as search} from './routes/search.js';
+import {router as webhook} from './routes/webhook.js';
 
 import {
   middlewares,
@@ -30,42 +30,27 @@ import {
   retryBlocker,
   socketSessions,
   socketLoginRequired,
+  accessWebhooks,
 } from './utils/middlewares.js';
 
 import {Server as Socket} from 'socket.io';
 
 import config from './config.js';
 
-export const app = new Koa();
+export const app = new Koa({proxy: true});
 
 app.keys = [config.secret];
-app.users = [];
+app.users = {};
 
 app.use(
-  morgan(
-    ':method :url :req[X-SSO-ID] :req[X-SSO-AG] :status :response-time ms - :res[content-length]',
-    {
-      skip(req, _) {
-        return /^\/ping/.exec(req.url);
-      },
+  morgan(':method :url :status :response-time ms - :res[content-length]', {
+    skip(req, _) {
+      return /^\/ping/.exec(req.url);
     },
-  ),
-);
-app.use(koaBody());
-app.use(
-  new cors({
-    origin: config.cors.origins.length
-      ? (ctx) => {
-          const origin = ctx.header.origin || ctx.origin;
-          if (origin && config.cors.origins.includes(origin)) {
-            return origin;
-          }
-          return 'https://socious.io';
-        }
-      : undefined,
-    credentials: true,
   }),
 );
+
+app.use(koaBody());
 // configure the database via environment, see:
 // https://www.postgresql.org/docs/9.1/libpq-envars.html
 app.db = new DBCircuitBreaker(new pg.Pool());
@@ -73,10 +58,18 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err);
   process.exit(-1);
 });
+
 app.use(middlewares);
 app.use(session(config.session, app));
 
 const blueprint = new Router();
+
+blueprint.use(
+  '/webhooks',
+  accessWebhooks,
+  webhook.routes(),
+  webhook.allowedMethods(),
+);
 blueprint.use('/ping', ping.routes(), ping.allowedMethods());
 blueprint.use('/auth', retryBlocker, auth.routes(), auth.allowedMethods());
 blueprint.use('/user', loginRequired, user.routes(), user.allowedMethods());
@@ -141,14 +134,12 @@ app.socket.use(socketLoginRequired);
 socket handler will push every auth users connection ids to app.users
 will purge it when connection closed 
 */
-app.socket.on('connect', (socket) => {
+app.socket.on('connect', async (socket) => {
   const socketId = socket.id;
   const userId = socket.userId;
 
   if (!app.users[userId]) app.users[socket.userId] = [];
   app.users[userId].push(socketId);
-
-  app.socket.to(socketId).emit('chat', socket.userId);
 
   socket.on('disconnect', () => {
     const index = app.users[userId].indexOf(socketId);

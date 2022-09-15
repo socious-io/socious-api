@@ -1,8 +1,26 @@
 import compose from 'koa-compose';
+import Cors from '@koa/cors';
 import Auth from '../services/auth/index.js';
 import http from 'http';
 import User from '../models/user/index.js';
+import Config from '../config.js';
 import {UnauthorizedError, TooManyRequestsError} from './errors.js';
+
+const cors = new Cors({
+  origin: Config.cors.origins.length
+    ? (ctx) => {
+        const origin = ctx.header.origin || ctx.origin;
+        if (origin) {
+          const url = new URL(origin);
+          for (const allowed of Config.cors.origins) {
+            if (url.host.endsWith(allowed)) return origin;
+          }
+        }
+        return 'https://socious.io';
+      }
+    : undefined,
+  credentials: true,
+});
 
 const throwHandler = async (ctx, next) => {
   try {
@@ -26,7 +44,7 @@ const throwHandler = async (ctx, next) => {
   }
 };
 
-export const middlewares = compose([throwHandler]);
+export const middlewares = compose([cors, throwHandler]);
 
 export const loginRequired = async (ctx, next) => {
   const {authorization} = ctx.request.header;
@@ -48,6 +66,9 @@ export const loginRequired = async (ctx, next) => {
     throw new UnauthorizedError('Unknown user');
   }
 
+  // Auto refresh on sessions
+  if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token;
+
   await next();
 };
 
@@ -61,8 +82,13 @@ export const socketSessions = (app) => {
 };
 
 export const socketLoginRequired = async (socket, next) => {
-  const token = socket.handshake.auth.token || socket.session.token;
+  const token =
+    socket.handshake.auth.token ||
+    socket.handshake.headers.authorization ||
+    socket.session.token;
+
   if (!token) return next(new UnauthorizedError());
+
   try {
     const {id} = await Auth.verifyToken(token);
     // TODO: we can fetch user if need
@@ -123,4 +149,13 @@ export const retryBlocker = async (ctx, next) => {
     retryBlockerData[ip].blocked = now.getTime() + blockerTimer;
 
   if (error) throw error;
+};
+
+export const accessWebhooks = async (ctx, next) => {
+  const {token} = ctx.headers;
+
+  if (Config.webhooks.token !== token)
+    throw new UnauthorizedError('invalid authorization');
+
+  await next();
 };

@@ -3,6 +3,7 @@ import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
 import {findChatSchem} from './schema.js';
+import Identity from '../identity/index.js';
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
@@ -62,6 +63,16 @@ export const messages = async (id, {offset = 0, limit = 10}) => {
     LEFT JOIN media AS media ON media.id = media
     WHERE chat_id=${id} AND reply_id IS NULL AND deleted_at IS NULL
     ORDER BY messages.created_at DESC LIMIT ${limit} OFFSET ${offset}
+  `);
+  return rows;
+};
+
+export const getMessage = async (id) => {
+  const {rows} = await app.db.query(sql`
+    SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url
+    FROM messages
+    LEFT JOIN media AS media ON media.id = media
+    WHERE id=${id}
   `);
   return rows;
 };
@@ -150,4 +161,17 @@ export const summary = async (identityId, {offset = 0, limit = 10}, filter) => {
   });
 
   return chats;
+};
+
+export const addParticipantPermission = async (identity, participantId) => {
+  // Access to ORGs to add any participants
+  if (identity.type === Identity.Types.ORG) return;
+
+  const participant = await Identity.get(participantId, identity.id);
+
+  // All may access to create chat to ORG
+  if (participant.type === Identity.Types.ORG) return;
+
+  // Deny access if participant not followed
+  if (!participant.following) throw new PermissionError();
 };

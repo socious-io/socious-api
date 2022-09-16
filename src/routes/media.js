@@ -4,6 +4,7 @@ import Media from '../models/media/index.js';
 import Upload from '../utils/upload.js';
 
 import {BadRequestError} from '../utils/errors.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 
 const koaBody = Body({multipart: true, uploadDir: '.'});
 
@@ -25,7 +26,7 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} created_at
  */
 
-router.post('/upload', koaBody, async (ctx) => {
+router.post('/upload', loginRequired, koaBody, async (ctx) => {
   if (!ctx.request.files.file) throw new BadRequestError('file is required');
   const {originalFilename, filepath, mimetype} = ctx.request.files.file;
   const mediaUrl = await Upload(filepath, mimetype);
@@ -49,7 +50,7 @@ router.post('/upload', koaBody, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  */
 
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginRequired, async (ctx) => {
   ctx.body = await Media.get(ctx.params.id);
 });
 
@@ -70,6 +71,6 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Datetime} items.created_at
  */
 
-router.post('/', async (ctx) => {
+router.post('/', loginRequired, async (ctx) => {
   ctx.body = {items: await Media.getAll(ctx.request.body.ids)};
 });

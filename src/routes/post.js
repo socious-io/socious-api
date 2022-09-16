@@ -3,6 +3,10 @@ import Post from '../models/post/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/requests.js';
+import {
+  loginOptional,
+  loginRequired,
+} from '../utils/middlewares/authorization.js';
 export const router = new Router();
 
 /**
@@ -28,7 +32,7 @@ export const router = new Router();
  * @apiSuccess (200) {String[]} causes_tags
  * @apiSuccess (200) {String[]} identity_tags
  */
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginOptional, async (ctx) => {
   ctx.body = await Post.get(ctx.params.id, ctx.identity.id);
 });
 
@@ -62,7 +66,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {String[]} items.causes_tags
  * @apiSuccess (200) {String[]} items.identity_tags
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = ctx.query.identity
     ? await Post.allByIdentity(
         ctx.identity.id,
@@ -98,7 +102,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
  */
-router.post('/create', async (ctx) => {
+router.post('/create', loginRequired, async (ctx) => {
   ctx.body = await Post.insert(ctx.identity.id, ctx.request.body);
 });
 
@@ -129,7 +133,7 @@ router.post('/create', async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String} identity_id
  */
-router.post('/update/:id', async (ctx) => {
+router.post('/update/:id', loginRequired, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   ctx.body = await Post.update(
     ctx.params.id,
@@ -151,10 +155,12 @@ router.post('/update/:id', async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/remove/:id', async (ctx) => {
+router.get('/remove/:id', loginRequired, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   await Post.remove(ctx.params.id);
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
@@ -185,7 +191,7 @@ router.get('/remove/:id', async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/:id/comments', paginate, async (ctx) => {
+router.get('/:id/comments', loginRequired, paginate, async (ctx) => {
   ctx.body = await Post.comments(ctx.params.id, ctx.identity.id, ctx.paginate);
 });
 
@@ -217,7 +223,7 @@ router.get('/:id/comments', paginate, async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.get('/comments/:id', paginate, async (ctx) => {
+router.get('/comments/:id', loginRequired, paginate, async (ctx) => {
   ctx.body = await Post.commentsReplies(
     ctx.params.id,
     ctx.identity.id,
@@ -238,9 +244,11 @@ router.get('/comments/:id', paginate, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/remove/comments/:id', async (ctx) => {
+router.get('/remove/comments/:id', loginRequired, async (ctx) => {
   await Post.removeComment(ctx.params.id, ctx.identity.id);
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
@@ -266,7 +274,7 @@ router.get('/remove/comments/:id', async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.post('/:id/comments', async (ctx) => {
+router.post('/:id/comments', loginRequired, async (ctx) => {
   ctx.body = await Post.newComment(
     ctx.params.id,
     ctx.identity.id,
@@ -303,7 +311,7 @@ router.post('/:id/comments', async (ctx) => {
  * @apiSuccess (200) {Object} identity_meta
  *
  */
-router.post('/update/comments/:id', async (ctx) => {
+router.post('/update/comments/:id', loginRequired, async (ctx) => {
   ctx.body = await Post.updateComment(
     ctx.params.id,
     ctx.identity.id,
@@ -324,7 +332,7 @@ router.post('/update/comments/:id', async (ctx) => {
  *
  *
  */
-router.post('/update/:id/like', async (ctx) => {
+router.post('/update/:id/like', loginRequired, async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
 
   const post = await Post.miniGet(ctx.params.id);
@@ -350,9 +358,11 @@ router.post('/update/:id/like', async (ctx) => {
  *
  *
  */
-router.get('/remove/:id/like', async (ctx) => {
+router.get('/remove/:id/like', loginRequired, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id);
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
@@ -369,21 +379,25 @@ router.get('/remove/:id/like', async (ctx) => {
  *
  *
  */
-router.post('/update/:id/comments/:comment_id/like', async (ctx) => {
-  ctx.body = await Post.like(
-    ctx.params.id,
-    ctx.identity.id,
-    ctx.params.comment_id,
-  );
+router.post(
+  '/update/:id/comments/:comment_id/like',
+  loginRequired,
+  async (ctx) => {
+    ctx.body = await Post.like(
+      ctx.params.id,
+      ctx.identity.id,
+      ctx.params.comment_id,
+    );
 
-  const comment = await Post.getComment(ctx.params.comment_id);
+    const comment = await Post.getComment(ctx.params.comment_id);
 
-  Event.push(Event.Types.NOTIFICATION, comment.identity_id, {
-    type: Notif.Types.COMMENT_LIKE,
-    refId: ctx.body.id,
-    identity: ctx.identity,
-  });
-});
+    Event.push(Event.Types.NOTIFICATION, comment.identity_id, {
+      type: Notif.Types.COMMENT_LIKE,
+      refId: ctx.body.id,
+      identity: ctx.identity,
+    });
+  },
+);
 
 /**
  * @api {get} /posts/remove/:id/comments/:comment_id/like UnLike Comment
@@ -400,10 +414,16 @@ router.post('/update/:id/comments/:comment_id/like', async (ctx) => {
  *
  *
  */
-router.get('/remove/:id/comments/:comment_id/like', async (ctx) => {
-  await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id);
-  ctx.body = {message: 'success'};
-});
+router.get(
+  '/remove/:id/comments/:comment_id/like',
+  loginRequired,
+  async (ctx) => {
+    await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id);
+    ctx.body = {
+      message: 'success',
+    };
+  },
+);
 
 /**
  * @api {post} /posts/:id/share Share
@@ -419,6 +439,6 @@ router.get('/remove/:id/comments/:comment_id/like', async (ctx) => {
  * @apiBody {String} content
  *
  */
-router.post('/:id/share', async (ctx) => {
+router.post('/:id/share', loginRequired, async (ctx) => {
   ctx.body = await Post.share(ctx.params.id, ctx.identity.id, ctx.request.body);
 });

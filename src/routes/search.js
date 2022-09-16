@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import Search from '../services/search/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
@@ -21,7 +22,7 @@ export const router = new Router();
  * @apiSuccess (200) {Number} total_count
  * @apiSuccess (200) {Object[]} items
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginRequired, paginate, async (ctx) => {
   const body = {
     ...ctx.query,
     current_user_id: ctx.user.id,

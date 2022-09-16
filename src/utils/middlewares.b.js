@@ -45,7 +45,20 @@ const throwHandler = async (ctx, next) => {
   }
 };
 
-export const loginRequired = async (ctx) => {
+export const currentIdentity = async (ctx) => {
+  const currentidentity = ctx.request.header['current-identity'];
+  const identityId = currentidentity || ctx.session.current_identity;
+
+  const identity = identityId
+    ? await Identity.get(identityId)
+    : await Identity.get(ctx.user.id);
+
+  if (identityId) await Identity.permissioned(identity, ctx.user.id);
+
+  ctx.identity = identity;
+};
+
+export const loginRequired = async (ctx, next) => {
   const {authorization} = ctx.request.header;
 
   const token = authorization
@@ -68,50 +81,22 @@ export const loginRequired = async (ctx) => {
   // Auto refresh on sessions
   if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token;
 
+  await currentIdentity(ctx);
+
+  await next();
 };
 
-export const currentIdentity = async (ctx) => {
-  const currentidentity = ctx.request.header['current-identity'];
-  const identityId = currentidentity || ctx.session.current_identity;
-
-  const identity = identityId
-    ? await Identity.get(identityId)
-    : await Identity.get(ctx.user.id);
-
-  if (identityId) await Identity.permissioned(identity, ctx.user.id);
-
-  ctx.identity = identity;
-};
-
-
-export const authorization = async (ctx, next) => {
-  const publicRoutes = [
-    /^\/auth/,
-    /^\/posts\/?$/,
-    /^\/user\/.+\/profile\/?$/,
-    /^\/orgs\/by-shortname\/[a-z0-9._-]+\/?$/,
-    /^\/orgs\/[a-z0-9-]+\/?$/,
-    /^\/projects\/?$/,
-    /^\/projects\/[a-z0-9-]+\/?$/
-  ]
-
-  const loginOptional = publicRoutes.some(ex => ex.test(ctx.path))
-
+export const loginOptional = async (ctx, next) => {
   try {
-    await loginRequired(ctx)
-  } catch (e) {
-    if (!loginOptional) throw e
-    ctx.user = await User.getByUsername('guest')
+    await loginRequired(ctx, next);
+  } catch {
+    ctx.user = await User.getByUsername('guest');
+    await currentIdentity(ctx);
+    await next();
   }
+};
 
-  await currentIdentity(ctx)
-
-  await next()
-}
-
-export const middlewares = compose([cors, throwHandler, authorization]);
-
-
+export const middlewares = compose([cors, throwHandler]);
 
 export const socketSessions = (app) => {
   return (socket, next) => {

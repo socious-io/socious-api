@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 import Device from '../models/device/index.js';
 
 export const router = new Router();
@@ -17,7 +18,7 @@ export const router = new Router();
  * @apiSuccess (200) {Object} meta
  * @apiSuccess (200) {String} created_at
  */
-router.get('/', async (ctx) => {
+router.get('/', loginRequired, async (ctx) => {
   ctx.body = await Device.all(ctx.user.id);
 });
 
@@ -40,7 +41,7 @@ router.get('/', async (ctx) => {
  * @apiSuccess (200) {Object} meta
  * @apiSuccess (200) {String} created_at
  */
-router.post('/', async (ctx) => {
+router.post('/', loginRequired, async (ctx) => {
   ctx.body = await Device.insert(ctx.user.id, ctx.request.body);
 });
 
@@ -63,7 +64,7 @@ router.post('/', async (ctx) => {
  * @apiSuccess (200) {Object} meta
  * @apiSuccess (200) {String} created_at
  */
-router.post('/update', async (ctx) => {
+router.post('/update', loginRequired, async (ctx) => {
   ctx.body = await Device.update(ctx.user.id, ctx.request.body);
 });
 
@@ -77,7 +78,7 @@ router.post('/update', async (ctx) => {
  * @apiParam {String} token
  *
  */
-router.get('/remove/:token', async (ctx) => {
+router.get('/remove/:token', loginRequired, async (ctx) => {
   await Device.delete(ctx.user.id, ctx.params.token);
   ctx.body = {message: 'success'};
 });

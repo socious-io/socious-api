@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import Notif from '../models/notification/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
@@ -26,7 +27,7 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} items.read_at
  * @apiSuccess (200) {Datetime} items.view_at
  */
-router.get('/unreads', paginate, async (ctx) => {
+router.get('/unreads', loginRequired, paginate, async (ctx) => {
   const notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
 
   await Notif.viewed(
@@ -55,7 +56,7 @@ router.get('/unreads', paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} view_at
  */
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginRequired, async (ctx) => {
   const notif = await Notif.get(ctx.user.id, ctx.params.id);
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = notif;
@@ -85,7 +86,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Datetime} items.read_at
  * @apiSuccess (200) {Datetime} items.view_at
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginRequired, paginate, async (ctx) => {
   let notifications = [];
   if (JSON.parse(ctx.request.query.unreads || null)) {
     notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
@@ -109,7 +110,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiDescription read all notifications
  *
  */
-router.post('/read/all', async (ctx) => {
+router.post('/read/all', loginRequired, async (ctx) => {
   await Notif.readAll(ctx.user.id);
   ctx.body = {message: 'success'};
 });
@@ -124,7 +125,7 @@ router.post('/read/all', async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.post('/read/:id', async (ctx) => {
+router.post('/read/:id', loginRequired, async (ctx) => {
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = {message: 'success'};
 });

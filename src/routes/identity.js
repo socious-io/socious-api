@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import Identity from '../models/identity/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 
 export const router = new Router();
 
@@ -16,7 +17,7 @@ export const router = new Router();
  * @apiSuccess (200) {Object} type (users, organizations)
  * @apiSuccess (200) {Object} meta
  */
-router.get('/', async (ctx) => {
+router.get('/', loginRequired, async (ctx) => {
   ctx.body = await Identity.getAll(ctx.user.id, ctx.identity.id);
 });
 
@@ -33,7 +34,7 @@ router.get('/', async (ctx) => {
  * @apiSuccess (200) {Object} type (users, organizations)
  * @apiSuccess (200) {Object} meta
  */
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginRequired, async (ctx) => {
   ctx.body = await Identity.get(ctx.params.id, ctx.identity.id);
 });
 
@@ -48,7 +49,7 @@ router.get('/:id', async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/set/:id/session', async (ctx) => {
+router.get('/set/:id/session', loginRequired, async (ctx) => {
   const identity = await Identity.get(ctx.params.id);
   await Identity.permissioned(identity, ctx.user.id);
 

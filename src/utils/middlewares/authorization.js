@@ -1,8 +1,8 @@
-import Config from '../config.js';
-import Auth from '../services/auth/index.js';
-import User from '../models/user/index.js';
-import Identity from '../models/identity/index.js';
-import {UnauthorizedError} from './errors.js';
+import Config from '../../config.js';
+import Auth from '../../services/auth/index.js';
+import User from '../../models/user/index.js';
+import Identity from '../../models/identity/index.js';
+import {UnauthorizedError} from '../errors.js';
 
 export const currentIdentity = async (ctx) => {
   const currentidentity = ctx.request.header['current-identity'];

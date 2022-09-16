@@ -1,6 +1,6 @@
 import compose from 'koa-compose';
 import Cors from '@koa/cors';
-import Config from '../config.js';
+import Config from '../../config.js';
 
 export const cors = new Cors({
   origin: Config.cors.origins.length

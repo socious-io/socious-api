@@ -2,7 +2,6 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {StatusType} from './enums.js';
-import {updateProfileSchem} from './schema.js';
 
 export const insert = async (
   first_name,
@@ -23,16 +22,34 @@ export const insert = async (
   }
 };
 
-export const updateProfile = async (id, profile) => {
-  await updateProfileSchem.validateAsync(profile);
+export const updateProfile = async (
+  id,
+  {
+    first_name,
+    last_name,
+    avatar,
+    cover_image,
+    phone,
+    bio,
+    city,
+    address,
+    country,
+    wallet_address,
+    social_causes,
+    skills,
+    mission,
+    language,
+    mobile_country_code,
+  },
+) => {
   const query = sql`
     UPDATE users SET 
-      first_name=${profile.first_name}, last_name=${profile.last_name},
-      avatar=${profile.avatar}, cover_image=${profile.cover_image}, phone=${profile.phone},
-      bio=${profile.bio}, city=${profile.city}, address=${profile.address}, country=${profile.country},
-      wallet_address=${profile.wallet_address}, social_causes=${profile.social_causes},
-      skills=${profile.skills}, mission=${profile.mission}, language=${profile.language},
-      mobile_country_code=${profile.mobile_country_code}
+      first_name=${first_name}, last_name=${last_name},
+      avatar=${avatar}, cover_image=${cover_image}, phone=${phone},
+      bio=${bio}, city=${city}, address=${address}, country=${country},
+      wallet_address=${wallet_address}, social_causes=${social_causes},
+      skills=${skills}, mission=${mission}, language=${language},
+      mobile_country_code=${mobile_country_code}
     WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {

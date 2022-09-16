@@ -2,7 +2,6 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {MemberTypes} from './enums.js';
-import {findChatSchem} from './schema.js';
 import Identity from '../identity/index.js';
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
@@ -35,10 +34,9 @@ export const filtered = async (
   return rows;
 };
 
-export const find = async (identityId, body) => {
-  await findChatSchem.validateAsync(body);
+export const find = async (identityId, {participants}) => {
 
-  const participants = body.participants.map((id) => id.toLowerCase());
+  participants = participants.map((id) => id.toLowerCase());
   if (!participants.includes(identityId)) participants.push(identityId);
   participants.sort();
 

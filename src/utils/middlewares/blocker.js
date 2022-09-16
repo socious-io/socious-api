@@ -1,4 +1,4 @@
-import {TooManyRequestsError} from './errors.js';
+import {TooManyRequestsError} from '../errors.js';
 
 const retryBlockerData = {};
 /**

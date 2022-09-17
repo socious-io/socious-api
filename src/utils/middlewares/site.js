@@ -1,5 +1,7 @@
 import compose from 'koa-compose';
 import Cors from '@koa/cors';
+import koaBody from 'koa-body';
+import session from 'koa-session';
 import Config from '../../config.js';
 
 export const cors = new Cors({
@@ -40,4 +42,5 @@ export const throwHandler = async (ctx, next) => {
   }
 };
 
-export default compose([cors, throwHandler]);
+export default (app) =>
+  compose([throwHandler, cors, koaBody(), session(Config.session, app)]);

@@ -1,9 +1,11 @@
 import Router from '@koa/router';
+import {validate} from '@socious/data';
 import Org from '../models/organization/index.js';
 import {
   loginOptional,
   loginRequired,
 } from '../utils/middlewares/authorization.js';
+import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
@@ -30,7 +32,7 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.get('/:id', loginOptional, async (ctx) => {
+router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
 });
 
@@ -126,6 +128,7 @@ router.get('/', loginOptional, paginate, async (ctx) => {
  * @apiSuccess (200) {String[]} social_causes
  */
 router.post('/', loginRequired, async (ctx) => {
+  await validate.OrganizationSchema.validateAsync(ctx.request.body);
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body);
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
@@ -181,10 +184,16 @@ router.get('/check', loginRequired, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.post('/update/:id', loginRequired, async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  ctx.body = await Org.update(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/update/:id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await validate.OrganizationSchema.validateAsync(ctx.request.body);
+    ctx.body = await Org.update(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {post} /orgs/:id/members add member
@@ -215,9 +224,15 @@ router.post('/update/:id', loginRequired, async (ctx) => {
  * @apiSuccess (200) {String} items.last_name
  * @apiSuccess (200) {String} items.email
  */
-router.get('/:id/members', loginRequired, paginate, async (ctx) => {
-  ctx.body = await Org.members(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/members',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Org.members(ctx.params.id, ctx.paginate);
+  },
+);
 
 /**
  * @api {post} /orgs/:id/members/:user_id Add member
@@ -232,11 +247,16 @@ router.get('/:id/members', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.post('/:id/members/:user_id', loginRequired, async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  await Org.addMember(ctx.params.id, ctx.params.user_id);
-  ctx.body = {message: 'success'};
-});
+router.post(
+  '/:id/members/:user_id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await Org.addMember(ctx.params.id, ctx.params.user_id);
+    ctx.body = {message: 'success'};
+  },
+);
 
 /**
  * @api {get} /orgs/remove/:id/members/:user_id Delete member
@@ -251,8 +271,13 @@ router.post('/:id/members/:user_id', loginRequired, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.get('/remove/:id/members/:user_id', loginRequired, async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  await Org.removeMember(ctx.params.id, ctx.params.user_id);
-  ctx.body = {message: 'success'};
-});
+router.get(
+  '/remove/:id/members/:user_id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await Org.removeMember(ctx.params.id, ctx.params.user_id);
+    ctx.body = {message: 'success'};
+  },
+);

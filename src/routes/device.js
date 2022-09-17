@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import Device from '../models/device/index.js';
+import {validate} from '@socious/data';
 
 export const router = new Router();
 
@@ -42,6 +43,7 @@ router.get('/', loginRequired, async (ctx) => {
  * @apiSuccess (200) {String} created_at
  */
 router.post('/', loginRequired, async (ctx) => {
+  await validate.DeviceNewSchema.validateAsync(ctx.request.body);
   ctx.body = await Device.insert(ctx.user.id, ctx.request.body);
 });
 
@@ -65,6 +67,7 @@ router.post('/', loginRequired, async (ctx) => {
  * @apiSuccess (200) {String} created_at
  */
 router.post('/update', loginRequired, async (ctx) => {
+  await validate.DeviceNewSchema.validateAsync(ctx.request.body);
   ctx.body = await Device.update(ctx.user.id, ctx.request.body);
 });
 

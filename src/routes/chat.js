@@ -1,10 +1,12 @@
 /* eslint-disable no-unreachable */
 import Router from '@koa/router';
+import {validate} from '@socious/data';
 import Event from '../services/events/index.js';
 import Chat from '../models/chat/index.js';
 import {paginate} from '../utils/requests.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {NotImplementedError} from '../utils/errors.js';
+import {chatPermission, checkIdParams} from '../utils/middlewares/route.js';
 export const router = new Router();
 
 /**
@@ -53,10 +55,15 @@ router.get('/summary', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  * @apiSuccess (200) {Datetime} updated_at
  */
-router.get('/:id', loginRequired, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Chat.get(ctx.params.id);
-});
+router.get(
+  '/:id',
+  loginRequired,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    ctx.body = await Chat.get(ctx.params.id);
+  },
+);
 
 /**
  * @api {get} /chats Get all
@@ -105,6 +112,7 @@ router.get('/', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} items.updated_at
  */
 router.post('/find', loginRequired, async (ctx) => {
+  await validate.FindChatSchema.validateAsync(ctx.request.body);
   ctx.body = {items: await Chat.find(ctx.identity.id, ctx.request.body)};
 });
 
@@ -130,6 +138,7 @@ router.post('/find', loginRequired, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  */
 router.post('/', loginRequired, async (ctx) => {
+  await validate.ChatSchema.validateAsync(ctx.request.body);
   ctx.body = await Chat.create(ctx.identity, ctx.request.body);
 });
 
@@ -216,10 +225,16 @@ router.get('/remove/:id', loginRequired, async (_ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  */
 
-router.get('/:id/participants', loginRequired, paginate, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Chat.participants(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/participants',
+  loginRequired,
+  paginate,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    ctx.body = await Chat.participants(ctx.params.id, ctx.paginate);
+  },
+);
 
 /**
  * @api {post} /chats/update/:id/participants/mute Mute participant
@@ -324,6 +339,7 @@ router.post(
 router.get(
   '/remove/:id/participants/:identity_id',
   loginRequired,
+  checkIdParams,
   async (_ctx) => {
     throw new NotImplementedError();
     // await Chat.permissioned(
@@ -369,10 +385,16 @@ router.get(
  * @apiSuccess (200) {Datetime} items.updated_at
  *
  */
-router.get('/:id/messages', loginRequired, paginate, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Chat.messages(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/messages',
+  loginRequired,
+  paginate,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    ctx.body = await Chat.messages(ctx.params.id, ctx.paginate);
+  },
+);
 
 /**
  * @api {post} /chats/:id/messages New Messages
@@ -398,27 +420,33 @@ router.get('/:id/messages', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  *
  */
-router.post('/:id/messages', loginRequired, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
+router.post(
+  '/:id/messages',
+  loginRequired,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    await validate.MessageSchema.validateAsync(ctx.request.body);
 
-  ctx.body = await Chat.newMessage(
-    ctx.params.id,
-    ctx.identity.id,
-    ctx.request.body,
-  );
+    ctx.body = await Chat.newMessage(
+      ctx.params.id,
+      ctx.identity.id,
+      ctx.request.body,
+    );
 
-  const participants = await Chat.miniParticipants(ctx.params.id);
+    const participants = await Chat.miniParticipants(ctx.params.id);
 
-  participants.map((p) =>
-    Event.push(Event.Types.CHAT, p.identity_id, {
-      ...ctx.body,
-      identity: ctx.identity,
-      muted: p.muted_until
-        ? p.muted_until.getTime() > new Date().getTime()
-        : false,
-    }),
-  );
-});
+    participants.map((p) =>
+      Event.push(Event.Types.CHAT, p.identity_id, {
+        ...ctx.body,
+        identity: ctx.identity,
+        muted: p.muted_until
+          ? p.muted_until.getTime() > new Date().getTime()
+          : false,
+      }),
+    );
+  },
+);
 
 /**
  * @api {post} /chats/:id/messages/:message_id Reply Messages
@@ -446,27 +474,34 @@ router.post('/:id/messages', loginRequired, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  *
  */
-router.post('/:id/messages/:message_id', loginRequired, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Chat.newMessage(
-    ctx.params.id,
-    ctx.identity.id,
-    ctx.request.body,
-    ctx.params.message_id,
-  );
+router.post(
+  '/:id/messages/:message_id',
+  loginRequired,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    await validate.MessageSchema.validateAsync(ctx.request.body);
 
-  const participants = await Chat.miniParticipants(ctx.params.id);
+    ctx.body = await Chat.newMessage(
+      ctx.params.id,
+      ctx.identity.id,
+      ctx.request.body,
+      ctx.params.message_id,
+    );
 
-  participants.map((p) =>
-    Event.push(Event.Types.CHAT, p.identity_id, {
-      ...ctx.body,
-      identity: ctx.identity,
-      muted: p.muted_until
-        ? p.muted_until.getTime() > new Date().getTime()
-        : false,
-    }),
-  );
-});
+    const participants = await Chat.miniParticipants(ctx.params.id);
+
+    participants.map((p) =>
+      Event.push(Event.Types.CHAT, p.identity_id, {
+        ...ctx.body,
+        identity: ctx.identity,
+        muted: p.muted_until
+          ? p.muted_until.getTime() > new Date().getTime()
+          : false,
+      }),
+    );
+  },
+);
 
 /**
  * @api {get} /chats/:id/messages/:message_id Get Reply Messages
@@ -501,9 +536,10 @@ router.post('/:id/messages/:message_id', loginRequired, async (ctx) => {
 router.get(
   '/:id/messages/:message_id',
   loginRequired,
+  checkIdParams,
+  chatPermission,
   paginate,
   async (ctx) => {
-    await Chat.permissioned(ctx.identity.id, ctx.params.id);
     ctx.body = await Chat.messagesReplies(ctx.params.message_id, ctx.paginate);
   },
 );
@@ -534,14 +570,21 @@ router.get(
  * @apiSuccess (200) {Datetime} updated_at
  *
  */
-router.post('/update/:id/messages/:message_id', loginRequired, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Chat.editMessage(
-    ctx.params.message_id,
-    ctx.identity.id,
-    ctx.request.body,
-  );
-});
+router.post(
+  '/update/:id/messages/:message_id',
+  loginRequired,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    await validate.MessageSchema.validateAsync(ctx.request.body);
+
+    ctx.body = await Chat.editMessage(
+      ctx.params.message_id,
+      ctx.identity.id,
+      ctx.request.body,
+    );
+  },
+);
 
 /**
  * @api {post} /chats/update/:id/messages/:message_id/read read Messages
@@ -560,8 +603,9 @@ router.post('/update/:id/messages/:message_id', loginRequired, async (ctx) => {
 router.post(
   '/update/:id/messages/:message_id/read',
   loginRequired,
+  checkIdParams,
+  chatPermission,
   async (ctx) => {
-    await Chat.permissioned(ctx.identity.id, ctx.params.id);
     await Chat.readMessage(ctx.params.message_id, ctx.identity.id);
     ctx.body = {message: 'success'};
   },
@@ -581,8 +625,13 @@ router.post(
  *
  *
  */
-router.get('/remove/:id/messages/:message_id', loginRequired, async (ctx) => {
-  await Chat.permissioned(ctx.identity.id, ctx.params.id);
-  await Chat.removeMessage(ctx.params.message_id, ctx.identity.id);
-  ctx.body = {message: 'success'};
-});
+router.get(
+  '/remove/:id/messages/:message_id',
+  loginRequired,
+  checkIdParams,
+  chatPermission,
+  async (ctx) => {
+    await Chat.removeMessage(ctx.params.message_id, ctx.identity.id);
+    ctx.body = {message: 'success'};
+  },
+);

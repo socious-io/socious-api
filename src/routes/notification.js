@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import Notif from '../models/notification/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
+import {checkIdParams} from '../utils/middlewares/route.js';
 export const router = new Router();
 
 /**
@@ -56,7 +57,7 @@ router.get('/unreads', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} view_at
  */
-router.get('/:id', loginRequired, async (ctx) => {
+router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
   const notif = await Notif.get(ctx.user.id, ctx.params.id);
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = notif;
@@ -125,7 +126,7 @@ router.post('/read/all', loginRequired, async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.post('/read/:id', loginRequired, async (ctx) => {
+router.post('/read/:id', loginRequired, checkIdParams, async (ctx) => {
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = {message: 'success'};
 });

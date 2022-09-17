@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import {validate} from '@socious/data';
 import Project from '../models/project/index.js';
 import Applicant from '../models/applicant/index.js';
 import Notif from '../models/notification/index.js';
@@ -8,6 +9,12 @@ import {
   loginOptional,
   loginRequired,
 } from '../utils/middlewares/authorization.js';
+import {
+  applicantOwner,
+  checkIdParams,
+  projectPermission,
+} from '../utils/middlewares/route.js';
+import {projectOwner} from '../models/applicant/read.js';
 export const router = new Router();
 
 /**
@@ -26,7 +33,7 @@ export const router = new Router();
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.get('/:id', loginOptional, async (ctx) => {
+router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Project.get(ctx.params.id);
 });
 
@@ -60,7 +67,7 @@ router.get('/', loginRequired, paginate, async (ctx) => {
 });
 
 /**
- * @api {post} /projects/create Create new
+ * @api {post} /projects Create new
  * @apiGroup Project
  * @apiName Create
  * @apiVersion 2.0.0
@@ -85,7 +92,8 @@ router.get('/', loginRequired, paginate, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/create', loginRequired, async (ctx) => {
+router.post('/', loginRequired, async (ctx) => {
+  await validate.ProjectSchema.validateAsync(ctx.request.body);
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
 });
 
@@ -118,10 +126,16 @@ router.post('/create', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/update/:id', loginRequired, async (ctx) => {
-  await Project.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Project.update(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/update/:id',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    await validate.ProjectSchema.validateAsync(ctx.request.body);
+    ctx.body = await Project.update(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {get} /projects/:id/questions Get Questions
@@ -138,15 +152,20 @@ router.post('/update/:id', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} questions.created_at
  */
 
-router.get('/:id/questions', loginRequired, async (ctx) => {
-  await Project.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = {
-    questions: await Project.getQuestions(ctx.params.id),
-  };
-});
+router.get(
+  '/:id/questions',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    ctx.body = {
+      questions: await Project.getQuestions(ctx.params.id),
+    };
+  },
+);
 
 /**
- * @api {post} /projects/:id/create/questions New Questions
+ * @api {post} /projects/:id/questions New Questions
  * @apiGroup Project
  * @apiName New Questions
  * @apiVersion 2.0.0
@@ -156,10 +175,16 @@ router.get('/:id/questions', loginRequired, async (ctx) => {
  * @apiBody {String[]} options
  * @apiBody {Boolean} required
  */
-router.post('/:id/create/questions', loginRequired, async (ctx) => {
-  await Project.permissioned(ctx.identity.id, ctx.params.id);
-  ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/:id/questions',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    await validate.QuestionSchema.validateAsync(ctx.request.body);
+    ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {post} /projects/questions Get Questions
@@ -175,8 +200,10 @@ router.post('/:id/create/questions', loginRequired, async (ctx) => {
 router.post(
   '/update/:id/questions/:question_id',
   loginRequired,
+  checkIdParams,
+  projectPermission,
   async (ctx) => {
-    await Project.permissioned(ctx.identity.id, ctx.params.id);
+    await validate.QuestionSchema.validateAsync(ctx.request.body);
     ctx.body = await Project.updateQuestion(
       ctx.params.question_id,
       ctx.request.body,
@@ -195,13 +222,18 @@ router.post(
  *
  * @apiParam {String} id
  */
-router.get('/remove/:id', loginRequired, async (ctx) => {
-  await Project.permissioned(ctx.identity.id, ctx.params.id);
-  await Project.remove(ctx.params.id);
-  ctx.body = {
-    message: 'success',
-  };
-});
+router.get(
+  '/remove/:id',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    await Project.remove(ctx.params.id);
+    ctx.body = {
+      message: 'success',
+    };
+  },
+);
 
 /**
  * @api {get} /projects/:id/applicants Get all applicants
@@ -230,9 +262,15 @@ router.get('/remove/:id', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
  */
-router.get('/:id/applicants', loginRequired, paginate, async (ctx) => {
-  ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/applicants',
+  loginRequired,
+  paginate,
+  checkIdParams,
+  async (ctx) => {
+    ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
+  },
+);
 
 /**
  * @api {get} /projects/applicants/:id Get applicant
@@ -257,12 +295,12 @@ router.get('/:id/applicants', loginRequired, paginate, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.get('/applicants/:id', loginRequired, async (ctx) => {
+router.get('/applicants/:id', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Applicant.get(ctx.params.id);
 });
 
 /**
- * @api {post} /projects/:id/create/applicants Apply
+ * @api {post} /projects/:id/applicants Apply
  * @apiGroup Project
  * @apiName Apply
  * @apiVersion 2.0.0
@@ -296,7 +334,9 @@ router.get('/applicants/:id', loginRequired, async (ctx) => {
  * @apiSuccess {String} answers.answer
  * @apiSuccess {Number} answers.selected_option
  */
-router.post('/:id/create/applicants', loginRequired, async (ctx) => {
+router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ApplicantSchema.validateAsync(ctx.request.body);
+
   ctx.body = await Applicant.apply(
     ctx.params.id,
     ctx.user.id,
@@ -335,10 +375,15 @@ router.post('/:id/create/applicants', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/applicants/:id/withdraw', loginRequired, async (ctx) => {
-  await Applicant.mustOwner(ctx.user.id, ctx.params.id);
-  ctx.body = await Applicant.withdraw(ctx.params.id);
-});
+router.post(
+  '/applicants/:id/withdraw',
+  loginRequired,
+  checkIdParams,
+  applicantOwner,
+  async (ctx) => {
+    ctx.body = await Applicant.withdraw(ctx.params.id);
+  },
+);
 
 /**
  * @api {post} /projects/applicants/:id/offer Offer Applicant
@@ -370,10 +415,16 @@ router.post('/applicants/:id/withdraw', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/applicants/:id/offer', loginRequired, async (ctx) => {
-  await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
-  ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/applicants/:id/offer',
+  loginRequired,
+  checkIdParams,
+  projectOwner,
+  async (ctx) => {
+    await validate.ApplicantOfferSchema.validateAsync(ctx.request.body);
+    ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {post} /projects/applicants/:id/reject Reject Applicant
@@ -402,10 +453,16 @@ router.post('/applicants/:id/offer', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/applicants/:id/reject', loginRequired, async (ctx) => {
-  await Applicant.mustProjectOwner(ctx.identity.id, ctx.params.id);
-  ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/applicants/:id/reject',
+  loginRequired,
+  checkIdParams,
+  projectOwner,
+  async (ctx) => {
+    await validate.ApplicantRejectSchema.validateAsync(ctx.request.body);
+    ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {post} /projects/applicants/:id/approve Approve Offer
@@ -430,10 +487,14 @@ router.post('/applicants/:id/reject', loginRequired, async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.post('/applicants/:id/approve', loginRequired, async (ctx) => {
-  await Applicant.mustOwner(ctx.identity.id, ctx.params.id);
-  ctx.body = await Applicant.approve(ctx.params.id);
-});
+router.post(
+  '/applicants/:id/approve',
+  loginRequired,
+  applicantOwner,
+  async (ctx) => {
+    ctx.body = await Applicant.approve(ctx.params.id);
+  },
+);
 
 /**
  * @api {post} /projects/applicants/:id Update Applicant
@@ -470,10 +531,16 @@ router.post('/applicants/:id/approve', loginRequired, async (ctx) => {
  * @apiSuccess {String} answers.answer
  * @apiSuccess {Number} answers.selected_option
  */
-router.post('/applicants/update/:id', loginRequired, async (ctx) => {
-  await Applicant.mustOwner(ctx.user.id, ctx.params.id);
-  ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/applicants/update/:id',
+  loginRequired,
+  checkIdParams,
+  applicantOwner,
+  async (ctx) => {
+    await validate.ApplicantSchema.validateAsync(ctx.request.body);
+    ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {get} /projects/remove/applicants/:id Remove Applicant
@@ -485,10 +552,15 @@ router.post('/applicants/update/:id', loginRequired, async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.get('/remove/applicants/:id', loginRequired, async (ctx) => {
-  await Applicant.mustOwner(ctx.user.id, ctx.params.id);
-  await Applicant.remove(ctx.params.id);
-  ctx.body = {
-    message: 'success',
-  };
-});
+router.get(
+  '/remove/applicants/:id',
+  loginRequired,
+  checkIdParams,
+  applicantOwner,
+  async (ctx) => {
+    await Applicant.remove(ctx.params.id);
+    ctx.body = {
+      message: 'success',
+    };
+  },
+);

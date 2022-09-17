@@ -48,7 +48,7 @@ export const update = async (
 };
 
 export const share = async (id, identityId, {content}) => {
-  content = sanitizeHtml(content);
+  content = sanitizeHtml(content || '');
 
   try {
     const {rows} = await app.db.query(

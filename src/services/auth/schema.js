@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import {usernamePattern} from '../../models/user/schema.js';
+import {validate} from '@socious/data';
 
 const phonePattern = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
@@ -11,13 +11,13 @@ export const authSchem = Joi.object({
 export const registerSchem = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
-  username: Joi.string().regex(usernamePattern),
+  username: Joi.string().regex(validate.usernamePattern),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
 });
 
 export const preregisterSchem = Joi.object({
-  username: Joi.string().regex(usernamePattern),
+  username: Joi.string().regex(validate.usernamePattern),
   email: Joi.string().email(),
 });
 

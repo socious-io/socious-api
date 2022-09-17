@@ -1,11 +1,11 @@
 import Router from '@koa/router';
 import {BadRequestError} from '../utils/errors.js';
-
 import Follow from '../models/follow/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/requests.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
+import {checkIdParams} from '../utils/middlewares/route.js';
 
 export const router = new Router();
 
@@ -93,7 +93,7 @@ router.get('/followings', loginRequired, paginate, async (ctx) => {
  * @apiSuccess (200) {Object} follow info object
  *
  */
-router.post('/:id', loginRequired, async (ctx) => {
+router.post('/:id', loginRequired, checkIdParams, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (followed) throw new BadRequestError('Already followed');
 
@@ -120,7 +120,7 @@ router.post('/:id', loginRequired, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.get('/remove/:id', loginRequired, async (ctx) => {
+router.get('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (!followed) throw new BadRequestError('Not followed');
 

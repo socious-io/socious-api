@@ -3,10 +3,13 @@ import Auth from '../../services/auth/index.js';
 import User from '../../models/user/index.js';
 import Identity from '../../models/identity/index.js';
 import {UnauthorizedError} from '../errors.js';
+import {validate} from '@socious/data';
 
 export const currentIdentity = async (ctx) => {
   const currentidentity = ctx.request.header['current-identity'];
   const identityId = currentidentity || ctx.session.current_identity;
+
+  if (identityId) await validate.UUID.validateAsync(identityId);
 
   const identity = identityId
     ? await Identity.get(identityId)
@@ -17,7 +20,7 @@ export const currentIdentity = async (ctx) => {
   ctx.identity = identity;
 };
 
-export const loginRequired = async (ctx, next) => {
+export const currentUser = async (ctx) => {
   const {authorization} = ctx.request.header;
 
   const token = authorization
@@ -36,23 +39,25 @@ export const loginRequired = async (ctx, next) => {
   } catch {
     throw new UnauthorizedError('Unknown user');
   }
-
   // Auto refresh on sessions
   if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token;
+};
 
+export const loginRequired = async (ctx, next) => {
+  await currentUser(ctx);
   await currentIdentity(ctx);
 
-  await next();
+  return next();
 };
 
 export const loginOptional = async (ctx, next) => {
   try {
-    await loginRequired(ctx, next);
-  } catch {
+    await currentUser(ctx);
+  } catch (err) {
     ctx.user = await User.getByUsername('guest');
-    await currentIdentity(ctx);
-    await next();
   }
+  await currentIdentity(ctx);
+  return next();
 };
 
 export const accessWebhooks = async (ctx, next) => {
@@ -61,5 +66,5 @@ export const accessWebhooks = async (ctx, next) => {
   if (Config.webhooks.token !== token)
     throw new UnauthorizedError('invalid authorization');
 
-  await next();
+  return next();
 };

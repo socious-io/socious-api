@@ -35,7 +35,6 @@ export const filtered = async (
 };
 
 export const find = async (identityId, {participants}) => {
-
   participants = participants.map((id) => id.toLowerCase());
   if (!participants.includes(identityId)) participants.push(identityId);
   participants.sort();

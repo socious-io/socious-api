@@ -62,7 +62,7 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
  */
 router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
-    ctx.body = await User.getProfileLimited(ctx.params.id);  
+    ctx.body = await User.getProfileByUsernameLimited(ctx.params.username);  
     return
   }
   ctx.body = await User.getProfileByUsername(ctx.params.username);

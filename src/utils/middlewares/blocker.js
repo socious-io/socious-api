@@ -5,14 +5,8 @@ const retryBlockerData = {};
  * this would work on all routes that use this middlware would block and send 429 http error
  * after retryCount exceed would refresh ip after reset timer
  */
-export default async (ctx, next) => {
+export default ({resetTimer, blockerTimer, retryCount}) => async (ctx, next) => {
   let error;
-  // 1 Minute to reset retry
-  const resetTimer = 60 * 1000;
-  // 2 Hours block after retry count exceed
-  const blockerTimer = 2 * 60 * 60 * 1000;
-  // would block after this count exceed
-  const retryCount = 10;
   // Note: This must be overide on Nginx
   const ip = ctx.request.header['x-real-ip'] || ctx.request.ip;
   const now = new Date();

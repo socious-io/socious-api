@@ -1,8 +1,11 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
-import {StatusTypes} from './enums.js';
+import Data from '@socious/data'
 import {get} from './read.js';
+
+
+const StatusTypes = Data.ApplicantStatus
 
 export const insert = async (
   projectId,

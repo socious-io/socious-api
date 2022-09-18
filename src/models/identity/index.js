@@ -2,11 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import Org from '../organization/index.js';
-
-const Types = {
-  ORG: 'organizations',
-  USER: 'users',
-};
+import Data from '@socious/data';
 
 const get = async (id, identityId) => {
   return app.db.get(sql`
@@ -51,10 +47,10 @@ const getAll = async (userId, identityId) => {
 
 const permissioned = async (identity, userId) => {
   switch (identity.type) {
-    case Types.ORG:
-      await Org.permissionedMember(identity.id, userId);
+    case Data.IdentityType.ORG:
+      await Org.permissioned(identity.id, userId);
       break;
-    case Types.USER:
+    case Data.IdentityType.USER:
       if (userId !== identity.id) throw new PermissionError('Not allow');
       break;
     default:
@@ -63,7 +59,6 @@ const permissioned = async (identity, userId) => {
 };
 
 export default {
-  Types,
   get,
   getAll,
   getByIds,

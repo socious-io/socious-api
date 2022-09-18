@@ -47,6 +47,14 @@ export default {
     token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
     addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks',
   },
+  requestBlocker: {
+    // We may tagname blocker configs and use it on other groups and routes
+    auth: {
+      resetTimer:  process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
+      blockerTimer: process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
+      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
+    }
+  },
   aws: {
     cdn_url:
       process.env.AWS_CDN_URL ||

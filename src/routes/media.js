@@ -4,7 +4,7 @@ import Media from '../models/media/index.js';
 import Upload from '../utils/upload.js';
 
 import {BadRequestError} from '../utils/errors.js';
-import {loginRequired} from '../utils/middlewares/authorization.js';
+import {loginOptional, loginRequired} from '../utils/middlewares/authorization.js';
 import {checkIdParams} from '../utils/middlewares/route.js';
 
 const koaBody = Body({multipart: true, uploadDir: '.'});
@@ -51,7 +51,7 @@ router.post('/upload', loginRequired, koaBody, async (ctx) => {
  * @apiSuccess (200) {Datetime} created_at
  */
 
-router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
+router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Media.get(ctx.params.id);
 });
 

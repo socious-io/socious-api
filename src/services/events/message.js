@@ -1,34 +1,34 @@
-import Notif from '../../models/notification/index.js';
+import Data from '@socious/data'
 
 export const makeMessage = (type, name) => {
   switch (type) {
-    case Notif.Types.FOLLOWED:
-      return {title: Notif.Title.FOLLOWED, body: `${name} followed you`};
+    case Data.NotificationType.FOLLOWED:
+      return {title: Data.NotificationTitle.FOLLOWED, body: `${name} followed you`};
 
-    case Notif.Types.CHAT:
-      return {title: Notif.Title.CHAT, body: `${name} sent you new message`};
+    case Data.NotificationType.CHAT:
+      return {title: Data.NotificationTitle.CHAT, body: `${name} sent you new message`};
 
-    case Notif.Types.COMMENT:
+    case Data.NotificationType.COMMENT:
       return {
-        title: Notif.Title.COMMENT,
+        title: Data.NotificationTitle.COMMENT,
         body: `${name} has comment on your post`,
       };
 
-    case Notif.Types.COMMENT_LIKE:
+    case Data.NotificationType.COMMENT_LIKE:
       return {
-        title: Notif.Title.COMMENT_LIKE,
+        title: Data.NotificationTitle.COMMENT_LIKE,
         body: `${name} liked your comment`,
       };
 
-    case Notif.Types.POST_LIKE:
-      return {title: Notif.Title.POST_LIKE, body: `${name} liked your post`};
+    case Data.NotificationType.POST_LIKE:
+      return {title: Data.NotificationTitle.POST_LIKE, body: `${name} liked your post`};
 
-    case Notif.Types.SHARE_POST:
-      return {title: Notif.Title.POST_LIKE, body: `${name} shared your post`};
+    case Data.NotificationType.SHARE_POST:
+      return {title: Data.NotificationTitle.POST_LIKE, body: `${name} shared your post`};
 
-    case Notif.Types.APPLICATION:
+    case Data.NotificationType.APPLICATION:
       return {
-        title: Notif.Title.POST_LIKE,
+        title: Data.NotificationTitle.POST_LIKE,
         body: `${name} applied to your project`,
       };
 

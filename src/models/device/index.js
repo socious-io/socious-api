@@ -1,17 +1,8 @@
 import sql from 'sql-template-tag';
-import Joi from 'joi';
 
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 
-const insertSchem = Joi.object({
-  token: Joi.string().required(),
-  meta: Joi.object({
-    app_version: Joi.string(),
-    os: Joi.string().valid('IOS', 'ANDROID', 'WINDOWS', 'WEBAPP'),
-    os_version: Joi.string(),
-  }).required(),
-});
 
 const insert = async (userId, {token, meta}) => {
   try {

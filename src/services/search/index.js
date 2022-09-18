@@ -1,26 +1,13 @@
-import Joi from 'joi';
+import Data from '@socious/data'
 import {app} from '../../index.js';
 
-const Types = {
-  POSTS: 'posts',
-  USERS: 'users',
-  RELATED_USERS: 'related_users',
-  PROJECTS: 'projects',
-  CHATS: 'chats',
-};
 
-const typesNeedUser = [Types.USERS, Types.RELATED_USERS];
+const typesNeedUser = [Data.SearchType.USERS, Data.SearchType.RELATED_USERS];
 
-const searchSchema = Joi.object({
-  q: Joi.string().required(),
-  type: Joi.string()
-    .valid(...Object.values(Types))
-    .required(),
-  current_user_id: Joi.string().uuid().required(),
-});
+
 
 const find = async (body, {offset = 0, limit = 10}) => {
-  await searchSchema.validateAsync(body);
+  await Data.SearchSchema.validateAsync(body);
 
   const query = body.q.replaceAll(
     /[^\p{Letter}\p{Number}\p{Separator}]/gu,
@@ -41,6 +28,5 @@ const find = async (body, {offset = 0, limit = 10}) => {
 };
 
 export default {
-  Types,
   find,
 };

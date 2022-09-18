@@ -1,8 +1,11 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, NotImplementedError} from '../../utils/errors.js';
-import {MemberTypes, Types} from './enums.js';
+import Data from '@socious/data';
 import {find, addParticipantPermission} from './read.js';
+
+const MemberTypes = Data.ChatMemberType
+const Types = Data.ChatType
 
 export const create = async (
   identity,

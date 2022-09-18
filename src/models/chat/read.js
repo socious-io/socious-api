@@ -1,8 +1,10 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
-import {MemberTypes} from './enums.js';
+import Data from '@socious/data';
 import Identity from '../identity/index.js';
+
+const MemberTypes = Data.ChatMemberType
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
@@ -162,12 +164,12 @@ export const summary = async (identityId, {offset = 0, limit = 10}, filter) => {
 
 export const addParticipantPermission = async (identity, participantId) => {
   // Access to ORGs to add any participants
-  if (identity.type === Identity.Types.ORG) return;
+  if (identity.type === Data.IdentityType.ORG) return;
 
   const participant = await Identity.get(participantId, identity.id);
 
   // All may access to create chat to ORG
-  if (participant.type === Identity.Types.ORG) return;
+  if (participant.type === Data.IdentityType.ORG) return;
 
   // Deny access if participant not followed
   if (!participant.following) throw new PermissionError();

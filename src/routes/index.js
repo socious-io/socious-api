@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import Config from '../config.js';
 import {accessWebhooks} from '../utils/middlewares/authorization.js';
 import blocker from '../utils/middlewares/blocker.js';
 
@@ -29,7 +30,7 @@ export default (app) => {
   );
 
   blueprint.use('/ping', ping.routes(), ping.allowedMethods());
-  blueprint.use('/auth', blocker, auth.routes(), auth.allowedMethods());
+  blueprint.use('/auth', blocker(Config.requestBlocker.auth), auth.routes(), auth.allowedMethods());
   blueprint.use('/user', user.routes(), user.allowedMethods());
   blueprint.use('/identities', identity.routes(), identity.allowedMethods());
   blueprint.use('/orgs', org.routes(), org.allowedMethods());

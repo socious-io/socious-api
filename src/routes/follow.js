@@ -107,7 +107,7 @@ router.post('/:id', loginRequired, checkIdParams, async (ctx) => {
 });
 
 /**
- * @api {get} /follows/remove/:id Unfollow
+ * @api {get} /follows/:id/unfollow Unfollow
  * @apiGroup Follow
  * @apiName Unfollow
  * @apiVersion 2.0.0
@@ -120,7 +120,7 @@ router.post('/:id', loginRequired, checkIdParams, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.get('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+router.post('/:id/unfollow', loginRequired, checkIdParams, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);
   if (!followed) throw new BadRequestError('Not followed');
 

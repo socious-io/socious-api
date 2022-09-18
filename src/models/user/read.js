@@ -73,7 +73,6 @@ export const getProfileByUsername = async (username) => {
   );
 };
 
-
 export const getProfileLimited = async (id) => {
   return app.db.get(
     sql`

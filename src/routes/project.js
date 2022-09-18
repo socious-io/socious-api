@@ -143,6 +143,8 @@ router.post(
  * @apiName Get Questions
  * @apiVersion 2.0.0
  * @apiDescription get question
+ * 
+ * @apiParam {String} id project id
  *
  * @apiSuccess {Object[]} questions
  * @apiSuccess {String} questions.id
@@ -170,6 +172,8 @@ router.get(
  * @apiName New Questions
  * @apiVersion 2.0.0
  * @apiDescription Add new question
+ * 
+ * @apiParam {String} id project id
  *
  * @apiBody {String} question
  * @apiBody {String[]} options
@@ -212,7 +216,7 @@ router.post(
 );
 
 /**
- * @api {get} /projects/remove/:id Delete
+ * @api {post} /projects/remove/:id Delete
  * @apiGroup Project
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -222,7 +226,7 @@ router.post(
  *
  * @apiParam {String} id
  */
-router.get(
+router.post(
   '/remove/:id',
   loginRequired,
   checkIdParams,
@@ -543,7 +547,7 @@ router.post(
 );
 
 /**
- * @api {get} /projects/remove/applicants/:id Remove Applicant
+ * @api {post} /projects/remove/applicants/:id Remove Applicant
  * @apiGroup Project
  * @apiName RemoveApplicant
  * @apiVersion 2.0.0
@@ -552,7 +556,7 @@ router.post(
  * @apiParam {String} id
  *
  */
-router.get(
+router.post(
   '/remove/applicants/:id',
   loginRequired,
   checkIdParams,

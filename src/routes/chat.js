@@ -612,7 +612,7 @@ router.post(
 );
 
 /**
- * @api {post} /chats/update/:id/messages/:message_id Delete messages
+ * @api {post} /chats/remove/:id/messages/:message_id Delete messages
  * @apiGroup Chat
  * @apiName Delete Messages
  * @apiVersion 2.0.0
@@ -625,7 +625,7 @@ router.post(
  *
  *
  */
-router.get(
+router.post(
   '/remove/:id/messages/:message_id',
   loginRequired,
   checkIdParams,

@@ -36,8 +36,8 @@ const debug = Debug('socious-api:user');
  */
 router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
-    ctx.body = await User.getProfileLimited(ctx.params.id);  
-    return
+    ctx.body = await User.getProfileLimited(ctx.params.id);
+    return;
   }
   ctx.body = await User.getProfile(ctx.params.id);
 });
@@ -62,8 +62,8 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
  */
 router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
-    ctx.body = await User.getProfileByUsernameLimited(ctx.params.username);  
-    return
+    ctx.body = await User.getProfileByUsernameLimited(ctx.params.username);
+    return;
   }
   ctx.body = await User.getProfileByUsername(ctx.params.username);
 });

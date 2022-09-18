@@ -259,7 +259,7 @@ router.post(
 );
 
 /**
- * @api {get} /orgs/remove/:id/members/:user_id Delete member
+ * @api {post} /orgs/remove/:id/members/:user_id Delete member
  * @apiGroup Organazation.Members
  * @apiName Delete member
  * @apiVersion 2.0.0
@@ -271,7 +271,7 @@ router.post(
  * @apiSuccess (200) {Object} success
  *
  */
-router.get(
+router.post(
   '/remove/:id/members/:user_id',
   loginRequired,
   checkIdParams,

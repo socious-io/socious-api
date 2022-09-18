@@ -127,7 +127,7 @@ router.post('/update/profile', loginRequired, async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.post('/update/change-password', loginRequired, async (ctx) => {
+router.post('/change-password', loginRequired, async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
   ctx.body = {
     message: 'success',
@@ -145,7 +145,7 @@ router.post('/update/change-password', loginRequired, async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.post('/update/change-password-direct', loginRequired, async (ctx) => {
+router.post('/change-password-direct', loginRequired, async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
 
   ctx.body = {

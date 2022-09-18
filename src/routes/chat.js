@@ -175,7 +175,7 @@ router.post('/update/:id', loginRequired, async (_ctx) => {
 });
 
 /**
- * @api {get} /chats/remove/:id Delete
+ * @api {post} /chats/remove/:id Delete
  * @apiGroup Chat
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -185,7 +185,7 @@ router.post('/update/:id', loginRequired, async (_ctx) => {
  * @apiParam {String} id
  *
  */
-router.get('/remove/:id', loginRequired, async (_ctx) => {
+router.post('/remove/:id', loginRequired, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(
   //   ctx.identity.id,
@@ -325,7 +325,7 @@ router.post(
 );
 
 /**
- * @api {get} /chats/remove/:id/participants/:identity_id remove participant
+ * @api {post} /chats/remove/:id/participants/:identity_id remove participant
  * @apiGroup Chat
  * @apiName remove participant
  * @apiVersion 2.0.0
@@ -336,7 +336,7 @@ router.post(
  * @apiParam {String} id
  * @apiParam {String} identity_id
  */
-router.get(
+router.post(
   '/remove/:id/participants/:identity_id',
   loginRequired,
   checkIdParams,

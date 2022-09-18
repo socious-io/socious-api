@@ -72,7 +72,7 @@ router.post('/update', loginRequired, async (ctx) => {
 });
 
 /**
- * @api {get} /devices/remove/:token Delete
+ * @api {post} /devices/remove/:token Delete
  * @apiGroup Device
  * @apiName DElete
  * @apiVersion 2.0.0
@@ -81,7 +81,7 @@ router.post('/update', loginRequired, async (ctx) => {
  * @apiParam {String} token
  *
  */
-router.get('/remove/:token', loginRequired, async (ctx) => {
+router.post('/remove/:token', loginRequired, async (ctx) => {
   await Device.delete(ctx.user.id, ctx.params.token);
   ctx.body = {message: 'success'};
 });

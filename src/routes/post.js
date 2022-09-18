@@ -147,7 +147,7 @@ router.post('/update/:id', loginRequired, checkIdParams, async (ctx) => {
 });
 
 /**
- * @api {get} /posts/remove/:id Delete
+ * @api {post} /posts/remove/:id Delete
  * @apiGroup Post
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -159,7 +159,7 @@ router.post('/update/:id', loginRequired, checkIdParams, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+router.post('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
   await Post.permissioned(ctx.identity.id, ctx.params.id);
   await Post.remove(ctx.params.id);
   ctx.body = {
@@ -252,7 +252,7 @@ router.get(
 );
 
 /**
- * @api {get} /posts/remove/comments/:id Delete
+ * @api {post} /posts/remove/comments/:id Delete
  * @apiGroup Post.Comment
  * @apiName Delete
  * @apiVersion 2.0.0
@@ -264,7 +264,7 @@ router.get(
  *
  * @apiSuccess (200) {Object} success
  */
-router.get(
+router.post(
   '/remove/comments/:id',
   loginRequired,
   checkIdParams,
@@ -435,7 +435,7 @@ router.post(
 );
 
 /**
- * @api {get} /posts/remove/:id/comments/:comment_id/like UnLike Comment
+ * @api {post} /posts/remove/:id/comments/:comment_id/like UnLike Comment
  * @apiGroup Post.Comment
  * @apiName UnLikeComment
  * @apiVersion 2.0.0
@@ -449,7 +449,7 @@ router.post(
  *
  *
  */
-router.get(
+router.post(
   '/remove/:id/comments/:comment_id/like',
   loginRequired,
   checkIdParams,

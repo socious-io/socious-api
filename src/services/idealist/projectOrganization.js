@@ -1,5 +1,5 @@
 import sql from 'sql-template-tag';
-import {app} from './app.js'; //'../../index.js';
+import {app} from '../../index.js';
 
 import organization from '../../models/organization/index.js';
 import media from '../../models/media/index.js';
@@ -13,7 +13,7 @@ import {Type} from '../../models/organization/enums.js';
 export const organizationFromProject = async function (project) {
   const org = project.org || null;
 
-  if (!org) return false;
+  if (!org || !org.name) return false;
 
   //check if org exist in database
   const id = await getOrganization(org);
@@ -40,7 +40,6 @@ export const organizationFromProject = async function (project) {
         ...(sh_name && {shortname: sh_name}),
         ...(orgBio && {bio: orgBio}),
         ...(orgBio && {description: orgBio}),
-        //email: project.applyEmail ? project.applyEmail : 'no@email.com', //not good - beter to change in model validation
         type: type,
         ...(org.address && org.address.city && {city: org.address.city}),
         ...(org.address && org.address.full && {address: org.address.full}),
@@ -123,36 +122,51 @@ async function getOrganization(org) {
 
     return orgInDatabase.id;
   } catch (err) {
-    if (err.status !== 400)
+    if (err.status !== 400 && err.message !== 'not matched') {
+      //we dont need to log status 400 - 'not matched' error
       console.log('\x1b[31m%s\x1b[0m', err.status + ' ' + err.message);
+    }
     return false;
   }
 }
 
 async function shortname(org) {
-  let shortname = null;
+  try {
+    let shortname = null;
 
-  if (org.url && org.url.en) {
-    //get from org url
-    const chunks = org.url.en.split('/');
-    shortname = chunks[chunks.length - 1];
-    shortname = shortname.substr(-32);
-  } else {
-    //get from org name
-    shortname = org.name.replaceAll(' ', '_').replace(/[^a-zA-Z_-]/g, '');
+    if (org.url?.en) {
+      //get from org url
+      const url_string = new URL(org.url.en).pathname;
+
+      const chunks = url_string.split('/');
+      //console.log(chunks);
+
+      shortname = chunks[chunks.length - 1];
+      shortname = decodeURI(shortname);
+      shortname = shortname.slice(32);
+    } else {
+      //get from org name
+      if (!org.name) return null;
+      shortname = org.name.replaceAll(' ', '_').replace(/[^a-zA-Z_-]/g, '');
+    }
+
+    while (shortname.match(/_{2,}|-{2,}|_-|-_|\s/g)) {
+      shortname = shortname.replace(/_{2,}|-{2,}|_-|-_|\s/g, '_');
+    }
+
+    while (!shortname[0].match(/[a-zA-Z0-9]/) && shortname.length > 0) {
+      shortname = shortname.substring(1);
+    }
+
+    shortname =
+      shortname.toLowerCase().slice(0, 32) +
+      Math.floor(1000 + Math.random() * 9000);
+
+    return shortname;
+  } catch (err) {
+    console.log(
+      `Error parsing shortname for organization ${org.id}: ${err.message}`,
+    );
+    return false;
   }
-
-  while (shortname.match(/_{2,}|-{2,}|_-|-_|\s/g)) {
-    shortname = shortname.replace(/_{2,}|-{2,}|_-|-_|\s/g, '_');
-  }
-
-  while (!shortname[0].match(/[a-zA-Z0-9]/) && shortname.length > 0) {
-    shortname = shortname.substring(1);
-  }
-
-  shortname =
-    shortname.toLowerCase().slice(0, 32) +
-    Math.floor(1000 + Math.random() * 9000);
-
-  return shortname;
 }

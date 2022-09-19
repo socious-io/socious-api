@@ -2,13 +2,22 @@
 async function shortname(org) {
   let shortname = null;
 
-  if (org.url && org.url.en) {
+  if (org.url?.en) {
     //get from org url
-    const chunks = org.url.en.split('/');
+
+    const url_string = new URL(org.url.en).pathname;
+
+    console.log(url_string);
+
+    const chunks = url_string.split('/');
+    console.log(chunks);
+
     shortname = chunks[chunks.length - 1];
-    shortname = shortname.substr(-32);
+    shortname = decodeURI(shortname);
+    shortname = shortname.slice(32);
   } else {
     //get from org name
+    if (!org.name) return null;
     shortname = org.name.replaceAll(' ', '_').replace(/[^a-zA-Z_-]/g, '');
   }
 
@@ -29,9 +38,9 @@ async function shortname(org) {
 
 console.log(
   await shortname({
-    // url: {
-    //   en: 'http://idealist.com/12123213242132332121312___FIDI - Fundação Instituto - de Fundação Instituto - de/ InstitutoInstitutoPesquisa e Estudo de Diagnóstico por Imagem',
-    // },
+    url: {
+      en: 'https://www.idealist.org/en/nonprofit/f73462b59165469c93774ad922c25586-defenders-of-wildlife-washington', //'http://idealist.com/en/nonprofit/12123213242132332121312___FIDI-Fundação-Instituto-de-Fundação==Instituto--de-InstitutoInstitutoPesquisa--e--Estudo-de-Diagnóstico-por-Imagem',
+    },
     name: '__FIDI - Fundação Instituto - de Fundação Instituto - de/ InstitutoInstitutoPesquisa e Estudo de Diagnóstico por Imagem',
   }),
 );

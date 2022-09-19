@@ -63,6 +63,10 @@ export default {
   cors: {
     origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
   },
+  idealist: {
+    wait_between_project: '500',
+    wait_break: '10000',
+  },
 };
 
 /**

@@ -1,59 +1,55 @@
 import axios from 'axios';
 
-import {
-  getProject,
-  processProject,
-  lastIdealistProject,
-} from './src/services/idealist/project.js';
+import {getProject, processProject, lastIdealistProject} from './project.js';
 
 import {
   sleep,
-  removeProcessedProjectIds,
-  checkUnprocessedIds,
-} from './src/services/idealist/helpers.js';
-import config from './src/config.js';
+  //removeProcessedProjectIds,
+  //checkUnprocessedIds,
+} from './helpers.js';
+import config from '../../config.js';
 
 // change null bellow with timestamp for testing purposes
 const sinceTimstamp = process.env.IDEALIST_SINCE; // '2022-09-14 17:30:07';
 
 const idealistToken = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 
-//Call the Idealist functionality...
-(async () => {
-  //get the listings of projects
-  console.log('Getting lists of projects from Idealist...');
-  const project_ids = await getIds();
+// //Call the Idealist functionality...
+// (async () => {
+//   //get the listings of projects
+//   console.log('Getting lists of projects from Idealist...');
+//   const project_ids = await getIds();
 
-  //get the projects and organizations
-  console.log('Getting projects from Idealist...');
-  await getAllProjects(project_ids);
+//   //get the projects and organizations
+//   console.log('Getting projects from Idealist...');
+//   await getAllProjects(project_ids);
 
-  //check if there are not processed projects in the listing
-  console.log('Checking if all the projects are successfully loaded...');
-  const remain_ids = await removeProcessedProjectIds(project_ids);
+//   //check if there are not processed projects in the listing
+//   console.log('Checking if all the projects are successfully loaded...');
+//   const remain_ids = await removeProcessedProjectIds(project_ids);
 
-  //get all projects again with unsuccessfull ids...
-  const unprocessedIds = await checkUnprocessedIds(remain_ids);
+//   //get all projects again with unsuccessfull ids...
+//   const unprocessedIds = await checkUnprocessedIds(remain_ids);
 
-  if (unprocessedIds > 0) {
-    console.log('Repeating the process for not processed projects...');
+//   if (unprocessedIds > 0) {
+//     console.log('Repeating the process for not processed projects...');
 
-    await sleep(config.idealist.wait_break);
+//     await sleep(config.idealist.wait_break);
 
-    await getAllProjects(remain_ids);
-  } else {
-    console.log('\x1b[32m%s\x1b[0m', 'Projects successfully saved.');
-  }
+//     await getAllProjects(remain_ids);
+//   } else {
+//     console.log('\x1b[32m%s\x1b[0m', 'Projects successfully saved.');
+//   }
 
-  process.exit(0);
-})();
+//   process.exit(0);
+// })();
 
 /**
  * Get a list (object) of all the ID of all the projects
  *
  * @returns object
  */
-async function getIds() {
+export async function getIds() {
   const types = ['jobs', 'internships', 'volops'];
   let res = {jobs: [], volops: [], internships: []};
   for (let x = 0; x < types.length; x++) {
@@ -68,7 +64,7 @@ async function getIds() {
  * @param object ids
  * @returns void
  */
-async function getAllProjects(ids) {
+export async function getAllProjects(ids) {
   for (let [types, val] of Object.entries(ids)) {
     //for each type of project (job, volop and intenrship)
     let res = 0;
@@ -140,7 +136,7 @@ async function getAllProjects(ids) {
  * @returns object
  */
 
-async function getListings(project_types) {
+export async function getListings(project_types) {
   try {
     let ttl = 200;
     const all_projects = [];
@@ -221,6 +217,5 @@ async function getListings(project_types) {
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
     //will continue to next type
-    //in case of error 500~ to try to repeat same type???
   }
 }

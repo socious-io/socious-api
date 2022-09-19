@@ -3,10 +3,7 @@ import https from 'https';
 import http from 'http';
 
 import sql from 'sql-template-tag';
-import {app} from './app.js';
-
-//import sql from 'sql-template-tag';
-//import {app} from '../../../src/index.js';
+import {app} from '../../index.js'; //'./app.js';
 
 import {organizationFromProject} from './projectOrganization.js';
 import project from '../../models/project/index.js';
@@ -24,7 +21,7 @@ export const getProject = async function (project_types, id) {
       `https://www.idealist.org/api/v1/listings/${project_types}/${id}`,
       {
         auth: {
-          username: '743e1f3940484d7680130c748ed22758',
+          username: process.env.IDEALIST_TOKEN, //'743e1f3940484d7680130c748ed22758',
           password: '',
         },
 
@@ -139,7 +136,9 @@ async function getProjectFromDb(p) {
 
     return pr.id;
   } catch (err) {
-    if (err.status !== 400) console.log(err.message, err.status);
+    if (err.status !== 400 && err.message !== 'not matched') {
+      console.log(err.message, err.status);
+    }
     return false;
   }
 }
@@ -175,7 +174,7 @@ async function remotePreference(p) {
     if (p.remoteTemporary && p.remoteTemporary === true) {
       return 'HYBRID';
     }
-    return 'REMOOTE'; //change to enum and here to REMOTE!!!
+    return 'REMOTE';
   } else {
     return 'ONSITE';
   }
@@ -188,23 +187,20 @@ async function remotePreference(p) {
  * @return integer
  */
 async function experienceLevel(p) {
-  if (p.professionalLevel) {
-    switch (p.professionalLevel) {
-      case 'NONE':
-        return 1;
-      case 'ENTRY_LEVEL':
-        return 2;
-      case 'MANAGERIAL':
-      case 'INTERMEDIATE':
-        return 3;
-      case 'PROFESSIONAL':
-      case 'DIRECTOR':
-      case 'EXECUTIVE':
-      case 'EXPERT':
-        return 4;
-      default:
-        return 0;
-    }
+  const pr_lev = {
+    NONE: 1,
+    ENTRY_LEVEL: 2,
+    MANAGERIAL: 3,
+    INTERMEDIATE: 3,
+    PROFESSIONAL: 4,
+    DIRECTOR: 4,
+    EXECUTIVE: 4,
+    EXPERT: 4,
+  };
+
+  if (p.professionalLevel && pr_lev[p.professionalLevel]) {
+    return pr_lev[p.professionalLevel];
   }
+
   return 0;
 }

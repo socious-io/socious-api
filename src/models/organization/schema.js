@@ -11,7 +11,7 @@ export const upsertSchem = Joi.object({
   name: Joi.string().required(),
   bio: Joi.string(),
   description: Joi.string(),
-  email: Joi.string().email().allow(null),
+  email: Joi.string().email(),
   phone: Joi.string(),
   type: Joi.string().valid(...Object.values(Type)),
   city: Joi.string(),

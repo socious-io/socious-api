@@ -1,16 +1,9 @@
 import axios from 'axios';
-
 import {getProject, processProject, lastIdealistProject} from './project.js';
-
-import {
-  sleep,
-  //removeProcessedProjectIds,
-  //checkUnprocessedIds,
-} from './helpers.js';
+import {sleep} from './helpers.js';
 import config from '../../config.js';
 
-// change null bellow with timestamp for testing purposes
-const sinceTimstamp = process.env.IDEALIST_SINCE; // '2022-09-14 17:30:07';
+const sinceTimstamp = process.env.IDEALIST_SINCE; // add timestamp to .env for testing purposes (ex. '2022-09-14 17:30:07')
 
 const idealistToken = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 
@@ -139,8 +132,7 @@ export async function getListings(project_types) {
             //console.log(error.response.headers);
           } else if (error.request) {
             // The request was made but no response was received
-            // 'error.request' is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
+            // 'error.request' is an instance of http.ClientRequest in node.js
             throw new Error(
               `Error in request getting listings for ${project_types},
             ${error.request}`,

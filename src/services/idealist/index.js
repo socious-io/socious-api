@@ -1,4 +1,5 @@
 import config from '../../config.js';
+import {configureHttp} from './http-agent/configure-http.js';
 import {getIds, getAllProjects} from './controller.js';
 import {
   sleep,
@@ -8,6 +9,8 @@ import {
 
 //Start the Idealist functionality...
 export async function start() {
+  configureHttp();
+
   //get the listings of projects
   console.log('Getting lists of projects from Idealist...');
   const project_ids = await getIds();

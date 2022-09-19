@@ -1,6 +1,4 @@
 import axios from 'axios';
-import https from 'https';
-import http from 'http';
 
 import sql from 'sql-template-tag';
 import {app} from '../../index.js'; //'./app.js';
@@ -26,8 +24,6 @@ export const getProject = async function (project_types, id) {
         },
 
         timeout: 0,
-        httpAgent: new http.Agent({keepAlive: true}),
-        httpsAgent: new https.Agent({keepAlive: true}),
       },
     );
 

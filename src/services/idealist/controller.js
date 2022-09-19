@@ -14,36 +14,6 @@ const sinceTimstamp = process.env.IDEALIST_SINCE; // '2022-09-14 17:30:07';
 
 const idealistToken = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 
-// //Call the Idealist functionality...
-// (async () => {
-//   //get the listings of projects
-//   console.log('Getting lists of projects from Idealist...');
-//   const project_ids = await getIds();
-
-//   //get the projects and organizations
-//   console.log('Getting projects from Idealist...');
-//   await getAllProjects(project_ids);
-
-//   //check if there are not processed projects in the listing
-//   console.log('Checking if all the projects are successfully loaded...');
-//   const remain_ids = await removeProcessedProjectIds(project_ids);
-
-//   //get all projects again with unsuccessfull ids...
-//   const unprocessedIds = await checkUnprocessedIds(remain_ids);
-
-//   if (unprocessedIds > 0) {
-//     console.log('Repeating the process for not processed projects...');
-
-//     await sleep(config.idealist.wait_break);
-
-//     await getAllProjects(remain_ids);
-//   } else {
-//     console.log('\x1b[32m%s\x1b[0m', 'Projects successfully saved.');
-//   }
-
-//   process.exit(0);
-// })();
-
 /**
  * Get a list (object) of all the ID of all the projects
  *
@@ -71,8 +41,6 @@ export async function getAllProjects(ids) {
     let count = 0;
 
     console.log(`Loading ${types} projects...`);
-
-    //process.stdout.write(`Processed ${types} projects: \n`);
 
     for (let x = 0; x < val.length; x++) {
       let obj = val[x]; //object {id , processed}
@@ -164,7 +132,6 @@ export async function getListings(project_types) {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            //console.log(error.response.data);
             throw new Error(
               `Error in response getting listings for ${project_types},
             ${error.response.status}`,
@@ -185,7 +152,6 @@ export async function getListings(project_types) {
             error.message`,
             );
           }
-          //console.log(error.config);
         });
 
       if (response.status === 200) {

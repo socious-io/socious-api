@@ -400,7 +400,7 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
 });
 
 /**
- * @api {post} /posts/update/:id/comments/:comment_id/like Like Comment
+ * @api {post} /posts/:id/comments/:comment_id/like Like Comment
  * @apiGroup Post.Comment
  * @apiName LikeComment
  * @apiVersion 2.0.0
@@ -414,7 +414,7 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
  *
  */
 router.post(
-  '/update/:id/comments/:comment_id/like',
+  '/:id/comments/:comment_id/like',
   loginRequired,
   checkIdParams,
   async (ctx) => {

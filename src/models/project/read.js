@@ -12,6 +12,16 @@ export const get = async (id) => {
   `);
 };
 
+export const getAll = async (ids) => {
+  return app.db.get(sql`
+  SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
+    array_to_json(p.causes_tags) AS causes_tags
+    FROM projects p
+    JOIN identities i ON i.id=p.identity_id
+  WHERE p.id=${ids}
+  `);
+};
+
 export const all = async ({offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
@@ -40,3 +50,6 @@ export const permissioned = async (identityId, id) => {
   if (project.identity_id !== identityId)
     throw new PermissionError('Not allow');
 };
+
+
+export const filterColumns = ['country', 'causes_tags', 'skills', 'payment_type', 'payment_scheme', 'status']

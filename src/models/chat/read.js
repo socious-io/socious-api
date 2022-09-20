@@ -55,6 +55,10 @@ export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM chats WHERE id=${id}`);
 };
 
+export const getAll = async (ids) => {
+  return app.db.get(sql`SELECT * FROM chats WHERE id=ANY(${ids})`);
+};
+
 export const messages = async (id, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) OVER () as total_count, messages.*, media.url as media_url

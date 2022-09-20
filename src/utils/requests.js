@@ -1,5 +1,3 @@
-import Identity from '../models/identity/index.js';
-
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;
   if (page < 1) page = 1;
@@ -24,19 +22,4 @@ export const paginate = async (ctx, next) => {
   }
 
   ctx.body = response;
-};
-
-export const identity = async (ctx, next) => {
-  const currentidentity = ctx.request.header['current-identity'];
-  const identityId = currentidentity || ctx.session.current_identity;
-
-  const identity = identityId
-    ? await Identity.get(identityId)
-    : await Identity.get(ctx.user.id);
-
-  if (identityId) await Identity.permissioned(identity, ctx.user.id);
-
-  ctx.identity = identity;
-
-  await next();
 };

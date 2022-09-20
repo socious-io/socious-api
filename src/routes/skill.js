@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import Skill from '../models/skill/index.js';
+import {loginOptional} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
@@ -22,6 +23,6 @@ export const router = new Router();
  * @apiSuccess {String} items.name
  * @apiSuccess {Datetime} created_at
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Skill.all(ctx.paginate);
 });

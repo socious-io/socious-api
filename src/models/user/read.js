@@ -72,3 +72,37 @@ export const getProfileByUsername = async (username) => {
     `,
   );
 };
+
+export const getProfileLimited = async (id) => {
+  return app.db.get(
+    sql`
+    SELECT u.id, username, first_name, last_name,
+    mission, bio, impact_score, skills,
+    followers, followings, u.created_at,
+    array_to_json(u.social_causes) AS social_causes,
+    row_to_json(avatar.*) AS avatar,
+    row_to_json(cover.*) AS cover_image
+    FROM users u 
+    LEFT JOIN media avatar ON avatar.id=u.avatar
+    LEFT JOIN media cover ON cover.id=u.cover_image
+    WHERE u.id=${id}
+    `,
+  );
+};
+
+export const getProfileByUsernameLimited = async (username) => {
+  return app.db.get(
+    sql`
+    SELECT u.id, username, first_name, last_name,
+    mission, bio, impact_score, skills,
+    followers, followings, u.created_at,
+    array_to_json(u.social_causes) AS social_causes,
+    row_to_json(avatar.*) AS avatar,
+    row_to_json(cover.*) AS cover_image
+    FROM users u 
+    LEFT JOIN media avatar ON avatar.id=u.avatar
+    LEFT JOIN media cover ON cover.id=u.cover_image
+    WHERE u.username=${username}
+    `,
+  );
+};

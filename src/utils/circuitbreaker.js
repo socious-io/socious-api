@@ -4,6 +4,7 @@ import Config from '../config.js';
 import {readFile} from 'fs/promises';
 const debug = Debug('socious-api:circuitbreaker');
 import {NotMatchedError} from './errors.js';
+import sql from 'sql-template-tag';
 
 // Create a retry policy that'll try whatever function we execute 3
 // times with a randomized exponential backoff.

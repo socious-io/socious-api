@@ -1,3 +1,4 @@
+import Data from '@socious/data'
 import Config from '../../config.js';
 import publish from '../jobs/publish.js';
 import Device from '../../models/device/index.js';
@@ -7,7 +8,7 @@ import Org from '../../models/organization/index.js';
 import {makeMessage} from './message.js';
 import axios from 'axios';
 
-const Types = {
+export const Types = {
   CHAT: 'chat',
   NOTIFICATION: 'notification',
 };
@@ -27,7 +28,7 @@ const emitEvent = async (eventType, userId, id) => {
 };
 
 const coordinateNotifs = async (userId, body) => {
-  const consolidateExceptions = [Notif.Types.APPLICATION];
+  const consolidateExceptions = [Data.NotificationType.APPLICATION];
 
   let name = body.identity?.meta?.username || body.identity?.meta?.shortname;
   let message = makeMessage(body.type, name);
@@ -91,7 +92,7 @@ const batchPush = async (eventType, identityIds, body) => {
 
   return Promise.all(
     identities.map(async (i) => {
-      if (i.type === Identity.Types.ORG) {
+      if (i.type === Data.IdentityType.ORG) {
         const members = await Org.miniMembers(i.id);
         return batchPush(
           eventType,
@@ -108,7 +109,7 @@ const batchPush = async (eventType, identityIds, body) => {
 export const worker = async ({eventType, identityId, body}) => {
   const identity = await Identity.get(identityId);
 
-  if (identity.type === Identity.Types.ORG) {
+  if (identity.type === Data.IdentityType.ORG) {
     const members = await Org.miniMembers(identityId.id);
     return batchPush(
       eventType,

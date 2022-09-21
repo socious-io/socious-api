@@ -33,7 +33,7 @@ export default {
   },
   session: {
     key: 'Socious.sess',
-    maxAge: '2h',
+    maxAge: 48 * 60 * 60 * 1000,
     autoCommit: true,
     overwrite: true,
     httpOnly: true,

@@ -11,7 +11,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.CHAT:
       return {
         title: Data.NotificationTitle.CHAT,
-        body: `${name} sent you new message`,
+        body: `${name} sent you a new message`,
       };
 
     case Data.NotificationType.COMMENT:

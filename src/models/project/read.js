@@ -13,13 +13,14 @@ export const get = async (id) => {
 };
 
 export const getAll = async (ids) => {
-  return app.db.get(sql`
+  const {rows} = app.db.query(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
   WHERE p.id=${ids}
   `);
+  return rows
 };
 
 export const all = async ({offset = 0, limit = 10}) => {

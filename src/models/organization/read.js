@@ -30,7 +30,7 @@ export const get = async (id) => {
 };
 
 export const getAll = async (ids) => {
-  return app.db.query(sql`
+  const {rows} = await app.db.query(sql`
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
@@ -39,6 +39,7 @@ export const getAll = async (ids) => {
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
     WHERE org.id=ANY(${ids})`);
+  return rows
 };
 
 export const getByShortname = async (shortname) => {

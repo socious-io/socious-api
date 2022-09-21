@@ -65,7 +65,7 @@ export const get = async (id, currentIdentity) => {
 };
 
 export const getAll = async (ids, currentIdentity) => {
-  return app.db.get(sql`
+  const {rows} = await app.db.query(sql`
   SELECT posts.*,
     array_to_json(posts.causes_tags) as causes_tags,
     i.type AS identity_type, i.meta AS identity_meta, 
@@ -78,6 +78,7 @@ export const getAll = async (ids, currentIdentity) => {
   LEFT JOIN posts sp ON sp.id = posts.shared_id
   LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
   WHERE posts.id=ANY(${ids})`);
+  return rows
 };
 
 export const miniGet = async (id) => {

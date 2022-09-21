@@ -56,7 +56,8 @@ export const get = async (id) => {
 };
 
 export const getAll = async (ids) => {
-  return app.db.get(sql`SELECT * FROM chats WHERE id=ANY(${ids})`);
+  const {rows} = await app.db.query(sql`SELECT * FROM chats WHERE id=ANY(${ids})`);
+  return rows
 };
 
 export const messages = async (id, {offset = 0, limit = 10}) => {

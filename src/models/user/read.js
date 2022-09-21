@@ -105,7 +105,7 @@ export const getAllProfile = async (ids) => {
     WHERE u.id=ANY(${ids})
     `,
   );
-  return rows
+  return rows;
 };
 
 export const getProfileByUsernameLimited = async (username) => {

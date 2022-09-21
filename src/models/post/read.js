@@ -78,7 +78,7 @@ export const getAll = async (ids, currentIdentity) => {
   LEFT JOIN posts sp ON sp.id = posts.shared_id
   LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
   WHERE posts.id=ANY(${ids})`);
-  return rows
+  return rows;
 };
 
 export const miniGet = async (id) => {

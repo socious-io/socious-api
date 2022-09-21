@@ -39,7 +39,7 @@ export const getAll = async (ids) => {
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
     WHERE org.id=ANY(${ids})`);
-  return rows
+  return rows;
 };
 
 export const getByShortname = async (shortname) => {

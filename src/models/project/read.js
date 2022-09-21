@@ -20,7 +20,7 @@ export const getAll = async (ids) => {
     JOIN identities i ON i.id=p.identity_id
   WHERE p.id=${ids}
   `);
-  return rows
+  return rows;
 };
 
 export const all = async ({offset = 0, limit = 10}) => {

@@ -379,7 +379,7 @@ router.post('/:id/like', loginRequired, checkIdParams, async (ctx) => {
 });
 
 /**
- * @api {get} /posts/:id/unlike UnLike Post
+ * @api {post} /posts/:id/unlike UnLike Post
  * @apiGroup Post
  * @apiName UnLikePost
  * @apiVersion 2.0.0
@@ -400,7 +400,7 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
 });
 
 /**
- * @api {post} /posts/update/:id/comments/:comment_id/like Like Comment
+ * @api {post} /posts/:id/comments/:comment_id/like Like Comment
  * @apiGroup Post.Comment
  * @apiName LikeComment
  * @apiVersion 2.0.0
@@ -414,7 +414,7 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
  *
  */
 router.post(
-  '/update/:id/comments/:comment_id/like',
+  '/:id/comments/:comment_id/like',
   loginRequired,
   checkIdParams,
   async (ctx) => {
@@ -435,7 +435,7 @@ router.post(
 );
 
 /**
- * @api {post} /posts/remove/:id/comments/:comment_id/like UnLike Comment
+ * @api {post} /posts/:id/comments/:comment_id/unlike UnLike Comment
  * @apiGroup Post.Comment
  * @apiName UnLikeComment
  * @apiVersion 2.0.0
@@ -450,7 +450,7 @@ router.post(
  *
  */
 router.post(
-  '/remove/:id/comments/:comment_id/like',
+  '/:id/comments/:comment_id/unlike',
   loginRequired,
   checkIdParams,
   async (ctx) => {

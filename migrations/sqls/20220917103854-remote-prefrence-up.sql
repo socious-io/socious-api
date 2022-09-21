@@ -1,4 +1,4 @@
-ALTER TYPE project_remote_preference_type RENAME RTO project_remote_preference_type_old;
+ALTER TYPE project_remote_preference_type RENAME TO project_remote_preference_type_old;
 
 CREATE TYPE project_remote_preference_type AS ENUM ('ONSITE', 'REMOTE', 'HYBRID');
 

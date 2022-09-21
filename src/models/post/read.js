@@ -64,6 +64,22 @@ export const get = async (id, currentIdentity) => {
   WHERE posts.id=${id}`);
 };
 
+export const getAll = async (ids, currentIdentity) => {
+  return app.db.get(sql`
+  SELECT posts.*,
+    array_to_json(posts.causes_tags) as causes_tags,
+    i.type AS identity_type, i.meta AS identity_meta, 
+    EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
+    (SELECT ARRAY(SELECT url FROM media m WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media))) as media,
+    row_to_json(sp.*) AS shared_post,
+    row_to_json(sp_i.*) AS shared_from_identity
+  FROM posts 
+  JOIN identities i ON posts.identity_id=i.id
+  LEFT JOIN posts sp ON sp.id = posts.shared_id
+  LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
+  WHERE posts.id=ANY(${ids})`);
+};
+
 export const miniGet = async (id) => {
   return app.db.get(sql`SELECT * FROM POSTS WHERE id=${id}`);
 };
@@ -72,3 +88,5 @@ export const permissioned = async (identityId, id) => {
   const post = await miniGet(id);
   if (post.identity_id !== identityId) throw new PermissionError('Not allow');
 };
+
+export const filterColumns = ['causes_tags', 'hashtags'];

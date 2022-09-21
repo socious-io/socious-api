@@ -4,8 +4,8 @@ import {EntryError, NotImplementedError} from '../../utils/errors.js';
 import Data from '@socious/data';
 import {find, addParticipantPermission} from './read.js';
 
-const MemberTypes = Data.ChatMemberType
-const Types = Data.ChatType
+const MemberTypes = Data.ChatMemberType;
+const Types = Data.ChatType;
 
 export const create = async (
   identity,

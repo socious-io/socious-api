@@ -1,12 +1,18 @@
-import Data from '@socious/data'
+import Data from '@socious/data';
 
 export const makeMessage = (type, name) => {
   switch (type) {
     case Data.NotificationType.FOLLOWED:
-      return {title: Data.NotificationTitle.FOLLOWED, body: `${name} followed you`};
+      return {
+        title: Data.NotificationTitle.FOLLOWED,
+        body: `${name} followed you`,
+      };
 
     case Data.NotificationType.CHAT:
-      return {title: Data.NotificationTitle.CHAT, body: `${name} sent you new message`};
+      return {
+        title: Data.NotificationTitle.CHAT,
+        body: `${name} sent you a new message`,
+      };
 
     case Data.NotificationType.COMMENT:
       return {
@@ -21,10 +27,16 @@ export const makeMessage = (type, name) => {
       };
 
     case Data.NotificationType.POST_LIKE:
-      return {title: Data.NotificationTitle.POST_LIKE, body: `${name} liked your post`};
+      return {
+        title: Data.NotificationTitle.POST_LIKE,
+        body: `${name} liked your post`,
+      };
 
     case Data.NotificationType.SHARE_POST:
-      return {title: Data.NotificationTitle.POST_LIKE, body: `${name} shared your post`};
+      return {
+        title: Data.NotificationTitle.POST_LIKE,
+        body: `${name} shared your post`,
+      };
 
     case Data.NotificationType.APPLICATION:
       return {

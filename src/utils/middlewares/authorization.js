@@ -55,6 +55,7 @@ export const loginOptional = async (ctx, next) => {
     await currentUser(ctx);
   } catch (err) {
     ctx.user = await User.getByUsername('guest');
+    ctx.guest = true;
   }
   await currentIdentity(ctx);
   return next();

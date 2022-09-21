@@ -1,4 +1,4 @@
-import Data from '@socious/data'
+import Data from '@socious/data';
 import Config from '../../config.js';
 import publish from '../jobs/publish.js';
 import Device from '../../models/device/index.js';

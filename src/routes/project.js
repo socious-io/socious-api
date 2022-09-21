@@ -143,7 +143,7 @@ router.post(
  * @apiName Get Questions
  * @apiVersion 2.0.0
  * @apiDescription get question
- * 
+ *
  * @apiParam {String} id project id
  *
  * @apiSuccess {Object[]} questions
@@ -172,7 +172,7 @@ router.get(
  * @apiName New Questions
  * @apiVersion 2.0.0
  * @apiDescription Add new question
- * 
+ *
  * @apiParam {String} id project id
  *
  * @apiBody {String} question

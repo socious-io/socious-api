@@ -64,4 +64,4 @@ export const shortNameExists = async (shortname) => {
   }
 };
 
-export const filterColumns = ['country', 'type', 'social_causes']
+export const filterColumns = ['country', 'type', 'social_causes'];

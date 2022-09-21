@@ -4,7 +4,7 @@ import {PermissionError} from '../../utils/errors.js';
 import Data from '@socious/data';
 import Identity from '../identity/index.js';
 
-const MemberTypes = Data.ChatMemberType
+const MemberTypes = Data.ChatMemberType;
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(

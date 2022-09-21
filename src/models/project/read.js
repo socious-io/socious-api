@@ -51,5 +51,11 @@ export const permissioned = async (identityId, id) => {
     throw new PermissionError('Not allow');
 };
 
-
-export const filterColumns = ['country', 'causes_tags', 'skills', 'payment_type', 'payment_scheme', 'status']
+export const filterColumns = [
+  'country',
+  'causes_tags',
+  'skills',
+  'payment_type',
+  'payment_scheme',
+  'status',
+];

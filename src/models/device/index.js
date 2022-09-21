@@ -3,7 +3,6 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 
-
 const insert = async (userId, {token, meta}) => {
   try {
     const {rows} = await app.db.query(sql`

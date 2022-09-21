@@ -4,7 +4,10 @@ import Media from '../models/media/index.js';
 import Upload from '../utils/upload.js';
 
 import {BadRequestError} from '../utils/errors.js';
-import {loginOptional, loginRequired} from '../utils/middlewares/authorization.js';
+import {
+  loginOptional,
+  loginRequired,
+} from '../utils/middlewares/authorization.js';
 import {checkIdParams} from '../utils/middlewares/route.js';
 
 const koaBody = Body({multipart: true, uploadDir: '.'});

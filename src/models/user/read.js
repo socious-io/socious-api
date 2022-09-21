@@ -124,4 +124,4 @@ export const getProfileByUsernameLimited = async (username) => {
   );
 };
 
-export const filterColumns = ['country', 'social_causes', 'skills']
+export const filterColumns = ['country', 'social_causes', 'skills'];

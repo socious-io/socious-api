@@ -89,5 +89,4 @@ export const permissioned = async (identityId, id) => {
   if (post.identity_id !== identityId) throw new PermissionError('Not allow');
 };
 
-
-export const filterColumns = ['causes_tags', 'hashtags']
+export const filterColumns = ['causes_tags', 'hashtags'];

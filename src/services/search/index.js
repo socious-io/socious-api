@@ -35,28 +35,26 @@ const addHistory = async (body, identityId) => {
 
 const fetch = async (type, ids, {offset, limit}) => {
   const selectedIds = ids.slice(offset, offset + limit);
-  let result = {
-    rows: [],
-  };
+  let rows = []
   switch (type) {
     case Data.SearchType.POSTS:
-      result = await Post.getAll(selectedIds);
+      rows = await Post.getAll(selectedIds);
       break;
     case Data.SearchType.USERS:
-      result = await User.getAllProfile(selectedIds);
+      rows = await User.getAllProfile(selectedIds);
       break;
     case Data.SearchType.RELATED_USERS:
-      result = await User.getAllProfile(selectedIds);
+      rows = await User.getAllProfile(selectedIds);
       break;
     case Data.SearchType.PROJECTS:
-      result = await Project.getAll(selectedIds);
+      rows = await Project.getAll(selectedIds);
       break;
     case Data.SearchType.ORGANIZATIONS:
-      result = await Org.getAll(selectedIds);
+      rows = await Org.getAll(selectedIds);
       break;
   }
 
-  return result.rows.map((r) => {
+  return rows.map((r) => {
     return {
       total_count: ids.length,
       ...r,

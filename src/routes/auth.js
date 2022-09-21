@@ -53,6 +53,7 @@ router.post('/logout', loginRequired, async (ctx) => {
   const {refresh_token} = ctx.request.body;
   if (refresh_token) await Auth.expireRefreshToken(refresh_token);
   delete ctx.session.token;
+  delete ctx.session.current_identity;
   ctx.body = {message: 'success'};
 });
 

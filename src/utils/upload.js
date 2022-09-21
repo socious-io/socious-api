@@ -2,32 +2,28 @@ import Crypto from 'crypto';
 import AWS from 'aws-sdk';
 import fs from 'fs/promises';
 import Config from '../config.js';
+import Data from '@socious/data'
+
 
 const s3 = new AWS.S3();
 
-export const ContentTypes = {
-  JPEG: 'image/jpeg',
-  PNG: 'image/png',
-  PDF: 'application/pdf',
-};
+
 
 const makeExtention = (contentType) => {
   switch (contentType) {
-    case ContentTypes.JPEG:
+    case Data.MediaContentType.JPEG:
       return '.jpg';
-    case ContentTypes.PNG:
+    case Data.MediaContentType.PNG:
       return '.png';
-    case ContentTypes.PDF:
+    case Data.MediaContentType.PDF:
       return '.pdf';
     default:
       throw Error('Unkown content type');
   }
 };
 
-export default async (file, contentType = ContentTypes.JPEG) => {
-  const buffer =
-    typeof file === 'string' ? await fs.createReadStream(file) : file;
-
+export default async (file, contentType = Data.MediaContentType.JPEG) => {
+  const buffer = typeof file === 'string' ? await fs.readFile(file) : file;
   const shasum = Crypto.createHash('md5');
   shasum.update(buffer);
   const filename = `${shasum.digest('hex')}${makeExtention(contentType)}`;

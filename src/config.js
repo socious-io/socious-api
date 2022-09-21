@@ -9,7 +9,7 @@ export default {
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
-  jwtExpireTime: '2h',
+  jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
   mail: {
     sendgrid: {
@@ -52,13 +52,25 @@ export default {
     signed: true,
     rolling: false,
     renew: true,
-    secure: false, // need do it enviremental (works on https only)
-    sameSite: null,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : null,
+  },
+  webhooks: {
+    token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
+    addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks',
+  },
+  requestBlocker: {
+    // We may tagname blocker configs and use it on other groups and routes
+    auth: {
+      resetTimer:  process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
+      blockerTimer: process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
+      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
+    }
   },
   aws: {
     cdn_url:
       process.env.AWS_CDN_URL ||
-      'https://soscious.s3.ap-northeast-1.amazonaws.com/',
+      'https://soscious.s3.ap-northeast-1.amazonaws.com',
     bucket: process.env.AWS_BUCKET || 'socious',
     key_id: process.env.AWS_ACCESS_KEY_ID,
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
@@ -69,7 +81,7 @@ export default {
     key: process.env.FCM_KEY,
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || '').split(','),
+    origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
   },
 };
 

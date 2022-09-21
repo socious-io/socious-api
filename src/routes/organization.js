@@ -1,5 +1,11 @@
 import Router from '@koa/router';
+import {validate} from '@socious/data';
 import Org from '../models/organization/index.js';
+import {
+  loginOptional,
+  loginRequired,
+} from '../utils/middlewares/authorization.js';
+import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
@@ -26,8 +32,35 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
+});
+
+/**
+ * @api {get} /orgs/by-shortname/:shortname Get By shortname
+ * @apiGroup Organazation
+ * @apiName Get By shortname
+ * @apiVersion 2.0.0
+ * @apiDescription get organazation by shortname
+ *
+ * @apiParam {String} shortname
+ *
+ * @apiSuccess (200) {String} id
+ * @apiSuccess (200) {String} name
+ * @apiSuccess (200) {String} bio
+ * @apiSuccess (200) {String} description
+ * @apiSuccess (200) {String} email
+ * @apiSuccess (200) {String} phone
+ * @apiSuccess (200) {String} type
+ * @apiSuccess (200) {String} city
+ * @apiSuccess (200) {String} address
+ * @apiSuccess (200) {Url} website
+ * @apiSuccess (200) {Datetime} created_at
+ * @apiSuccess (200) {Datetime} updated_at
+ * @apiSuccess (200) {String[]} social_causes
+ */
+router.get('/by-shortname/:shortname', loginOptional, async (ctx) => {
+  ctx.body = await Org.getByShortname(ctx.params.shortname);
 });
 
 /**
@@ -57,7 +90,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Datetime} items.updated_at
  * @apiSuccess (200) {String[]} items.social_causes
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Org.all(ctx.paginate);
 });
 
@@ -68,6 +101,7 @@ router.get('/', paginate, async (ctx) => {
  * @apiVersion 2.0.0
  * @apiDescription create new organazation
  *
+ * @apiBody {String} shortname Mandatory Unique
  * @apiBody {String} name Mandatory
  * @apiBody {String} bio
  * @apiBody {String} description
@@ -93,9 +127,26 @@ router.get('/', paginate, async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.post('/', async (ctx) => {
-  ctx.body = await Org.insert(ctx.request.body);
+router.post('/', loginRequired, async (ctx) => {
+  await validate.OrganizationSchema.validateAsync(ctx.request.body);
+  ctx.body = await Org.insert(ctx.user.id, ctx.request.body);
   await Org.addMember(ctx.body.id, ctx.user.id);
+});
+
+/**
+ * @api {get} /orgs/check Check uniques
+ * @apiGroup Organazation
+ * @apiName Check uniques
+ * @apiVersion 2.0.0
+ * @apiDescription check organazation unique columns
+ *
+ * @apiQuery {String} shortname
+ */
+
+router.get('/check', loginRequired, async (ctx) => {
+  ctx.body = {
+    shortname_exists: await Org.shortNameExists(ctx.query.shortname),
+  };
 });
 
 /**
@@ -107,6 +158,7 @@ router.post('/', async (ctx) => {
  *
  * @apiParam {String} id
  *
+ * @apiBody {String} shortname Mandatory Unique
  * @apiBody {String} name
  * @apiBody {String} bio
  * @apiBody {String} description
@@ -132,10 +184,16 @@ router.post('/', async (ctx) => {
  * @apiSuccess (200) {Datetime} updated_at
  * @apiSuccess (200) {String[]} social_causes
  */
-router.put('/:id', async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  ctx.body = await Org.update(ctx.params.id, ctx.request.body);
-});
+router.post(
+  '/update/:id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await validate.OrganizationSchema.validateAsync(ctx.request.body);
+    ctx.body = await Org.update(ctx.params.id, ctx.request.body);
+  },
+);
 
 /**
  * @api {post} /orgs/:id/members add member
@@ -166,12 +224,18 @@ router.put('/:id', async (ctx) => {
  * @apiSuccess (200) {String} items.last_name
  * @apiSuccess (200) {String} items.email
  */
-router.get('/:id/members', paginate, async (ctx) => {
-  ctx.body = await Org.members(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/members',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Org.members(ctx.params.id, ctx.paginate);
+  },
+);
 
 /**
- * @api {put} /orgs/:id/members/:user_id Add member
+ * @api {post} /orgs/:id/members/:user_id Add member
  * @apiGroup Organazation.Members
  * @apiName Add member
  * @apiVersion 2.0.0
@@ -183,14 +247,19 @@ router.get('/:id/members', paginate, async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.put('/:id/members/:user_id', async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  await Org.addMember(ctx.params.id, ctx.params.user_id);
-  ctx.body = {message: 'success'};
-});
+router.post(
+  '/:id/members/:user_id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await Org.addMember(ctx.params.id, ctx.params.user_id);
+    ctx.body = {message: 'success'};
+  },
+);
 
 /**
- * @api {delete} /orgs/:id/members/:user_id Delete member
+ * @api {post} /orgs/remove/:id/members/:user_id Delete member
  * @apiGroup Organazation.Members
  * @apiName Delete member
  * @apiVersion 2.0.0
@@ -202,8 +271,13 @@ router.put('/:id/members/:user_id', async (ctx) => {
  * @apiSuccess (200) {Object} success
  *
  */
-router.delete('/:id/members/:user_id', async (ctx) => {
-  await Org.permissionedMember(ctx.params.id, ctx.user.id);
-  await Org.removeMember(ctx.params.id, ctx.params.user_id);
-  ctx.body = {message: 'success'};
-});
+router.post(
+  '/remove/:id/members/:user_id',
+  loginRequired,
+  checkIdParams,
+  orgMember,
+  async (ctx) => {
+    await Org.removeMember(ctx.params.id, ctx.params.user_id);
+    ctx.body = {message: 'success'};
+  },
+);

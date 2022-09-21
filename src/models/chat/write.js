@@ -1,21 +1,45 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {newChatSchem, updateChatSchem, messageUpsertSchem} from './schema.js';
-import {EntryError} from '../../utils/errors.js';
-import {MemberTypes} from './enums.js';
+import {EntryError, NotImplementedError} from '../../utils/errors.js';
+import Data from '@socious/data';
+import {find, addParticipantPermission} from './read.js';
 
-export const create = async (identityId, body) => {
-  await newChatSchem.validateAsync(body);
+const MemberTypes = Data.ChatMemberType
+const Types = Data.ChatType
+
+export const create = async (
+  identity,
+  {type, participants, description, name},
+) => {
+  if (type !== Types.CHAT) throw new NotImplementedError();
+
+  participants = participants.map((id) => id.toLowerCase());
+
+  await Promise.all(
+    participants
+      .filter((p) => p !== identity.id)
+      .map((p) => addParticipantPermission(identity, p)),
+  );
+
+  if (!participants.includes(identity.id)) participants.push(identity.id);
+  participants.sort();
+
+  const existing = await find(identity.id, {participants});
+  if (existing.length > 0) return existing[0];
+
   await app.db.query('BEGIN');
   try {
     const {rows} = await app.db.query(sql`
-      INSERT INTO chats (name, description, type, created_by)
-        VALUES (${body.name}, ${body.description}, ${body.type}, ${identityId})
+      INSERT INTO chats (name, description, type, participants, created_by)
+        VALUES (${name}, ${description}, ${type}, ${participants}, ${identity.id})
         RETURNING *
     `);
     const chat = rows[0];
     await Promise.all(
-      body.participants.map((p) => addParticipant(chat.id, p, identityId)),
+      participants
+        // current Identity will add automaticly as ADMIN
+        .filter((p) => p !== identity.id)
+        .map((p) => addParticipant(chat.id, p, identity.id)),
     );
     await app.db.query('COMMIT');
     return chat;
@@ -25,14 +49,12 @@ export const create = async (identityId, body) => {
   }
 };
 
-export const update = async (id, body) => {
-  await updateChatSchem.validateAsync(body);
+export const update = async (id, {name, description}) => {
   try {
     const {rows} = await app.db.query(sql`
       UPDATE chats
-        SET name=${body.name}, 
-          description=${body.description},
-          type=${body.type}
+        SET name=${name}, 
+          description=${description}
         WHERE id=${id}
         RETURNING *
     `);
@@ -106,12 +128,16 @@ export const removeParticipant = async (chatId, participantId) => {
   }
 };
 
-export const newMessage = async (chatId, identityId, body, replyId = null) => {
-  await messageUpsertSchem.validateAsync(body);
+export const newMessage = async (
+  chatId,
+  identityId,
+  {text, media},
+  replyId = null,
+) => {
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO messages (identity_id, chat_id, text, reply_id, media)
-    VALUES (${identityId}, ${chatId}, ${body.text}, ${replyId}, ${body.media}) RETURNING *
+    VALUES (${identityId}, ${chatId}, ${text}, ${replyId}, ${media}) RETURNING *
   `);
     return rows[0];
   } catch (err) {
@@ -119,13 +145,12 @@ export const newMessage = async (chatId, identityId, body, replyId = null) => {
   }
 };
 
-export const editMessage = async (id, identityId, body) => {
-  await messageUpsertSchem.validateAsync(body);
+export const editMessage = async (id, identityId, {text, media}) => {
   try {
     const {rows} = await app.db.query(sql`
     UPDATE messages 
-      SET text=${body.text},
-      media=${body.media}
+      SET text=${text},
+      media=${media}
     WHERE id=${id} AND identity_id=${identityId} 
     RETURNING *
   `);
@@ -143,7 +168,12 @@ export const removeMessage = async (id, identityId) => {
 };
 
 export const getMessage = async (id) => {
-  return app.db.get(sql`SELECT * FROM messages WHERE id=${id}`);
+  return app.db.get(sql`
+  SELECT m.*, i.type AS identity_type, i.meta AS identity_meta
+  FROM messages m
+  JOIN identities i ON i.id=m.identity_id
+  WHERE m.id=${id}
+  `);
 };
 
 export const readMessage = async (id, identityId) => {

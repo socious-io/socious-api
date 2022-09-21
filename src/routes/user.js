@@ -5,6 +5,12 @@ import Applicant from '../models/applicant/index.js';
 import Auth from '../services/auth/index.js';
 import Skill from '../models/skill/index.js';
 import {paginate} from '../utils/requests.js';
+import {
+  loginOptional,
+  loginRequired,
+} from '../utils/middlewares/authorization.js';
+import {validate} from '@socious/data';
+import {checkIdParams} from '../utils/middlewares/route.js';
 
 export const router = new Router();
 
@@ -28,8 +34,38 @@ const debug = Debug('socious-api:user');
  * @apiBody  {String} wallet_address
  * @apiBody  {String[]} social_causes
  */
-router.get('/:id/profile', async (ctx) => {
+router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
+  if (ctx.user.status === User.StatusType.INACTIVE) {
+    ctx.body = await User.getProfileLimited(ctx.params.id);
+    return;
+  }
   ctx.body = await User.getProfile(ctx.params.id);
+});
+
+/**
+ * @api {get} /user/by-username/:username/profile Others Profile by Username
+ * @apiGroup User
+ * @apiName OthersProfilebyUsername
+ * @apiVersion 2.0.0
+ * @apiDescription Other User Profile by username
+ * @apiPermission LoginRequired
+ *
+ * @apiParam {String} username
+ *
+ * @apiBody  {String} first_name Mandatory
+ * @apiBody  {String} last_name Mandatory
+ * @apiBody  {String} bio
+ * @apiBody  {String} city
+ * @apiBody  {String} address
+ * @apiBody  {String} wallet_address
+ * @apiBody  {String[]} social_causes
+ */
+router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
+  if (ctx.user.status === User.StatusType.INACTIVE) {
+    ctx.body = await User.getProfileByUsernameLimited(ctx.params.username);
+    return;
+  }
+  ctx.body = await User.getProfileByUsername(ctx.params.username);
 });
 
 /**
@@ -49,12 +85,12 @@ router.get('/:id/profile', async (ctx) => {
  * @apiBody  {String[]} social_causes
  *
  */
-router.get('/profile', async (ctx) => {
-  ctx.body = await User.getProfile(ctx.user.id);
+router.get('/profile', loginRequired, async (ctx) => {
+  ctx.body = await User.currentProfile(ctx.user);
 });
 
 /**
- * @api {put} /user/profile Update Profile
+ * @api {post} /user/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
  * @apiVersion 2.0.0
@@ -72,14 +108,15 @@ router.get('/profile', async (ctx) => {
  * @apiBody  {String[]} social_causes
  * @apiBody  {String[]} skills skills names
  */
-router.put('/profile', async (ctx) => {
+router.post('/update/profile', loginRequired, async (ctx) => {
+  await validate.UpdateProfileSchema.validateAsync(ctx.request.body);
   const skills = await Skill.getAllByNames(ctx.request.body.skills);
   ctx.request.body.skills = skills.map((s) => s.name);
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 
 /**
- * @api {put} /user/change-password Change Password
+ * @api {post} /user/change-password Change Password
  * @apiGroup User
  * @apiName ChangePassword
  * @apiVersion 2.0.0
@@ -90,13 +127,15 @@ router.put('/profile', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.put('/change-password', async (ctx) => {
+router.post('/change-password', loginRequired, async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
- * @api {put} /user/change-password/direct Change Password Directly
+ * @api {post} /user/change-password/direct Change Password Directly
  * @apiGroup User
  * @apiName ChangePasswordDirectly
  * @apiVersion 2.0.0
@@ -106,10 +145,12 @@ router.put('/change-password', async (ctx) => {
  * @apiBody {String{min:8}} password Mandatory
  *
  */
-router.put('/change-password-direct', async (ctx) => {
+router.post('/change-password-direct', loginRequired, async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
 
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
@@ -124,9 +165,11 @@ router.put('/change-password-direct', async (ctx) => {
  *
  * @apiSuccess  {Object} success
  */
-router.post('/delete', async (ctx) => {
+router.post('/delete', loginRequired, async (ctx) => {
   await User.remove(ctx.user, ctx.request.body.reason);
-  ctx.body = {message: 'success'};
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 /**
@@ -144,6 +187,12 @@ router.post('/delete', async (ctx) => {
  * @apiSuccess {Datetime} created_at
  * @apiSuccess {Datetime} updated_at
  */
-router.get('/:id/applicants', paginate, async (ctx) => {
-  ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
-});
+router.get(
+  '/:id/applicants',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
+  },
+);

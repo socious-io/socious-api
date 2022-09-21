@@ -1,28 +1,46 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import {upsertSchem} from './schema.js';
 
-export const insert = async (identityId, body) => {
-  await upsertSchem.validateAsync(body);
-
+export const insert = async (
+  identityId,
+  {
+    title,
+    description,
+    payment_type,
+    payment_scheme,
+    payment_currency,
+    payment_range_lower,
+    payment_range_higher,
+    experience_level,
+    status,
+    remote_preference,
+    project_type,
+    project_length,
+    skills,
+    causes_tags,
+    country,
+  },
+) => {
   try {
     const {rows} = await app.db.query(
       sql`
       INSERT INTO projects (
-        title, description, identity_id, country_id, 
+        title, description, identity_id, 
         payment_type, payment_scheme, payment_currency, 
         payment_range_lower, payment_range_higher, experience_level,
-        status, remote_preference
+        status, remote_preference, project_type, project_length,
+        skills, causes_tags, country
       )
       VALUES (
-        ${body.title}, ${body.description}, ${identityId}, 
-        ${body.country_id}, ${body.payment_type}, ${body.payment_scheme}, 
-        ${body.payment_currency}, ${body.payment_range_lower},
-        ${body.payment_range_higher}, ${body.experience_level}, ${body.status},
-        ${body.remote_preference}
+        ${title}, ${description}, ${identityId}, 
+        ${payment_type}, ${payment_scheme}, 
+        ${payment_currency}, ${payment_range_lower},
+        ${payment_range_higher}, ${experience_level}, ${status},
+        ${remote_preference}, ${project_type}, ${project_length},
+        ${skills}, ${causes_tags}, ${country}
       )
-      RETURNING *`,
+      RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {
@@ -30,25 +48,46 @@ export const insert = async (identityId, body) => {
   }
 };
 
-export const update = async (id, body) => {
-  await upsertSchem.validateAsync(body);
-
+export const update = async (
+  id,
+  {
+    title,
+    description,
+    payment_type,
+    payment_scheme,
+    payment_currency,
+    payment_range_lower,
+    payment_range_higher,
+    experience_level,
+    status,
+    remote_preference,
+    project_type,
+    project_length,
+    skills,
+    causes_tags,
+    country,
+  },
+) => {
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE projects SET
-        title=${body.title},
-        description=${body.description},
-        country_id=${body.country_id},
-        payment_type=${body.payment_type},
-        payment_scheme=${body.payment_scheme},
-        payment_currency=${body.payment_currency},
-        payment_range_lower=${body.payment_range_lower},
-        payment_range_higher=${body.payment_range_higher},
-        experience_level=${body.experience_level},
-        remote_preference=${body.remote_preference},
-        status=${body.status}
-      WHERE id=${id} RETURNING *`,
+        title=${title},
+        description=${description},
+        payment_type=${payment_type},
+        payment_scheme=${payment_scheme},
+        payment_currency=${payment_currency},
+        payment_range_lower=${payment_range_lower},
+        payment_range_higher=${payment_range_higher},
+        experience_level=${experience_level},
+        remote_preference=${remote_preference},
+        status=${status},
+        project_type=${project_type}, 
+        project_length=${project_length},
+        skills=${skills},
+        causes_tags=${causes_tags},
+        country=${country}
+      WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];
   } catch (err) {

@@ -1,7 +1,43 @@
 import Router from '@koa/router';
 import Notif from '../models/notification/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
+import {checkIdParams} from '../utils/middlewares/route.js';
 export const router = new Router();
+
+/**
+ * @api {get} /notifications/unreads Get unreads
+ * @apiGroup notifications
+ * @apiName Get unreads
+ * @apiVersion 2.0.0
+ * @apiDescription get unread notifications
+ *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1}} limit=10
+ *
+ * @apiSuccess (200) {Number} page
+ * @apiSuccess (200) {Number} limit
+ * @apiSuccess (200) {Number} total_count
+ * @apiSuccess (200) {Object[]} items
+ * @apiSuccess (200) {String} items.id
+ * @apiSuccess (200) {String} items.ref_id
+ * @apiSuccess (200) {String} items.type ('FOLLOWED', 'COMMENT_LIKE', 'POST_LIKE', 'CHAT', 'SHARE_POST', 'SHARE_PROJECT', 'COMMENT', 'APPLICATION')
+ * @apiSuccess (200) {Object} items.data
+ * @apiSuccess (200) {Datetime} items.created_at
+ * @apiSuccess (200) {Datetime} items.updated_at
+ * @apiSuccess (200) {Datetime} items.read_at
+ * @apiSuccess (200) {Datetime} items.view_at
+ */
+router.get('/unreads', loginRequired, paginate, async (ctx) => {
+  const notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
+
+  await Notif.viewed(
+    ctx.user.id,
+    notifications.map((n) => n.id),
+  );
+
+  ctx.body = notifications;
+});
 
 /**
  * @api {get} /notifications/:id Get
@@ -21,7 +57,7 @@ export const router = new Router();
  * @apiSuccess (200) {Datetime} read_at
  * @apiSuccess (200) {Datetime} view_at
  */
-router.get('/:id', async (ctx) => {
+router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
   const notif = await Notif.get(ctx.user.id, ctx.params.id);
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = notif;
@@ -51,7 +87,7 @@ router.get('/:id', async (ctx) => {
  * @apiSuccess (200) {Datetime} items.read_at
  * @apiSuccess (200) {Datetime} items.view_at
  */
-router.get('/', paginate, async (ctx) => {
+router.get('/', loginRequired, paginate, async (ctx) => {
   let notifications = [];
   if (JSON.parse(ctx.request.query.unreads || null)) {
     notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);
@@ -68,20 +104,20 @@ router.get('/', paginate, async (ctx) => {
 });
 
 /**
- * @api {put} /notifications/read/all read all notifications
+ * @api {post} /notifications/read/all read all notifications
  * @apiGroup notifications
  * @apiName readAll
  * @apiVersion 2.0.0
  * @apiDescription read all notifications
  *
  */
-router.put('/read/all', async (ctx) => {
+router.post('/read/all', loginRequired, async (ctx) => {
   await Notif.readAll(ctx.user.id);
   ctx.body = {message: 'success'};
 });
 
 /**
- * @api {put} /notifications/read/:id Read
+ * @api {post} /notifications/read/:id Read
  * @apiGroup notifications
  * @apiName Read
  * @apiVersion 2.0.0
@@ -90,7 +126,7 @@ router.put('/read/all', async (ctx) => {
  * @apiParam {String} id
  *
  */
-router.put('/read/:id', async (ctx) => {
+router.post('/read/:id', loginRequired, checkIdParams, async (ctx) => {
   await Notif.read(ctx.user.id, [ctx.params.id]);
   ctx.body = {message: 'success'};
 });

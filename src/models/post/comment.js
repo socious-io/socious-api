@@ -1,15 +1,13 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {upsertCommentSchem} from './schema.js';
 import {EntryError} from '../../utils/errors.js';
 
-export const newComment = async (id, identityId, body) => {
-  await upsertCommentSchem.validateAsync(body);
+export const newComment = async (id, identityId, {content, reply_id}) => {
   try {
     const {rows} = await app.db.query(sql`
     INSERT 
       INTO comments (identity_id, post_id, content, reply_id)
-      VALUES(${identityId}, ${id}, ${body.content}, ${body.reply_id})
+      VALUES(${identityId}, ${id}, ${content}, ${reply_id})
       RETURNING *
     `);
     return rows[0];
@@ -18,12 +16,11 @@ export const newComment = async (id, identityId, body) => {
   }
 };
 
-export const updateComment = async (id, identityId, body) => {
-  await upsertCommentSchem.validateAsync(body);
+export const updateComment = async (id, identityId, {content}) => {
   try {
     const {rows} = await app.db.query(sql`
     UPDATE comments SET
-      content=${body.content}
+      content=${content}
     WHERE id=${id} AND identity_id=${identityId}
     RETURNING *
     `);
@@ -39,11 +36,20 @@ export const removeComment = async (id, identityId) => {
   );
 };
 
-export const comments = async (id, {offset = 0, limit = 10}) => {
+export const comments = async (
+  id,
+  currentIdentity,
+  {offset = 0, limit = 10},
+) => {
   const {rows} = await app.db.query(sql`
   SELECT 
   COUNT(*) OVER () as total_count,
-  c.*, i.type  as identity_type, i.meta as identity_meta
+  c.*, i.type  as identity_type, i.meta as identity_meta,
+  EXISTS (
+    SELECT id FROM likes WHERE post_id=${id} AND 
+    identity_id=${currentIdentity} AND
+    comment_id=c.id
+  ) AS liked
   FROM comments c JOIN identities i ON c.identity_id=i.id
   WHERE post_id=${id} AND reply_id IS NULL
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
@@ -51,13 +57,26 @@ export const comments = async (id, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const commentsReplies = async (id, {offset = 0, limit = 10}) => {
+export const commentsReplies = async (
+  id,
+  currentIdentity,
+  {offset = 0, limit = 10},
+) => {
   const {rows} = await app.db.query(sql`
   SELECT COUNT(*) OVER () as total_count,
-  c.*, i.type  as identity_type, i.meta as identity_meta
+  c.*, i.type  as identity_type, i.meta as identity_meta,
+  EXISTS (
+    SELECT id FROM likes WHERE post_id=${id} AND 
+    identity_id=${currentIdentity} AND
+    comment_id=c.id
+  ) AS liked
   FROM comments c JOIN identities i ON c.identity_id=i.id
   WHERE reply_id=${id}
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
+};
+
+export const getComment = async (id) => {
+  return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`);
 };

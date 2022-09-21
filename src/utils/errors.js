@@ -2,6 +2,7 @@ export class AuthorizationError extends Error {
   status = 401;
 }
 export class PermissionError extends Error {
+  message = 'Not allow';
   status = 403;
 }
 export class BadRequestError extends Error {
@@ -14,7 +15,7 @@ export class EntryError extends Error {
   status = 400;
 }
 export class NotMatchedError extends Error {
-  message = 'not matched';
+  message = 'Not matched';
   status = 400;
 }
 export class UnauthorizedError extends Error {
@@ -23,6 +24,11 @@ export class UnauthorizedError extends Error {
 }
 
 export class TooManyRequestsError extends Error {
-  message = 'too many requests';
+  message = 'Too many requests';
   status = 429;
+}
+
+export class NotImplementedError extends Error {
+  message = 'Not implemented';
+  status = 501;
 }

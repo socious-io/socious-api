@@ -14,4 +14,5 @@ WHERE
     COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '') || COALESCE(o.name, '')
     )
   @@ websearch_to_tsquery($1)
+  {{filter}}
 ORDER BY p.created_at DESC

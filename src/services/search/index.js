@@ -27,10 +27,29 @@ const filterColumns = (type) => {
 }
 
 const fetch = async (type, ids, {offset, limit}) => {
-  ids = ids.slice(offset, offset+limit)  
-  const {rows} = await Org.getAll(ids)
+  const selectedIds = ids.slice(offset, offset+limit)  
+  let result = {
+    rows: []
+  }
+  switch (type) {
+    case Data.SearchType.POSTS:
+      result = await Post.getAll(selectedIds)
+      break
+    case Data.SearchType.USERS:
+      result = await User.getAllProfile(selectedIds)
+      break
+    case Data.SearchType.RELATED_USERS:
+      result = await User.getAllProfile(selectedIds)
+      break
+    case Data.SearchType.PROJECTS:
+      result = await Project.getAll(selectedIds)
+      break
+    case Data.SearchType.ORGANIZATIONS:
+      result = await Org.getAll(selectedIds)
+      break
+  }
   
-  return rows.map(r => {
+  return result.rows.map(r => {
     return {
       total_count: ids.length,
       ...r
@@ -52,8 +71,9 @@ const find = async (body, {offset = 0, limit = 10}) => {
     typesNeedUser.includes(body.type) ? body.current_user_id : undefined,
     
   ].filter((p) => p !== undefined);
-  console.log(filterColumns)
+
   let filters = filtering(body.filter, filterColumns(body.type))
+  
   if (filters) filters = 'AND ' + filters
 
 

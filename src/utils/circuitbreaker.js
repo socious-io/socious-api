@@ -65,7 +65,6 @@ export class DBCircuitBreaker {
     Object.keys(kwargs).map(k => {
       q = q.replaceAll(`{{${k}}}`, kwargs[k])
     })
-    console.log(q, kwargs)
     return this.query(q, args);
   }
 

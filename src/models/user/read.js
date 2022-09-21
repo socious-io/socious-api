@@ -91,7 +91,7 @@ export const getProfileLimited = async (id) => {
 };
 
 export const getAllProfile = async (ids) => {
-  return app.db.get(
+  return app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
     mission, bio, impact_score, skills,

@@ -6,16 +6,18 @@ import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
 /**
- * @api {get} /search Search
+ * @api {post} /search Search
  * @apiGroup Search
  * @apiName Search
  * @apiVersion 2.0.0
  * @apiDescription search
  *
+ * @apiQuery {Number} page default 1
+ * @apiQuery {Number{min: 1, max:50}} limit default 10
+ * 
  * @apiBody {String} q query string
  * @apiBody {String} type query type (posts, users, related_users(follwed or following), projects, chats)
- * @apiBody {Number} page default 1
- * @apiBody {Number{min: 1, max:50}} limit default 10
+ * @apiBody {Object} filter
  *
  * @apiSuccess (200) {Number} page
  * @apiSuccess (200) {Number} limit

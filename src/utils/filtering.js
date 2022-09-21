@@ -9,7 +9,17 @@ const operators = {
   'lte': '<='
 }
 
-export const format = (value) => typeof value === 'string' ? `'${value}'` : value
+export const format = (value) => {
+  switch (typeof value) {
+    case 'string':
+      return `'${value}'`
+    case 'object':
+      if (!Array.isArray(value)) throw new BadRequestError(`filtering value is not valid`)
+      return `'{${value.join(',')}}'`
+    default:
+      return value
+  }
+}
 
 export const filtering = (filter, columns) => {
 
@@ -17,26 +27,24 @@ export const filtering = (filter, columns) => {
 
   const conditions = []
   
-  for (const [key, value] of Object.entries(filter)) {
+  for (const [key, val] of Object.entries(filter)) {
+    
     if (!columns.includes(key)) throw new BadRequestError('filter key not allowed')
 
-    if (typeof value !== 'object') {
-      conditions.push(`${key}=${format(value)}`)
-      continue
-    }
 
-    const valueKeys = Object.keys(value)
+    const valueKeys = Object.keys(val)
     
-    if (valueKeys.length < 1) continue
+    let op = operators[valueKeys[0]]
     
-    const op = valueKeys[0]
-    
-    if (!Object.keys(operators).includes(op)) throw new BadRequestError(`${op} in not correct operator`)
+    const value = op ? val[valueKeys[0]] : val
 
+    if (Array.isArray(value)) op = '@>'
 
-    conditions.push(`${key}${operators[op]}${format(value[op])}`)
+    if (!op) op = '='
+
+    conditions.push(`${key} ${op} ${format(value)}`)
 
   }
 
-  return conditions.join(' AND')
+  return conditions.join(' AND ')
 }

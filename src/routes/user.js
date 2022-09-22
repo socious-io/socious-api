@@ -90,7 +90,7 @@ router.get('/profile', loginRequired, async (ctx) => {
 });
 
 /**
- * @api {post} /user/profile Update Profile
+ * @api {post} /user/update/profile Update Profile
  * @apiGroup User
  * @apiName UpdateProfile
  * @apiVersion 2.0.0

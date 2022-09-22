@@ -1,7 +1,6 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import {upsertSchem} from './schema.js';
 import {shortNameExists} from './read.js';
 
 const generateShortname = (name, website) => {
@@ -17,14 +16,52 @@ const generateShortname = (name, website) => {
   return `${name.replaceAll(' ', '_').slice(0, 36)}${rand}`;
 };
 
-export const insert = async (identityId, body) => {
+export const insert = async (
+  identityId,
+  {
+    shortname,
+    name,
+    website,
+    bio,
+    description,
+    email,
+    phone,
+    type,
+    city,
+    address,
+    country,
+    social_causes,
+    mobile_country_code,
+    mission,
+    culture,
+    image,
+    cover_image,
+  },
+) => {
   // temp logic
-  if (!body.shortname) {
-    const shortname = generateShortname(body.name, body.website);
-    if (await shortNameExists(shortname)) return insert(identityId, body);
-    body.shortname = shortname;
+  if (!shortname) {
+    shortname = generateShortname(name, website);
+    if (await shortNameExists(shortname))
+      return insert(identityId, {
+        shortname,
+        name,
+        website,
+        bio,
+        description,
+        email,
+        phone,
+        type,
+        city,
+        address,
+        country,
+        social_causes,
+        mobile_country_code,
+        mission,
+        culture,
+        image,
+        cover_image,
+      });
   }
-  await upsertSchem.validateAsync(body);
 
   try {
     const {rows} = await app.db.query(
@@ -34,10 +71,10 @@ export const insert = async (identityId, body) => {
         type, city, address, country, website, 
         social_causes, mobile_country_code, created_by, image, cover_image,
         mission, culture, shortname) 
-        VALUES (${body.name}, ${body.bio}, ${body.description}, ${body.email},
-          ${body.phone}, ${body.type} ,${body.city}, ${body.address}, ${body.country},
-          ${body.website}, ${body.social_causes}, ${body.mobile_country_code},
-          ${identityId}, ${body.image}, ${body.cover_image}, ${body.mission}, ${body.culture},
+        VALUES (${name}, ${bio}, ${description}, ${email},
+          ${phone}, ${type} ,${city}, ${address}, ${country},
+          ${website}, ${social_causes}, ${mobile_country_code},
+          ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture},
           ${body.shortname})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
@@ -47,36 +84,73 @@ export const insert = async (identityId, body) => {
   }
 };
 
-export const update = async (id, body) => {
+export const update = async (
+  id,
+  {
+    shortname,
+    name,
+    website,
+    bio,
+    description,
+    email,
+    phone,
+    type,
+    city,
+    address,
+    country,
+    social_causes,
+    mobile_country_code,
+    mission,
+    culture,
+    image,
+    cover_image,
+  },
+) => {
   // temp logic
-  if (!body.shortname) {
-    const shortname = generateShortname(body.name, body.website);
-    if (await shortNameExists(shortname)) return update(id, body);
-    body.shortname = shortname;
+  if (!shortname) {
+    shortname = generateShortname(name, website);
+    if (await shortNameExists(shortname))
+      return update(id, {
+        shortname,
+        name,
+        website,
+        bio,
+        description,
+        email,
+        phone,
+        type,
+        city,
+        address,
+        country,
+        social_causes,
+        mobile_country_code,
+        mission,
+        culture,
+        image,
+        cover_image,
+      });
   }
-
-  await upsertSchem.validateAsync(body);
 
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE organizations SET 
-        name=${body.name}, 
+        name=${name}, 
         shortname=${body.shortname},
-        bio=${body.bio}, 
-        description=${body.description}, 
-        email=${body.email}, 
-        phone=${body.phone}, 
-        city=${body.city}, 
-        address=${body.address}, 
-        website=${body.website},
-        social_causes=${body.social_causes},
-        country=${body.country},
-        mobile_country_code=${body.mobile_country_code},
-        image=${body.image},
-        cover_image=${body.cover_image},
-        mission=${body.mission},
-        culture=${body.culture}
+        bio=${bio}, 
+        description=${description}, 
+        email=${email}, 
+        phone=${phone}, 
+        city=${city}, 
+        address=${address}, 
+        website=${website},
+        social_causes=${social_causes},
+        country=${country},
+        mobile_country_code=${mobile_country_code},
+        image=${image},
+        cover_image=${cover_image},
+        mission=${mission},
+        culture=${culture}
       WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];

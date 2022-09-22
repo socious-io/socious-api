@@ -1,7 +1,5 @@
 SELECT
-  COUNT(*) OVER () as total_count,
-  p.*, i.type  as identity_type, i.meta as identity_meta,
-  array_to_json(p.causes_tags) as causes_tags
+  p.id
 FROM posts p
 JOIN identities i ON i.id=p.identity_id
 LEFT JOIN users u ON u.id=i.id and i.type='users'
@@ -16,4 +14,5 @@ WHERE
     COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '') || COALESCE(o.name, '')
     )
   @@ websearch_to_tsquery($1)
-ORDER BY p.created_at DESC  LIMIT $2 OFFSET $3
+  {{filter}}
+ORDER BY p.created_at DESC

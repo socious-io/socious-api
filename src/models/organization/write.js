@@ -75,7 +75,7 @@ export const insert = async (
           ${phone}, ${type} ,${city}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture},
-          ${body.shortname})
+          ${shortname})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];
@@ -136,7 +136,7 @@ export const update = async (
       sql`
       UPDATE organizations SET 
         name=${name}, 
-        shortname=${body.shortname},
+        shortname=${shortname},
         bio=${bio}, 
         description=${description}, 
         email=${email}, 

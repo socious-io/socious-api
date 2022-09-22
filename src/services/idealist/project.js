@@ -47,7 +47,7 @@ export const lastIdealistProject = async function (project_type) {
 
     return new Date(row.updated_at).toISOString();
   } catch (err) {
-    if (err.status !== 400)
+    if (err.status !== 400 && err.message !== 'not matched')
       console.log('\x1b[31m%s\x1b[0m', err.status + ' ' + err.message);
     return null;
   }
@@ -73,6 +73,10 @@ export const processProject = async function (p, type) {
 
 async function saveProject(pro, type, org_id) {
   try {
+    const project_name = pro.name;
+
+    if (!pro.name) return false;
+
     const payment_type = await paymentType(pro);
     const remote_preference = await remotePreference(pro);
 
@@ -81,7 +85,7 @@ async function saveProject(pro, type, org_id) {
     const experience_level = await experienceLevel(pro);
 
     const body = {
-      title: pro.name ? pro.name : 'Untitled',
+      title: project_name,
       description: pro.description ? pro.description : 'No information',
       ...(pro.address && pro.address.country && {country: pro.address.country}),
       remote_preference: remote_preference,

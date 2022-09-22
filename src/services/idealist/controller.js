@@ -67,12 +67,12 @@ export async function getAllProjects(ids) {
       }
 
       //wait some time after each 50th project
-      if (count > 50) {
+      const wait_b = config.idealist.wait_break;
+
+      if (count > 50 && wait_b) {
         process.stdout.clearLine(0);
         process.stdout.cursorTo(0);
-        process.stdout.write(
-          `Waiting ${config.idealist.wait_break / 1000} secons`,
-        );
+        process.stdout.write(`Waiting ${wait_b / 1000} secons`);
         await sleep(config.idealist.wait_break);
         count = 0;
       } else {

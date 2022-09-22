@@ -64,8 +64,8 @@ export default {
     origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
   },
   idealist: {
-    wait_between_project: '500',
-    wait_break: '10000',
+    wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
+    wait_break: process.env.WAIT_BREAK || '10000',
   },
 };
 

@@ -35,7 +35,7 @@ const addHistory = async (body, identityId) => {
 
 const fetch = async (type, ids, {offset, limit}) => {
   const selectedIds = ids.slice(offset, offset + limit);
-  let rows = []
+  let rows = [];
   switch (type) {
     case Data.SearchType.POSTS:
       rows = await Post.getAll(selectedIds);
@@ -86,7 +86,6 @@ const find = async (
   if (filters) filters = 'AND ' + filters;
 
   const {rows} = await app.db.execute(name, params, {filter: filters});
-
   return fetch(
     body.type,
     rows.map((r) => r.id),

@@ -42,13 +42,13 @@ export const organizationFromProject = async function (project) {
         type = org.orgType;
       }
 
-      let sh_name = null;
-      sh_name = await shortname(org);
+      let shName = null;
+      shName = await shortname(org);
 
       //add dynamically properties to the request
       const body = {
         name: org.name,
-        ...(sh_name && {shortname: sh_name}),
+        ...(shName && {shortname: shName}),
         ...(orgBio && {bio: orgBio}),
         ...(orgBio && {description: orgBio}),
         type: type,

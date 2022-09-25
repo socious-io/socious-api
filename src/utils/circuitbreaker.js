@@ -59,8 +59,12 @@ export class DBCircuitBreaker {
     return this.cache[name];
   }
 
-  async execute(name, ...args) {
-    const q = await this.getQueryFromFile(name);
+  async execute(name, args, kwargs = {}) {
+    let q = await this.getQueryFromFile(name);
+    // Note: kwargs are unsafe
+    Object.keys(kwargs).map((k) => {
+      q = q.replaceAll(`{{${k}}}`, kwargs[k]);
+    });
     return this.query(q, args);
   }
 

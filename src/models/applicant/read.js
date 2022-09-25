@@ -44,7 +44,7 @@ export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const mustOwner = async (userId, id) => {
+export const owner = async (userId, id) => {
   try {
     await app.db.get(
       sql`SELECT * FROM applicants WHERE id=${id} and user_id=${userId}`,
@@ -54,7 +54,7 @@ export const mustOwner = async (userId, id) => {
   }
 };
 
-export const mustProjectOwner = async (identityId, id) => {
+export const projectOwner = async (identityId, id) => {
   try {
     await app.db.get(sql`SELECT * FROM applicants a 
       JOIN projects p ON a.project_id=p.id 

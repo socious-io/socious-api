@@ -1,8 +1,5 @@
 SELECT
-  COUNT(*) OVER () as total_count,
-  c.*, i.type  as identity_type, i.meta as identity_meta, m.id,
-  m.id as message_id,
-  m.text as message_text
+  c.id
 FROM chats c
 JOIN chats_participants p ON p.chat_id=c.id
 JOIN identities i ON i.id=p.identity_id
@@ -17,4 +14,5 @@ WHERE
     COALESCE(u.last_name, '') || COALESCE(o.name, '')
   )
   @@ websearch_to_tsquery($1)
-ORDER BY p.created_at DESC  LIMIT $2 OFFSET $3
+  {{filter}}
+ORDER BY p.created_at DESC

@@ -3,9 +3,9 @@ import {getProject, processProject, lastIdealistProject} from './project.js';
 import {sleep} from './helpers.js';
 import config from '../../config.js';
 
-const sinceTimstamp = process.env.IDEALIST_SINCE; // add timestamp to .env for testing purposes (ex. '2022-09-14 17:30:07')
+const since_timstamp = process.env.IDEALIST_SINCE; // add timestamp to .env for testing purposes (ex. '2022-09-14 17:30:07')
 
-const idealistToken = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
+const idealist_token = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 
 /**
  * Get a list (object) of all the ID of all the projects
@@ -42,20 +42,20 @@ export async function getAllProjects(ids) {
       //get project from Idealist
       let p = await getProject(types, obj.id); //use queue?...
 
-      let project_type;
+      let projectType;
 
       if (types === 'jobs') {
-        project_type = 'job'; //we need singular object property later
+        projectType = 'job'; //we need singular object property later
       } else if (types === 'volops') {
-        project_type = 'volop';
+        projectType = 'volop';
       } else if (types === 'internships') {
-        project_type = 'internship';
+        projectType = 'internship';
       }
 
       //process project and insert/update in database
 
-      if (p && p[project_type]) {
-        if ((await processProject(p[project_type], project_type)) === true) {
+      if (p && p[projectType]) {
+        if ((await processProject(p[projectType], projectType)) === true) {
           res++;
 
           obj.processed = 1; //mark project as processed
@@ -67,13 +67,15 @@ export async function getAllProjects(ids) {
       }
 
       //wait some time after each 50th project
-      const wait_b = config.idealist.wait_break;
-
-      if (count > 50 && wait_b) {
-        process.stdout.clearLine(0);
-        process.stdout.cursorTo(0);
-        process.stdout.write(`Waiting ${wait_b / 1000} secons`);
-        await sleep(config.idealist.wait_break);
+      if (count > 50) {
+        if (config.idealist.wait_between_project > 0) {
+          process.stdout.clearLine(0);
+          process.stdout.cursorTo(0);
+          process.stdout.write(
+            `Waiting ${config.idealist.wait_break / 1000} secons`,
+          );
+          await sleep(config.idealist.wait_break);
+        }
         count = 0;
       } else {
         await sleep(config.idealist.wait_between_project);
@@ -93,31 +95,31 @@ export async function getAllProjects(ids) {
  * Get the all listings of projects from Idealist from one type
  * and put their ID into object
  *
- * @param {string} project_types
+ * @param {string} projectTypes
  * @returns object
  */
 
-export async function getListings(project_types) {
+export async function getListings(projectTypes) {
   try {
     let ttl = 200;
-    const all_projects = [];
+    const allProjects = [];
     let hasMore = true;
 
     //get the last project from Idealist of this type from database
-    let since = await lastIdealistProject(project_types); //get from database
+    let since = await lastIdealistProject(projectTypes); //get from database
 
-    if (sinceTimstamp) since = sinceTimstamp;
+    if (since_timstamp) since = since_timstamp;
 
     if (!since) since = '';
 
     while (ttl > 0 && hasMore === true) {
       const response = await axios
-        .get(`https://www.idealist.org/api/v1/listings/${project_types}`, {
+        .get(`https://www.idealist.org/api/v1/listings/${projectTypes}`, {
           params: {
             since: since,
           },
           auth: {
-            username: idealistToken,
+            username: idealist_token,
             password: '',
           },
         })
@@ -126,7 +128,7 @@ export async function getListings(project_types) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
             throw new Error(
-              `Error in response getting listings for ${project_types},
+              `Error in response getting listings for ${projectTypes},
             ${error.response.status}`,
             );
             //console.log(error.response.headers);
@@ -134,14 +136,14 @@ export async function getListings(project_types) {
             // The request was made but no response was received
             // 'error.request' is an instance of http.ClientRequest in node.js
             throw new Error(
-              `Error in request getting listings for ${project_types},
+              `Error in request getting listings for ${projectTypes},
             ${error.request}`,
             );
           } else {
             // Something happened in setting up the request that triggered an Error
             console.log(
-              `Other error getting listing for ${project_types},
-            error.message`,
+              `Other error getting listing for ${projectTypes},
+            ${error.message}`,
             );
           }
         });
@@ -149,14 +151,14 @@ export async function getListings(project_types) {
       if (response.status === 200) {
         hasMore = response.data.hasMore;
 
-        let projects = response.data[project_types]; //array
+        let projects = response.data[projectTypes]; //array
 
         if (projects.length > 0) {
           //get the since from this stack of project listing
           since = projects[projects.length - 1].updated;
 
           for (let y = 0; y < projects.length; y++) {
-            all_projects.push({id: projects[y].id, processed: 0});
+            allProjects.push({id: projects[y].id, processed: 0});
           }
         }
       } else if (response.status < 500) {
@@ -168,10 +170,10 @@ export async function getListings(project_types) {
     }
 
     console.log(
-      `${all_projects.length} ${project_types} will be loaded from Idealist.`,
+      `${allProjects.length} ${projectTypes} will be loaded from Idealist.`,
     );
 
-    return all_projects; //returns all ids from one type
+    return allProjects; //returns all ids from one type
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
     //will continue to next type

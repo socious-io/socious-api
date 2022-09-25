@@ -1,24 +1,13 @@
 import sql from 'sql-template-tag';
-import Joi from 'joi';
 
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 
-const insertSchem = Joi.object({
-  token: Joi.string().required(),
-  meta: Joi.object({
-    app_version: Joi.string(),
-    os: Joi.string().valid('IOS', 'ANDROID', 'WINDOWS', 'WEBAPP'),
-    os_version: Joi.string(),
-  }).required(),
-});
-
-const insert = async (userId, body) => {
-  await insertSchem.validateAsync(body);
+const insert = async (userId, {token, meta}) => {
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO devices (user_id, token, meta)
-      VALUES(${userId}, ${body.token}, ${body.meta})
+      VALUES(${userId}, ${token}, ${meta})
     RETURNING *
   `);
     return rows[0];
@@ -27,13 +16,12 @@ const insert = async (userId, body) => {
   }
 };
 
-const update = async (userId, body) => {
-  await insertSchem.validateAsync(body);
+const update = async (userId, {token, meta}) => {
   try {
     const {rows} = await app.db.query(sql`
     UPDATE devices 
-      SET meta=${body.meta}
-    WHERE user_id=${userId} AND token=${body.token}
+      SET meta=${meta}
+    WHERE user_id=${userId} AND token=${token}
     RETURNING *
   `);
     return rows[0];

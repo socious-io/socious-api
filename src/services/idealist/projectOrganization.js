@@ -3,7 +3,7 @@ import {app} from '../../index.js';
 
 import organization from '../../models/organization/index.js';
 import media from '../../models/media/index.js';
-import {Type} from '../../models/organization/enums.js';
+//import {Type} from '../../models/organization/enums.js';
 
 /**
  * creates new organization from project if it doesn't exists in database
@@ -26,26 +26,36 @@ export const organizationFromProject = async function (project) {
     try {
       const orgBio = await organizationBio(org);
 
+      const Type = {
+        SOCIAL: 'SOCIAL',
+        NONPROFIT: 'NONPROFIT',
+        COOP: 'COOP',
+        IIF: 'IIF',
+        PUBLIC: 'PUBLIC',
+        INTERGOV: 'INTERGOV',
+        DEPARTMENT: 'DEPARTMENT',
+        OTHER: 'OTHER',
+      };
+
       let type = 'OTHER';
       if (org.orgType && Object.values(Type).includes(org.orgType)) {
         type = org.orgType;
       }
 
-      let sh_name = null;
-      sh_name = await shortname(org);
+      let shName = null;
+      shName = await shortname(org);
 
       //add dynamically properties to the request
       const body = {
         name: org.name,
-        ...(sh_name && {shortname: sh_name}),
+        ...(shName && {shortname: shName}),
         ...(orgBio && {bio: orgBio}),
         ...(orgBio && {description: orgBio}),
         type: type,
-        ...(org.address && org.address.city && {city: org.address.city}),
-        ...(org.address && org.address.full && {address: org.address.full}),
-        ...(org.address &&
-          org.address.country && {country: org.address.country}),
-        ...(org.url && org.url.en && {website: org.url.en}),
+        ...(org.address?.city && {city: org.address.city}),
+        ...(org.address?.full && {address: org.address.full}),
+        ...(org.address?.country && {country: org.address.country}),
+        ...(org.url?.en && {website: org.url.en}),
         social_causes: [],
       };
 
@@ -139,7 +149,6 @@ async function shortname(org) {
       const url_string = new URL(org.url.en).pathname;
 
       const chunks = url_string.split('/');
-      //console.log(chunks);
 
       shortname = chunks[chunks.length - 1];
       shortname = decodeURI(shortname);

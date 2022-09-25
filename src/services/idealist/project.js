@@ -9,14 +9,14 @@ import project from '../../models/project/index.js';
 /**
  * Get single project from Idealist
  *
- * @param {string} project_types
+ * @param {string} projectTypes
  * @param {string} id
  * @returns object || void
  */
-export const getProject = async function (project_types, id) {
+export const getProject = async function (projectTypes, id) {
   try {
     let proj = await axios.get(
-      `https://www.idealist.org/api/v1/listings/${project_types}/${id}`,
+      `https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`,
       {
         auth: {
           username: process.env.IDEALIST_TOKEN, //'743e1f3940484d7680130c748ed22758',
@@ -37,17 +37,17 @@ export const getProject = async function (project_types, id) {
   }
 };
 
-export const lastIdealistProject = async function (project_type) {
+export const lastIdealistProject = async function (projectType) {
   try {
-    project_type = project_type.slice(0, -1);
+    projectType = projectType.slice(0, -1);
 
     const row = await app.db.get(
-      sql`SELECT updated_at FROM projects WHERE other_party_title = ${project_type} ORDER BY updated_at DESC LIMIT 1`,
+      sql`SELECT updated_at FROM projects WHERE other_party_title = ${projectType} ORDER BY updated_at DESC LIMIT 1`,
     );
 
     return new Date(row.updated_at).toISOString();
   } catch (err) {
-    if (err.status !== 400)
+    if (err.status !== 400 && err.message !== 'Not matched')
       console.log('\x1b[31m%s\x1b[0m', err.status + ' ' + err.message);
     return null;
   }
@@ -55,38 +55,42 @@ export const lastIdealistProject = async function (project_type) {
 
 export const processProject = async function (p, type) {
   try {
-    let org_id;
+    let orgId;
 
     //create organization or get ID of existing one
-    org_id = await organizationFromProject(p);
+    orgId = await organizationFromProject(p);
 
     //if project is volop, can have a group (create or find and get ID)
     // if (project.group) {
     //   group_id = await groupFromProject(project.group);
     // }
 
-    if (org_id) return await saveProject(p, type, org_id); //return true or false
+    if (orgId) return await saveProject(p, type, orgId); //return true or false
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
   }
 };
 
-async function saveProject(pro, type, org_id) {
+async function saveProject(pro, type, orgId) {
   try {
-    const payment_type = await paymentType(pro);
-    const remote_preference = await remotePreference(pro);
+    const projectName = pro.name;
 
-    const payment_scheme =
+    if (!pro.name) return false;
+
+    const paymentType = await getPaymentType(pro);
+    const remotePreference = await getRemotePreference(pro);
+
+    const paymentScheme =
       pro.salaryPeriod && pro.salaryPeriod == 'HOUR' ? 'HOURLY' : 'FIXED';
-    const experience_level = await experienceLevel(pro);
+    const experienceLevel = await getExperienceLevel(pro);
 
     const body = {
-      title: pro.name ? pro.name : 'Untitled',
+      title: projectName,
       description: pro.description ? pro.description : 'No information',
       ...(pro.address && pro.address.country && {country: pro.address.country}),
-      remote_preference: remote_preference,
-      payment_type: payment_type,
-      payment_scheme: payment_scheme,
+      remote_preference: remotePreference,
+      payment_type: paymentType,
+      payment_scheme: paymentScheme,
       ...(pro.salaryCurrency && {payment_currency: pro.salaryCurrency}),
       ...(pro.salaryMinimum && {
         payment_range_lower: pro.salaryMinimum.toString(),
@@ -94,7 +98,7 @@ async function saveProject(pro, type, org_id) {
       ...(pro.salaryMaximum && {
         payment_range_higher: pro.salaryMaximum.toString(),
       }),
-      ...(experience_level && {experience_level: experience_level}),
+      ...(experienceLevel && {experience_level: experienceLevel}),
       status: 'ACTIVE',
       ...(pro.expires && {expires_at: pro.expires}), //check if works for date
       other_party_id: pro.id,
@@ -114,7 +118,7 @@ async function saveProject(pro, type, org_id) {
       await project.update(projFromDb.id, body);
     } else {
       //create new project
-      await project.insert(org_id, body);
+      await project.insert(orgId, body);
     }
 
     return true;
@@ -132,7 +136,7 @@ async function getProjectFromDb(p) {
 
     return pr.id;
   } catch (err) {
-    if (err.status !== 400 && err.message !== 'not matched') {
+    if (err.status !== 400 && err.message !== 'Not matched') {
       console.log(err.message, err.status);
     }
     return false;
@@ -147,7 +151,7 @@ async function getProjectFromDb(p) {
  * @param object
  * @return string
  */
-async function paymentType(p) {
+async function getPaymentType(p) {
   if (
     (p.salaryMinimum && p.salaryMinimum > 0) ||
     (p.salaryMaximum && p.salaryMaximum > 0) ||
@@ -165,7 +169,7 @@ async function paymentType(p) {
  * @param object
  * @return string
  */
-async function remotePreference(p) {
+async function getRemotePreference(p) {
   if (p.remoteOk && p.remoteOk === true) {
     if (p.remoteTemporary && p.remoteTemporary === true) {
       return 'HYBRID';
@@ -182,7 +186,7 @@ async function remotePreference(p) {
  * @param object
  * @return integer
  */
-async function experienceLevel(p) {
+async function getExperienceLevel(p) {
   const pr_lev = {
     NONE: 1,
     ENTRY_LEVEL: 2,

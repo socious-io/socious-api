@@ -1,6 +1,8 @@
 import Router from '@koa/router';
+import {validate} from '@socious/data';
 import Identity from '../models/identity/index.js';
-import {identity} from '../utils/requests.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
+import {checkIdParams} from '../utils/middlewares/route.js';
 
 export const router = new Router();
 
@@ -17,7 +19,7 @@ export const router = new Router();
  * @apiSuccess (200) {Object} type (users, organizations)
  * @apiSuccess (200) {Object} meta
  */
-router.get('/', identity, async (ctx) => {
+router.get('/', loginRequired, async (ctx) => {
   ctx.body = await Identity.getAll(ctx.user.id, ctx.identity.id);
 });
 
@@ -34,7 +36,7 @@ router.get('/', identity, async (ctx) => {
  * @apiSuccess (200) {Object} type (users, organizations)
  * @apiSuccess (200) {Object} meta
  */
-router.get('/:id', identity, async (ctx) => {
+router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Identity.get(ctx.params.id, ctx.identity.id);
 });
 
@@ -49,7 +51,7 @@ router.get('/:id', identity, async (ctx) => {
  *
  * @apiSuccess (200) {Object} success
  */
-router.get('/set/:id/session', async (ctx) => {
+router.get('/set/:id/session', loginRequired, checkIdParams, async (ctx) => {
   const identity = await Identity.get(ctx.params.id);
   await Identity.permissioned(identity, ctx.user.id);
 

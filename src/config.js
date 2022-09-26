@@ -72,6 +72,9 @@ export default {
   cors: {
     origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
   },
+  payments: {
+    stripe_secret_key: process.env.STRIPE_SECRET_KEY
+  }
 };
 
 /**

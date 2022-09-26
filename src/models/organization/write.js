@@ -62,16 +62,15 @@ export const insert = async (
         cover_image,
       });
   }
-
   try {
     const {rows} = await app.db.query(
       sql`
       INSERT INTO organizations (
-        name, bio, description, email, phone, 
+        shortname, name, bio, description, email, phone, 
         type, city, address, country, website, 
         social_causes, mobile_country_code, created_by, image, cover_image,
         mission, culture) 
-        VALUES (${name}, ${bio}, ${description}, ${email},
+        VALUES (${shortname}, ${name}, ${bio}, ${description}, ${email},
           ${phone}, ${type} ,${city}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture})
@@ -134,6 +133,7 @@ export const update = async (
     const {rows} = await app.db.query(
       sql`
       UPDATE organizations SET 
+        shortname=${shortname},
         name=${name}, 
         bio=${bio}, 
         description=${description}, 

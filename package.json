@@ -74,7 +74,7 @@
     "supertest-koa-agent": "^0.3.2"
   },
   "devDependencies": {
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-prettier": "^4.2.1",

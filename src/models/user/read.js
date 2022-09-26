@@ -9,7 +9,7 @@ export const get = async (id) => {
 
 export const getByUsername = async (username) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE username=${username}`,
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE username=${username.toLowerCase()}`,
   );
 };
 
@@ -68,7 +68,7 @@ export const getProfileByUsername = async (username) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
-    WHERE u.username=${username}
+    WHERE u.username=${username.toLowerCase()}
     `,
   );
 };
@@ -120,7 +120,7 @@ export const getProfileByUsernameLimited = async (username) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
-    WHERE u.username=${username}
+    WHERE u.username=${username.toLowerCase()}
     `,
   );
 };

@@ -51,13 +51,13 @@ export const getByShortname = async (shortname) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    WHERE org.shortname=${shortname}`);
+    WHERE org.shortname=${shortname.toLowerCase()}`);
 };
 
 export const shortNameExists = async (shortname) => {
   try {
     await app.db.get(
-      sql`SELECT * FROM organizations WHERE shortname=${shortname}`,
+      sql`SELECT * FROM organizations WHERE shortname=${shortname.toLowerCase()}`,
     );
     return true;
   } catch {

@@ -109,7 +109,6 @@ async function saveLogoIdInOrganization(imageId, newOrgId) {
   try {
     await app.db.query(sql`UPDATE organizations 
     SET image = ${imageId} WHERE id = ${newOrgId}`);
-    console.log('Saved logo to organization');
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
     return false;

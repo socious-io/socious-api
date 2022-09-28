@@ -1,19 +1,9 @@
 import axios from 'axios';
 import {configureHttp} from '../idealist/http-agent/configure-http.js';
 
-// import sql from 'sql-template-tag';
-// import {app} from '../../index.js';
-// import organization from '../../models/organization/index.js';
-// import media from '../../models/media/index.js';
-//import project from '../../models/project/index.js';
 import {getLastReliefWebProjectId, processProject} from './project.js';
 
-//import {OrganizationType} from '@socious/data/src/enums.js';
-//import {iso3ToIso2} from './helpers.js';
-
-//const other_party_title = 'reliefweb job';
 const url = 'https://api.reliefweb.int/v1/jobs';
-
 const appName = 'socious';
 
 export async function listProjects() {
@@ -21,16 +11,18 @@ export async function listProjects() {
 
   let last_id = await getLastReliefWebProjectId();
   let next = true;
-  let ttl = 1;
-  let limit = 5; //up to 1000, defaults to 1000
+  let ttl = 10;
+  let limit = 100; //up to 1000, defaults to 1000
 
-  let url_params =
-    `?appName=${appName}&profile=full&limit=${limit}` +
-    `&filter[field]=id&filter[value][from]=${last_id}&sort[]=id:asc`;
+  let url_params;
 
   let count = 0;
   try {
     while (ttl > 0 && next === true) {
+      url_params =
+        `?appName=${appName}&profile=full&limit=${limit}` +
+        `&filter[field]=id&filter[value][from]=${last_id}&sort[]=id:asc`;
+
       const response = await axios
         .get(`${url}${url_params}`, {
           headers: {
@@ -54,7 +46,7 @@ export async function listProjects() {
         });
 
       if (response.status === 200) {
-        console.log('Items: ' + response.data.data.length);
+        console.log('Projects found: ' + response.data.data.length);
 
         const data = response.data.data;
 

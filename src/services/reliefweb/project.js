@@ -24,9 +24,8 @@ export async function getLastReliefWebProjectId() {
 }
 
 export async function processProject(p) {
-  console.log('Processing project...');
   const orgId = await createOrgFromProject(p);
-  console.log(`Org id is: ${orgId}`);
+
   if (!orgId) return false;
 
   //save or update the project
@@ -40,7 +39,6 @@ export async function processProject(p) {
  * @returns boolean
  */
 async function saveProject(p, type, orgId) {
-  //console.log(pro);
   try {
     const body = await parseProject(p, type);
 
@@ -49,10 +47,8 @@ async function saveProject(p, type, orgId) {
 
     if (projFromDb) {
       await project.update(projFromDb.id, body);
-      console.log('Project updated');
     } else {
       await project.insert(orgId, body);
-      console.log('Project created');
     }
 
     return true;

@@ -197,7 +197,7 @@ router.post('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
  */
 router.get(
   '/:id/comments',
-  loginRequired,
+  loginOptional,
   paginate,
   checkIdParams,
   async (ctx) => {
@@ -239,7 +239,7 @@ router.get(
  */
 router.get(
   '/comments/:id',
-  loginRequired,
+  loginOptional,
   paginate,
   checkIdParams,
   async (ctx) => {

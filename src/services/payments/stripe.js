@@ -24,6 +24,7 @@ export const checkout = async ({
   amount,
   currency,
   meta,
+  callback,
 }) => {
 
   const product = await stripe.products.create({
@@ -55,8 +56,8 @@ export const checkout = async ({
         },
       ],
       mode: 'payment',
-      success_url: `${Config.payments.success_url}?id=${trx.id}`,
-      cancel_url: `${Config.payments.cancel_url}?id=${trx.id}`,
+      success_url: `${callback}?id=${trx.id}&status=success`,
+      cancel_url: `${callback}?id=${trx.id}&status=cancel`,
     });
 
     await setTransaction(trx.id, session.id);

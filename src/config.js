@@ -75,12 +75,7 @@ export default {
   payments: {
     stripe: {
       secret_key: process.env.STRIPE_SECRET_KEY,
-    },
-    success_url:
-      process.env.PAYMENT_SUCCESS_URL ||
-      'http://localhost:8370/payments/success',
-    cancel_url:
-      process.env.PAYMENT_CANCEL_URL || 'http://localhost:8370/payments/cancel',
+    }
   },
 };
 

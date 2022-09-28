@@ -18,6 +18,7 @@ import {router as media} from './media.js';
 import {router as skill} from './skill.js';
 import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
+import {router as payment} from './payment.js';
 
 export default (app) => {
   const blueprint = new Router();
@@ -50,6 +51,7 @@ export default (app) => {
   blueprint.use('/media', media.routes(), media.allowedMethods());
   blueprint.use('/skills', skill.routes(), skill.allowedMethods());
   blueprint.use('/search', search.routes(), search.allowedMethods());
+  blueprint.use('/payments', payment.routes(), payment.allowedMethods());
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

@@ -1,5 +1,5 @@
-import {collectProjects} from './src/services/reliefweb/controller.js';
+import {listProjects} from './src/services/reliefweb/controller.js';
 
-collectProjects();
+listProjects();
 
 console.log('END OF PROCESS');

@@ -12,8 +12,8 @@ const generateShortname = (name, website) => {
       .toLowerCase()
       .replace(/[^a-z0-9._-]/, '-')
       .replace(/[._-]{2,}/, '-')
-      .slice(0, 36)}${rand}`;
-  return `${name.replaceAll(' ', '_').slice(0, 36)}${rand}`;
+      .slice(0, 36)}${rand}`.toLowerCase();
+  return `${name.replaceAll(' ', '_').slice(0, 36)}${rand}`.toLowerCase();
 };
 
 export const insert = async (
@@ -62,20 +62,18 @@ export const insert = async (
         cover_image,
       });
   }
-
   try {
     const {rows} = await app.db.query(
       sql`
       INSERT INTO organizations (
-        name, bio, description, email, phone, 
+        shortname, name, bio, description, email, phone, 
         type, city, address, country, website, 
         social_causes, mobile_country_code, created_by, image, cover_image,
-        mission, culture, shortname) 
-        VALUES (${name}, ${bio}, ${description}, ${email},
+        mission, culture) 
+        VALUES (${shortname.toLowerCase()}, ${name}, ${bio}, ${description}, ${email},
           ${phone}, ${type} ,${city}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
-          ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture},
-          ${shortname})
+          ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture})
         RETURNING *, array_to_json(social_causes) AS social_causes`,
     );
     return rows[0];
@@ -135,6 +133,7 @@ export const update = async (
     const {rows} = await app.db.query(
       sql`
       UPDATE organizations SET 
+        shortname=${shortname.toLowerCase()},
         name=${name}, 
         shortname=${shortname},
         bio=${bio}, 

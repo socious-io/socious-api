@@ -16,9 +16,7 @@ export async function createOrgFromProject(p) {
       return false; //project has to have organization???
     }
 
-    const orgName = org.longname ? org.longname : org.name ? org.name : null;
-
-    if (!orgName) {
+    if (!org.name) {
       console.log(
         '\x1b[31m%s\x1b[0m',
         'Organization name not found in project',
@@ -27,7 +25,7 @@ export async function createOrgFromProject(p) {
     }
 
     //check if org exist in table then update or insert // DO WE UPDATE???
-    const org_id_from_db = await findOrgFromTable(orgName);
+    const org_id_from_db = await findOrgFromTable(org.name);
 
     if (org_id_from_db) {
       return org_id_from_db;
@@ -35,6 +33,8 @@ export async function createOrgFromProject(p) {
       // create new organization
 
       const org = await getOrganizationFromApi(p);
+
+      if (!org) return false;
 
       const body = await parseOrganization(org);
 
@@ -63,7 +63,7 @@ export async function createOrgFromProject(p) {
 async function findOrgFromTable(org_name) {
   try {
     const orgFromTable = await app.db.get(
-      sql`SELECT id FROM organizations WHERE name = ${org_name}`,
+      sql`SELECT id, name FROM organizations WHERE name LIKE ${org_name}`,
     );
     return orgFromTable.id;
   } catch (err) {
@@ -90,7 +90,11 @@ async function getOrganizationFromApi(p) {
     }
     return false;
   } catch (err) {
-    console.log('\x1b[31m%s\x1b[0m', err.message);
+    console.log(
+      '\x1b[31m%s\x1b[0m',
+      'Error getting organization from ReliefWeb: ' + err.message,
+    );
+    return false;
   }
 }
 
@@ -117,7 +121,7 @@ async function saveLogoIdInOrganization(imageId, newOrgId) {
 
 async function parseOrganization(org) {
   try {
-    if (!org) return false;
+    if (!org || org === undefined) return false;
 
     const shName = await shortname(org);
     const orgBio = await organizationBio(org);
@@ -173,7 +177,7 @@ async function shortname(org) {
   try {
     let shortname = null;
 
-    if (!org.name) return false;
+    if (!org.name || org.name === undefined) return false;
 
     shortname = org.name.replaceAll(' ', '_').replace(/[^a-zA-Z_-]/g, '');
 

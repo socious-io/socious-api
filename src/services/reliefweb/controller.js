@@ -11,12 +11,13 @@ export async function listProjects() {
 
   let last_id = await getLastReliefWebProjectId();
   let next = true;
-  let ttl = 10;
-  let limit = 100; //up to 1000, defaults to 1000
+  let ttl = 100;
+  let limit = 1000; //up to 1000, defaults to 1000
 
   let url_params;
 
-  let count = 0;
+  let count = 0,
+    countProcessing = 0;
   try {
     while (ttl > 0 && next === true) {
       url_params =
@@ -46,7 +47,11 @@ export async function listProjects() {
         });
 
       if (response.status === 200) {
-        console.log('Projects found: ' + response.data.data.length);
+        //console.log('Projects found: ' + response.data.data.length);
+        countProcessing = countProcessing + response.data.data.length;
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        process.stdout.write('Projects found: ' + countProcessing);
 
         const data = response.data.data;
 
@@ -77,7 +82,8 @@ export async function listProjects() {
 
       ttl--;
     }
-    console.log(`${count} projects processed.`);
+    process.stdout.write('\n');
+    console.log('\x1b[33m%s\x1b[0m', `${count} projects processed.`);
   } catch (err) {
     console.log(err);
   }

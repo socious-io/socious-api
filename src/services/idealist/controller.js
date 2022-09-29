@@ -109,6 +109,13 @@ export async function getListings(projectTypes) {
     let since = await lastIdealistProject(projectTypes); //get from database
 
     if (since_timstamp) since = since_timstamp;
+    if (!idealist_token) {
+      console.log(
+        '\x1b[31m%s\x1b[0m',
+        'Idealist token not found! Please check if it is set into the .env file.',
+      );
+      process.exit(1);
+    }
 
     if (!since) since = '';
 

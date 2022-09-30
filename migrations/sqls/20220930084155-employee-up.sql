@@ -1,7 +1,7 @@
 
 ALTER TABLE applicants 
 ADD COLUMN weekly_limit int
-ADD COLUMN estimation_total_hours int DEFAULT 1;
+ADD COLUMN total_hours int DEFAULT 1;
 
 CREATE TABLE employees (
   id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY NOT NULL,

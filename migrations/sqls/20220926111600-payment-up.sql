@@ -18,6 +18,7 @@ CREATE TABLE payments (
 );
 
 ALTER TABLE projects ALTER COLUMN payment_currency TYPE payment_currency;
+ALTER TABLE applicants ALTER COLUMN offer_rate TYPE float USING assignment_total::float;
 ALTER TABLE applicants ALTER COLUMN assignment_total TYPE float USING assignment_total::float;
 
 ALTER TABLE projects ADD COLUMN total_escrow_amount float;

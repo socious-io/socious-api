@@ -39,7 +39,7 @@ router.post('/project/:id/escrow', loginRequired, checkIdParams, async (ctx) => 
     identity_id: ctx.identity.id,
     meta: {
       project_id: project.id
-    }    
+    }
   })
 
 })
@@ -48,9 +48,6 @@ router.post('/project/:id/escrow', loginRequired, checkIdParams, async (ctx) => 
 
 router.post('/:id/verify', loginRequired, checkIdParams,  async (ctx) => {
   const success = await Payment.verify(ctx.params.id)
-
-  // TODO: check payment and if it's project escrow make escrow on success
-
   ctx.body = {
     message: success ? 'success' : 'fail',
     code: success ? 1 : 0,

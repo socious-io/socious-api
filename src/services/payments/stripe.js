@@ -3,7 +3,6 @@ import Config from '../../config.js';
 import Data from '@socious/data';
 import Stripe from 'stripe';
 import {create, setTransaction, complete, cancel} from './transaction.js';
-import {PermissionError} from '../../utils/errors.js';
 
 const stripe = Stripe(Config.payments.stripe.secret_key);
 
@@ -80,7 +79,6 @@ export const expire = async (trx) => {
 };
 
 export const verify = async (trx) => {
-  if (trx.verified_at) throw new PermissionError();
 
   const session = await stripe.checkout.sessions.retrieve(trx.transaction_id);
 

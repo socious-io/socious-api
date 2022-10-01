@@ -34,27 +34,17 @@ export const setTransaction = async (id, transaction) => {
 };
 
 export const complete = async (id) => {
-  try {
-    const {rows} = await app.db.query(sql`
-      UPDATE payments SET verified_at=now() WHERE id=${id}
+  return app.db.query(sql`
+      UPDATE payments SET verified_at=now() WHERE id=${id} AND verified_at IS NULL
       RETURNING *
     `);
-    return rows[0].id;
-  } catch (err) {
-    throw new EntryError(err);
-  }
 };
 
 export const cancel = async (id) => {
-  try {
-    const {rows} = await app.db.query(sql`
-      UPDATE payments SET canceled_at=now() WHERE id=${id}
+  return app.db.query(sql`
+      UPDATE payments SET canceled_at=now() WHERE id=${id} AND cenceled_at IS NULL
       RETURNING *
     `);
-    return rows[0].id;
-  } catch (err) {
-    throw new EntryError(err);
-  }
 };
 
 export const get = async (id) => {

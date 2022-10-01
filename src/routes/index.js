@@ -12,6 +12,7 @@ import {router as post} from './post.js';
 import {router as follow} from './follow.js';
 import {router as notif} from './notification.js';
 import {router as project} from './project.js';
+import {router as applicant} from './applicant.js';
 import {router as chat} from './chat.js';
 import {router as device} from './device.js';
 import {router as media} from './media.js';
@@ -42,6 +43,7 @@ export default (app) => {
   blueprint.use('/orgs', org.routes(), org.allowedMethods());
   blueprint.use('/posts', post.routes(), post.allowedMethods());
   blueprint.use('/projects', project.routes(), project.allowedMethods());
+  blueprint.use('/applicants', applicant.routes(), applicant.allowedMethods());
   blueprint.use('/follows', follow.routes(), follow.allowedMethods());
   blueprint.use('/notifications', notif.routes(), notif.allowedMethods());
 

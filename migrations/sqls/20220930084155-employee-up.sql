@@ -1,7 +1,7 @@
 
 ALTER TABLE applicants 
-ADD COLUMN weekly_limit int
-ADD COLUMN total_hours int DEFAULT 1;
+  ADD COLUMN weekly_limit int,
+  ADD COLUMN total_hours int DEFAULT 1;
 
 CREATE TABLE employees (
   id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY NOT NULL,
@@ -22,14 +22,13 @@ CREATE FUNCTION applicant_employee()
 RETURNS TRIGGER AS
 $$
 BEGIN
-  CASE
-    WHEN NEW.status = 'HIRED' AND NOT EXISTS (SELECT id FROM employees WHERE identity_id=NEW.identity_id AND project_id=NEW.project_id) THEN
+  IF NEW.status = 'HIRED' AND NOT EXISTS (SELECT id FROM employees WHERE identity_id=NEW.identity_id AND project_id=NEW.project_id) THEN
     INSERT INTO employees (project_id, identity_id, applicant_id) VALUES (
       NEW.project_id,
       NEW.identity_id,
       NEW.id
     );
-  END;
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

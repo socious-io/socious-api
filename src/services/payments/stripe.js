@@ -26,7 +26,6 @@ export const checkout = async ({
   meta,
   callback,
 }) => {
-
   const product = await stripe.products.create({
     name,
     description,
@@ -67,7 +66,7 @@ export const checkout = async ({
       id: trx.id,
       amount: trx.amount,
       currency: trx.currency,
-      url: session.url
+      url: session.url,
     };
   } catch (err) {
     await app.db.query('ROLLBACK');

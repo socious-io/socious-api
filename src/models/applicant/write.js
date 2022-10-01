@@ -84,7 +84,14 @@ export const hire = async (id) => {
 
 export const offer = async (
   id,
-  {offer_rate, offer_message, due_date, assignment_total, total_hours, weekly_limit},
+  {
+    offer_rate,
+    offer_message,
+    due_date,
+    assignment_total,
+    total_hours,
+    weekly_limit,
+  },
 ) => {
   try {
     const {rows} = await app.db.query(

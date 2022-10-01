@@ -4,8 +4,7 @@ import {get} from './transaction.js';
 import * as Stripe from './stripe.js';
 
 const checkout = async (body) => {
-  
-  if (!body.currency) body.currency = Data.PaymentCurrency.USD
+  if (!body.currency) body.currency = Data.PaymentCurrency.USD;
 
   switch (body.service) {
     case 'STRIPE':

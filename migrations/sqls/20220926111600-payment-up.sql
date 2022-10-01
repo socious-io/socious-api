@@ -1,5 +1,5 @@
 CREATE TYPE payment_service AS ENUM ('STRIPE');
-CREATE TYPE payment_currency AS ENUM ('USD', 'JPY', 'EUR');
+CREATE TYPE payment_currency AS ENUM ('USD', 'RWF', 'AUD','BDT','GTQ','INR','CHF','MXN','CAD','DOP','KRW','EUR','ZAR','NPR','COP','UYU','CRC','JPY','GBP','ARS','GHS','PEN','DKK','BRL','CLP', 'EGP', 'THB');
 CREATE TYPE topup_status AS ENUM ('WAITING', 'COMPLETE');
 
 
@@ -17,11 +17,14 @@ CREATE TABLE payments (
   CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE
 );
 
-ALTER TABLE projects ALTER COLUMN payment_currency TYPE payment_currency;
-ALTER TABLE applicants ALTER COLUMN offer_rate TYPE float USING assignment_total::float;
-ALTER TABLE applicants ALTER COLUMN assignment_total TYPE float USING assignment_total::float;
+ALTER TABLE applicants 
+  ALTER COLUMN offer_rate TYPE float USING assignment_total::float;
 
-ALTER TABLE projects ADD COLUMN total_escrow_amount float;
+ALTER TABLE applicants 
+  ALTER COLUMN assignment_total TYPE float USING assignment_total::float;
+
+ALTER TABLE projects 
+  ADD COLUMN total_escrow_amount float;
 
 CREATE TABLE topups (
   id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY NOT NULL,
@@ -39,8 +42,8 @@ CREATE TABLE escrows (
   project_id uuid NOT NULL,
   payment_id uuid NOT NULL,
   topup_id uuid,
-  amount float GENERATED ALWAYS AS (SELECT amount FROM payments WHERE id=payment_id),
-  currency payment_currency GENERATED ALWAYS AS (SELECT currency FROM payments WHERE id=payment_id),
+  amount float,
+  currency payment_currency,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   released_at timestamp,
   refound_at timestamp,
@@ -54,15 +57,14 @@ CREATE FUNCTION payment_escrow()
 RETURNS TRIGGER AS
 $$
 BEGIN
-  CASE
-    WHEN NEW.meta->>'project_id' IS NOT NULL AND NEW.verified_at IS NOT NULL THEN
+  IF NEW.meta->>'project_id' IS NOT NULL AND NEW.verified_at IS NOT NULL THEN
     INSERT INTO escrows (project_id, payment_id, amount, currency) VALUES (
       NEW.meta->>'project_id',
       NEW.id,
       NEW.amount,
       NEW.currency
     );
-  END;
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

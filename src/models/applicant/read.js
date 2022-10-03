@@ -46,8 +46,11 @@ export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
 
 export const owner = async (userId, id) => {
   try {
-    await app.db.get(
-      sql`SELECT * FROM applicants WHERE id=${id} and user_id=${userId}`,
+    return app.db.get(
+      sql`SELECT a.*, row_to_json(p.*) AS project
+      FROM applicants a 
+      JOIN projects p ON a.project_id=p.id
+      WHERE a.id=${id} and a.user_id=${userId}`,
     );
   } catch {
     throw new PermissionError('not allow');
@@ -56,7 +59,8 @@ export const owner = async (userId, id) => {
 
 export const projectOwner = async (identityId, id) => {
   try {
-    await app.db.get(sql`SELECT * FROM applicants a 
+    return app.db.get(sql`SELECT a.*, row_to_json(p.*) AS project
+      FROM applicants a 
       JOIN projects p ON a.project_id=p.id 
       WHERE id=${id} AND p.identity_id=${identityId}`);
   } catch {

@@ -28,12 +28,12 @@ export const projectPermission = async (ctx, next) => {
 };
 
 export const projectOwner = async (ctx, next) => {
-  await Applicant.owner(ctx.identity.id, ctx.params.id);
+  ctx.applicant = await Applicant.projectOwner(ctx.identity.id, ctx.params.id);
   return next();
 };
 
 export const applicantOwner = async (ctx, next) => {
-  await Applicant.owner(ctx.user.id, ctx.params.id);
+  ctx.applicant = await Applicant.owner(ctx.user.id, ctx.params.id);
   return next();
 };
 

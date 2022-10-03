@@ -12,12 +12,14 @@ import {router as post} from './post.js';
 import {router as follow} from './follow.js';
 import {router as notif} from './notification.js';
 import {router as project} from './project.js';
+import {router as applicant} from './applicant.js';
 import {router as chat} from './chat.js';
 import {router as device} from './device.js';
 import {router as media} from './media.js';
 import {router as skill} from './skill.js';
 import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
+import {router as payment} from './payment.js';
 
 export default (app) => {
   const blueprint = new Router();
@@ -41,6 +43,7 @@ export default (app) => {
   blueprint.use('/orgs', org.routes(), org.allowedMethods());
   blueprint.use('/posts', post.routes(), post.allowedMethods());
   blueprint.use('/projects', project.routes(), project.allowedMethods());
+  blueprint.use('/applicants', applicant.routes(), applicant.allowedMethods());
   blueprint.use('/follows', follow.routes(), follow.allowedMethods());
   blueprint.use('/notifications', notif.routes(), notif.allowedMethods());
 
@@ -50,6 +53,7 @@ export default (app) => {
   blueprint.use('/media', media.routes(), media.allowedMethods());
   blueprint.use('/skills', skill.routes(), skill.allowedMethods());
   blueprint.use('/search', search.routes(), search.allowedMethods());
+  blueprint.use('/payments', payment.routes(), payment.allowedMethods());
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

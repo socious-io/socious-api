@@ -4,7 +4,7 @@ import {PermissionError} from '../../utils/errors.js';
 import Data from '@socious/data';
 import Identity from '../identity/index.js';
 
-const MemberTypes = Data.ChatMemberType
+const MemberTypes = Data.ChatMemberType;
 
 export const all = async (identityId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
@@ -53,6 +53,13 @@ export const find = async (identityId, {participants}) => {
 
 export const get = async (id) => {
   return app.db.get(sql`SELECT * FROM chats WHERE id=${id}`);
+};
+
+export const getAll = async (ids) => {
+  const {rows} = await app.db.query(
+    sql`SELECT * FROM chats WHERE id=ANY(${ids})`,
+  );
+  return rows;
 };
 
 export const messages = async (id, {offset = 0, limit = 10}) => {

@@ -30,7 +30,12 @@ export default (app) => {
   );
 
   blueprint.use('/ping', ping.routes(), ping.allowedMethods());
-  blueprint.use('/auth', blocker(Config.requestBlocker.auth), auth.routes(), auth.allowedMethods());
+  blueprint.use(
+    '/auth',
+    blocker(Config.requestBlocker.auth),
+    auth.routes(),
+    auth.allowedMethods(),
+  );
   blueprint.use('/user', user.routes(), user.allowedMethods());
   blueprint.use('/identities', identity.routes(), identity.allowedMethods());
   blueprint.use('/orgs', org.routes(), org.allowedMethods());

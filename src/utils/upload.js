@@ -2,12 +2,9 @@ import Crypto from 'crypto';
 import AWS from 'aws-sdk';
 import fs from 'fs/promises';
 import Config from '../config.js';
-import Data from '@socious/data'
-
+import Data from '@socious/data';
 
 const s3 = new AWS.S3();
-
-
 
 const makeExtention = (contentType) => {
   switch (contentType) {

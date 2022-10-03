@@ -45,7 +45,7 @@ export default {
   },
   session: {
     key: 'Socious.sess',
-    maxAge: '2h',
+    maxAge: 48 * 60 * 60 * 1000,
     autoCommit: true,
     overwrite: true,
     httpOnly: true,
@@ -62,10 +62,11 @@ export default {
   requestBlocker: {
     // We may tagname blocker configs and use it on other groups and routes
     auth: {
-      resetTimer:  process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
-      blockerTimer: process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
-      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
-    }
+      resetTimer: process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
+      blockerTimer:
+        process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
+      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10,
+    },
   },
   aws: {
     cdn_url:

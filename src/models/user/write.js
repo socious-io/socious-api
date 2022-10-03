@@ -13,7 +13,7 @@ export const insert = async (
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO users (first_name, last_name, username, email, password) 
-    VALUES (${first_name}, ${last_name}, ${username},
+    VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
       ${email.toLowerCase()}, ${hashedPasswd}) RETURNING *
   `);
     return rows[0];
@@ -40,6 +40,7 @@ export const updateProfile = async (
     mission,
     language,
     mobile_country_code,
+    username,
   },
 ) => {
   const query = sql`
@@ -49,7 +50,7 @@ export const updateProfile = async (
       bio=${bio}, city=${city}, address=${address}, country=${country},
       wallet_address=${wallet_address}, social_causes=${social_causes},
       skills=${skills}, mission=${mission}, language=${language},
-      mobile_country_code=${mobile_country_code}
+      mobile_country_code=${mobile_country_code},username=${username.toLowerCase()}
     WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {

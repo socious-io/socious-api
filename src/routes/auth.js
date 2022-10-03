@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import Debug from 'debug';
 import Auth from '../services/auth/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 
 export const router = new Router();
 
@@ -51,7 +52,7 @@ router.post('/refresh', async (ctx) => {
 router.post('/logout', async (ctx) => {
   const {refresh_token} = ctx.request.body;
   if (refresh_token) await Auth.expireRefreshToken(refresh_token);
-  delete ctx.session.token;
+  ctx.session = null;
   ctx.body = {message: 'success'};
 });
 

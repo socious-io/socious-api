@@ -47,7 +47,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
- * @apiQuery {String} identity
+ * @apiQuery {String} identity Filter by owning organization
  *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
@@ -143,7 +143,7 @@ router.post(
  * @apiName Get Questions
  * @apiVersion 2.0.0
  * @apiDescription get question
- * 
+ *
  * @apiParam {String} id project id
  *
  * @apiSuccess {Object[]} questions
@@ -172,7 +172,7 @@ router.get(
  * @apiName New Questions
  * @apiVersion 2.0.0
  * @apiDescription Add new question
- * 
+ *
  * @apiParam {String} id project id
  *
  * @apiBody {String} question

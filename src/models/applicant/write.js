@@ -84,7 +84,14 @@ export const hire = async (id) => {
 
 export const offer = async (
   id,
-  {offer_rate, offer_message, due_date, assignment_total},
+  {
+    offer_rate,
+    offer_message,
+    due_date,
+    assignment_total,
+    total_hours,
+    weekly_limit,
+  },
 ) => {
   try {
     const {rows} = await app.db.query(
@@ -94,7 +101,9 @@ export const offer = async (
         offer_message=${offer_message},
         due_date=${due_date},
         assignment_total=${assignment_total},
-        status=${StatusTypes.OFFERED}
+        status=${StatusTypes.OFFERED},
+        total_hours=${total_hours},
+        weekly_limits=${weekly_limit}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];

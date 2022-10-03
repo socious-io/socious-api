@@ -96,7 +96,9 @@ async function getExperienceLevel(p) {
       secondNum = parseInt(Array.from(exp)[0]);
     }
     if (!isNaN(firstNum) && !isNaN(secondNum)) {
-      return Math.round((firstNum + secondNum) / 2);
+      let res = Math.round((firstNum + secondNum) / 2);
+
+      return res < 4 ? res : 4;
     }
     return 0;
   }

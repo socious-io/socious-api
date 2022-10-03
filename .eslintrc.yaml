@@ -15,7 +15,7 @@ plugins:
 rules:
   linebreak-style:
     - error
-    - windows
+    - unix
   no-unused-vars:
     - error
     -

@@ -12,7 +12,7 @@ export async function listProjects() {
   let last_id = await getLastReliefWebProjectId();
   let next = true;
   let ttl = 100;
-  let limit = 1000; //up to 1000, defaults to 1000
+  let limit = 100; //up to 1000, defaults to 1000
 
   let url_params;
 
@@ -32,14 +32,15 @@ export async function listProjects() {
         })
         .catch(function (error) {
           if (error.response) {
-            console.log(error.response);
+            //console.log(error.response);
             throw new Error(
               `Error in response getting listings, ${error.response.status}`,
             );
             //console.log(error.response.headers);
           } else if (error.request) {
+            //console.log(error.request);
             throw new Error(
-              `Error in request getting listings for, ${error.request}`,
+              `Error in request getting listings for, ${error.message}`,
             );
           } else {
             console.log(`Other error getting listing for, ${error.message}`);
@@ -47,7 +48,6 @@ export async function listProjects() {
         });
 
       if (response.status === 200) {
-        //console.log('Projects found: ' + response.data.data.length);
         countProcessing = countProcessing + response.data.data.length;
         process.stdout.clearLine(0);
         process.stdout.cursorTo(0);
@@ -60,8 +60,6 @@ export async function listProjects() {
         }
 
         if (data.length > 0) {
-          //let last_record = data[data.length - 1];
-          //last_id = last_record.id;
           last_id = data[data.length - 1].id;
         }
 

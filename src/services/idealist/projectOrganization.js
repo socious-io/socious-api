@@ -3,7 +3,7 @@ import {app} from '../../index.js';
 
 import organization from '../../models/organization/index.js';
 import media from '../../models/media/index.js';
-//import {Type} from '../../models/organization/enums.js';
+import {OrganizationType} from '@socious/data/src/enums.js';
 
 /**
  * creates new organization from project if it doesn't exists in database
@@ -26,19 +26,11 @@ export const organizationFromProject = async function (project) {
     try {
       const orgBio = await organizationBio(org);
 
-      const Type = {
-        SOCIAL: 'SOCIAL',
-        NONPROFIT: 'NONPROFIT',
-        COOP: 'COOP',
-        IIF: 'IIF',
-        PUBLIC: 'PUBLIC',
-        INTERGOV: 'INTERGOV',
-        DEPARTMENT: 'DEPARTMENT',
-        OTHER: 'OTHER',
-      };
-
       let type = 'OTHER';
-      if (org.orgType && Object.values(Type).includes(org.orgType)) {
+      if (
+        org.orgType &&
+        Object.values(OrganizationType).includes(org.orgType)
+      ) {
         type = org.orgType;
       }
 

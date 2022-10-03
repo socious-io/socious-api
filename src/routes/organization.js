@@ -196,11 +196,11 @@ router.post(
 );
 
 /**
- * @api {post} /orgs/:id/members add member
+ * @api {get} /orgs/:id/members Get members
  * @apiGroup Organazation.Members
  * @apiName Update
  * @apiVersion 2.0.0
- * @apiDescription update organazation
+ * @apiDescription get organization members
  *
  * @apiParam {String} id
  *

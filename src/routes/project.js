@@ -43,7 +43,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
- * @apiQuery {String} identity
+ * @apiQuery {String} identity Filter by owning organization
  *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit

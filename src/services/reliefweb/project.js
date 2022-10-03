@@ -75,6 +75,7 @@ async function parseProject(p, type) {
       ? p.body
       : 'No information aviable',
     ...(countryIso2 && {country: countryIso2}),
+    ...(p.city && p.city[0].name && {city: p.city[0].name}),
     ...(experienceLevel && {experience_level: experienceLevel}),
     status: 'ACTIVE',
     ...(p.date?.closing && {expires_at: p.date.closing}),

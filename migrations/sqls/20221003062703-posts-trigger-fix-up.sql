@@ -1,0 +1,5 @@
+DROP TRIGGER del_post ON posts;
+
+
+CREATE TRIGGER del_post
+    AFTER DELETE ON posts FOR EACH ROW EXECUTE FUNCTION del_post();

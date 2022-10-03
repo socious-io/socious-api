@@ -87,7 +87,6 @@ async function saveProject(pro, type, orgId) {
     const body = {
       title: projectName,
       description: pro.description ? pro.description : 'No information',
-      ...(pro.address && pro.address.country && {country: pro.address.country}),
       remote_preference: remotePreference,
       payment_type: paymentType,
       payment_scheme: paymentScheme,
@@ -100,6 +99,8 @@ async function saveProject(pro, type, orgId) {
       }),
       ...(experienceLevel && {experience_level: experienceLevel}),
       status: 'ACTIVE',
+      ...(pro.address?.country && {country: pro.address.country}),
+      ...(pro.address?.city && {city: pro.address.city}),
       ...(pro.expires && {expires_at: pro.expires}), //check if works for date
       other_party_id: pro.id,
       other_party_title: type,

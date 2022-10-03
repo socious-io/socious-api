@@ -20,6 +20,7 @@ export const insert = async (
     skills,
     causes_tags,
     country,
+    city,
     other_party_id,
     other_party_title,
     other_party_url,
@@ -35,7 +36,7 @@ export const insert = async (
         payment_type, payment_scheme, payment_currency, 
         payment_range_lower, payment_range_higher, experience_level,
         status, remote_preference, project_type, project_length,
-        skills, causes_tags, country, other_party_id, other_party_title,
+        skills, causes_tags, country, city, other_party_id, other_party_title,
         other_party_url, expires_at, updated_at
       )
       VALUES (
@@ -44,7 +45,7 @@ export const insert = async (
         ${payment_currency}, ${payment_range_lower},
         ${payment_range_higher}, ${experience_level}, ${status},
         ${remote_preference}, ${project_type}, ${project_length},
-        ${skills}, ${causes_tags}, ${country}, ${other_party_id}, ${other_party_title},
+        ${skills}, ${causes_tags}, ${country}, ${city}, ${other_party_id}, ${other_party_title},
         ${other_party_url}, ${expires_at}, ${updated_at}
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`,
@@ -73,6 +74,7 @@ export const update = async (
     skills,
     causes_tags,
     country,
+    city,
     other_party_id,
     other_party_title,
     other_party_url,
@@ -99,6 +101,7 @@ export const update = async (
         skills=${skills},
         causes_tags=${causes_tags},
         country=${country},
+        city=${city},
         other_party_id=${other_party_id}, 
         other_party_title=${other_party_title},
         other_party_url=${other_party_url},

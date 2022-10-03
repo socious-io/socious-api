@@ -70,7 +70,14 @@ export default {
     key: process.env.FCM_KEY,
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || 'localhost:3000').split(','),
+    origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(
+      ',',
+    ),
+  },
+  payments: {
+    stripe: {
+      secret_key: process.env.STRIPE_SECRET_KEY,
+    },
   },
 };
 

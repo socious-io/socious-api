@@ -25,6 +25,7 @@ export const insert = async (
     other_party_url,
     expires_at,
     updated_at,
+    city,
   },
 ) => {
   try {
@@ -36,7 +37,7 @@ export const insert = async (
         payment_range_lower, payment_range_higher, experience_level,
         status, remote_preference, project_type, project_length,
         skills, causes_tags, country, other_party_id, other_party_title,
-        other_party_url, expires_at, updated_at
+        other_party_url, expires_at, updated_at, city
       )
       VALUES (
         ${title}, ${description}, ${identityId}, 
@@ -45,7 +46,7 @@ export const insert = async (
         ${payment_range_higher}, ${experience_level}, ${status},
         ${remote_preference}, ${project_type}, ${project_length},
         ${skills}, ${causes_tags}, ${country}, ${other_party_id}, ${other_party_title},
-        ${other_party_url}, ${expires_at}, ${updated_at}
+        ${other_party_url}, ${expires_at}, ${updated_at}, ${city}
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
@@ -78,6 +79,7 @@ export const update = async (
     other_party_url,
     expires_at,
     updated_at,
+    city,
   },
 ) => {
   try {
@@ -104,6 +106,7 @@ export const update = async (
         other_party_url=${other_party_url},
         expires_at=${expires_at},
         updated_at=${updated_at}
+        city=${city}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];

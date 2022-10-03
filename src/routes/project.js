@@ -9,12 +9,8 @@ import {
   loginOptional,
   loginRequired,
 } from '../utils/middlewares/authorization.js';
-import {
-  applicantOwner,
-  checkIdParams,
-  projectPermission,
-} from '../utils/middlewares/route.js';
-import {projectOwner} from '../models/applicant/read.js';
+import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
+
 export const router = new Router();
 
 /**
@@ -47,7 +43,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
  * @apiQuery {Number} page default 1
  * @apiQuery {Number{min: 1}} limit=10
  *
- * @apiQuery {String} identity
+ * @apiQuery {String} identity Filter by owning organization
  *
  * @apiSuccess {Number} page
  * @apiSuccess {Number} limit
@@ -277,33 +273,6 @@ router.get(
 );
 
 /**
- * @api {get} /projects/applicants/:id Get applicant
- * @apiGroup Project
- * @apiName GetApplicants
- * @apiVersion 2.0.0
- * @apiDescription get applicant by id
- *
- * @apiParam {String} id
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
-router.get('/applicants/:id', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await Applicant.get(ctx.params.id);
-});
-
-/**
  * @api {post} /projects/:id/applicants Apply
  * @apiGroup Project
  * @apiName Apply
@@ -355,216 +324,3 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
     identity: ctx.identity,
   });
 });
-
-/**
- * @api {post} /projects/applicants/:id/withdraw Withdraw Application
- * @apiGroup Project
- * @apiName WithdrawApplicant
- * @apiVersion 2.0.0
- * @apiDescription withdraw application; must be applicant (owner)
- *
- * @apiParam {String} id
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
-router.post(
-  '/applicants/:id/withdraw',
-  loginRequired,
-  checkIdParams,
-  applicantOwner,
-  async (ctx) => {
-    ctx.body = await Applicant.withdraw(ctx.params.id);
-  },
-);
-
-/**
- * @api {post} /projects/applicants/:id/offer Offer Applicant
- * @apiGroup Project
- * @apiName OfferApplicant
- * @apiVersion 2.0.0
- * @apiDescription offer for applicant must be project owner
- *
- * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- *
- * @apiParam {String} id
- *
- * @apiBody {String} offer_rate
- * @apiBody {String} offer_message
- * @apiBody {Number} assignment_total
- * @apiBody {Datetime} due_date
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
-router.post(
-  '/applicants/:id/offer',
-  loginRequired,
-  checkIdParams,
-  projectOwner,
-  async (ctx) => {
-    await validate.ApplicantOfferSchema.validateAsync(ctx.request.body);
-    ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
-  },
-);
-
-/**
- * @api {post} /projects/applicants/:id/reject Reject Applicant
- * @apiGroup Project
- * @apiName RejectApplicant
- * @apiVersion 2.0.0
- * @apiDescription offer for applicant must be project owner
- *
- * @apiHeader {String} Current-Identity default current user identity can set organization identity if current user has permission
- *
- * @apiParam {String} id
- *
- * @apiBody {String} feedback
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
-router.post(
-  '/applicants/:id/reject',
-  loginRequired,
-  checkIdParams,
-  projectOwner,
-  async (ctx) => {
-    await validate.ApplicantRejectSchema.validateAsync(ctx.request.body);
-    ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
-  },
-);
-
-/**
- * @api {post} /projects/applicants/:id/approve Approve Offer
- * @apiGroup Project
- * @apiName ApproveOffer
- * @apiVersion 2.0.0
- * @apiDescription approve offer must be applicant owner
- *
- * @apiParam {String} id
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- */
-router.post(
-  '/applicants/:id/approve',
-  loginRequired,
-  applicantOwner,
-  async (ctx) => {
-    ctx.body = await Applicant.approve(ctx.params.id);
-  },
-);
-
-/**
- * @api {post} /projects/applicants/:id Update Applicant
- * @apiGroup Project
- * @apiName UpdateApplicant
- * @apiVersion 2.0.0
- * @apiDescription approve offer must be applicant owner
- *
- * @apiParam {String} id applicant
- *
- * @apiBody {String} cover_letter
- * @apiBody {String} payment_type
- * @apiBody {String} payment_rate
- * @apiBody {Object[]} answers
- * @apiBody {String} answers.id
- * @apiBody {String} answers.answer
- * @apiBody {Number} answers.selected_option
- *
- * @apiSuccess {String} status
- * @apiSuccess {String} cover_letter
- * @apiSuccess {String} asignment_total
- * @apiSuccess {String} due_date
- * @apiSuccess {String} feedback
- * @apiSuccess {String} payment_type
- * @apiSuccess {String} payment_rate
- * @apiSuccess {String} offer_rate
- * @apiSuccess {String} offer_message
- * @apiSuccess {String} project_id
- * @apiSuccess {String} user_id
- * @apiSuccess {Datetime} created_at
- * @apiSuccess {Datetime} updated_at
- * @apiSuccess {Object[]} answers
- * @apiSuccess {String} answers.id
- * @apiSuccess {String} answers.answer
- * @apiSuccess {Number} answers.selected_option
- */
-router.post(
-  '/applicants/update/:id',
-  loginRequired,
-  checkIdParams,
-  applicantOwner,
-  async (ctx) => {
-    await validate.ApplicantSchema.validateAsync(ctx.request.body);
-    ctx.body = await Applicant.editApply(ctx.params.id, ctx.request.body);
-  },
-);
-
-/**
- * @api {post} /projects/remove/applicants/:id Remove Applicant
- * @apiGroup Project
- * @apiName RemoveApplicant
- * @apiVersion 2.0.0
- * @apiDescription approve offer must be applicant owner
- *
- * @apiParam {String} id
- *
- */
-router.post(
-  '/remove/applicants/:id',
-  loginRequired,
-  checkIdParams,
-  applicantOwner,
-  async (ctx) => {
-    await Applicant.remove(ctx.params.id);
-    ctx.body = {
-      message: 'success',
-    };
-  },
-);

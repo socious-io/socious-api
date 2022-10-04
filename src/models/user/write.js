@@ -86,3 +86,20 @@ export const verifyPhone = async (id) => {
     sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );
 };
+
+export const remove = async (user, reason) => {
+  await app.db.query('BEGIN');
+  try {
+    Promise.all([
+      app.db.query(
+        sql`INSERT INTO deleted_users (user_id, username, reason, registered_at)
+      VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`,
+      ),
+      app.db.query(sql`DELETE FROM users WHERE id=${user.id}`),
+    ]);
+    await app.db.query('COMMIT');
+  } catch (err) {
+    await app.db.query('ROLLBACK');
+    throw err;
+  }
+};

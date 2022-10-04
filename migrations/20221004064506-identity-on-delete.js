@@ -22,7 +22,7 @@ exports.up = function (db) {
   var filePath = path.join(
     __dirname,
     'sqls',
-    '20221004055314-fix-trigger-up.sql',
+    '20221004064506-identity-on-delete-up.sql',
   );
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
@@ -40,7 +40,7 @@ exports.down = function (db) {
   var filePath = path.join(
     __dirname,
     'sqls',
-    '20221004055314-fix-trigger-down.sql',
+    '20221004064506-identity-on-delete-down.sql',
   );
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {

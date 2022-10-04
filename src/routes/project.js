@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import {validate} from '@socious/data';
+import Data, {validate} from '@socious/data';
 import Project from '../models/project/index.js';
 import Applicant from '../models/applicant/index.js';
 import Notif from '../models/notification/index.js';
@@ -10,6 +10,7 @@ import {
   loginRequired,
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
+import { PermissionError } from '../utils/errors.js';
 
 export const router = new Router();
 
@@ -89,6 +90,9 @@ router.get('/', loginOptional, paginate, async (ctx) => {
  * @apiSuccess {Datetime} updated_at
  */
 router.post('/', loginRequired, async (ctx) => {
+  // only organizations allow to create projects
+  if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError()
+
   await validate.ProjectSchema.validateAsync(ctx.request.body);
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
 });

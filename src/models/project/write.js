@@ -105,7 +105,7 @@ export const update = async (
         other_party_title=${other_party_title},
         other_party_url=${other_party_url},
         expires_at=${expires_at},
-        updated_at=${updated_at}
+        updated_at=${updated_at},
         city=${city}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );

@@ -79,7 +79,6 @@ export const expire = async (trx) => {
 };
 
 export const verify = async (trx) => {
-
   const session = await stripe.checkout.sessions.retrieve(trx.transaction_id);
 
   const isSuccess =

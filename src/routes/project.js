@@ -56,7 +56,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
  * @apiSuccess {Datetime} items.created_at
  * @apiSuccess {Datetime} items.updated_at
  */
-router.get('/', loginRequired, paginate, async (ctx) => {
+router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = ctx.query.identity
     ? await Project.allByIdentity(ctx.query.identity, ctx.paginate)
     : await Project.all(ctx.paginate);

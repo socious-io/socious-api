@@ -1,7 +1,6 @@
 import Router from '@koa/router';
 import Debug from 'debug';
 import Auth from '../services/auth/index.js';
-import {loginRequired} from '../utils/middlewares/authorization.js';
 
 export const router = new Router();
 

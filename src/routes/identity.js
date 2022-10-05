@@ -1,5 +1,4 @@
 import Router from '@koa/router';
-import {validate} from '@socious/data';
 import Identity from '../models/identity/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {checkIdParams} from '../utils/middlewares/route.js';

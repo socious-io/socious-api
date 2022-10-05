@@ -28,7 +28,10 @@ const emitEvent = async (eventType, userId, id) => {
 };
 
 const coordinateNotifs = async (userId, body) => {
-  const consolidateExceptions = [Data.NotificationType.APPLICATION];
+  const consolidateExceptions = [
+    Data.NotificationType.APPLICATION,
+    Data.NotificationType.FOLLOWED,
+  ];
 
   let name = body.identity?.meta?.username || body.identity?.meta?.shortname;
   let message = makeMessage(body.type, name);

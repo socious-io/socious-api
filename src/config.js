@@ -79,7 +79,6 @@ export default {
       secret_key: process.env.STRIPE_SECRET_KEY,
     },
   },
-  statics: process.env.STATICS || 'statics',
 };
 
 /**

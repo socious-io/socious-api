@@ -1,9 +1,7 @@
 import Koa from 'koa';
-import serve from 'koa-static';
 import http from 'http';
 import morgan from 'koa-morgan';
 import pg from 'pg';
-
 import {DBCircuitBreaker} from './utils/circuitbreaker.js';
 import socket from './utils/socket.js';
 import blueprint from './routes/index.js';
@@ -24,8 +22,6 @@ app.use(
     },
   }),
 );
-
-app.use(serve(Config.statics));
 
 // configure the database via environment, see:
 // https://www.postgresql.org/docs/9.1/libpq-envars.html

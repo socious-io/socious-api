@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import Config from '../config.js';
 import {accessWebhooks} from '../utils/middlewares/authorization.js';
+import {koaSwagger} from 'koa2-swagger-ui';
 import blocker from '../utils/middlewares/blocker.js';
 
 import {router as ping} from './ping.js';
@@ -28,6 +29,11 @@ export default (app) => {
   blueprint.get('/openapi.json', (ctx) => {
     ctx.body = openapi;
   });
+
+  blueprint.get(
+    '/docs',
+    koaSwagger({routePrefix: false, swaggerOptions: {spec: openapi}}),
+  );
 
   blueprint.use(
     '/webhooks',

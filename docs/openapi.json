@@ -7,9 +7,6 @@
   "servers": [
     {
       "url": "https://dev.socious.io/api/v2/"
-    },
-    {
-      "url": "http://localhost:8370"
     }
   ],
   "components": {

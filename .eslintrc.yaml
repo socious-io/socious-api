@@ -6,6 +6,7 @@ parserOptions:
   ecmaVersion: 2022
   ecmaFeatures:
     impliedStrict: true
+    experimentalObjectRestSpread: true
   sourceType: module
 extends:
   - 'eslint:recommended'

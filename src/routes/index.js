@@ -20,9 +20,14 @@ import {router as skill} from './skill.js';
 import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
 import {router as payment} from './payment.js';
+import openapi from '../../docs/openapi.json' assert {type: 'json'};
 
 export default (app) => {
   const blueprint = new Router();
+
+  blueprint.get('/openapi.json', (ctx) => {
+    ctx.body = openapi;
+  });
 
   blueprint.use(
     '/webhooks',

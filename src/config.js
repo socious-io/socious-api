@@ -40,7 +40,7 @@ export default {
     password: process.env.PGPASSWORD,
   },
   nats: {
-    servers: process.env.NATS_HOSTS.split(','),
+    servers: process.env.NATS_HOSTS?.split(','),
     token: process.env.NATS_TOKEN,
   },
   session: {

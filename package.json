@@ -26,7 +26,9 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "ENV=testing node scripts/createdb.js || db-migrate up --config ./migrations/database_test.json",
     "test": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit || ENV=testing node scripts/dropdb.js",
+    "posttest": "ENV=testing node scripts/dropdb.js",
     "test:watch": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --watch",
+    "test:ci": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --ci --reporters='default' --reporters=jest-junit",
     "test:cov": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --coverage",
     "test:debug": "ENV=testing node --inspect-brk node_modules/.bin/jest --runInBand",
     "apidoc": "apidoc -i src/routes -o apidoc",
@@ -35,6 +37,7 @@
     "workers:watch": "nodemon --inspect src/services/jobs/workers.js"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@forfuture/apidoc-openapi": "^0.0.1",
     "@koa/cors": "^3.4.1",
     "@koa/router": "^12.0.0",
@@ -52,6 +55,7 @@
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "http-errors": "~2.0.0",
+    "jest-junit": "^14.0.1",
     "joi": "^17.6.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
@@ -76,6 +80,7 @@
     "supertest-koa-agent": "^0.3.2"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-assertions": "^7.18.6",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.0.4",

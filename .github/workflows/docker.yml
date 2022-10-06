@@ -160,20 +160,18 @@ jobs:
       - name: Run DB and NATS
         run: docker-compose up -d
 
+      - name: Pull image
+        run: docker pull ${{ steps.meta.outputs.tags }}
+
       - name: Prepare tests
-        run: |
-          docker pull ${{ steps.meta.outputs.tags }}
-          docker rm -fv socious-tests
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 
       - name: Run tests
-        run: |
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
 
       - name: Cleanup tests
         if: always()
-        run: |
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:
     needs: [build-dev, run-tests]
@@ -200,7 +198,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run DB and NATS
+      - name: Run NATS
         run: docker-compose up -d
 
       - name: Run DB migrations
@@ -246,7 +244,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run DB and NATS
+      - name: Run NATS
         run: docker-compose up -d
 
       - name: Run DB migrations

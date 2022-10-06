@@ -164,9 +164,9 @@ jobs:
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-tests
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests ${{ steps.meta.outputs.tags }} npm run pretest
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests ${{ steps.meta.outputs.tags }} npm run test:ci
-          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests ${{ steps.meta.outputs.tags }} npm run posttest
+          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+          docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:
     needs: [build-dev, run-tests]

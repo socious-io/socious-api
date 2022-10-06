@@ -170,7 +170,7 @@ jobs:
         run: rm -r test-results && mkdir -m a+rwx test-results
 
       - name: Run tests
-        run: docker run --env-file /etc/socious-api/test.env -v $(PWD)/test-results:/usr/src/app/test-results --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+        run: docker run --env-file /etc/socious-api/test.env -v "$(pwd)/test-results:/usr/src/app/test-results" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
 
       - name: Cleanup tests
         if: always()

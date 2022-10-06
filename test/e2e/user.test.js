@@ -59,7 +59,8 @@ test('profile', async () => {
   expect(response.body).toMatchSnapshot();
 });
 
-afterAll(async (done) => {
-  await app.db.pool.end();
-  server.close(done);
+afterAll((done) => {
+  app.db.pool.end().then(() => {
+    server.close(done);
+  });
 });

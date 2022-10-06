@@ -167,7 +167,7 @@ jobs:
         run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 
       - name: Create output directory
-        run: mkdir test-results
+        run: rm -r test-results && mkdir test-results
 
       - name: Run tests
         run: docker run --env-file /etc/socious-api/test.env -v ./test-results:/usr/src/app/test-results --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci

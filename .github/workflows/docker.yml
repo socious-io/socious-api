@@ -135,7 +135,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           target: development
 
-  testing:
+  run-tests:
     needs: build-dev
     name: Tests
     if: github.ref == 'refs/heads/main'
@@ -169,7 +169,7 @@ jobs:
           docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:
-    needs: [build-dev, testing]
+    needs: [build-dev, run-tests]
     name: Deploy to Dev
     if: github.ref == 'refs/heads/main'
     runs-on: ["backend-dev"]
@@ -215,7 +215,7 @@ jobs:
           docker run -d --restart always -h socious-workers -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
 
   deploy-prod:
-    needs: build
+    needs: [build-dev, run-tests]
     name: Deploy to Production
     if: github.ref == 'refs/heads/production'
     runs-on: ["backend-prod"]

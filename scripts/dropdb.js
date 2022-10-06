@@ -6,13 +6,8 @@ const client = new pg.Client({
   database: 'postgres',
 });
 
-const main = async () => {
-  if (Config.env !== 'testing') throw new Error('not valid env to dropdb');
-  await client.connect();
-  await client.query(`DROP DATABASE ${Config.database.db}`);
-};
+if (Config.env !== 'testing') throw new Error('not valid env to dropdb');
 
-main().catch((ex) => {
-  console.error(ex);
-  process.exit(1);
-});
+await client.connect();
+
+await client.query(`DROP DATABASE ${Config.database.db}`);

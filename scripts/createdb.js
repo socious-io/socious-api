@@ -6,12 +6,6 @@ const client = new pg.Client({
   database: 'postgres',
 });
 
-const main = async () => {
-  await client.connect();
-  await client.query(`CREATE DATABASE ${Config.database.db}`);
-};
+await client.connect();
 
-main().catch((ex) => {
-  console.error(ex);
-  process.exit(1);
-});
+await client.query(`CREATE DATABASE ${Config.database.db}`);

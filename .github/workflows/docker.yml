@@ -160,12 +160,19 @@ jobs:
       - name: Run DB and NATS
         run: docker-compose up -d
 
-      - name: Run tests
+      - name: Prepare tests
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-tests
           docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+
+      - name: Run tests
+        run: |
           docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+
+      - name: Cleanup tests
+        if: always()
+        run: |
           docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --name socious-tests --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:

@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "testenv",
+  "testenv": {
+    "driver": "pg",
+    "user": "socious",
+    "password": "passwd",
+    "host": "localhost",
+    "port": 5432,
+    "database": "socious_test"
+  }
+}

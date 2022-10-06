@@ -12,11 +12,7 @@ const main = async () => {
   await client.query(`DROP DATABASE ${Config.database.db}`);
 };
 
-main()
-  .then(() => {
-    process.exit(1);
-  })
-  .catch((ex) => {
-    console.error(ex);
-    process.exit(1);
-  });
+main().catch((ex) => {
+  console.error(ex);
+  process.exit(1);
+});

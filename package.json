@@ -128,10 +128,14 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/build/",
+      "/test-results/",
       "/coverage/"
     ],
     "roots": [
       "<rootDir>/test/"
     ]
+  },
+  "jest-junit": {
+    "outputDirectory": "test-results"
   }
 }

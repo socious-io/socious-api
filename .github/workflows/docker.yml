@@ -166,12 +166,21 @@ jobs:
       - name: Prepare tests
         run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 
+      - name: Create output directory
+        run: mkdir test-results
+
       - name: Run tests
-        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+        run: docker run --env-file /etc/socious-api/test.env -v ./test-results:test-results --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
 
       - name: Cleanup tests
         if: always()
         run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
+      
+      - name: Archive test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-results
 
   deploy-dev:
     needs: [build-dev, run-tests]

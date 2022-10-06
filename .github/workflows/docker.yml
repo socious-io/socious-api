@@ -164,14 +164,14 @@ jobs:
         run: docker pull ${{ steps.meta.outputs.tags }}
 
       - name: Prepare tests
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 
       - name: Run tests
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
 
       - name: Cleanup tests
         if: always()
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/test.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
+        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:
     needs: [build-dev, run-tests]

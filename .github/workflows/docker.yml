@@ -164,14 +164,14 @@ jobs:
         run: docker pull ${{ steps.meta.outputs.tags }}
 
       - name: Prepare tests
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 
       - name: Run tests
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
 
       - name: Cleanup tests
         if: always()
-        run: docker run -v "/etc/socious-api/test.env:/usr/src/app/.env" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
 
   deploy-dev:
     needs: [build-dev, run-tests]
@@ -205,19 +205,19 @@ jobs:
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-migrations
-          docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+          docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
 
       - name: Docker run
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+          docker run -d --restart always -p 5061:5061 -h socious-api --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
 
       - name: Docker run workers
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
-          docker run -d --restart always -h socious-workers -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
+          docker run -d --restart always -h socious-workers --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
 
   deploy-prod:
     needs: [build-dev, run-tests]
@@ -251,16 +251,16 @@ jobs:
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker rm -fv socious-migrations
-          docker run -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+          docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
 
       - name: Docker run
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 5061:5061 -h socious-api -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+          docker run -d --restart always -p 5061:5061 -h socious-api --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
 
       - name: Docker run workers
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
-          docker run -d --restart always -h socious-workers -v "/etc/socious-api/env:/usr/src/app/.env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
+          docker run -d --restart always -h socious-workers --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers

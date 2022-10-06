@@ -32,7 +32,6 @@
     "test:cov": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --coverage",
     "test:debug": "ENV=testing node --inspect-brk node_modules/.bin/jest --runInBand",
     "apidoc": "apidoc -i src/routes -o apidoc",
-    "apidoc:openapi": "apidoc-openapi -p apidoc.json -s src/routes -o apidoc/openapi.json",
     "workers": "node src/services/jobs/workers.js",
     "workers:watch": "nodemon --inspect src/services/jobs/workers.js"
   },

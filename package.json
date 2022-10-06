@@ -24,7 +24,7 @@
     "start": "node serve.js",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
-    "pretest": "ENV=testing node scripts/createdb.js && db-migrate up",
+    "pretest": "ENV=testing node scripts/createdb.js && db-migrate up --config ./migrations/database.json",
     "test": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit",
     "posttest": "ENV=testing node scripts/dropdb.js",
     "test:watch": "ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --watch",

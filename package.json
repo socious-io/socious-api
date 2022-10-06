@@ -100,31 +100,9 @@
   "jest": {
     "moduleFileExtensions": [
       "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
+      "json"
     ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/*.{ts,js}",
-      "!**/node_modules/**",
-      "!**/build/**",
-      "!**/coverage/**"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    },
-    "coverageReporters": [
-      "text",
-      "text-summary"
-    ],
-    "testRegex": "(tests/.*|(\\.|/)(test|spec))\\.(js|ts)x?$",
+    "testRegex": "(tests/.*|(\\.|/)(test|spec))\\.js$",
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/build/",

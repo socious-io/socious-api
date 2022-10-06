@@ -177,6 +177,7 @@ jobs:
         run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
       
       - name: Archive test results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-report

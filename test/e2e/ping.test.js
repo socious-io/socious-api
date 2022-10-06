@@ -1,9 +1,19 @@
-import request from 'supertest';
+import supertest from 'supertest';
 import {app} from '../../src/index.js';
 
+let server, request;
+
+beforeAll(() => {
+  server = app.listen();
+  request = supertest(server);
+});
+
 test('ping works', async () => {
-  const response = await request(app.callback()).get('/ping');
+  const response = await request.get('/ping');
   expect(response.status).toBe(200);
   expect(response.text).toMatchSnapshot();
-  return true;
+});
+
+afterAll((done) => {
+  server.close(done);
 });

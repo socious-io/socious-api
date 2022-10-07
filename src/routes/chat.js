@@ -436,15 +436,19 @@ router.post(
 
     const participants = await Chat.miniParticipants(ctx.params.id);
 
-    participants.map((p) =>
-      Event.push(Event.Types.CHAT, p.identity_id, {
-        ...ctx.body,
-        identity: ctx.identity,
-        muted: p.muted_until
-          ? p.muted_until.getTime() > new Date().getTime()
-          : false,
-      }),
-    );
+    participants
+      .filter((p) => p.identity_id != ctx.identity)
+      .map((p) =>
+        Event.push(Event.Types.CHAT, p.identity_id, {
+          ...ctx.body,
+          refId: ctx.body.id,
+          parentId: ctx.params.id,
+          identity: ctx.identity,
+          muted: p.muted_until
+            ? p.muted_until.getTime() > new Date().getTime()
+            : false,
+        }),
+      );
   },
 );
 
@@ -491,15 +495,19 @@ router.post(
 
     const participants = await Chat.miniParticipants(ctx.params.id);
 
-    participants.map((p) =>
-      Event.push(Event.Types.CHAT, p.identity_id, {
-        ...ctx.body,
-        identity: ctx.identity,
-        muted: p.muted_until
-          ? p.muted_until.getTime() > new Date().getTime()
-          : false,
-      }),
-    );
+    participants
+      .filter((p) => p.identity_id != ctx.identity)
+      .map((p) =>
+        Event.push(Event.Types.CHAT, p.identity_id, {
+          ...ctx.body,
+          refId: ctx.body.id,
+          parentId: ctx.params.id,
+          identity: ctx.identity,
+          muted: p.muted_until
+            ? p.muted_until.getTime() > new Date().getTime()
+            : false,
+        }),
+      );
   },
 );
 

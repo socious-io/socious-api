@@ -14,7 +14,7 @@ export const get = async (id) => {
     sql`SELECT a.*, i.meta as user
     FROM applicants a
     JOIN identities i ON i.id=a.user_id
-    WHERE id=${id}`,
+    WHERE a.id=${id}`,
   );
   applicant.answers = await getAnswers(id);
   return applicant;

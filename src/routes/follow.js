@@ -35,13 +35,10 @@ export const router = new Router();
  *
  */
 router.get('/followers', loginRequired, paginate, async (ctx) => {
-  ctx.body = ctx.query.name
-    ? await Follow.followersByName(
-        ctx.identity.id,
-        ctx.query.name,
-        ctx.paginate,
-      )
-    : await Follow.followers(ctx.identity.id, ctx.paginate);
+  ctx.body = await Follow.followers(ctx.identity.id, ctx.paginate, {
+    type: ctx.query.type,
+    name: ctx.query.name,
+  });
 });
 
 /**
@@ -70,13 +67,10 @@ router.get('/followers', loginRequired, paginate, async (ctx) => {
  *
  */
 router.get('/followings', loginRequired, paginate, async (ctx) => {
-  ctx.body = ctx.query.name
-    ? await Follow.followingsByName(
-        ctx.identity.id,
-        ctx.query.name,
-        ctx.paginate,
-      )
-    : await Follow.followings(ctx.identity.id, ctx.paginate);
+  ctx.body = await Follow.followings(ctx.identity.id, ctx.paginate, {
+    type: ctx.query.type,
+    name: ctx.query.name,
+  });
 });
 
 /**
@@ -102,6 +96,7 @@ router.post('/:id', loginRequired, checkIdParams, async (ctx) => {
   Event.push(Event.Types.NOTIFICATION, ctx.params.id, {
     type: Notif.Types.FOLLOWED,
     refId: ctx.body.id,
+    parentId: ctx.identity.id,
     identity: ctx.identity,
   });
 });

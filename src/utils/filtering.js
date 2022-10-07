@@ -22,7 +22,7 @@ export const format = (value) => {
   }
 };
 
-export const filtering = (filter, columns) => {
+export const filtering = (filter, columns, andPrefix = true) => {
   if (!filter) return '';
 
   const conditions = [];
@@ -30,6 +30,8 @@ export const filtering = (filter, columns) => {
   for (const [key, val] of Object.entries(filter)) {
     if (!columns.includes(key))
       throw new BadRequestError('filter key not allowed');
+
+    if (!val) continue;
 
     const valueKeys = Object.keys(val);
 
@@ -44,5 +46,9 @@ export const filtering = (filter, columns) => {
     conditions.push(`${key} ${op} ${format(value)}`);
   }
 
-  return conditions.join(' AND ');
+  let result = conditions.join(' AND ');
+
+  if (result && andPrefix) result = ' AND ' + result;
+
+  return result;
 };

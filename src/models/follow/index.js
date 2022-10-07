@@ -2,81 +2,58 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {BadRequestError, EntryError} from '../../utils/errors.js';
 
-const followings = async (identityId, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
+export const filterColumns = ['name', 'type'];
+
+const followings = async (
+  identityId,
+  {offset = 0, limit = 10},
+  filter = {},
+) => {
+  let filtering = '';
+  if (filter.name)
+    filtering += ` AND position('${filter.name.toLowerCase()}' IN lower(i.meta->>'name')) > 0`;
+  if (filter.type) filtering += ` AND i.type='${filter.type.toLowerCase()}'`;
+
+  const {rows} = await app.db.query(`
   SELECT 
     COUNT(*) OVER () as total_count,
     f.id,
     i.id AS identity_id,
     i.type AS identity_type,
     i.meta AS identity_meta,
-    EXISTS (SELECT id FROM follows WHERE following_identity_id=${identityId} AND follower_identity_id=i.id) AS mutual,
+    EXISTS (SELECT id FROM follows WHERE following_identity_id='${identityId}' AND follower_identity_id=i.id) AS mutual,
     true AS following,
     f.created_at
   FROM follows f
   JOIN identities i ON i.id=f.following_identity_id
-  WHERE follower_identity_id=${identityId}
+  WHERE follower_identity_id='${identityId}'
+  ${filtering}
   ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
 
   return rows;
 };
 
-const followers = async (identityId, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
+const followers = async (identityId, {offset = 0, limit = 10}, filter = {}) => {
+  let filtering = '';
+  if (filter.name)
+    filtering += ` AND position('${filter.name.toLowerCase()}' IN lower(i.meta->>'name')) > 0`;
+  if (filter.type) filtering += ` AND i.type='${filter.type.toLowerCase()}'`;
+
+  const {rows} = await app.db.query(`
   SELECT 
     COUNT(*) OVER () as total_count,
     f.id,
     i.id AS identity_id,
     i.type AS identity_type,
     i.meta AS identity_meta,
-    EXISTS (SELECT id FROM follows WHERE follower_identity_id=${identityId} AND following_identity_id=i.id) AS mutual,
+    EXISTS (SELECT id FROM follows WHERE follower_identity_id='${identityId}' AND following_identity_id=i.id) AS mutual,
     true AS follower,
     f.created_at
   FROM follows f
   JOIN identities i ON i.id=f.follower_identity_id
-  WHERE following_identity_id=${identityId}
+  WHERE following_identity_id='${identityId}'
+  ${filtering}
   ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
-
-  return rows;
-};
-
-const followingsByName = async (identityId, name, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
-  SELECT 
-    COUNT(*) OVER () as total_count,
-    f.id,
-    i.id AS identity_id,
-    i.type AS identity_type,
-    i.meta AS identity_meta,
-    EXISTS (SELECT id FROM follows WHERE following_identity_id=${identityId} AND follower_identity_id=i.id) AS mutual,
-    true AS following,
-    f.created_at
-  FROM follows f
-  JOIN identities i ON i.id=f.following_identity_id
-  WHERE follower_identity_id=${identityId}
-  AND position(${name.toLowerCase()} IN lower(i.meta->>'name')) > 0
-  ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
-
-  return rows;
-};
-
-const followersByName = async (identityId, name, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
-  SELECT 
-    COUNT(*) OVER () as total_count,
-    f.id,
-    i.id AS identity_id,
-    i.type AS identity_type,
-    i.meta AS identity_meta,
-    EXISTS (SELECT id FROM follows WHERE follower_identity_id=${identityId} AND following_identity_id=i.id) AS mutual,
-    true AS follower,
-    f.created_at
-  FROM follows f
-  JOIN identities i ON i.id=f.follower_identity_id
-  WHERE following_identity_id=${identityId}
-  AND position(${name.toLowerCase()} IN lower(i.meta->>'name')) > 0
-  ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
-
   return rows;
 };
 
@@ -108,11 +85,10 @@ const unfollow = async (follower, following) => {
 };
 
 export default {
+  filterColumns,
   followed,
   follow,
   unfollow,
   followings,
   followers,
-  followingsByName,
-  followersByName,
 };

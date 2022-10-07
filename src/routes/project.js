@@ -325,6 +325,7 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   Event.push(Event.Types.NOTIFICATION, project.identity_id, {
     type: Notif.Types.APPLICATION,
     refId: ctx.body.id,
+    parentId: project.id,
     identity: ctx.identity,
   });
 });

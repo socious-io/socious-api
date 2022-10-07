@@ -310,9 +310,11 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
   );
 
   const post = await Post.miniGet(ctx.params.id);
+
   Event.push(Event.Types.NOTIFICATION, post.identity_id, {
     type: Notif.Types.COMMENT,
     refId: ctx.body.id,
+    parentId: post.id,
     identity: ctx.identity,
   });
 });
@@ -374,6 +376,7 @@ router.post('/:id/like', loginRequired, checkIdParams, async (ctx) => {
   Event.push(Event.Types.NOTIFICATION, post.identity_id, {
     type: Notif.Types.POST_LIKE,
     refId: ctx.body.id,
+    parentId: post.id,
     identity: ctx.identity,
   });
 });
@@ -429,6 +432,7 @@ router.post(
     Event.push(Event.Types.NOTIFICATION, comment.identity_id, {
       type: Notif.Types.COMMENT_LIKE,
       refId: ctx.body.id,
+      parentId: comment.post_id,
       identity: ctx.identity,
     });
   },

@@ -14,8 +14,7 @@ const logger = winston.createLogger({
     newrelicWinstonFormatter()
   ),
   transports: [
-    new winston.transports.File({ filename: `${Config.logs}/error.log`, level: 'error' }),
-    new winston.transports.File({filename: `${Config.logs}/access.log`})
+    new winston.transports.Console()
   ],
 });
 

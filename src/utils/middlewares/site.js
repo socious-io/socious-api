@@ -24,11 +24,9 @@ export const throwHandler = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if (err.debugMessage) {
+    if (err.debugMessage && Config.debug) {
       if (ctx.app.env === 'development') ctx.body.debug = err.debugMessage;
       console.log(`${err}: ${err.debugMessage}`);
-    } else {
-      console.log(err);
     }
     ctx.body = {error: err.message};
     if (err.name === 'ValidationError') {

@@ -14,7 +14,6 @@ export const Types = {
 };
 
 const emitEvent = async (eventType, userId, id) => {
-  console.log(Config.webhooks.addr);
   try {
     const res = await axios.post(
       `${Config.webhooks.addr}/notify`,

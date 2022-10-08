@@ -10,11 +10,11 @@ const newrelicWinstonFormatter = newrelicFormatter(winston)
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
-    winston.format.label({label: 'test'}),
     newrelicWinstonFormatter()
   ),
   transports: [
-    new winston.transports.Console()
+    new winston.transports.File({ filename: `${Config.logs}/error.log`, level: 'error' }),
+    new winston.transports.File({filename: `${Config.logs}/access.log`})
   ],
 });
 

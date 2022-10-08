@@ -7,13 +7,14 @@ import socket from './utils/socket.js';
 import blueprint from './routes/index.js';
 
 import middlewares from './utils/middlewares/site.js';
-
+import {koaLogger} from './utils/logging.js'
 import Config from './config.js';
 
 export const app = new Koa({proxy: true});
 
 app.keys = [Config.secret];
 app.users = {};
+app.use(koaLogger);
 
 app.use(
   morgan(':method :url :status :response-time ms - :res[content-length]', {

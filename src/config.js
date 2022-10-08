@@ -7,6 +7,7 @@ config({path: envFile});
 export default {
   env: process.env.ENV || 'development',
   debug: process.env.DEBUG || false,
+  logs: process.env.LOG_DIR || 'logs/',
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
   jwtExpireTime: '2d',

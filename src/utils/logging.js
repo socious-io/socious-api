@@ -10,7 +10,7 @@ const newrelicWinstonFormatter = newrelicFormatter(winston)
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
-    winston.format.label(),
+    winston.format.label({label: 'test'}),
     newrelicWinstonFormatter()
   ),
   transports: [

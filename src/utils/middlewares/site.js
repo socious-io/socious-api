@@ -24,7 +24,7 @@ export const throwHandler = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if (err.debugMessage && Config.debug) {
+    if (err.debugMessage) {
       if (ctx.app.env === 'development') ctx.body.debug = err.debugMessage;
       console.log(`${err}: ${err.debugMessage}`);
     }

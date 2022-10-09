@@ -562,7 +562,7 @@
           "required": true
         }
       ],
-      "put": {
+      "post": {
         "tags": ["project"],
         "summary": "project applicatons",
         "requestBody": {
@@ -1806,7 +1806,7 @@
     },
     "/user/profile": {
       "get": {
-        "tags": ["current user"],
+        "tags": ["users"],
         "summary": "profile",
         "security": [
           {
@@ -1835,7 +1835,7 @@
     },
     "/user/update/profile": {
       "post": {
-        "tags": ["current user"],
+        "tags": ["users"],
         "summary": "update profile",
         "requestBody": {
           "content": {
@@ -1888,7 +1888,7 @@
     },
     "/user/change-password": {
       "post": {
-        "tags": ["current user"],
+        "tags": ["users"],
         "summary": "change password",
         "requestBody": {
           "content": {
@@ -1920,7 +1920,7 @@
     },
     "/user/change-password-direct": {
       "post": {
-        "tags": ["current user"],
+        "tags": ["users"],
         "summary": "change password direct",
         "requestBody": {
           "content": {
@@ -1951,7 +1951,7 @@
     },
     "/user/delete": {
       "post": {
-        "tags": ["current user"],
+        "tags": ["users"],
         "summary": "delete",
         "requestBody": {
           "content": {
@@ -1968,6 +1968,75 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/{user_id}/profile": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": ["users"],
+        "summary": "other user profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/by-username/{username}/profile": {
+      "parameters": [
+        {
+          "name": "username",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "example": "seira-yun8611",
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": ["users"],
+        "summary": "other profile by username",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "311fca4c-057d-4752-9e7c-b985ff1c5294"
           }
         ],
         "responses": {
@@ -2123,6 +2192,364 @@
       "get": {
         "tags": ["device"],
         "summary": "get",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/devices/update": {
+      "post": {
+        "tags": ["device"],
+        "summary": "update meta data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "token": "cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p",
+                  "meta": {
+                    "os": "ANDROID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/devices/remove/{token}": {
+      "parameters": [
+        {
+          "name": "token",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "example": "cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p"
+        }
+      ],
+      "post": {
+        "tags": ["device"],
+        "summary": "remove token",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/follows/{identity_id}": {
+      "parameters": [
+        {
+          "name": "identity_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["follows"],
+        "summary": "follow",
+        "requestBody": {
+          "content": {}
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/follows/{identity_id}/unfollow": {
+      "parameters": [
+        {
+          "name": "identity_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["follows"],
+        "summary": "unfollow",
+        "requestBody": {
+          "content": {}
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/follows/followings": {
+      "get": {
+        "tags": ["follows"],
+        "summary": "followings",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "c8765d15-030d-4ebc-a493-9265c0911f16"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "test"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "organizations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/follows/followers": {
+      "get": {
+        "tags": ["follows"],
+        "summary": "followers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "c8765d15-030d-4ebc-a493-9265c0911f16"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "test"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "organizations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "tags": ["search"],
+        "summary": "search",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "q": "search q",
+                "type": "projects"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/search/history": {
+      "get": {
+        "tags": ["search"],
+        "summary": "current user search history",
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "c8765d15-030d-4ebc-a493-9265c0911f16"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "example": 100
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "example": 1
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/media/upload": {
+      "post": {
+        "tags": ["media"],
+        "summary": "upload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/media/{media_id}": {
+      "parameters": [
+        {
+          "name": "media_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": ["media"],
+        "summary": "get media",
         "security": [
           {
             "bearerAuth": []

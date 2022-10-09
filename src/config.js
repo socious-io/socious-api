@@ -91,6 +91,10 @@ export default {
       secret_key: process.env.STRIPE_SECRET_KEY,
     },
   },
+  idealist: {
+    wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
+    wait_break: process.env.WAIT_BREAK || 1000,
+  },
 };
 
 /**

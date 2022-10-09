@@ -22,11 +22,11 @@ export const koaLogger = async (ctx, next) => {
 
   let logLevel;
   if (ctx.status >= 500) {
-    msg += ` | ${ctx.body}`;
+    msg += ` | ${JSON.stringify(ctx.body)}`;
     logLevel = 'error';
   }
   if (ctx.status >= 400) {
-    msg += ` | ${ctx.body}`;
+    msg += ` | ${JSON.stringify(ctx.body)}`;
     logLevel = 'warn';
   }
   if (ctx.status >= 100) {

@@ -137,6 +137,7 @@ export const update = async (
       UPDATE organizations SET 
         shortname=${shortname.toLowerCase()},
         name=${name}, 
+        shortname=${shortname},
         bio=${bio}, 
         description=${description}, 
         email=${email}, 

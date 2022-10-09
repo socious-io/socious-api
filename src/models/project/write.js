@@ -99,6 +99,7 @@ export const update = async (
     commitment_hours_higher,
   },
 ) => {
+  if (!updated_at) updated_at = raw('NOW()');
   try {
     const {rows} = await app.db.query(
       sql`

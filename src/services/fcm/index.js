@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../../config.js';
+import logger from '../../utils/logging.js';
 
 const URL = 'https://fcm.googleapis.com/fcm/send';
 
@@ -25,6 +26,6 @@ export const simplePush = async ({
   try {
     await axios.post(URL, body, {headers: HEADERS});
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 };

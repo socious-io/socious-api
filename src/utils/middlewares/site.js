@@ -3,6 +3,7 @@ import Cors from '@koa/cors';
 import koaBody from 'koa-body';
 import session from 'koa-session';
 import Config from '../../config.js';
+import logger from '../logging.js';
 
 export const cors = new Cors({
   origin: Config.cors.origins.length
@@ -27,9 +28,8 @@ export const throwHandler = async (ctx, next) => {
     if (err.debugMessage) {
       if (ctx.app.env === 'development') ctx.body.debug = err.debugMessage;
       console.log(`${err}: ${err.debugMessage}`);
-    } else {
-      console.log(err);
     }
+
     ctx.body = {error: err.message};
     if (err.name === 'ValidationError') {
       ctx.status = 400;
@@ -39,6 +39,8 @@ export const throwHandler = async (ctx, next) => {
     if (err.message.includes('uuid')) err.status = 400;
 
     ctx.status = err.status || 500;
+
+    if (ctx.status >= 500) logger.error(`${err.message} | ${err.stack}`);
   }
 };
 

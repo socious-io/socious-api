@@ -9,18 +9,31 @@ const StatusTypes = Data.ApplicantStatus;
 export const insert = async (
   projectId,
   userId,
-  {cover_letter, payment_type, payment_rate},
+  {
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
 ) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO applicants (project_id, user_id, cover_letter, payment_type, payment_rate) 
+      INSERT INTO applicants (
+        project_id, user_id, cover_letter, payment_type, payment_rate,
+        cv_link, cv_name, share_contact_info
+        ) 
         VALUES (
           ${projectId},
           ${userId}, 
           ${cover_letter}, 
           ${payment_type},
-          ${payment_rate}
+          ${payment_rate},
+          ${cv_link},
+          ${cv_name},
+          ${share_contact_info}
         )
         RETURNING id`,
     );
@@ -32,7 +45,14 @@ export const insert = async (
 
 export const update = async (
   id,
-  {cover_letter, payment_type, payment_rate},
+  {
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
 ) => {
   try {
     const {rows} = await app.db.query(
@@ -41,6 +61,9 @@ export const update = async (
         cover_letter=${cover_letter},
         payment_type=${payment_type},
         payment_rate=${payment_rate}
+        cv_link=${cv_link},
+        cv_name=${cv_name},
+        share_contact_info=${share_contact_info}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -148,7 +171,15 @@ export const giveAnswer = async (
 export const apply = async (
   projectId,
   userId,
-  {answers, cover_letter, payment_type, payment_rate},
+  {
+    answers = [],
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
 ) => {
   const {rows} = await app.db.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${projectId} and required=true
@@ -163,6 +194,9 @@ export const apply = async (
       cover_letter,
       payment_rate,
       payment_type,
+      cv_link,
+      cv_name,
+      share_contact_info,
     });
 
     let answersResult = [];
@@ -182,7 +216,15 @@ export const apply = async (
 
 export const editApply = async (
   id,
-  {answers, cover_letter, payment_type, payment_rate},
+  {
+    answers = [],
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
 ) => {
   await app.db.query('BEGIN');
   try {
@@ -190,6 +232,9 @@ export const editApply = async (
       cover_letter,
       payment_type,
       payment_rate,
+      cv_link,
+      cv_name,
+      share_contact_info,
     });
 
     const {rows} = await app.db.query(sql`

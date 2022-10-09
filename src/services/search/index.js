@@ -81,11 +81,9 @@ const find = async (
 
   if (shouldSave) await addHistory(body, identityId);
 
-  let filters = filtering(body.filter, filterColumns(body.type));
-
-  if (filters) filters = 'AND ' + filters;
-
-  const {rows} = await app.db.execute(name, params, {filter: filters});
+  const {rows} = await app.db.execute(name, params, {
+    filter: filtering(body.filter, filterColumns(body.type)),
+  });
   return fetch(
     body.type,
     rows.map((r) => r.id),

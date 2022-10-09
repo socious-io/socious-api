@@ -5,8 +5,11 @@ import {ValidationError, PermissionError} from '../../utils/errors.js';
 export const members = async (id, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(sql`
     SELECT 
-    COUNT(*) OVER () as total_count, u.id, u.username, u.email, u.first_name, u.last_name 
-    FROM org_members INNER JOIN users u ON org_members.user_id=u.id 
+    COUNT(*) OVER () as total_count, u.id, u.username, u.email, u.first_name, u.last_name,
+    row_to_json(m.*) AS avatar
+    FROM org_members
+    INNER JOIN users u ON org_members.user_id=u.id 
+    LEFT JOIN media m ON m.id=u.avatar
     WHERE org_id=${id} ORDER BY org_members.created_at DESC LIMIT ${limit} OFFSET ${offset}`);
   return rows;
 };

@@ -2,7 +2,6 @@ import Koa from 'koa';
 import http from 'http';
 import morgan from 'koa-morgan';
 import pg from 'pg';
-
 import {DBCircuitBreaker} from './utils/circuitbreaker.js';
 import socket from './utils/socket.js';
 import blueprint from './routes/index.js';

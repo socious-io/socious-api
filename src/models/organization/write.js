@@ -8,6 +8,8 @@ const generateShortname = (name, website) => {
   if (website)
     return `${website
       .split(/([^.]+)\.[^.]+$/)[1]
+      .replace(/https?:/, '')
+      .replace(/\//, '')
       .replace(/@.*$/, '')
       .toLowerCase()
       .replace(/[^a-z0-9._-]/, '-')

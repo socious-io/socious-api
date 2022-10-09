@@ -10,7 +10,7 @@ import {
   loginRequired,
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
-import { PermissionError } from '../utils/errors.js';
+import {PermissionError} from '../utils/errors.js';
 
 export const router = new Router();
 
@@ -91,7 +91,7 @@ router.get('/', loginOptional, paginate, async (ctx) => {
  */
 router.post('/', loginRequired, async (ctx) => {
   // only organizations allow to create projects
-  if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError()
+  if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError();
 
   await validate.ProjectSchema.validateAsync(ctx.request.body);
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
@@ -325,6 +325,7 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   Event.push(Event.Types.NOTIFICATION, project.identity_id, {
     type: Notif.Types.APPLICATION,
     refId: ctx.body.id,
+    parentId: project.id,
     identity: ctx.identity,
   });
 });

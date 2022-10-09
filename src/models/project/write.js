@@ -26,6 +26,10 @@ export const insert = async (
     expires_at,
     updated_at,
     city,
+    weekly_hours_lower,
+    weekly_hours_higher,
+    commitment_hours_lower,
+    commitment_hours_higher,
   },
 ) => {
   try {
@@ -36,8 +40,13 @@ export const insert = async (
         payment_type, payment_scheme, payment_currency, 
         payment_range_lower, payment_range_higher, experience_level,
         status, remote_preference, project_type, project_length,
-        skills, causes_tags, country, other_party_id, other_party_title,
-        other_party_url, expires_at, updated_at, city
+        skills, causes_tags, country, city,
+        other_party_id, other_party_title,
+        other_party_url, expires_at, updated_at,
+        weekly_hours_lower,
+        weekly_hours_higher,
+        commitment_hours_lower,
+        commitment_hours_higher
       )
       VALUES (
         ${title}, ${description}, ${identityId}, 
@@ -45,8 +54,11 @@ export const insert = async (
         ${payment_currency}, ${payment_range_lower},
         ${payment_range_higher}, ${experience_level}, ${status},
         ${remote_preference}, ${project_type}, ${project_length},
-        ${skills}, ${causes_tags}, ${country}, ${other_party_id}, ${other_party_title},
-        ${other_party_url}, ${expires_at}, ${updated_at}, ${city}
+        ${skills}, ${causes_tags}, ${country}, ${city},
+        ${other_party_id}, ${other_party_title},
+        ${other_party_url}, ${expires_at}, ${updated_at},
+        ${weekly_hours_lower}, ${weekly_hours_higher}, ${commitment_hours_lower},
+        ${commitment_hours_higher}
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
@@ -80,6 +92,10 @@ export const update = async (
     expires_at,
     updated_at,
     city,
+    weekly_hours_lower,
+    weekly_hours_higher,
+    commitment_hours_lower,
+    commitment_hours_higher,
   },
 ) => {
   try {
@@ -106,7 +122,11 @@ export const update = async (
         other_party_url=${other_party_url},
         expires_at=${expires_at},
         updated_at=${updated_at},
-        city=${city}
+        city=${city},
+        weekly_hours_lower=${weekly_hours_lower},
+        weekly_hours_higher=${weekly_hours_higher},
+        commitment_hours_lower=${commitment_hours_lower},
+        commitment_hours_higher=${commitment_hours_higher}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];

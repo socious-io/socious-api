@@ -8,7 +8,6 @@ const debug = Debug('socious-api:ping');
 export const router = new Router();
 let abort = false;
 
-
 router.get('/', (ctx) => {
   ctx.body = 'pong';
 });
@@ -18,8 +17,6 @@ router.get('/remote', async (ctx) => {
   ctx.body = pingRes.data;
 });
 
-
-
 router.get('/ready', (ctx) => {
   if (abort) {
     debug('not ready');
@@ -28,8 +25,6 @@ router.get('/ready', (ctx) => {
   }
   ctx.body = 'pong';
 });
-
-
 
 router.get('/abort', (ctx) => {
   abort = true;

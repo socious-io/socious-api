@@ -12,7 +12,6 @@ import {
 
 export const router = new Router();
 
-
 router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Applicant.get(ctx.params.id);
 });
@@ -27,7 +26,6 @@ router.post(
   },
 );
 
-
 router.post(
   '/:id/offer',
   loginRequired,
@@ -38,7 +36,6 @@ router.post(
     ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
   },
 );
-
 
 router.post(
   '/:id/reject',
@@ -51,7 +48,6 @@ router.post(
   },
 );
 
-
 router.post('/:id/approve', loginRequired, applicantOwner, async (ctx) => {
   ctx.body = await Applicant.approve(ctx.params.id);
 });
@@ -63,7 +59,6 @@ router.post('/:id/hire', loginRequired, projectOwner, async (ctx) => {
     throw new PermissionError();
   ctx.body = await Applicant.hire(ctx.params.id);
 });
-
 
 router.post(
   '/update/:id',

@@ -9,12 +9,10 @@ import {NotImplementedError} from '../utils/errors.js';
 import {chatPermission, checkIdParams} from '../utils/middlewares/route.js';
 export const router = new Router();
 
-
 router.get('/summary', loginRequired, paginate, async (ctx) => {
   const {filter} = ctx.query;
   ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate, filter);
 });
-
 
 router.get(
   '/:id',
@@ -30,18 +28,15 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Chat.all(ctx.identity.id, ctx.paginate);
 });
 
-
 router.post('/find', loginRequired, async (ctx) => {
   await validate.FindChatSchema.validateAsync(ctx.request.body);
   ctx.body = {items: await Chat.find(ctx.identity.id, ctx.request.body)};
 });
 
-
 router.post('/', loginRequired, async (ctx) => {
   await validate.ChatSchema.validateAsync(ctx.request.body);
   ctx.body = await Chat.create(ctx.identity, ctx.request.body);
 });
-
 
 router.post('/update/:id', loginRequired, async (_ctx) => {
   throw new NotImplementedError();
@@ -52,7 +47,6 @@ router.post('/update/:id', loginRequired, async (_ctx) => {
   // );
   // ctx.body = await Chat.update(ctx.params.id, ctx.request.body);
 });
-
 
 router.post('/remove/:id', loginRequired, async (_ctx) => {
   throw new NotImplementedError();
@@ -65,8 +59,6 @@ router.post('/remove/:id', loginRequired, async (_ctx) => {
   // ctx.body = {message: 'success'};
 });
 
-
-
 router.get(
   '/:id/participants',
   loginRequired,
@@ -78,7 +70,6 @@ router.get(
   },
 );
 
-
 router.post('/update/:id/participants/mute', loginRequired, async (_ctx) => {
   throw new NotImplementedError();
   // await Chat.permissioned(ctx.identity.id, ctx.params.id);
@@ -89,7 +80,6 @@ router.post('/update/:id/participants/mute', loginRequired, async (_ctx) => {
   // );
   // ctx.body = {message: 'success'};
 });
-
 
 router.post(
   '/update/:id/participants/:identity_id/permit',
@@ -108,7 +98,6 @@ router.post(
     // );
   },
 );
-
 
 router.post(
   '/update/:id/participants/:identity_id',
@@ -130,7 +119,6 @@ router.post(
   },
 );
 
-
 router.post(
   '/remove/:id/participants/:identity_id',
   loginRequired,
@@ -151,7 +139,6 @@ router.post(
   },
 );
 
-
 router.get(
   '/:id/messages',
   loginRequired,
@@ -162,7 +149,6 @@ router.get(
     ctx.body = await Chat.messages(ctx.params.id, ctx.paginate);
   },
 );
-
 
 router.post(
   '/:id/messages',
@@ -228,7 +214,6 @@ router.post(
       );
   },
 );
-
 
 router.get(
   '/:id/messages/:message_id',
@@ -256,7 +241,6 @@ router.post(
     );
   },
 );
-
 
 router.post(
   '/update/:id/messages/:message_id/read',

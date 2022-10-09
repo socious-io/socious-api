@@ -8,7 +8,6 @@ import {paginate} from '../utils/requests.js';
 
 export const router = new Router();
 
-
 router.post('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Search.find(
     ctx.request.body,
@@ -16,7 +15,6 @@ router.post('/', loginOptional, paginate, async (ctx) => {
     ctx.paginate,
   );
 });
-
 
 router.get('/history', loginRequired, paginate, async (ctx) => {
   ctx.body = await Search.history(ctx.identity.id, ctx.paginate);

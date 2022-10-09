@@ -9,14 +9,12 @@ import {checkIdParams} from '../utils/middlewares/route.js';
 
 export const router = new Router();
 
-
 router.get('/followers', loginRequired, paginate, async (ctx) => {
   ctx.body = await Follow.followers(ctx.identity.id, ctx.paginate, {
     type: ctx.query.type,
     name: ctx.query.name,
   });
 });
-
 
 router.get('/followings', loginRequired, paginate, async (ctx) => {
   ctx.body = await Follow.followings(ctx.identity.id, ctx.paginate, {
@@ -38,7 +36,6 @@ router.post('/:id', loginRequired, checkIdParams, async (ctx) => {
     identity: ctx.identity,
   });
 });
-
 
 router.post('/:id/unfollow', loginRequired, checkIdParams, async (ctx) => {
   const followed = await Follow.followed(ctx.identity.id, ctx.params.id);

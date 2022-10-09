@@ -16,7 +16,6 @@ export const router = new Router();
 
 const debug = Debug('socious-api:user');
 
-
 router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
     ctx.body = await User.getProfileLimited(ctx.params.id);
@@ -24,7 +23,6 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
   }
   ctx.body = await User.getProfile(ctx.params.id);
 });
-
 
 router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
@@ -34,11 +32,9 @@ router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
   ctx.body = await User.getProfileByUsername(ctx.params.username);
 });
 
-
 router.get('/profile', loginRequired, async (ctx) => {
   ctx.body = await User.currentProfile(ctx.user);
 });
-
 
 router.post('/update/profile', loginRequired, async (ctx) => {
   await validate.UpdateProfileSchema.validateAsync(ctx.request.body);
@@ -47,14 +43,12 @@ router.post('/update/profile', loginRequired, async (ctx) => {
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
 });
 
-
 router.post('/change-password', loginRequired, async (ctx) => {
   await Auth.changePassword(ctx.user, ctx.request.body);
   ctx.body = {
     message: 'success',
   };
 });
-
 
 router.post('/change-password-direct', loginRequired, async (ctx) => {
   await Auth.directChangePassword(ctx.user, ctx.request.body);
@@ -64,14 +58,12 @@ router.post('/change-password-direct', loginRequired, async (ctx) => {
   };
 });
 
-
 router.post('/delete', loginRequired, async (ctx) => {
   await User.remove(ctx.user, ctx.request.body.reason);
   ctx.body = {
     message: 'success',
   };
 });
-
 
 router.get(
   '/:id/applicants',

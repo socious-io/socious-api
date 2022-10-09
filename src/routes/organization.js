@@ -9,21 +9,17 @@ import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
 
-
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
 });
-
 
 router.get('/by-shortname/:shortname', loginOptional, async (ctx) => {
   ctx.body = await Org.getByShortname(ctx.params.shortname);
 });
 
-
 router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Org.all(ctx.paginate);
 });
-
 
 router.post('/', loginRequired, async (ctx) => {
   await validate.OrganizationSchema.validateAsync(ctx.request.body);
@@ -31,13 +27,11 @@ router.post('/', loginRequired, async (ctx) => {
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
 
-
 router.get('/check', loginRequired, async (ctx) => {
   ctx.body = {
     shortname_exists: await Org.shortNameExists(ctx.query.shortname),
   };
 });
-
 
 router.post(
   '/update/:id',
@@ -49,7 +43,6 @@ router.post(
     ctx.body = await Org.update(ctx.params.id, ctx.request.body);
   },
 );
-
 
 router.get(
   '/:id/members',
@@ -71,7 +64,6 @@ router.post(
     ctx.body = {message: 'success'};
   },
 );
-
 
 router.post(
   '/remove/:id/members/:user_id',

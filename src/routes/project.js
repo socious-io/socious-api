@@ -14,7 +14,6 @@ import {PermissionError} from '../utils/errors.js';
 
 export const router = new Router();
 
-
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Project.get(ctx.params.id);
 });
@@ -25,7 +24,6 @@ router.get('/', loginOptional, paginate, async (ctx) => {
     : await Project.all(ctx.paginate);
 });
 
-
 router.post('/', loginRequired, async (ctx) => {
   // only organizations allow to create projects
   if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError();
@@ -33,7 +31,6 @@ router.post('/', loginRequired, async (ctx) => {
   await validate.ProjectSchema.validateAsync(ctx.request.body);
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
 });
-
 
 router.post(
   '/update/:id',
@@ -45,7 +42,6 @@ router.post(
     ctx.body = await Project.update(ctx.params.id, ctx.request.body);
   },
 );
-
 
 router.get(
   '/:id/questions',
@@ -70,7 +66,6 @@ router.post(
   },
 );
 
-
 router.post(
   '/update/:id/questions/:question_id',
   loginRequired,
@@ -85,7 +80,6 @@ router.post(
   },
 );
 
-
 router.post(
   '/remove/:id',
   loginRequired,
@@ -99,7 +93,6 @@ router.post(
   },
 );
 
-
 router.get(
   '/:id/applicants',
   loginRequired,
@@ -109,7 +102,6 @@ router.get(
     ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
   },
 );
-
 
 router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   await validate.ApplicantSchema.validateAsync(ctx.request.body);

@@ -23,9 +23,7 @@
   "paths": {
     "/auth/login": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "login",
         "requestBody": {
           "content": {
@@ -52,9 +50,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "register",
         "requestBody": {
           "content": {
@@ -94,9 +90,7 @@
     },
     "/auth/preregister": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "preregister",
         "requestBody": {
           "content": {
@@ -194,9 +188,7 @@
     },
     "/auth/otp": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "send otp",
         "requestBody": {
           "content": {
@@ -222,9 +214,7 @@
     },
     "/auth/otp/confirm": {
       "get": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "confirm otp",
         "parameters": [
           {
@@ -256,9 +246,7 @@
     },
     "/auth/forget-password": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "forget password",
         "requestBody": {
           "content": {
@@ -284,9 +272,7 @@
     },
     "/auth/refresh": {
       "post": {
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "summary": "refresh token",
         "requestBody": {
           "content": {
@@ -312,9 +298,7 @@
     },
     "/projects": {
       "get": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "get all",
         "security": [
           {
@@ -331,9 +315,7 @@
         }
       },
       "post": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "create",
         "requestBody": {
           "content": {
@@ -348,10 +330,7 @@
                   "payment_scheme": "FIXED",
                   "payment_type": "VOLUNTEER",
                   "remote_preference": "HYBRID",
-                  "social_causes": [
-                    "SOCIAL",
-                    "POVERTY"
-                  ],
+                  "social_causes": ["SOCIAL", "POVERTY"],
                   "status": "ACTIVE",
                   "title": "Testing"
                 }
@@ -376,9 +355,7 @@
     },
     "/projects/update/{project_id}": {
       "post": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "update",
         "requestBody": {
           "content": {
@@ -386,9 +363,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "causes_tags": [
-                    "SOCIAL"
-                  ],
+                  "causes_tags": ["SOCIAL"],
                   "country": "AL",
                   "created_at": "2022-09-05T17:19:25.501Z",
                   "deleted_at": null,
@@ -398,9 +373,7 @@
                   "id": "af8f8687-3cc9-49db-8231-4636cfb9a3a5",
                   "identity_id": "ebd02a72-f530-4d18-9a72-d7aa9ace1271",
                   "old_id": null,
-                  "passions": [
-                    "SOCIAL"
-                  ],
+                  "passions": ["SOCIAL"],
                   "payment_currency": null,
                   "payment_range_higher": "13",
                   "payment_range_lower": "12",
@@ -409,11 +382,7 @@
                   "project_length": "LESS_THAN_A_DAY",
                   "project_type": "PART_TIME",
                   "remote_preference": "HYBRID",
-                  "skills": [
-                    "ANGULARJS",
-                    "CSS",
-                    "AWS"
-                  ],
+                  "skills": ["ANGULARJS", "CSS", "AWS"],
                   "status": "ACTIVE",
                   "title": "Sdsdsd Demo New ",
                   "updated_at": "2022-09-05T17:19:25.501Z"
@@ -457,9 +426,7 @@
     },
     "/projects/{project_id}": {
       "get": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "get",
         "security": [
           {
@@ -488,9 +455,7 @@
     },
     "/projects/{project_id}/questions": {
       "post": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "add question",
         "requestBody": {
           "content": {
@@ -500,10 +465,7 @@
                 "example": {
                   "question": "are you OK ?",
                   "required": false,
-                  "options": [
-                    "yes",
-                    "no"
-                  ]
+                  "options": ["yes", "no"]
                 }
               }
             }
@@ -546,9 +508,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "apply",
         "requestBody": {
           "content": {
@@ -603,9 +563,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "project applicatons",
         "requestBody": {
           "content": {
@@ -649,9 +607,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "project"
-        ],
+        "tags": ["project"],
         "summary": "get applicant",
         "security": [
           {
@@ -670,9 +626,7 @@
     },
     "/chats": {
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "all",
         "security": [
           {
@@ -689,9 +643,7 @@
         }
       },
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "create",
         "requestBody": {
           "content": {
@@ -702,9 +654,7 @@
                   "name": "test",
                   "description": "test",
                   "type": "CHAT",
-                  "participants": [
-                    "bec6c278-52ea-45c6-86b8-67a711f40a00"
-                  ]
+                  "participants": ["bec6c278-52ea-45c6-86b8-67a711f40a00"]
                 }
               }
             }
@@ -727,9 +677,7 @@
     },
     "/chats/summary": {
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "summary",
         "security": [
           {
@@ -758,9 +706,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "get",
         "security": [
           {
@@ -789,9 +735,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "update",
         "requestBody": {
           "content": {
@@ -824,9 +768,7 @@
     },
     "/chats/find": {
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "find",
         "requestBody": {
           "content": {
@@ -834,9 +776,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "participants": [
-                    "311fca4c-057d-4752-9e7c-b985ff1c5294"
-                  ]
+                  "participants": ["311fca4c-057d-4752-9e7c-b985ff1c5294"]
                 }
               }
             }
@@ -869,9 +809,7 @@
     },
     "/chats/{chat_id}/participants": {
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "participants",
         "security": [
           {
@@ -910,9 +848,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "messages",
         "security": [
           {
@@ -929,9 +865,7 @@
         }
       },
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "new message",
         "requestBody": {
           "content": {
@@ -980,9 +914,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "reply message",
         "requestBody": {
           "content": {
@@ -1011,9 +943,7 @@
         }
       },
       "get": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "replied messages",
         "security": [
           {
@@ -1050,9 +980,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "edit messages",
         "requestBody": {
           "content": {
@@ -1101,9 +1029,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "remove messages",
         "security": [
           {
@@ -1122,9 +1048,7 @@
     },
     "/chats/update/{chat_id}/messages/{message_id}/read": {
       "post": {
-        "tags": [
-          "chat"
-        ],
+        "tags": ["chat"],
         "summary": "read messages",
         "requestBody": {
           "content": {}
@@ -1164,9 +1088,7 @@
     },
     "/posts": {
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "create",
         "requestBody": {
           "content": {
@@ -1175,9 +1097,7 @@
                 "type": "object",
                 "example": {
                   "content": "content",
-                  "causes_tags": [
-                    "SOCIAL"
-                  ]
+                  "causes_tags": ["SOCIAL"]
                 }
               }
             }
@@ -1198,9 +1118,7 @@
         }
       },
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "all",
         "security": [
           {
@@ -1229,9 +1147,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "get",
         "security": [
           {
@@ -1260,9 +1176,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "delete",
         "security": [
           {
@@ -1291,9 +1205,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "update",
         "requestBody": {
           "content": {
@@ -1302,10 +1214,7 @@
                 "type": "object",
                 "example": {
                   "content": "content2",
-                  "causes_tags": [
-                    "SOCIAL",
-                    "HEALTH"
-                  ]
+                  "causes_tags": ["SOCIAL", "HEALTH"]
                 }
               }
             }
@@ -1338,9 +1247,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "replies",
         "security": [
           {
@@ -1369,9 +1276,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "comments",
         "security": [
           {
@@ -1388,9 +1293,7 @@
         }
       },
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "new comment",
         "requestBody": {
           "content": {
@@ -1447,9 +1350,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "like comment",
         "requestBody": {
           "content": {
@@ -1498,9 +1399,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "unlike comment",
         "security": [
           {
@@ -1529,9 +1428,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "delete comment",
         "security": [
           {
@@ -1560,9 +1457,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "like",
         "requestBody": {
           "content": {
@@ -1603,9 +1498,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "unlike",
         "requestBody": {
           "content": {
@@ -1646,9 +1539,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "summary": "share",
         "requestBody": {
           "content": {
@@ -1679,9 +1570,7 @@
     },
     "/orgs": {
       "post": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "create",
         "requestBody": {
           "content": {
@@ -1711,9 +1600,7 @@
         }
       },
       "get": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "all",
         "security": [
           {
@@ -1742,9 +1629,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "get",
         "security": [
           {
@@ -1773,9 +1658,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "update",
         "requestBody": {
           "content": {
@@ -1793,9 +1676,7 @@
                   "mobile_country_code": "+81",
                   "name": "Beat childhood cancer",
                   "phone": "9171260643",
-                  "social_causes": [
-                    "SOCIAL"
-                  ],
+                  "social_causes": ["SOCIAL"],
                   "website": "https://asasas.com"
                 }
               }
@@ -1829,9 +1710,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "members",
         "security": [
           {
@@ -1868,9 +1747,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "add member",
         "requestBody": {
           "content": {}
@@ -1910,9 +1787,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "summary": "delete member",
         "security": [
           {
@@ -1931,9 +1806,7 @@
     },
     "/user/profile": {
       "get": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "profile",
         "security": [
           {
@@ -1962,9 +1835,7 @@
     },
     "/user/update/profile": {
       "post": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "update profile",
         "requestBody": {
           "content": {
@@ -2017,9 +1888,7 @@
     },
     "/user/change-password": {
       "post": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "change password",
         "requestBody": {
           "content": {
@@ -2051,9 +1920,7 @@
     },
     "/user/change-password-direct": {
       "post": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "change password direct",
         "requestBody": {
           "content": {
@@ -2084,9 +1951,7 @@
     },
     "/user/delete": {
       "post": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "delete",
         "requestBody": {
           "content": {
@@ -2127,9 +1992,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "other user profile",
         "security": [
           {
@@ -2159,9 +2022,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "other profile by username",
         "security": [
           {
@@ -2190,9 +2051,7 @@
     },
     "/identities": {
       "get": {
-        "tags": [
-          "identity"
-        ],
+        "tags": ["identity"],
         "summary": "current",
         "security": [
           {
@@ -2231,9 +2090,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "identity"
-        ],
+        "tags": ["identity"],
         "summary": "get",
         "security": [
           {
@@ -2272,9 +2129,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "identity"
-        ],
+        "tags": ["identity"],
         "summary": "set identity session",
         "security": [
           {
@@ -2303,9 +2158,7 @@
     },
     "/devices": {
       "post": {
-        "tags": [
-          "device"
-        ],
+        "tags": ["device"],
         "summary": "add",
         "requestBody": {
           "content": {
@@ -2337,9 +2190,7 @@
         }
       },
       "get": {
-        "tags": [
-          "device"
-        ],
+        "tags": ["device"],
         "summary": "get",
         "security": [
           {
@@ -2358,9 +2209,7 @@
     },
     "/devices/update": {
       "post": {
-        "tags": [
-          "device"
-        ],
+        "tags": ["device"],
         "summary": "update meta data",
         "requestBody": {
           "content": {
@@ -2405,9 +2254,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "device"
-        ],
+        "tags": ["device"],
         "summary": "remove token",
         "security": [
           {
@@ -2436,9 +2283,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "follows"
-        ],
+        "tags": ["follows"],
         "summary": "follow",
         "requestBody": {
           "content": {}
@@ -2470,9 +2315,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "follows"
-        ],
+        "tags": ["follows"],
         "summary": "unfollow",
         "requestBody": {
           "content": {}
@@ -2494,9 +2337,7 @@
     },
     "/follows/followings": {
       "get": {
-        "tags": [
-          "follows"
-        ],
+        "tags": ["follows"],
         "summary": "followings",
         "security": [
           {
@@ -2541,9 +2382,7 @@
     },
     "/follows/followers": {
       "get": {
-        "tags": [
-          "follows"
-        ],
+        "tags": ["follows"],
         "summary": "followers",
         "security": [
           {
@@ -2588,9 +2427,7 @@
     },
     "/search": {
       "post": {
-        "tags": [
-          "search"
-        ],
+        "tags": ["search"],
         "summary": "search",
         "requestBody": {
           "content": {
@@ -2622,9 +2459,7 @@
     },
     "/search/history": {
       "get": {
-        "tags": [
-          "search"
-        ],
+        "tags": ["search"],
         "summary": "current user search history",
         "parameters": [
           {
@@ -2669,9 +2504,7 @@
     },
     "/media/upload": {
       "post": {
-        "tags": [
-          "media"
-        ],
+        "tags": ["media"],
         "summary": "upload",
         "requestBody": {
           "content": {
@@ -2715,9 +2548,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "media"
-        ],
+        "tags": ["media"],
         "summary": "get media",
         "security": [
           {

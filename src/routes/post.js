@@ -11,7 +11,6 @@ import {
 import {checkIdParams} from '../utils/middlewares/route.js';
 export const router = new Router();
 
-
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Post.get(ctx.params.id, ctx.identity.id);
 });
@@ -25,7 +24,6 @@ router.get('/', loginOptional, paginate, async (ctx) => {
       )
     : await Post.all(ctx.identity.id, ctx.paginate);
 });
-
 
 router.post('/', loginRequired, async (ctx) => {
   await validate.PostSchema.validateAsync(ctx.request.body);
@@ -50,7 +48,6 @@ router.post('/remove/:id', loginRequired, checkIdParams, async (ctx) => {
   };
 });
 
-
 router.get(
   '/:id/comments',
   loginOptional,
@@ -64,7 +61,6 @@ router.get(
     );
   },
 );
-
 
 router.get(
   '/comments/:id',
@@ -93,7 +89,6 @@ router.post(
   },
 );
 
-
 router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
   await validate.CommentSchema.validateAsync(ctx.request.body);
 
@@ -113,7 +108,6 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
   });
 });
 
-
 router.post(
   '/update/comments/:id',
   loginRequired,
@@ -127,7 +121,6 @@ router.post(
     );
   },
 );
-
 
 router.post('/:id/like', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id);
@@ -148,7 +141,6 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
     message: 'success',
   };
 });
-
 
 router.post(
   '/:id/comments/:comment_id/like',
@@ -183,7 +175,6 @@ router.post(
     };
   },
 );
-
 
 router.post('/:id/share', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Post.share(ctx.params.id, ctx.identity.id, ctx.request.body);

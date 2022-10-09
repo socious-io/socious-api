@@ -5,17 +5,14 @@ import {validate} from '@socious/data';
 
 export const router = new Router();
 
-
 router.get('/', loginRequired, async (ctx) => {
   ctx.body = await Device.all(ctx.user.id);
 });
-
 
 router.post('/', loginRequired, async (ctx) => {
   await validate.DeviceNewSchema.validateAsync(ctx.request.body);
   ctx.body = await Device.insert(ctx.user.id, ctx.request.body);
 });
-
 
 router.post('/update', loginRequired, async (ctx) => {
   await validate.DeviceNewSchema.validateAsync(ctx.request.body);

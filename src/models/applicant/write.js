@@ -1,40 +1,69 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, PermissionError} from '../../utils/errors.js';
-import {upsertSchem, offerSchem, rejectSchem, answerSchema} from './schema.js';
-import {StatusTypes} from './enums.js';
+import Data from '@socious/data';
+import {get} from './read.js';
 
-export const insert = async (projectId, userId, body) => {
-  await upsertSchem.validateAsync(body);
+const StatusTypes = Data.ApplicantStatus;
+
+export const insert = async (
+  projectId,
+  userId,
+  {
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
+) => {
   try {
     const {rows} = await app.db.query(
       sql`
-      INSERT INTO applicants (project_id, user_id, cover_letter, payment_type, payment_rate) 
+      INSERT INTO applicants (
+        project_id, user_id, cover_letter, payment_type, payment_rate,
+        cv_link, cv_name, share_contact_info
+        ) 
         VALUES (
           ${projectId},
           ${userId}, 
-          ${body.cover_letter}, 
-          ${body.payment_type},
-          ${body.payment_rate}
+          ${cover_letter}, 
+          ${payment_type},
+          ${payment_rate},
+          ${cv_link},
+          ${cv_name},
+          ${share_contact_info}
         )
-        RETURNING *`,
+        RETURNING id`,
     );
-    return rows[0];
+    return get(rows[0].id);
   } catch (err) {
     throw new EntryError(err.message);
   }
 };
 
-export const update = async (id, body) => {
-  await upsertSchem.validateAsync(body);
-
+export const update = async (
+  id,
+  {
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
+) => {
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE applicants SET
-        cover_letter=${body.cover_letter},
-        payment_type=${body.payment_type},
-        payment_rate=${body.payment_rate}
+        cover_letter=${cover_letter},
+        payment_type=${payment_type},
+        payment_rate=${payment_rate}
+        cv_link=${cv_link},
+        cv_name=${cv_name},
+        share_contact_info=${share_contact_info}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -76,18 +105,28 @@ export const hire = async (id) => {
   );
 };
 
-export const offer = async (id, body) => {
-  await offerSchem.validateAsync(body);
-
+export const offer = async (
+  id,
+  {
+    offer_rate,
+    offer_message,
+    due_date,
+    assignment_total,
+    total_hours,
+    weekly_limit,
+  },
+) => {
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE applicants SET
-        offer_rate=${body.offer_rate},
-        offer_message=${body.offer_message},
-        due_date=${body.due_date},
-        assignment_total=${body.assignment_total},
-        status=${StatusTypes.OFFERED}
+        offer_rate=${offer_rate},
+        offer_message=${offer_message},
+        due_date=${due_date},
+        assignment_total=${assignment_total},
+        status=${StatusTypes.OFFERED},
+        total_hours=${total_hours},
+        weekly_limits=${weekly_limit}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -96,14 +135,12 @@ export const offer = async (id, body) => {
   }
 };
 
-export const reject = async (id, body) => {
-  await rejectSchem.validateAsync(body);
-
+export const reject = async (id, {feedback}) => {
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE applicants SET
-        feedback=${body.feedback},
+        feedback=${feedback},
         status=${StatusTypes.REJECTED}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
@@ -113,13 +150,16 @@ export const reject = async (id, body) => {
   }
 };
 
-export const giveAnswer = async (id, projectId, body) => {
-  await answerSchema.validateAsync(body);
+export const giveAnswer = async (
+  id,
+  projectId,
+  {question_id, answer, selected_option},
+) => {
   try {
     const {rows} = await app.db.query(sql`
       INSERT INTO answers 
         (project_id, question_id, applicant_id, answer, selected_option)
-        VALUES(${projectId}, ${body.id}, ${id}, ${body.answer}, ${body.selected_option})
+        VALUES(${projectId}, ${question_id.id}, ${id}, ${answer}, ${selected_option})
         RETURNING *
       `);
     return rows[0];
@@ -128,24 +168,43 @@ export const giveAnswer = async (id, projectId, body) => {
   }
 };
 
-export const apply = async (projectId, userId, body) => {
+export const apply = async (
+  projectId,
+  userId,
+  {
+    answers = [],
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
+) => {
   const {rows} = await app.db.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${projectId} and required=true
   `);
 
-  if (parseInt(rows[0]?.count) > body.answers?.length)
+  if (parseInt(rows[0]?.count) > answers?.length)
     throw new EntryError('answers are not sufficient');
 
   await app.db.query('BEGIN');
   try {
-    const applicant = await insert(projectId, userId, body);
+    const applicant = await insert(projectId, userId, {
+      cover_letter,
+      payment_rate,
+      payment_type,
+      cv_link,
+      cv_name,
+      share_contact_info,
+    });
 
-    let answers = [];
+    let answersResult = [];
     // not worked on promise all
-    for (const a of body.answers)
-      answers.push(await giveAnswer(applicant.id, projectId, a));
+    for (const a of answers)
+      answersResult.push(await giveAnswer(applicant.id, projectId, a));
 
-    applicant.answers = answers;
+    applicant.answers = answersResult;
 
     await app.db.query('COMMIT');
     return applicant;
@@ -155,24 +214,44 @@ export const apply = async (projectId, userId, body) => {
   }
 };
 
-export const editApply = async (id, body) => {
+export const editApply = async (
+  id,
+  {
+    answers = [],
+    cover_letter,
+    payment_type,
+    payment_rate,
+    cv_link,
+    cv_name,
+    share_contact_info,
+  },
+) => {
   await app.db.query('BEGIN');
   try {
-    const applicant = await update(id, body);
+    const applicant = await update(id, {
+      cover_letter,
+      payment_type,
+      payment_rate,
+      cv_link,
+      cv_name,
+      share_contact_info,
+    });
 
     const {rows} = await app.db.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${applicant.project_id} and required=true
     `);
 
-    if (parseInt(rows[0]?.count) > body.answers?.length)
+    if (parseInt(rows[0]?.count) > answers?.length)
       throw new EntryError('answers are not sufficient');
 
     await app.db.query(sql`DELETE FROM answers WHERE applicant_id=${id}`);
 
-    let answers = [];
+    let answersResult = [];
     // not worked on promise all
-    for (const a of body.answers)
-      answers.push(await giveAnswer(applicant.id, applicant.project_id, a));
+    for (const a of answers)
+      answersResult.push(
+        await giveAnswer(applicant.id, applicant.project_id, a),
+      );
 
     applicant.answers = answers;
 

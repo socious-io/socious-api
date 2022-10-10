@@ -1,11 +1,38 @@
-import sql from 'sql-template-tag';
+import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
-import {upsertSchem} from './schema.js';
 
-export const insert = async (identityId, body) => {
-  await upsertSchem.validateAsync(body);
-
+export const insert = async (
+  identityId,
+  {
+    title,
+    description,
+    payment_type,
+    payment_scheme,
+    payment_currency,
+    payment_range_lower,
+    payment_range_higher,
+    experience_level,
+    status,
+    remote_preference,
+    project_type,
+    project_length,
+    skills,
+    causes_tags,
+    country,
+    other_party_id,
+    other_party_title,
+    other_party_url,
+    expires_at,
+    updated_at,
+    city,
+    weekly_hours_lower,
+    weekly_hours_higher,
+    commitment_hours_lower,
+    commitment_hours_higher,
+  },
+) => {
+  if (!updated_at) updated_at = raw('NOW()');
   try {
     const {rows} = await app.db.query(
       sql`
@@ -14,15 +41,25 @@ export const insert = async (identityId, body) => {
         payment_type, payment_scheme, payment_currency, 
         payment_range_lower, payment_range_higher, experience_level,
         status, remote_preference, project_type, project_length,
-        skills, causes_tags, country
+        skills, causes_tags, country, city,
+        other_party_id, other_party_title,
+        other_party_url, expires_at, updated_at,
+        weekly_hours_lower,
+        weekly_hours_higher,
+        commitment_hours_lower,
+        commitment_hours_higher
       )
       VALUES (
-        ${body.title}, ${body.description}, ${identityId}, 
-        ${body.payment_type}, ${body.payment_scheme}, 
-        ${body.payment_currency}, ${body.payment_range_lower},
-        ${body.payment_range_higher}, ${body.experience_level}, ${body.status},
-        ${body.remote_preference}, ${body.project_type}, ${body.project_length},
-        ${body.skills}, ${body.causes_tags}, ${body.country}
+        ${title}, ${description}, ${identityId}, 
+        ${payment_type}, ${payment_scheme}, 
+        ${payment_currency}, ${payment_range_lower},
+        ${payment_range_higher}, ${experience_level}, ${status},
+        ${remote_preference}, ${project_type}, ${project_length},
+        ${skills}, ${causes_tags}, ${country}, ${city},
+        ${other_party_id}, ${other_party_title},
+        ${other_party_url}, ${expires_at}, ${updated_at},
+        ${weekly_hours_lower}, ${weekly_hours_higher}, ${commitment_hours_lower},
+        ${commitment_hours_higher}
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
@@ -32,28 +69,66 @@ export const insert = async (identityId, body) => {
   }
 };
 
-export const update = async (id, body) => {
-  await upsertSchem.validateAsync(body);
-
+export const update = async (
+  id,
+  {
+    title,
+    description,
+    payment_type,
+    payment_scheme,
+    payment_currency,
+    payment_range_lower,
+    payment_range_higher,
+    experience_level,
+    status,
+    remote_preference,
+    project_type,
+    project_length,
+    skills,
+    causes_tags,
+    country,
+    other_party_id,
+    other_party_title,
+    other_party_url,
+    expires_at,
+    updated_at,
+    city,
+    weekly_hours_lower,
+    weekly_hours_higher,
+    commitment_hours_lower,
+    commitment_hours_higher,
+  },
+) => {
+  if (!updated_at) updated_at = raw('NOW()');
   try {
     const {rows} = await app.db.query(
       sql`
       UPDATE projects SET
-        title=${body.title},
-        description=${body.description},
-        payment_type=${body.payment_type},
-        payment_scheme=${body.payment_scheme},
-        payment_currency=${body.payment_currency},
-        payment_range_lower=${body.payment_range_lower},
-        payment_range_higher=${body.payment_range_higher},
-        experience_level=${body.experience_level},
-        remote_preference=${body.remote_preference},
-        status=${body.status},
-        project_type=${body.project_type}, 
-        project_length=${body.project_length},
-        skills=${body.skills},
-        causes_tags=${body.causes_tags},
-        country=${body.country}
+        title=${title},
+        description=${description},
+        payment_type=${payment_type},
+        payment_scheme=${payment_scheme},
+        payment_currency=${payment_currency},
+        payment_range_lower=${payment_range_lower},
+        payment_range_higher=${payment_range_higher},
+        experience_level=${experience_level},
+        remote_preference=${remote_preference},
+        status=${status},
+        project_type=${project_type}, 
+        project_length=${project_length},
+        skills=${skills},
+        causes_tags=${causes_tags},
+        country=${country},
+        other_party_id=${other_party_id}, 
+        other_party_title=${other_party_title},
+        other_party_url=${other_party_url},
+        expires_at=${expires_at},
+        updated_at=${updated_at},
+        city=${city},
+        weekly_hours_lower=${weekly_hours_lower},
+        weekly_hours_higher=${weekly_hours_higher},
+        commitment_hours_lower=${commitment_hours_lower},
+        commitment_hours_higher=${commitment_hours_higher}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];

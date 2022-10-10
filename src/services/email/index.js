@@ -4,6 +4,7 @@ import sendgrid from '@sendgrid/mail';
 import config from '../../config.js';
 import ejs from 'ejs';
 import crypto from 'crypto';
+import logger from '../../utils/logging.js';
 
 const smtp = nodeMailer.createTransport(config.mail.smtp);
 sendgrid.setApiKey(config.mail.sendgrid.apiKey);
@@ -63,9 +64,9 @@ export const sendHtmlEmail = async ({
       default:
         throw Error(`Unkonw sender type ${sender}`);
     }
-  } catch (e) {
+  } catch (err) {
     // TODO: better error handler and retry system
-    console.log(e);
+    logger.error(err);
     return;
   }
 

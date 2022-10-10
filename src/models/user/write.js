@@ -2,7 +2,6 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {StatusType} from './enums.js';
-import {updateProfileSchem} from './schema.js';
 
 export const insert = async (
   first_name,
@@ -14,7 +13,7 @@ export const insert = async (
   try {
     const {rows} = await app.db.query(sql`
     INSERT INTO users (first_name, last_name, username, email, password) 
-    VALUES (${first_name}, ${last_name}, ${username},
+    VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
       ${email.toLowerCase()}, ${hashedPasswd}) RETURNING *
   `);
     return rows[0];
@@ -23,16 +22,35 @@ export const insert = async (
   }
 };
 
-export const updateProfile = async (id, profile) => {
-  await updateProfileSchem.validateAsync(profile);
+export const updateProfile = async (
+  id,
+  {
+    first_name,
+    last_name,
+    avatar,
+    cover_image,
+    phone,
+    bio,
+    city,
+    address,
+    country,
+    wallet_address,
+    social_causes,
+    skills,
+    mission,
+    language,
+    mobile_country_code,
+    username,
+  },
+) => {
   const query = sql`
     UPDATE users SET 
-      first_name=${profile.first_name}, last_name=${profile.last_name},
-      avatar=${profile.avatar}, cover_image=${profile.cover_image}, phone=${profile.phone},
-      bio=${profile.bio}, city=${profile.city}, address=${profile.address}, country=${profile.country},
-      wallet_address=${profile.wallet_address}, social_causes=${profile.social_causes},
-      skills=${profile.skills}, mission=${profile.mission}, language=${profile.language},
-      mobile_country_code=${profile.mobile_country_code}
+      first_name=${first_name}, last_name=${last_name},
+      avatar=${avatar}, cover_image=${cover_image}, phone=${phone},
+      bio=${bio}, city=${city}, address=${address}, country=${country},
+      wallet_address=${wallet_address}, social_causes=${social_causes},
+      skills=${skills}, mission=${mission}, language=${language},
+      mobile_country_code=${mobile_country_code},username=${username.toLowerCase()}
     WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {
@@ -67,4 +85,21 @@ export const verifyPhone = async (id) => {
   await app.db.query(
     sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`,
   );
+};
+
+export const remove = async (user, reason) => {
+  await app.db.query('BEGIN');
+  try {
+    Promise.all([
+      app.db.query(
+        sql`INSERT INTO deleted_users (user_id, username, reason, registered_at)
+      VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`,
+      ),
+      app.db.query(sql`DELETE FROM users WHERE id=${user.id}`),
+    ]);
+    await app.db.query('COMMIT');
+  } catch (err) {
+    await app.db.query('ROLLBACK');
+    throw err;
+  }
 };

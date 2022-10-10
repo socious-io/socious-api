@@ -1,15 +1,13 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {upsertCommentSchem} from './schema.js';
 import {EntryError} from '../../utils/errors.js';
 
-export const newComment = async (id, identityId, body) => {
-  await upsertCommentSchem.validateAsync(body);
+export const newComment = async (id, identityId, {content, reply_id}) => {
   try {
     const {rows} = await app.db.query(sql`
     INSERT 
       INTO comments (identity_id, post_id, content, reply_id)
-      VALUES(${identityId}, ${id}, ${body.content}, ${body.reply_id})
+      VALUES(${identityId}, ${id}, ${content}, ${reply_id})
       RETURNING *
     `);
     return rows[0];
@@ -18,12 +16,11 @@ export const newComment = async (id, identityId, body) => {
   }
 };
 
-export const updateComment = async (id, identityId, body) => {
-  await upsertCommentSchem.validateAsync(body);
+export const updateComment = async (id, identityId, {content}) => {
   try {
     const {rows} = await app.db.query(sql`
     UPDATE comments SET
-      content=${body.content}
+      content=${content}
     WHERE id=${id} AND identity_id=${identityId}
     RETURNING *
     `);
@@ -78,4 +75,8 @@ export const commentsReplies = async (
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
+};
+
+export const getComment = async (id) => {
+  return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`);
 };

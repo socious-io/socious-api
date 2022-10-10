@@ -79,7 +79,7 @@ export const register = async (body) => {
   );
 
   // sending OTP to verify user email after registeration
-  const code = await createOTP(
+  /* const code = await createOTP(
     user.id,
     OTPType.EMAIL,
     OTPPurposeType.ACTIVATION,
@@ -89,7 +89,7 @@ export const register = async (body) => {
     subject: 'Verify your account',
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
-  });
+  }); */
   return signin(user.id);
 };
 

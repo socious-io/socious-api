@@ -1,4 +1,5 @@
 import sql from 'sql-template-tag';
+import logger from '../../utils/logging.js';
 import {app} from '../../index.js';
 import User from '../../models/user/index.js';
 
@@ -39,6 +40,6 @@ export const createOTP = async (
   await app.db.query(
     sql`INSERT INTO otps (code, user_id, type, purpose) VALUES (${code}, ${userId}, ${otpType}, ${otpPurpose})`,
   );
-  console.log(`OTP Code generated for ${userId} => ${code}`);
+  logger.info(`OTP Code generated for ${userId} => ${code}`);
   return code;
 };

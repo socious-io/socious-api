@@ -1,10 +1,15 @@
-import 'dotenv/config';
+import {config} from 'dotenv';
+
+const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env';
+
+config({path: envFile});
 
 export default {
+  env: process.env.ENV || 'development',
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
   secret: process.env.SECRET,
-  jwtExpireTime: '2h',
+  jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
   mail: {
     sendgrid: {
@@ -27,21 +32,41 @@ export default {
       },
     },
   },
+  database: {
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    db: process.env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+  },
   nats: {
-    servers: process.env.NATS_HOSTS.split(','),
+    servers: process.env.NATS_HOSTS?.split(','),
     token: process.env.NATS_TOKEN,
   },
   session: {
     key: 'Socious.sess',
-    maxAge: '2h',
+    maxAge: 48 * 60 * 60 * 1000,
     autoCommit: true,
     overwrite: true,
     httpOnly: true,
     signed: true,
     rolling: false,
     renew: true,
-    secure: false, // need do it enviremental (works on https only)
-    sameSite: null,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : null,
+  },
+  webhooks: {
+    token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
+    addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks',
+  },
+  requestBlocker: {
+    // We may tagname blocker configs and use it on other groups and routes
+    auth: {
+      resetTimer: process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
+      blockerTimer:
+        process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
+      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10,
+    },
   },
   aws: {
     cdn_url:
@@ -57,7 +82,18 @@ export default {
     key: process.env.FCM_KEY,
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || '').split(','),
+    origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(
+      ',',
+    ),
+  },
+  payments: {
+    stripe: {
+      secret_key: process.env.STRIPE_SECRET_KEY,
+    },
+  },
+  idealist: {
+    wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
+    wait_break: process.env.WAIT_BREAK || 1000,
   },
 };
 

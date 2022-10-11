@@ -85,9 +85,3 @@ exports[`profile 2`] = `
   "wallet_address": null,
 }
 `;
-
-exports[`register 1`] = `
-{
-  "error": ""email" must be a valid email",
-}
-`;

@@ -62,7 +62,7 @@ export const projectOwner = async (identityId, id) => {
     return app.db.get(sql`SELECT a.*, row_to_json(p.*) AS project
       FROM applicants a 
       JOIN projects p ON a.project_id=p.id 
-      WHERE id=${id} AND p.identity_id=${identityId}`);
+      WHERE a.id=${id} AND p.identity_id=${identityId}`);
   } catch {
     throw new PermissionError('now allow');
   }

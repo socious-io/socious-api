@@ -126,7 +126,7 @@ export const offer = async (
         assignment_total=${assignment_total},
         status=${StatusTypes.OFFERED},
         total_hours=${total_hours},
-        weekly_limits=${weekly_limit}
+        weekly_limit=${weekly_limit}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -151,15 +151,15 @@ export const reject = async (id, {feedback}) => {
 };
 
 export const giveAnswer = async (
-  id,
+  applicantId,
   projectId,
-  {question_id, answer, selected_option},
+  {id, answer, selected_option},
 ) => {
   try {
     const {rows} = await app.db.query(sql`
       INSERT INTO answers 
         (project_id, question_id, applicant_id, answer, selected_option)
-        VALUES(${projectId}, ${question_id.id}, ${id}, ${answer}, ${selected_option})
+        VALUES(${projectId}, ${id}, ${applicantId}, ${answer}, ${selected_option})
         RETURNING *
       `);
     return rows[0];
@@ -198,7 +198,6 @@ export const apply = async (
       cv_name,
       share_contact_info,
     });
-
     let answersResult = [];
     // not worked on promise all
     for (const a of answers)

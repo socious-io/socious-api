@@ -1,0 +1,359 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+{
+  "error": ""email" must be a valid email",
+}
+`;
+
+exports[` 2`] = `
+{
+  "address": "address",
+  "bio": "test",
+  "city": "Tokyo",
+  "country": "JP",
+  "cover_image": null,
+  "created_at": Any<String>,
+  "created_by": Any<String>,
+  "culture": "test",
+  "description": "test",
+  "email": "test@socious.io",
+  "followers": 0,
+  "followings": 0,
+  "id": Any<String>,
+  "image": null,
+  "impact_score": 0,
+  "mission": "test",
+  "mobile_country_code": null,
+  "name": "test ORG",
+  "phone": "9379911",
+  "search_tsv": Any<String>,
+  "shortname": Any<String>,
+  "social_causes": [
+    "SOCIAL",
+    "MENTAL",
+  ],
+  "status": "ACTIVE",
+  "type": "COOP",
+  "updated_at": Any<String>,
+  "wallet_address": null,
+  "website": "http://test.com",
+}
+`;
+
+exports[` 3`] = `
+{
+  "address": "address",
+  "bio": "test",
+  "city": "Tehran",
+  "country": "IR",
+  "cover_image": null,
+  "created_at": Any<String>,
+  "created_by": Any<String>,
+  "culture": "test",
+  "description": "test",
+  "email": "test@socious.io",
+  "followers": 0,
+  "followings": 0,
+  "id": Any<String>,
+  "image": null,
+  "impact_score": 0,
+  "mission": "test",
+  "mobile_country_code": null,
+  "name": "test ORG",
+  "phone": "9899993",
+  "search_tsv": Any<String>,
+  "shortname": Any<String>,
+  "social_causes": [
+    "SOCIAL",
+    "MENTAL",
+  ],
+  "status": "ACTIVE",
+  "type": "SOCIAL",
+  "updated_at": Any<String>,
+  "wallet_address": null,
+  "website": "http://test.com",
+}
+`;
+
+exports[` 4`] = `
+{
+  "error": ""phone" must be a string",
+}
+`;
+
+exports[`add questions 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 2`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 3`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 4`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 5`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 6`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`apply 1`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`apply 2`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`create 1`] = `
+{
+  "causes_tags": [
+    "SOCIAL",
+    "POVERTY",
+  ],
+  "city": "Tokyo",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "JP",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "JPY",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "1_3_MONTHS",
+  "project_type": "FULL_TIME",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 1",
+  "total_escrow_amount": null,
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`create 2`] = `
+{
+  "causes_tags": [
+    "SOCIAL",
+    "POVERTY",
+  ],
+  "city": "Tehran",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "IR",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "USD",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "LESS_THAN_A_MONTH",
+  "project_type": "ONE_OFF",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 2",
+  "total_escrow_amount": null,
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`offer 1`] = `
+{
+  "assignment_total": 30000,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": "2022-12-30T02:44:04.000Z",
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": "Test",
+  "offer_rate": 9000,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "OFFERED",
+  "total_hours": 180,
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`reject 1`] = `
+{
+  "assignment_total": 0,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": "TEST",
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "REJECTED",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;

@@ -2,7 +2,16 @@ import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
 import {register} from './globals/user.js';
-import {create} from './globals/org.js';
+import {create as createOrg} from './globals/org.js';
+import {
+  create,
+  addQuestion,
+  apply,
+  offer,
+  reject,
+  approve,
+  hire,
+} from './globals/project.js';
 
 let server, request;
 
@@ -11,13 +20,21 @@ beforeAll(async () => {
   request = supertest(server);
 
   await register(request, data);
+  await createOrg(request, data);
 });
 
 test('create', async () => create(request, data));
+test('add questions', async () => addQuestion(request, data));
+test('apply', async () => apply(request, data));
+test('offer', async () => offer(request, data));
+test('reject', async () => reject(request, data));
+test('approve', async () => approve(request, data));
+test('hire', async () => hire(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);
   await app.db.query(`DELETE FROM organizations`);
+  await app.db.query(`DELETE FROM projects`);
   await app.db.pool.end();
 };
 

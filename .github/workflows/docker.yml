@@ -14,6 +14,7 @@ env:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -185,7 +186,7 @@ jobs:
           path: test-results
 
   deploy-dev:
-    needs: [build, run-tests]
+    needs: [build-dev, run-tests]
     name: Deploy to Dev
     if: github.ref == 'refs/heads/main'
     runs-on: ["backend-dev"]
@@ -231,7 +232,7 @@ jobs:
           docker run -d --restart always -h socious-workers --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
 
   deploy-prod:
-    needs: [build]
+    needs: [build, run-tests]
     name: Deploy to Production
     if: github.ref == 'refs/heads/production'
     runs-on: ["backend-prod"]

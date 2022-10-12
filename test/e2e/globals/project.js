@@ -1,4 +1,7 @@
-import {app} from '../../../src/index.js';
+import {
+  create as createTrx,
+  complete as completeTrx,
+} from '../../../src/services/payments/transaction.js';
 
 export const create = async (request, data) => {
   for (const i in data.projects.objs) {
@@ -167,20 +170,27 @@ export const hire = async (request, data) => {
       .set('Current-Identity', data.orgs[0].id);
 
     for (const applicant of applicants.body.items) {
-      console.log(applicant.status, '----------------');
       if (applicant.status != 'APPROVED') continue;
 
-      const payment = await request
-        .post(`/payments/project/${data.projects.objs[i].id}/escrow`)
-        .set('Authorization', data.users[0].access_token)
-        .set('Current-Identity', data.orgs[0].id)
-        .send({
-          service: 'STRIPE',
-          amount: applicant.offer_rate,
-          callback: 'https://dev.socious.io',
-        });
+      // TODO: test with send and verify with STRIPE it self
+      // Due Stripe sanctions and IR filtering for now we test on blow level of payments directly
+      const paymentId = await createTrx({
+        identity_id: data.orgs[0].id,
+        amount: applicant.assignment_total,
+        currency: data.projects.objs[i].payment_currency,
+        service: 'STRIPE',
+        meta: {
+          project_id: data.projects.objs[i].id,
+        },
+      });
+      await completeTrx(paymentId);
 
-      console.log(payment, '-----------------');
+      const response = await request
+        .post(`/applicants/${applicant.id}/hire`)
+        .set('Authorization', data.users[0].access_token)
+        .set('Current-Identity', data.orgs[0].id);
+
+      expect(response.status).toBe(200);
     }
   }
 };

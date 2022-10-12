@@ -18,6 +18,12 @@
         "type": "http",
         "scheme": "bearer"
       }
+    },
+    "schemas": {
+      "project-status": {
+        "type": "string",
+        "enum": ["DRAFT", "ACTIVE", "EXPIRE"]
+      }
     }
   },
   "paths": {
@@ -300,6 +306,30 @@
       "get": {
         "tags": ["project"],
         "summary": "get all",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "uuid of organization to filter",
+            "example": "2bd26aa5-f745-4f12-bca7-17916161ae8b"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/project-status"
+              },
+              "default": "ACTIVE"
+            },
+            "description": "statuses to filter for",
+            "example": "ACTIVE"
+          }
+        ],
         "security": [
           {
             "bearerAuth": []

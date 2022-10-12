@@ -108,6 +108,7 @@ export const offer = async (request, data) => {
       created_at: expect.any(String),
       updated_at: expect.any(String),
       user_id: expect.any(String),
+      due_date: expect.any(String),
     });
   }
 };

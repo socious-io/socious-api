@@ -316,7 +316,7 @@ exports[`offer 1`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": "2022-12-30T02:44:04.000Z",
+  "due_date": Any<String>,
   "feedback": null,
   "id": Any<String>,
   "offer_message": "Test",

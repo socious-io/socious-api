@@ -1,21 +1,23 @@
 import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
-import {login, register, profile} from './globals/user.js';
+import {register} from './globals/user.js';
+import {create} from './globals/org.js';
 
 let server, request;
 
-beforeAll(() => {
+beforeAll(async () => {
   server = app.listen();
   request = supertest(server);
+
+  await register(request, data);
 });
 
-test('register', async () => register(request, data));
-test('login', async () => login(request, data));
-test('profile', async () => profile(request, data));
+test('create', async () => create(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);
+  await app.db.query(`DELETE FROM organizations`);
   await app.db.pool.end();
 };
 

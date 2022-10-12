@@ -25,12 +25,12 @@
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "cross-env ENV=testing node scripts/createdb.js ; db-migrate --dotenvCustomPath=test.env up --config ./migrations/database.json",
-    "test": "cross-env ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit",
-    "posttest": "cross-env ENV=testing node scripts/dropdb.js",
-    "test:watch": "cross-env ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --watch",
-    "test:ci": "cross-env ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --ci --reporters='default' --reporters=jest-junit",
-    "test:cov": "cross-env ENV=testing node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --coverage",
-    "test:debug": "cross-env ENV=testing node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit; npm run aftertest",
+    "aftertest": "cross-env ENV=testing NEW_RELIC_ENABLED=false node scripts/dropdb.js",
+    "test:watch": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --watch",
+    "test:ci": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --ci --reporters='default' --reporters=jest-junit",
+    "test:cov": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --coverage",
+    "test:debug": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --inspect-brk node_modules/.bin/jest --runInBand",
     "workers": "node src/services/jobs/workers.js",
     "workers:watch": "nodemon --inspect src/services/jobs/workers.js"
   },
@@ -100,6 +100,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "jest": {
+    "testTimeout": 30000,
     "moduleFileExtensions": [
       "js",
       "json"

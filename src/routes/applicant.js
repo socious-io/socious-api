@@ -54,7 +54,7 @@ router.post('/:id/approve', loginRequired, applicantOwner, async (ctx) => {
 
 router.post('/:id/hire', loginRequired, projectOwner, async (ctx) => {
   if (
-    ctx.applicant.project.total_escrow_amount <= ctx.aapplicant.assignment_total
+    ctx.applicant.project.total_escrow_amount < ctx.applicant.assignment_total
   )
     throw new PermissionError();
   ctx.body = await Applicant.hire(ctx.params.id);

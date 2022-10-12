@@ -66,11 +66,11 @@ router.post('/delete', loginRequired, async (ctx) => {
 });
 
 router.get(
-  '/:id/applicants',
+  '/applicants',
   loginRequired,
   checkIdParams,
   paginate,
   async (ctx) => {
-    ctx.body = await Applicant.getByUserId(ctx.params.id, ctx.paginate);
+    ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate);
   },
 );

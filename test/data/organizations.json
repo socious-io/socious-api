@@ -1,0 +1,51 @@
+[
+  {
+    "name": "test ORG",
+    "bio": "test",
+    "description": "test",
+    "email": "test@socious.io",
+    "phone": "9379911",
+    "city": "Tokyo",
+    "type": "COOP",
+    "address": "address",
+    "website": "http://test.com",
+    "social_causes": ["SOCIAL", "MENTAL"],
+    "country": "JP",
+    "mission": "test",
+    "culture": "test"
+  },
+  {
+    "name": "test ORG",
+    "bio": "test",
+    "description": "test",
+    "email": "test@socious.io",
+    "phone": "9899993",
+    "city": "Tehran",
+    "type": "SOCIAL",
+    "address": "address",
+    "website": "http://test.com",
+    "social_causes": ["SOCIAL", "MENTAL"],
+    "country": "IR",
+    "mission": "test",
+    "culture": "test"
+  },
+  {
+    "invalid": true,
+    "name": "test ORG",
+    "bio": "test",
+    "description": "test",
+    "email": "test@socious.io",
+    "phone": null,
+    "city": "New York",
+    "type": null,
+    "address": "address",
+    "website": "http://test.com",
+    "social_causes": null,
+    "country": "US",
+    "mission": null,
+    "culture": null,
+    "image": null,
+    "cover_image": null,
+    "mobile_country_code": null
+  }
+]

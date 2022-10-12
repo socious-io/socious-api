@@ -3,6 +3,48 @@ import {
   complete as completeTrx,
 } from '../../../src/services/payments/transaction.js';
 
+export const get = async (request, data) => {
+  for (const i in data.projects.objs) {
+    if (data.projects.objs[i].invalid) continue;
+
+    const response = await request.get(`/projects/${data.projects.objs[i].id}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      identity_id: expect.any(String),
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+      search_tsv: expect.any(String),
+      identity_meta: expect.any(Object),
+    });
+  }
+};
+
+export const getApplicant = async (request, data) => {
+  for (const i in data.projects.objs) {
+    if (data.projects.objs[i].invalid) continue;
+
+    for (const id of data.projects.objs[i].applications) {
+      const response = await request
+        .get(`/applicants/${id}`)
+        .set('Authorization', data.users[0].access_token);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchSnapshot({
+        id: expect.any(String),
+        project_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        user: expect.any(Object),
+        user_id: expect.any(String),
+        // TODO: need to verify answers
+        answers: expect.any(Array),
+      });
+    }
+  }
+};
+
 export const create = async (request, data) => {
   for (const i in data.projects.objs) {
     const body = data.projects.objs[i];

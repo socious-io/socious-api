@@ -21,7 +21,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
 router.get('/', loginOptional, paginate, async (ctx) => {
   ctx.body = ctx.query.identity
     ? await Project.allByIdentity(ctx.query.identity, ctx.paginate)
-    : await Project.all(ctx.paginate);
+    : await Project.all(ctx.paginate, ctx.query.status || 'ACTIVE');
 });
 
 router.post('/', loginRequired, async (ctx) => {

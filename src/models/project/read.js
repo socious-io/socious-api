@@ -1,4 +1,4 @@
-import sql from 'sql-template-tag';
+import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 
@@ -15,8 +15,10 @@ export const get = async (id) => {
 
 export const getAll = async (ids) => {
   const {rows} = await app.db.query(sql`
-  SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
-    array_to_json(p.causes_tags) AS causes_tags
+  SELECT p.*,
+    i.type  as identity_type,
+    i.meta as identity_meta,
+    array_to_json(p.causes_tags) AS causes_tags,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
@@ -25,7 +27,12 @@ export const getAll = async (ids) => {
   return rows;
 };
 
-export const all = async ({offset = 0, limit = 10}) => {
+export const all = async ({offset = 0, limit = 10}, status) => {
+  const where = status
+    ? status instanceof Array
+      ? sql`WHERE status = ANY(${status})`
+      : sql`WHERE status = ${status}`
+    : raw('');
   const {rows} = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
@@ -33,6 +40,7 @@ export const all = async ({offset = 0, limit = 10}) => {
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
+      ${where}
       ORDER BY p.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
   return rows;
 };

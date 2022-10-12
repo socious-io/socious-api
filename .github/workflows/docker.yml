@@ -174,7 +174,7 @@ jobs:
 
       - name: Cleanup tests
         if: always()
-        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run posttest
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run aftertest
       
       - name: Archive test results
         if: always()

@@ -83,7 +83,7 @@ jobs:
 
   build-dev:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main'
     permissions:
       contents: read
       packages: write
@@ -140,7 +140,7 @@ jobs:
   run-tests:
     needs: build-dev
     name: Tests
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

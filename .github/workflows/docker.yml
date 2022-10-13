@@ -22,7 +22,7 @@ jobs:
   #       run: echo '${{ toJSON(job) }}'
 
   build:
-    if: github.ref == 'refs/heads/production'
+    if:  github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -194,9 +194,9 @@ jobs:
           path: test-results
 
   deploy-dev:
-    needs: [build-dev, run-tests]
+    needs: [build, run-tests]
     name: Deploy to Dev
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

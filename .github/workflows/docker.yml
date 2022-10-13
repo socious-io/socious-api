@@ -188,7 +188,7 @@ jobs:
   deploy-dev:
     needs: [build-dev, run-tests]
     name: Deploy to Dev
-    if: github.ref == 'refs/heads/main' && github.event == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -232,7 +232,7 @@ jobs:
           docker run -d --restart always -h socious-workers --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
 
   deploy-prod:
-    needs: [build, run-tests]
+    needs: [build]
     name: Deploy to Production
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
     runs-on: ["backend-prod"]

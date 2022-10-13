@@ -11,9 +11,12 @@ export const getAnswers = async (id) => {
 
 export const get = async (id) => {
   const applicant = await app.db.get(
-    sql`SELECT a.*, i.meta as user
+    sql`SELECT 
+      a.*, i.meta as user,
+      row_to_json(m.*) AS attachment
     FROM applicants a
     JOIN identities i ON i.id=a.user_id
+    LEFT JOIN media m ON m.id=a.attachment
     WHERE a.id=${id}`,
   );
   applicant.answers = await getAnswers(id);
@@ -22,24 +25,43 @@ export const get = async (id) => {
 
 export const all = async ({offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
-    sql`SELECT COUNT(*) OVER () as total_count, 
-      applicants.* FROM applicants ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+    sql`SELECT COUNT(a.*) OVER () as total_count,
+      a.*, i.meta as user,
+      row_to_json(m.*) AS attachment
+      FROM applicants a
+      JOIN identities i ON i.id=a.user_id
+      LEFT JOIN media m ON m.id=a.attachment
+      ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
 
 export const getByUserId = async (userId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
-    sql`SELECT COUNT(*) OVER () as total_count, 
-      applicants.* FROM applicants WHERE user_id=${userId} ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+    sql`
+      SELECT COUNT(a.*) OVER () as total_count,
+      a.*, i.meta as user,
+      row_to_json(m.*) AS attachment
+      FROM applicants a
+      JOIN identities i ON i.id=a.user_id
+      LEFT JOIN media m ON m.id=a.attachment
+      WHERE a.user_id=${userId} 
+      ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
 
 export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
-    sql`SELECT COUNT(*) OVER () as total_count, 
-      applicants.* FROM applicants WHERE project_id=${projectId} ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+    sql`SELECT
+          COUNT(a.*) OVER () as total_count,
+          a.*, i.meta as user,
+          row_to_json(m.*) AS attachment
+        FROM applicants a
+        JOIN identities i ON i.id=a.user_id
+        LEFT JOIN media m ON m.id=a.attachment
+        WHERE a.project_id=${projectId} 
+        ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };

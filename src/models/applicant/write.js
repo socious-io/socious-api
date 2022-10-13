@@ -16,6 +16,7 @@ export const insert = async (
     cv_link,
     cv_name,
     share_contact_info,
+    attachment,
   },
 ) => {
   try {
@@ -23,7 +24,7 @@ export const insert = async (
       sql`
       INSERT INTO applicants (
         project_id, user_id, cover_letter, payment_type, payment_rate,
-        cv_link, cv_name, share_contact_info
+        cv_link, cv_name, share_contact_info, attachment
         ) 
         VALUES (
           ${projectId},
@@ -33,7 +34,8 @@ export const insert = async (
           ${payment_rate},
           ${cv_link},
           ${cv_name},
-          ${share_contact_info}
+          ${share_contact_info},
+          ${attachment}
         )
         RETURNING id`,
     );
@@ -52,6 +54,7 @@ export const update = async (
     cv_link,
     cv_name,
     share_contact_info,
+    attachment,
   },
 ) => {
   try {
@@ -63,7 +66,8 @@ export const update = async (
         payment_rate=${payment_rate}
         cv_link=${cv_link},
         cv_name=${cv_name},
-        share_contact_info=${share_contact_info}
+        share_contact_info=${share_contact_info},
+        attachment=${attachment}
       WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
     );
     return rows[0];
@@ -179,6 +183,7 @@ export const apply = async (
     cv_link,
     cv_name,
     share_contact_info,
+    attachment,
   },
 ) => {
   const {rows} = await app.db.query(sql`
@@ -197,6 +202,7 @@ export const apply = async (
       cv_link,
       cv_name,
       share_contact_info,
+      attachment,
     });
     let answersResult = [];
     // not worked on promise all
@@ -223,6 +229,7 @@ export const editApply = async (
     cv_link,
     cv_name,
     share_contact_info,
+    attachment,
   },
 ) => {
   await app.db.query('BEGIN');
@@ -234,6 +241,7 @@ export const editApply = async (
       cv_link,
       cv_name,
       share_contact_info,
+      attachment,
     });
 
     const {rows} = await app.db.query(sql`

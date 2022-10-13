@@ -2,11 +2,12 @@ import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 
-export const get = async (id) => {
+export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
-    (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
+    (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
+    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
   WHERE p.id=${id}

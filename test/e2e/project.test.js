@@ -5,6 +5,8 @@ import {register} from './globals/user.js';
 import {create as createOrg} from './globals/org.js';
 import {
   create,
+  get,
+  getApplicant,
   addQuestion,
   apply,
   offer,
@@ -24,8 +26,10 @@ beforeAll(async () => {
 });
 
 test('create', async () => create(request, data));
+test('get', async () => get(request, data));
 test('add questions', async () => addQuestion(request, data));
 test('apply', async () => apply(request, data));
+test('get applicants', async () => getApplicant(request, data));
 test('offer', async () => offer(request, data));
 test('reject', async () => reject(request, data));
 test('approve', async () => approve(request, data));

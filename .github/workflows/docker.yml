@@ -83,7 +83,7 @@ jobs:
 
   build-dev:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write
@@ -140,7 +140,7 @@ jobs:
   run-tests:
     needs: build-dev
     name: Tests
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'refs/heads/main'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -234,7 +234,7 @@ jobs:
   deploy-prod:
     needs: [build, run-tests]
     name: Deploy to Production
-    if: github.ref == 'refs/heads/production' && github.event == 'push'
+    if: github.ref == 'refs/heads/production' && github.event_name == 'push'
     runs-on: ["backend-prod"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

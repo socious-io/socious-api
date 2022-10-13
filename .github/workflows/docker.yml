@@ -16,8 +16,10 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-      - name: Show context
-        run: echo "${{ github }}"
+      - name: Dump GH context
+        run: echo "${{ toJSON(github) }}"
+      - name: Dump job context
+        run: echo '${{ toJSON(job) }}'
 
   build:
     if: github.ref == 'refs/heads/production'

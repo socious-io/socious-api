@@ -13,13 +13,13 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GH context
-        run: echo "${{ toJSON(github) }}"
-      - name: Dump job context
-        run: echo '${{ toJSON(job) }}'
+  # debug:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Dump GH context
+  #       run: echo "${{ toJSON(github) }}"
+  #     - name: Dump job context
+  #       run: echo '${{ toJSON(job) }}'
 
   build:
     if: github.ref == 'refs/heads/production'
@@ -91,7 +91,7 @@ jobs:
 
   build-dev:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
     permissions:
       contents: read
       packages: write
@@ -140,7 +140,6 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: development
@@ -148,7 +147,7 @@ jobs:
   run-tests:
     needs: build-dev
     name: Tests
-    if: github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
     runs-on: ["backend-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

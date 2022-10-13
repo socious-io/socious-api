@@ -13,6 +13,12 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show context
+        run: echo "${{ github }}"
+
   build:
     if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest

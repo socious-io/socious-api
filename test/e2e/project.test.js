@@ -13,6 +13,11 @@ import {
   reject,
   approve,
   hire,
+  complete,
+  cancel,
+  confirm,
+  feedback,
+  feedbacks,
 } from './globals/project.js';
 
 let server, request;
@@ -34,6 +39,11 @@ test('offer', async () => offer(request, data));
 test('reject', async () => reject(request, data));
 test('approve', async () => approve(request, data));
 test('hire', async () => hire(request, data));
+test('complete', async () => complete(request, data));
+test('cancel', async () => cancel(request, data));
+test('confirm', async () => confirm(request, data));
+test('send feedback', async () => feedback(request, data));
+test('get feedbacks', async () => feedbacks(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

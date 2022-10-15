@@ -75,7 +75,7 @@ export const owner = async (userId, id) => {
       WHERE a.id=${id} and a.user_id=${userId}`,
     );
   } catch {
-    throw new PermissionError('not allow');
+    throw new PermissionError();
   }
 };
 
@@ -86,6 +86,6 @@ export const projectOwner = async (identityId, id) => {
       JOIN projects p ON a.project_id=p.id 
       WHERE a.id=${id} AND p.identity_id=${identityId}`);
   } catch {
-    throw new PermissionError('now allow');
+    throw new PermissionError();
   }
 };

@@ -10,11 +10,7 @@ import {
   loginOptional,
   loginRequired,
 } from '../utils/middlewares/authorization.js';
-import {
-  checkIdParams,
-  projectPermission,
-  employeer,
-} from '../utils/middlewares/route.js';
+import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
 import {PermissionError} from '../utils/errors.js';
 
 export const router = new Router();

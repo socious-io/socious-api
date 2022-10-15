@@ -1,6 +1,6 @@
 import * as read from './read.js';
-import * as write from './write';
-import * as feedback from './feedback';
+import * as write from './write.js';
+import * as feedback from './feedback.js';
 
 export default {
   ...read,

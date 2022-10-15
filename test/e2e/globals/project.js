@@ -323,6 +323,7 @@ export const feedbacks = async (request, data) => {
         employee_id: expect.any(String),
         created_at: expect.any(String),
         identity_id: expect.any(String),
+        identity: expect.any(Object),
       });
   }
 };

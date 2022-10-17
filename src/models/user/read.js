@@ -47,7 +47,30 @@ export const getProfile = async (id) => {
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
-    row_to_json(cover.*) AS cover_image
+    row_to_json(cover.*) AS cover_image,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', l.id,
+          'name', l.name,
+          'level', l.level
+        ))
+        FROM languages l
+        WHERE user_id=u.id
+    ) AS languages,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', e.id,
+          'title', e.title,
+          'description', e.description,
+          'skills', e.skills,
+          'start_at', e.start_at,
+          'end_at', e.end_at,
+          'org', row_to_json(org.*)
+        ))
+        FROM experiences e
+        JOIN organizations org ON org.id=e.org_id
+        WHERE user_id=u.id
+    ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
@@ -64,7 +87,30 @@ export const getProfileByUsername = async (username) => {
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
-    row_to_json(cover.*) AS cover_image
+    row_to_json(cover.*) AS cover_image,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', l.id,
+          'name', l.name,
+          'level', l.level
+        ))
+        FROM languages l
+        WHERE user_id=u.id
+    ) AS languages,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', e.id,
+          'title', e.title,
+          'description', e.description,
+          'skills', e.skills,
+          'start_at', e.start_at,
+          'end_at', e.end_at,
+          'org', row_to_json(org.*)
+        ))
+        FROM experiences e
+        JOIN organizations org ON org.id=e.org_id
+        WHERE user_id=u.id
+    ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

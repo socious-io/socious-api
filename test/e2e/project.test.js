@@ -26,7 +26,7 @@ beforeAll(async () => {
 });
 
 test('create', async () => create(request, data));
-test('get', async () => get(request, data));
+// test('get', async () => get(request, data));
 test('add questions', async () => addQuestion(request, data));
 test('apply', async () => apply(request, data));
 test('get applicants', async () => getApplicant(request, data));

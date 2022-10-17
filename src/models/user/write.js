@@ -41,6 +41,9 @@ export const updateProfile = async (
     language,
     mobile_country_code,
     username,
+    certificates,
+    goals,
+    educations,
   },
 ) => {
   const query = sql`
@@ -50,7 +53,8 @@ export const updateProfile = async (
       bio=${bio}, city=${city}, address=${address}, country=${country},
       wallet_address=${wallet_address}, social_causes=${social_causes},
       skills=${skills}, mission=${mission}, language=${language},
-      mobile_country_code=${mobile_country_code},username=${username.toLowerCase()}
+      mobile_country_code=${mobile_country_code},username=${username.toLowerCase()},
+      certificates=${certificates},goals=${goals}, educations=${educations}
     WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
   `;
   try {

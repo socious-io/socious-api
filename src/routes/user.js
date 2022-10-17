@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import Debug from 'debug';
 import User from '../models/user/index.js';
 import Applicant from '../models/applicant/index.js';
+import Employed from '../models/employed/index.js';
 import Auth from '../services/auth/index.js';
 import Skill from '../models/skill/index.js';
 import {paginate} from '../utils/requests.js';
@@ -72,5 +73,15 @@ router.get(
   paginate,
   async (ctx) => {
     ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate);
+  },
+);
+
+router.get(
+  '/employeds',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Employed.projects(ctx.identity.id, ctx.paginate);
   },
 );

@@ -3,6 +3,7 @@ import Data, {validate} from '@socious/data';
 import Project from '../models/project/index.js';
 import Applicant from '../models/applicant/index.js';
 import Notif from '../models/notification/index.js';
+import Employed from '../models/employed/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/requests.js';
 import {
@@ -121,3 +122,27 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
     identity: ctx.identity,
   });
 });
+
+router.get(
+  '/:id/employees',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Employed.employees(
+      ctx.identity.id,
+      ctx.params.id,
+      ctx.paginate,
+    );
+  },
+);
+
+router.get(
+  '/:id/feedbacks',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.body = await Employed.feedbacks(ctx.params.id, ctx.paginate);
+  },
+);

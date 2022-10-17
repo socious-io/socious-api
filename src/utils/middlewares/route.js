@@ -1,6 +1,7 @@
 import Org from '../../models/organization/index.js';
 import Chat from '../../models/chat/index.js';
 import Project from '../../models/project/index.js';
+import Employed from '../../models/employed/index.js';
 import Applicant from '../../models/applicant/index.js';
 import {validate} from '@socious/data';
 
@@ -39,5 +40,20 @@ export const applicantOwner = async (ctx, next) => {
 
 export const orgMember = async (ctx, next) => {
   Org.permissioned(ctx.params.id, ctx.user.id);
+  return next();
+};
+
+export const employeer = async (ctx, next) => {
+  ctx.employee = await Employed.employeer(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const employer = async (ctx, next) => {
+  ctx.employee = await Employed.employer(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const employee = async (ctx, next) => {
+  ctx.employee = await Employed.employee(ctx.identity.id, ctx.params.id);
   return next();
 };

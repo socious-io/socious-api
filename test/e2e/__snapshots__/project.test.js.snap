@@ -175,6 +175,7 @@ exports[`apply 1`] = `
   "answers": Any<Array>,
   "assignment_total": 0,
   "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 1",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",
@@ -203,6 +204,65 @@ exports[`apply 2`] = `
   "answers": Any<Array>,
   "assignment_total": 0,
   "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`apply 3`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`apply 4`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 2",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",
@@ -407,6 +467,7 @@ exports[`get applicants 1`] = `
   "answers": Any<Array>,
   "assignment_total": 0,
   "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 1",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",
@@ -435,6 +496,36 @@ exports[`get applicants 2`] = `
   "answers": Any<Array>,
   "assignment_total": 0,
   "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`get applicants 3`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 2",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",
@@ -458,10 +549,53 @@ exports[`get applicants 2`] = `
 }
 `;
 
+exports[`get applicants 4`] = `
+{
+  "answers": Any<Array>,
+  "assignment_total": 0,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "total_hours": 1,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`get feedbacks 1`] = `
+{
+  "content": "TEST",
+  "created_at": Any<String>,
+  "employee_id": Any<String>,
+  "id": Any<String>,
+  "identity": Any<Object>,
+  "identity_id": Any<String>,
+  "is_contest": false,
+  "project_id": Any<String>,
+}
+`;
+
 exports[`offer 1`] = `
 {
   "assignment_total": 30000,
   "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 2",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",
@@ -488,6 +622,7 @@ exports[`reject 1`] = `
 {
   "assignment_total": 0,
   "attachment": null,
+  "closed_at": null,
   "cover_letter": "test cover 1",
   "created_at": Any<String>,
   "cv_link": "https://test.com/test.cv",

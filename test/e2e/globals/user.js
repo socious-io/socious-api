@@ -80,6 +80,56 @@ export const profile = async (request, data) => {
   }
 };
 
+
+export const updateProfile = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue;
+    }
+
+    const body = JSON.parse(JSON.stringify(data.users[i]))
+    delete body.email
+    delete body.password
+    delete body.invalid
+    delete body.language
+    delete body.experience
+    delete body.id
+    delete body.access_token
+
+
+    const response = await request
+      .post('/user/update/profile')
+      .set('Authorization', data.users[i].access_token)
+      .send(body)
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      created_at: expect.any(String),
+      languages: [
+        {
+          id: expect.any(String),
+        },
+      ],
+      experiences: [
+        {
+          id: expect.any(String),
+          org: {
+            id: expect.any(String),
+            created_at: expect.any(String),
+            updated_at: expect.any(String),
+            created_by: expect.any(String),
+            shortname: expect.any(String),
+            search_tsv: expect.any(String),
+            followings: expect.any(Number),
+          },
+        },
+      ],
+    });
+  }
+};
+
+
 export const addLanguage = async (request, data) => {
   for (const i in data.users) {
     if (data.users[i].invalid) {

@@ -10,6 +10,7 @@ import {
   updateExperience,
   updateLanguage,
   profileByUsername,
+  updateProfile,
 } from './globals/user.js';
 
 let server, request;
@@ -27,6 +28,7 @@ test('profile', async () => profile(request, data));
 test('update language', async () => updateLanguage(request, data));
 test('update experience', async () => updateExperience(request, data));
 test('profile by username', async () => profileByUsername(request, data));
+test('update profile', async () => updateProfile(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

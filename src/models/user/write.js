@@ -2,7 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {StatusType} from './enums.js';
-
+import {getProfile} from './read.js'
 export const insert = async (
   first_name,
   last_name,
@@ -55,13 +55,11 @@ export const updateProfile = async (
       skills=${skills}, mission=${mission}, language=${language},
       mobile_country_code=${mobile_country_code},username=${username.toLowerCase()},
       certificates=${certificates},goals=${goals}, educations=${educations}
-    WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes
+    WHERE id=${id} RETURNING id
   `;
   try {
     const {rows} = await app.db.query(query);
-    const user = rows[0];
-    delete user.password;
-    return user;
+    return getProfile(rows[0].id);
   } catch (err) {
     throw new EntryError(err.message);
   }

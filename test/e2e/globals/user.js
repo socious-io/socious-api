@@ -163,6 +163,7 @@ export const addExperience = async (request, data) => {
       created_at: expect.any(String),
       user_id: expect.any(String),
       org_id: expect.any(String),
+      start_at: expect.any(String),
     });
 
     data.users[i].experience = response.body.id;
@@ -190,6 +191,7 @@ export const updateExperience = async (request, data) => {
       created_at: expect.any(String),
       user_id: expect.any(String),
       org_id: expect.any(String),
+      start_at: expect.any(String),
     });
   }
 };
@@ -215,6 +217,7 @@ export const profileByUsername = async (request, data) => {
       experiences: [
         {
           id: expect.any(String),
+          start_at: expect.any(String),
           org: {
             id: expect.any(String),
             created_at: expect.any(String),

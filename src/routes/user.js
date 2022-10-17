@@ -75,60 +75,12 @@ router.get(
   },
 );
 
-router.post('/languages', loginRequired, async (ctx) => {
-  await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body);
-  ctx.body = await User.addLanguage(ctx.user, ctx.request.body);
-});
-
-router.post(
-  '/languages/update/:id',
+router.get(
+  '/employeds',
   loginRequired,
   checkIdParams,
+  paginate,
   async (ctx) => {
-    await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body);
-    ctx.body = await User.editLanguage(
-      ctx.params.id,
-      ctx.user,
-      ctx.request.body,
-    );
-  },
-);
-
-router.post(
-  '/languages/remove/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body);
-    ctx.body = await User.removeLanguage(ctx.params.id, ctx.user);
-  },
-);
-
-router.post('/experiences', loginRequired, async (ctx) => {
-  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body);
-  ctx.body = await User.addExperience(ctx.user, ctx.request.body);
-});
-
-router.post(
-  '/experiences/update/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileExperienceSchema.validateAsync(ctx.request.body);
-    ctx.body = await User.editExperience(
-      ctx.params.id,
-      ctx.user,
-      ctx.request.body,
-    );
-  },
-);
-
-router.post(
-  '/experiences/remove/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileExperienceSchema.validateAsync(ctx.request.body);
-    ctx.body = await User.removeExperience(ctx.params.id, ctx.user);
+    ctx.body = await Employed.projects(ctx.identity.id, ctx.paginate);
   },
 );

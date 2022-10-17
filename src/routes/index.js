@@ -21,6 +21,7 @@ import {router as skill} from './skill.js';
 import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
 import {router as payment} from './payment.js';
+import {router as employed} from './employed.js';
 import openapi from '../../docs/openapi.json' assert {type: 'json'};
 
 export default (app) => {
@@ -65,6 +66,7 @@ export default (app) => {
   blueprint.use('/skills', skill.routes(), skill.allowedMethods());
   blueprint.use('/search', search.routes(), search.allowedMethods());
   blueprint.use('/payments', payment.routes(), payment.allowedMethods());
+  blueprint.use('/employeds', employed.routes(), employed.allowedMethods());
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

@@ -483,24 +483,10 @@
         }
       }
     },
-    "/projects/{project_id}/questions": {
-      "post": {
+    "/projects/{project_id}/applicants": {
+      "get": {
         "tags": ["project"],
-        "summary": "add question",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "question": "are you OK ?",
-                  "required": false,
-                  "options": ["yes", "no"]
-                }
-              }
-            }
-          }
-        },
+        "summary": "get applicants",
         "security": [
           {
             "bearerAuth": []
@@ -524,19 +510,7 @@
             }
           }
         }
-      }
-    },
-    "/projects/{project_id}/applicants": {
-      "parameters": [
-        {
-          "name": "project_id",
-          "in": "path",
-          "schema": {
-            "type": "string"
-          },
-          "required": true
-        }
-      ],
+      },
       "post": {
         "tags": ["project"],
         "summary": "apply",
@@ -569,6 +543,107 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/employees": {
+      "get": {
+        "tags": ["project"],
+        "summary": "get employees",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/feedbacks": {
+      "get": {
+        "tags": ["project"],
+        "summary": "get feedbacks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/questions": {
+      "post": {
+        "tags": ["project"],
+        "summary": "add question",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "question": "are you OK ?",
+                  "required": false,
+                  "options": ["yes", "no"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -2079,6 +2154,64 @@
         }
       }
     },
+    "/user/applicants": {
+      "get": {
+        "tags": ["users"],
+        "summary": "get user applicants",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "311fca4c-057d-4752-9e7c-b985ff1c5294"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/employed": {
+      "get": {
+        "tags": ["users"],
+        "summary": "get user emplyeds",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Current-Identity",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "311fca4c-057d-4752-9e7c-b985ff1c5294"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/identities": {
       "get": {
         "tags": ["identity"],
@@ -2587,6 +2720,192 @@
       "get": {
         "tags": ["media"],
         "summary": "get media",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/complete": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "complete job",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/confirm": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "confirm job",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/cancel": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "cancel job",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/kickout": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "cancel job",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/feedback": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "feedback job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "content": "test"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/employed/{employee_id}/contest": {
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": ["employed"],
+        "summary": "contest job",
         "security": [
           {
             "bearerAuth": []

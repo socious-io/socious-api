@@ -1,5 +1,53 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`add experience 1`] = `
+{
+  "created_at": Any<String>,
+  "description": "Test",
+  "end_at": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "skills": null,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`add experience 2`] = `
+{
+  "created_at": Any<String>,
+  "description": "Test",
+  "end_at": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "skills": null,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`add language 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "level": "NATIVE",
+  "name": "FA",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`add language 2`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "level": "NATIVE",
+  "name": "FA",
+  "user_id": Any<String>,
+}
+`;
+
 exports[`login 1`] = `
 {
   "error": ""email" must be a valid email",
@@ -8,86 +56,334 @@ exports[`login 1`] = `
 
 exports[`profile 1`] = `
 {
-  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "deleted_at": null,
-  "description_search": null,
-  "email": "test@test.io",
-  "email_text": null,
-  "email_verified_at": null,
-  "expiry_date": null,
+  "experiences": [
+    {
+      "description": "Test",
+      "end_at": null,
+      "id": Any<String>,
+      "org": {
+        "address": "address",
+        "bio": "test",
+        "city": "Tokyo",
+        "country": "JP",
+        "cover_image": null,
+        "created_at": Any<String>,
+        "created_by": Any<String>,
+        "culture": "test",
+        "description": "test",
+        "email": "test@socious.io",
+        "followers": 1,
+        "followings": 0,
+        "id": Any<String>,
+        "image": null,
+        "impact_score": 0,
+        "mission": "test",
+        "mobile_country_code": null,
+        "name": "test ORG",
+        "phone": "9379911",
+        "search_tsv": Any<String>,
+        "shortname": Any<String>,
+        "social_causes": [
+          "SOCIAL",
+          "MENTAL",
+        ],
+        "status": "ACTIVE",
+        "type": "COOP",
+        "updated_at": Any<String>,
+        "wallet_address": null,
+        "website": "http://test.com",
+      },
+      "skills": null,
+      "start_at": "2022-10-16T13:32:30.211",
+      "title": "Test",
+    },
+  ],
   "first_name": "test_name",
   "followers": 0,
-  "followings": 0,
+  "followings": 2,
   "id": Any<String>,
   "impact_score": 0,
-  "language": null,
+  "languages": [
+    {
+      "id": Any<String>,
+      "level": "NATIVE",
+      "name": "FA",
+    },
+  ],
   "last_name": "last_name",
   "mission": null,
-  "mobile_country_code": null,
-  "my_conversation": null,
-  "password_expired": false,
-  "phone": null,
-  "phone_verified_at": null,
-  "remember_token": null,
-  "search_tsv": Any<String>,
   "skills": null,
   "social_causes": null,
-  "status": "INACTIVE",
-  "updated_at": Any<String>,
   "username": "test_username",
-  "view_as": null,
-  "wallet_address": null,
 }
 `;
 
 exports[`profile 2`] = `
 {
-  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "deleted_at": null,
-  "description_search": null,
-  "email": "test2@test.io",
-  "email_text": null,
-  "email_verified_at": null,
-  "expiry_date": null,
+  "experiences": [
+    {
+      "description": "Test",
+      "end_at": null,
+      "id": Any<String>,
+      "org": {
+        "address": "address",
+        "bio": "test",
+        "city": "Tokyo",
+        "country": "JP",
+        "cover_image": null,
+        "created_at": Any<String>,
+        "created_by": Any<String>,
+        "culture": "test",
+        "description": "test",
+        "email": "test@socious.io",
+        "followers": 1,
+        "followings": 0,
+        "id": Any<String>,
+        "image": null,
+        "impact_score": 0,
+        "mission": "test",
+        "mobile_country_code": null,
+        "name": "test ORG",
+        "phone": "9379911",
+        "search_tsv": Any<String>,
+        "shortname": Any<String>,
+        "social_causes": [
+          "SOCIAL",
+          "MENTAL",
+        ],
+        "status": "ACTIVE",
+        "type": "COOP",
+        "updated_at": Any<String>,
+        "wallet_address": null,
+        "website": "http://test.com",
+      },
+      "skills": null,
+      "start_at": "2022-10-16T13:32:30.211",
+      "title": "Test",
+    },
+  ],
   "first_name": "test_name_2",
   "followers": 0,
   "followings": 0,
   "id": Any<String>,
   "impact_score": 0,
-  "language": null,
+  "languages": [
+    {
+      "id": Any<String>,
+      "level": "NATIVE",
+      "name": "FA",
+    },
+  ],
   "last_name": "last_name_2",
   "mission": null,
-  "mobile_country_code": null,
-  "my_conversation": null,
-  "password_expired": false,
-  "phone": null,
-  "phone_verified_at": null,
-  "remember_token": null,
-  "search_tsv": Any<String>,
   "skills": null,
   "social_causes": null,
-  "status": "INACTIVE",
-  "updated_at": Any<String>,
   "username": "test_username_2",
-  "view_as": null,
-  "wallet_address": null,
+}
+`;
+
+exports[`profile by username 1`] = `
+{
+  "avatar": null,
+  "bio": null,
+  "city": null,
+  "country": null,
+  "cover_image": null,
+  "created_at": Any<String>,
+  "experiences": [
+    {
+      "description": "Test",
+      "end_at": null,
+      "id": Any<String>,
+      "org": {
+        "address": "address",
+        "bio": "test",
+        "city": "Tokyo",
+        "country": "JP",
+        "cover_image": null,
+        "created_at": Any<String>,
+        "created_by": Any<String>,
+        "culture": "test",
+        "description": "test",
+        "email": "test@socious.io",
+        "followers": 1,
+        "followings": 0,
+        "id": Any<String>,
+        "image": null,
+        "impact_score": 0,
+        "mission": "test",
+        "mobile_country_code": null,
+        "name": "test ORG",
+        "phone": "9379911",
+        "search_tsv": Any<String>,
+        "shortname": Any<String>,
+        "social_causes": [
+          "SOCIAL",
+          "MENTAL",
+        ],
+        "status": "ACTIVE",
+        "type": "COOP",
+        "updated_at": Any<String>,
+        "wallet_address": null,
+        "website": "http://test.com",
+      },
+      "skills": null,
+      "start_at": Any<String>,
+      "title": "Test",
+    },
+  ],
+  "first_name": "test_name",
+  "followers": 0,
+  "followings": 2,
+  "id": Any<String>,
+  "impact_score": 0,
+  "languages": [
+    {
+      "id": Any<String>,
+      "level": "PROFICIENT",
+      "name": "EN",
+    },
+  ],
+  "last_name": "last_name",
+  "mission": null,
+  "skills": null,
+  "social_causes": null,
+  "username": "test_username",
+}
+`;
+
+exports[`profile by username 2`] = `
+{
+  "avatar": null,
+  "bio": null,
+  "city": null,
+  "country": null,
+  "cover_image": null,
+  "created_at": Any<String>,
+  "experiences": [
+    {
+      "description": "Test",
+      "end_at": null,
+      "id": Any<String>,
+      "org": {
+        "address": "address",
+        "bio": "test",
+        "city": "Tokyo",
+        "country": "JP",
+        "cover_image": null,
+        "created_at": Any<String>,
+        "created_by": Any<String>,
+        "culture": "test",
+        "description": "test",
+        "email": "test@socious.io",
+        "followers": 1,
+        "followings": 0,
+        "id": Any<String>,
+        "image": null,
+        "impact_score": 0,
+        "mission": "test",
+        "mobile_country_code": null,
+        "name": "test ORG",
+        "phone": "9379911",
+        "search_tsv": Any<String>,
+        "shortname": Any<String>,
+        "social_causes": [
+          "SOCIAL",
+          "MENTAL",
+        ],
+        "status": "ACTIVE",
+        "type": "COOP",
+        "updated_at": Any<String>,
+        "wallet_address": null,
+        "website": "http://test.com",
+      },
+      "skills": null,
+      "start_at": Any<String>,
+      "title": "Test",
+    },
+  ],
+  "first_name": "test_name_2",
+  "followers": 0,
+  "followings": 0,
+  "id": Any<String>,
+  "impact_score": 0,
+  "languages": [
+    {
+      "id": Any<String>,
+      "level": "PROFICIENT",
+      "name": "EN",
+    },
+  ],
+  "last_name": "last_name_2",
+  "mission": null,
+  "skills": null,
+  "social_causes": null,
+  "username": "test_username_2",
 }
 `;
 
 exports[`register 1`] = `
 {
   "error": ""email" must be a valid email",
+}
+`;
+
+exports[`update experience 1`] = `
+{
+  "created_at": Any<String>,
+  "description": "Test",
+  "end_at": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "skills": null,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`update experience 2`] = `
+{
+  "created_at": Any<String>,
+  "description": "Test",
+  "end_at": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "skills": null,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`update language 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "level": "PROFICIENT",
+  "name": "EN",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`update language 2`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "level": "PROFICIENT",
+  "name": "EN",
+  "user_id": Any<String>,
 }
 `;

@@ -4,11 +4,10 @@ import {
 } from '../../../src/services/payments/transaction.js';
 
 export const get = async (request, data) => {
-  for (const i in data.projects.objs) {
-    if (data.projects.objs[i].invalid) continue;
-
-    const response = await request.get(`/projects/${data.projects.objs[i].id}`);
-
+  for (const project of data.projects.objs) {
+    if (project.invalid) continue;
+    console.log(project.id, '--------------------');
+    const response = await request.get(`/projects/${project.id}`);
     expect(response.status).toBe(200);
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),

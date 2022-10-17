@@ -78,7 +78,8 @@
     "sql-template-tag": "^5.0.3",
     "stripe": "^10.14.0",
     "supertest-koa-agent": "^0.3.2",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.18.6",

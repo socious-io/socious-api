@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import Config from '../config.js';
 import {accessWebhooks} from '../utils/middlewares/authorization.js';
 import {koaSwagger} from 'koa2-swagger-ui';
+import yamljs from 'yamljs';
 import blocker from '../utils/middlewares/blocker.js';
 
 import {router as ping} from './ping.js';
@@ -22,18 +23,15 @@ import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
 import {router as payment} from './payment.js';
 import {router as employed} from './employed.js';
-import openapi from '../../docs/openapi.json' assert {type: 'json'};
 
 export default (app) => {
   const blueprint = new Router();
 
-  blueprint.get('/openapi.json', (ctx) => {
-    ctx.body = openapi;
-  });
+  const spec = yamljs.load('./docs/openapi.yml');
 
   blueprint.get(
     '/docs',
-    koaSwagger({routePrefix: false, swaggerOptions: {spec: openapi}}),
+    koaSwagger({routePrefix: false, swaggerOptions: {spec}}),
   );
 
   blueprint.use(

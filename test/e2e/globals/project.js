@@ -108,25 +108,28 @@ export const apply = async (request, data) => {
       };
     }
 
-    const response = await request
-      .post(`/projects/${data.projects.objs[i].id}/applicants`)
-      .set('Authorization', data.users[i].access_token)
-      .send(body);
+    for (const user of data.users) {
+      if (user.invalid) continue;
+      const response = await request
+        .post(`/projects/${data.projects.objs[i].id}/applicants`)
+        .set('Authorization', user.access_token)
+        .send(body);
 
-    expect(response.status).toBe(200);
-    expect(response.body).toMatchSnapshot({
-      id: expect.any(String),
-      project_id: expect.any(String),
-      created_at: expect.any(String),
-      updated_at: expect.any(String),
-      user: expect.any(Object),
-      user_id: expect.any(String),
-      // TODO: need to verify answers
-      answers: expect.any(Array),
-    });
-    if (!data.projects.objs[i].applications)
-      data.projects.objs[i].applications = [];
-    data.projects.objs[i].applications.push(response.body.id);
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchSnapshot({
+        id: expect.any(String),
+        project_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        user: expect.any(Object),
+        user_id: expect.any(String),
+        // TODO: need to verify answers
+        answers: expect.any(Array),
+      });
+      if (!data.projects.objs[i].applications)
+        data.projects.objs[i].applications = [];
+      data.projects.objs[i].applications.push(response.body.id);
+    }
   }
 };
 
@@ -235,5 +238,92 @@ export const hire = async (request, data) => {
 
       expect(response.status).toBe(200);
     }
+  }
+};
+
+export const complete = async (request, data) => {
+  const employeds = await request
+    .get('/user/employeds')
+    .set('Authorization', data.users[0].access_token);
+
+  for (const employed of employeds.body.items) {
+    const response = await request
+      .post(`/employeds/${employed.id}/complete`)
+      .set('Authorization', data.users[0].access_token);
+
+    expect(response.status).toBe(200);
+  }
+};
+
+export const cancel = async (request, data) => {
+  const employeds = await request
+    .get('/user/employeds')
+    .set('Authorization', data.users[1].access_token);
+
+  for (const employed of employeds.body.items) {
+    const response = await request
+      .post(`/employeds/${employed.id}/cancel`)
+      .set('Authorization', data.users[1].access_token);
+
+    expect(response.status).toBe(200);
+  }
+};
+
+export const confirm = async (request, data) => {
+  for (const project of data.projects.objs) {
+    const employeds = await request
+      .get(`/projects/${project.id}/employees`)
+      .set('Authorization', data.users[0].access_token)
+      .set('Current-Identity', data.orgs[0].id);
+
+    for (const employed of employeds.body.items) {
+      if (employed.status != 'COMPLETE') continue;
+
+      const response = await request
+        .post(`/employeds/${employed.id}/confirm`)
+        .set('Authorization', data.users[0].access_token)
+        .set('Current-Identity', data.orgs[0].id);
+
+      expect(response.status).toBe(200);
+    }
+  }
+};
+
+export const feedback = async (request, data) => {
+  for (const project of data.projects.objs) {
+    const employeds = await request
+      .get(`/projects/${project.id}/employees`)
+      .set('Authorization', data.users[0].access_token)
+      .set('Current-Identity', data.orgs[0].id);
+
+    for (const employed of employeds.body.items) {
+      const response = await request
+        .post(`/employeds/${employed.id}/feedback`)
+        .set('Authorization', data.users[0].access_token)
+        .set('Current-Identity', data.orgs[0].id)
+        .send({content: 'TEST'});
+
+      expect(response.status).toBe(200);
+    }
+  }
+};
+
+export const feedbacks = async (request, data) => {
+  for (const project of data.projects.objs) {
+    if (project.invalid) continue;
+    const response = await request
+      .get(`/projects/${project.id}/feedbacks`)
+      .set('Authorization', data.users[0].access_token);
+
+    expect(response.status).toBe(200);
+    if (response.body.items.length > 0)
+      expect(response.body.items[0]).toMatchSnapshot({
+        id: expect.any(String),
+        project_id: expect.any(String),
+        employee_id: expect.any(String),
+        created_at: expect.any(String),
+        identity_id: expect.any(String),
+        identity: expect.any(Object),
+      });
   }
 };

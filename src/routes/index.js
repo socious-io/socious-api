@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import Config from '../config.js';
 import {accessWebhooks} from '../utils/middlewares/authorization.js';
 import {koaSwagger} from 'koa2-swagger-ui';
+import yamljs from 'yamljs';
 import blocker from '../utils/middlewares/blocker.js';
 
 import {router as ping} from './ping.js';
@@ -26,10 +27,11 @@ import {router as employed} from './employed.js';
 export default (app) => {
   const blueprint = new Router();
 
+  const spec = yamljs.load('./docs/openapi.yml');
 
   blueprint.get(
     '/docs',
-    koaSwagger({routePrefix: false, swaggerOptions: {spec: '../../docs/openapi.yml'}}),
+    koaSwagger({routePrefix: false, swaggerOptions: {spec}}),
   );
 
   blueprint.use(

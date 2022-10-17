@@ -45,7 +45,7 @@
     "aws-sdk": "^2.1233.0",
     "axios": "^1.1.2",
     "bcrypt": "^5.1.0",
-    "chalk": "^5.1.0",
+    "chalk": "^5.1.2",
     "cockatiel": "^2.0.2",
     "cookie-parser": "~1.4.6",
     "db-migrate": "^1.0.0-beta.18",

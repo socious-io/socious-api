@@ -53,7 +53,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.REJECT:
       return {
         title: Data.NotificationTitle.REJECT,
-        body: `${name} rejected you`,
+        body: `${name} rejected your application`,
       };
 
     case Data.NotificationType.APPROVED:
@@ -71,19 +71,19 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.PROJECT_COMPLETE:
       return {
         title: Data.NotificationTitle.PROJECT_COMPLETE,
-        body: `${name} complete project`,
+        body: `${name} completed the project`,
       };
 
     case Data.NotificationType.EMPLOYER_CONFIRMED:
       return {
         title: Data.NotificationTitle.EMPLOYER_CONFIRMED,
-        body: `${name} confirmed your works`,
+        body: `${name} confirmed your work submission`,
       };
 
     case Data.NotificationType.EMPLOYER_CANCELED:
       return {
         title: Data.NotificationTitle.EMPLOYER_CANCELED,
-        body: `${name} removed you from project`,
+        body: `${name} removed you from the project`,
       };
 
     case Data.NotificationType.EMPLOYEE_CANCELED:

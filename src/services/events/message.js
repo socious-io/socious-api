@@ -17,7 +17,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.COMMENT:
       return {
         title: Data.NotificationTitle.COMMENT,
-        body: `${name} has comment on your post`,
+        body: `${name} commented on your post`,
       };
 
     case Data.NotificationType.COMMENT_LIKE:

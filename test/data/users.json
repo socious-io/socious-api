@@ -6,12 +6,8 @@
     "last_name": "last_name",
     "email": "test@test.io",
     "goals": "TEST",
-    "certificates": [
-      "test"
-    ],
-    "educations": [
-      "test"
-    ],
+    "certificates": ["test"],
+    "educations": ["test"],
     "bio": "TEST",
     "mission": "TEST",
     "password": "test_password"
@@ -23,12 +19,8 @@
     "last_name": "last_name_2",
     "goals": "TEST",
     "email": "test2@test.io",
-    "certificates": [
-      "test"
-    ],
-    "educations": [
-      "test"
-    ],
+    "certificates": ["test"],
+    "educations": ["test"],
     "bio": "TEST",
     "mission": "TEST",
     "password": "test_password"
@@ -41,12 +33,8 @@
     "last_name": "last_name_2",
     "email": "test2test.io",
     "goals": "TEST",
-    "certificates": [
-      "test"
-    ],
-    "educations": [
-      "test"
-    ],
+    "certificates": ["test"],
+    "educations": ["test"],
     "bio": "TEST",
     "mission": "TEST",
     "password": "test_password"

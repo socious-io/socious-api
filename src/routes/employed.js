@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import Employed from '../models/employed/index.js';
+import Notif from '../models/notification/index.js';
+import Event from '../services/events/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 
 import {
@@ -21,6 +23,15 @@ router.post(
     ctx.body = {
       message: 'success',
     };
+
+    const project = ctx.employee.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.employee.project.identity_id, {
+      type: Notif.Types.PROJECT_COMPLETE,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 
@@ -34,6 +45,15 @@ router.post(
     ctx.body = {
       message: 'success',
     };
+
+    const project = ctx.employee.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.employee.identity_id, {
+      type: Notif.Types.EMPLOYER_CONFIRMED,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 
@@ -47,6 +67,15 @@ router.post(
     ctx.body = {
       message: 'success',
     };
+
+    const project = ctx.employee.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.employee.project.identity_id, {
+      type: Notif.Types.EMPLOYEE_CANCELED,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 
@@ -60,6 +89,15 @@ router.post(
     ctx.body = {
       message: 'success',
     };
+
+    const project = ctx.employee.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.employee.identity_id, {
+      type: Notif.Types.EMPLOYER_CANCELED,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 

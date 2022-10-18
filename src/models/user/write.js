@@ -2,7 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 import {StatusType} from './enums.js';
-import {getProfile} from './read.js'
+import {getProfile} from './read.js';
 export const insert = async (
   first_name,
   last_name,

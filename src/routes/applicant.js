@@ -1,6 +1,8 @@
 import Router from '@koa/router';
 import {validate} from '@socious/data';
 import Applicant from '../models/applicant/index.js';
+import Notif from '../models/notification/index.js';
+import Event from '../services/events/index.js';
 import {PermissionError} from '../utils/errors.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
@@ -34,6 +36,15 @@ router.post(
   async (ctx) => {
     await validate.ApplicantOfferSchema.validateAsync(ctx.request.body);
     ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
+
+    const project = ctx.applicant.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.applicant.user_id, {
+      type: Notif.Types.OFFER,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 
@@ -45,11 +56,29 @@ router.post(
   async (ctx) => {
     await validate.ApplicantRejectSchema.validateAsync(ctx.request.body);
     ctx.body = await Applicant.reject(ctx.params.id, ctx.request.body);
+
+    const project = ctx.applicant.project;
+
+    Event.push(Event.Types.NOTIFICATION, ctx.applicant.user_id, {
+      type: Notif.Types.REJECT,
+      refId: ctx.body.id,
+      parentId: project.id,
+      identity: ctx.identity,
+    });
   },
 );
 
 router.post('/:id/approve', loginRequired, applicantOwner, async (ctx) => {
   ctx.body = await Applicant.approve(ctx.params.id);
+
+  const project = ctx.applicant.project;
+
+  Event.push(Event.Types.NOTIFICATION, project.identity_id, {
+    type: Notif.Types.APPROVED,
+    refId: ctx.body.id,
+    parentId: project.id,
+    identity: ctx.identity,
+  });
 });
 
 router.post('/:id/hire', loginRequired, projectOwner, async (ctx) => {
@@ -58,6 +87,15 @@ router.post('/:id/hire', loginRequired, projectOwner, async (ctx) => {
   )
     throw new PermissionError();
   ctx.body = await Applicant.hire(ctx.params.id);
+
+  const project = ctx.applicant.project;
+
+  Event.push(Event.Types.NOTIFICATION, project.identity_id, {
+    type: Notif.Types.APPROVED,
+    refId: ctx.body.id,
+    parentId: project.id,
+    identity: ctx.identity,
+  });
 });
 
 router.post(

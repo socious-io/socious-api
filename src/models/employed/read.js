@@ -52,9 +52,10 @@ export const employees = async (
 export const employee = async (identityId, id) => {
   try {
     return app.db.get(sql`
-      SELECT * 
-      FROM employees 
-      WHERE id=${id} AND identity_id=${identityId}`);
+      SELECT e.*, row_to_json(p.*) AS project
+      FROM employees e
+      JOIN projects p ON p.id=e.project_id
+      WHERE e.id=${id} AND e.identity_id=${identityId}`);
   } catch {
     throw new PermissionError();
   }
@@ -63,7 +64,9 @@ export const employee = async (identityId, id) => {
 export const employer = async (identityId, id) => {
   try {
     return app.db.get(sql`
-      SELECT e.* 
+      SELECT 
+        e.*,
+        row_to_json(p.*) AS project
       FROM employees e
       JOIN projects p ON p.id=e.project_id
       WHERE e.id=${id} AND p.identity_id=${identityId}
@@ -77,7 +80,9 @@ export const employer = async (identityId, id) => {
 export const employeer = async (identityId, id) => {
   try {
     return app.db.get(sql`
-      SELECT e.* 
+      SELECT 
+        e.*,
+        row_to_json(p.*) AS project
       FROM employees e
       JOIN projects p ON p.id=e.project_id
       WHERE e.id=${id} AND (p.identity_id=${identityId} OR e.identity_id=${identityId})

@@ -22,7 +22,11 @@ const consumer = (handler) => {
         } ${JSON.stringify(body)}`,
       );
 
-      handler(body);
+      try {
+        handler(body);
+      } catch (err) {
+        logger.error(`${err.message} | ${err.stack}`);
+      }
     }
   };
 };

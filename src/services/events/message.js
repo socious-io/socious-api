@@ -44,6 +44,54 @@ export const makeMessage = (type, name) => {
         body: `${name} applied to your project`,
       };
 
+    case Data.NotificationType.OFFER:
+      return {
+        title: Data.NotificationTitle.OFFER,
+        body: `${name} sent you an offer`,
+      };
+
+    case Data.NotificationType.REJECT:
+      return {
+        title: Data.NotificationTitle.REJECT,
+        body: `${name} rejected you`,
+      };
+
+    case Data.NotificationType.APPROVED:
+      return {
+        title: Data.NotificationTitle.APPROVED,
+        body: `${name} approved your offer`,
+      };
+
+    case Data.NotificationType.HIRED:
+      return {
+        title: Data.NotificationTitle.HIRED,
+        body: `Congratulations, ${name} hired you`,
+      };
+
+    case Data.NotificationType.PROJECT_COMPLETE:
+      return {
+        title: Data.NotificationTitle.PROJECT_COMPLETE,
+        body: `${name} complete project`,
+      };
+
+    case Data.NotificationType.EMPLOYER_CONFIRMED:
+      return {
+        title: Data.NotificationTitle.EMPLOYER_CONFIRMED,
+        body: `${name} confirmed your works`,
+      };
+
+    case Data.NotificationType.EMPLOYER_CANCELED:
+      return {
+        title: Data.NotificationTitle.EMPLOYER_CANCELED,
+        body: `${name} removed you from project`,
+      };
+
+    case Data.NotificationType.EMPLOYEE_CANCELED:
+      return {
+        title: Data.NotificationTitle.EMPLOYEE_CANCELED,
+        body: `${name} left the project`,
+      };
+
     default:
       throw new Error(`${type} is not valid to create message`);
   }

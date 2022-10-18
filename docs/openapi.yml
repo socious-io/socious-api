@@ -456,7 +456,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
- 
+
   /applicants/{applicant_id}/offer:
     parameters:
       - name: applicant_id

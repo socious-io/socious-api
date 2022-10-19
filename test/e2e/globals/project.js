@@ -342,6 +342,7 @@ export const userApplicants = async (request, data) => {
         user_id: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String),
+        due_date: expect.any(String),
         organization: expect.any(Object),
         project: expect.any(Object),
         user: expect.any(Object),

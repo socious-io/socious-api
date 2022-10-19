@@ -32,7 +32,7 @@ const coordinateNotifs = async (userId, body) => {
     Data.NotificationType.FOLLOWED,
   ];
 
-  let name = body.identity?.meta?.username || body.identity?.meta?.shortname;
+  let name = body.identity?.meta?.name;
   let message = makeMessage(body.type, name);
   const consolidateTime = 30 * 60 * 1000;
   const now = new Date();

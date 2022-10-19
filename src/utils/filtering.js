@@ -1,3 +1,4 @@
+import sql, {raw, join} from 'sql-template-tag';
 import {BadRequestError} from './errors.js';
 
 const operators = {
@@ -16,14 +17,14 @@ export const format = (value) => {
     case 'object':
       if (!Array.isArray(value))
         throw new BadRequestError(`filtering value is not valid`);
-      return `'{${value.join(',')}}'`;
+      return `''`;
     default:
       return value;
   }
 };
 
 export const filtering = (filter, columns, andPrefix = true) => {
-  if (!filter) return '';
+  if (!filter) return raw('');
 
   const conditions = [];
 
@@ -39,16 +40,25 @@ export const filtering = (filter, columns, andPrefix = true) => {
 
     const value = op ? val[valueKeys[0]] : val;
 
-    if (Array.isArray(value)) op = '@>';
+    if (Array.isArray(value)) op = '';
 
     if (!op) op = '=';
-
-    conditions.push(`${key} ${op} ${format(value)}`);
+    const operation = raw(`${key} ${op}`)
+    
+    if (Array.isArray(value)) {
+      conditions.push(sql`${operation} ANY(${value})`);
+    } else {
+      conditions.push(sql`${operation} ${value}`);
+    }
   }
 
-  let result = conditions.join(' AND ');
+  let result = join(conditions, ' AND ');
 
-  if (result && andPrefix) result = ' AND ' + result;
 
-  return result;
+  if (andPrefix) return join([raw(' AND '), result], '');
+
+  return result
 };
+
+export const sorting = (filter) => {
+}

@@ -1,6 +1,8 @@
 import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
+import {filtering} from '../../utils/filtering.js';
+
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
@@ -73,3 +75,39 @@ export const filterColumns = [
   'payment_scheme',
   'status',
 ];
+
+
+
+export const search = async (q, {filter}, {offset= 0, limit = 10}) => {
+
+  q = q.replaceAll(/[^\p{Letter}\p{Number}\p{Separator}]/gu, ' ')
+
+  console.log(sql`SELECT
+    p.id
+    FROM projects p
+    WHERE
+      p.status = 'ACTIVE' AND
+      p.search_tsv @@ websearch_to_tsquery('test:*')
+      ${filtering(filter, filterColumns)}
+    ORDER BY p.created_at DESC
+  `)
+
+  const {rows} = await app.db.query(sql`SELECT
+    p.id
+    FROM projects p
+    WHERE
+      p.status = 'ACTIVE' AND
+      p.search_tsv @@ websearch_to_tsquery('tes:*')
+      ${filtering(filter, filterColumns)}
+    ORDER BY p.created_at DESC
+  `)
+
+  const projects = await getAll(rows.map(r => r.id).slice(offset, offset + limit))
+
+  return projects.map(r => {
+    return {
+      total_count: rows.length,
+      ...r
+    }
+  })
+}

@@ -69,6 +69,10 @@ const find = async (
 ) => {
   await Data.SearchSchema.validateAsync(body);
 
+  if (body.type === Data.SearchType.PROJECTS)
+    return Project.search(body.q, {filter: body.filter}, {offset, limit})
+
+
   const query = body.q.replaceAll(
     /[^\p{Letter}\p{Number}\p{Separator}]/gu,
     ' ',

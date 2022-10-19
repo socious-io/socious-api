@@ -39,11 +39,16 @@ export const all = async ({offset = 0, limit = 10}) => {
 export const getByUserId = async (userId, {offset = 0, limit = 10}) => {
   const {rows} = await app.db.query(
     sql`
-      SELECT COUNT(a.*) OVER () as total_count,
-      a.*, i.meta as user,
-      row_to_json(m.*) AS attachment
+      SELECT 
+        COUNT(a.*) OVER () as total_count,
+        a.*, i.meta as user,
+        row_to_json(m.*) AS attachment,
+        row_to_json(p.*) AS project,
+        row_to_json(pi.*) AS organization
       FROM applicants a
       JOIN identities i ON i.id=a.user_id
+      JOIN projects p ON p.id=a.project_id
+      JOIN identities pi ON pi.id=p.identity_id
       LEFT JOIN media m ON m.id=a.attachment
       WHERE a.user_id=${userId} 
       ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,

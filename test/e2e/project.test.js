@@ -18,6 +18,7 @@ import {
   confirm,
   feedback,
   feedbacks,
+  userApplicants,
 } from './globals/project.js';
 
 let server, request;
@@ -44,6 +45,7 @@ test('cancel', async () => cancel(request, data));
 test('confirm', async () => confirm(request, data));
 test('send feedback', async () => feedback(request, data));
 test('get feedbacks', async () => feedbacks(request, data));
+test('user applicants', async () => userApplicants(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

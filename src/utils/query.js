@@ -1,7 +1,7 @@
 import sql, {raw, join} from 'sql-template-tag';
 import {BadRequestError} from './errors.js';
 
-const operators = {
+export const operators = {
   eq: '=',
   ne: '<>',
   gt: '>',
@@ -10,20 +10,7 @@ const operators = {
   lte: '<=',
 };
 
-export const format = (value) => {
-  switch (typeof value) {
-    case 'string':
-      return `'${value}'`;
-    case 'object':
-      if (!Array.isArray(value))
-        throw new BadRequestError(`filtering value is not valid`);
-      return `''`;
-    default:
-      return value;
-  }
-};
-
-export const filtering = (filter, columns, andPrefix = true) => {
+export const filtering = (filter, columns, append = true) => {
   if (!filter) return raw('');
 
   const conditions = [];
@@ -55,10 +42,18 @@ export const filtering = (filter, columns, andPrefix = true) => {
   let result = join(conditions, ' AND ');
 
 
-  if (andPrefix) return join([raw(' AND '), result], '');
+  if (append) return join([raw(' AND '), result], '');
 
-  return result
+  return join([raw(' WHERE '), result], '');
 };
 
-export const sorting = (filter) => {
+export const sorting = (sort, columns) => {
+  if (!sort) return raw(`ORDER BY ${columns[0]} DESC`);
+}
+
+
+export const textSearch = (q) => {
+  const queryList = q.match(/\w+/g) 
+
+  return queryList.map(i => `${i}:*`).join('&')
 }

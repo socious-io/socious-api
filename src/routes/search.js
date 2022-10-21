@@ -11,7 +11,7 @@ export const router = new Router();
 router.post('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Search.find(
     ctx.request.body,
-    {userId: ctx.user.id, identityId: ctx.identity.id, shouldSave: !ctx.guest},
+    {identityId: ctx.identity.id, shouldSave: !ctx.guest},
     ctx.paginate,
   );
 });

@@ -1,8 +1,20 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
+import {filtering, textSearch, sorting} from '../../utils/query.js';
 
-// TODO: we can add filters
-export const all = async ({offset = 0, limit = 10}) => {
+export const filterColumns = [
+    'country',
+    'type',
+    'social_causes'
+  ];
+
+export const sortColumns = [
+  'created_at',
+  'updated_at',
+];
+
+
+export const all = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, 
     org.*,
@@ -12,7 +24,9 @@ export const all = async ({offset = 0, limit = 10}) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+    ${filtering(filter, filterColumns, false)}
+    ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
@@ -29,16 +43,19 @@ export const get = async (id) => {
     WHERE org.id=${id}`);
 };
 
-export const getAll = async (ids) => {
+export const getAll = async (ids, sort) => {
   const {rows} = await app.db.query(sql`
-    SELECT org.*,
-    array_to_json(org.social_causes) AS social_causes,
-    row_to_json(m_image.*) AS image,
-    row_to_json(m_cover.*) AS cover_image
+    SELECT 
+      org.*,
+      array_to_json(org.social_causes) AS social_causes,
+      row_to_json(m_image.*) AS image,
+      row_to_json(m_cover.*) AS cover_image
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    WHERE org.id=ANY(${ids})`);
+    WHERE org.id=ANY(${ids})
+    ${sorting(sort, sortColumns)}
+    `);
   return rows;
 };
 
@@ -65,4 +82,24 @@ export const shortNameExists = async (shortname) => {
   }
 };
 
-export const filterColumns = ['country', 'type', 'social_causes'];
+
+export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
+  const {rows} = await app.db.query(sql`
+    SELECT
+      org.id
+    FROM organizations org
+    WHERE
+      org.search_tsv @@ to_tsquery(${textSearch(q)})
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+    `);
+
+  const orgs = await getAll(rows.map(r => r.id).slice(offset, offset + limit), sort)
+
+  return orgs.map(r => {
+    return {
+      total_count: rows.length,
+      ...r
+    }
+  });
+};

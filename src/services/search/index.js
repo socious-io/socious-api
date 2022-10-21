@@ -5,26 +5,9 @@ import Org from '../../models/organization/index.js';
 import Project from '../../models/project/index.js';
 import Data from '@socious/data';
 import {app} from '../../index.js';
-import {filtering} from '../../utils/filtering.js';
+import { BadRequestError } from '../../utils/errors.js';
 
-const typesNeedUser = [Data.SearchType.USERS, Data.SearchType.RELATED_USERS];
 
-const filterColumns = (type) => {
-  switch (type) {
-    case Data.SearchType.POSTS:
-      return Post.filterColumns;
-    case Data.SearchType.USERS:
-      return User.filterColumns;
-    case Data.SearchType.RELATED_USERS:
-      return User.filterColumns;
-    case Data.SearchType.PROJECTS:
-      return Project.filterColumns;
-    case Data.SearchType.ORGANIZATIONS:
-      return Org.filterColumns;
-    default:
-      return [];
-  }
-};
 
 const addHistory = async (body, identityId) => {
   await app.db.query(sql`
@@ -33,66 +16,37 @@ const addHistory = async (body, identityId) => {
   `);
 };
 
-const fetch = async (type, ids, {offset, limit}) => {
-  const selectedIds = ids.slice(offset, offset + limit);
-  let rows = [];
-  switch (type) {
-    case Data.SearchType.POSTS:
-      rows = await Post.getAll(selectedIds);
-      break;
-    case Data.SearchType.USERS:
-      rows = await User.getAllProfile(selectedIds);
-      break;
-    case Data.SearchType.RELATED_USERS:
-      rows = await User.getAllProfile(selectedIds);
-      break;
-    case Data.SearchType.PROJECTS:
-      rows = await Project.getAll(selectedIds);
-      break;
-    case Data.SearchType.ORGANIZATIONS:
-      rows = await Org.getAll(selectedIds);
-      break;
-  }
-
-  return rows.map((r) => {
-    return {
-      total_count: ids.length,
-      ...r,
-    };
-  });
-};
-
 const find = async (
   body,
-  {userId, identityId, shouldSave},
-  {offset = 0, limit = 10},
+  {identityId, shouldSave},
+  paginate
 ) => {
   await Data.SearchSchema.validateAsync(body);
 
-  if (body.type === Data.SearchType.PROJECTS)
-    return Project.search(body.q, {filter: body.filter}, {offset, limit})
+  const options = {...paginate, filter: body.filter, sort: body.sort}
 
-
-  const query = body.q.replaceAll(
-    /[^\p{Letter}\p{Number}\p{Separator}]/gu,
-    ' ',
-  );
-  const name = `search/${body.type}`;
-  const params = [
-    `"${query}"`,
-    typesNeedUser.includes(body.type) ? userId : undefined,
-  ].filter((p) => p !== undefined);
 
   if (shouldSave) await addHistory(body, identityId);
 
-  const {rows} = await app.db.execute(name, params, {
-    filter: filtering(body.filter, filterColumns(body.type)),
-  });
-  return fetch(
-    body.type,
-    rows.map((r) => r.id),
-    {offset, limit},
-  );
+  switch (body.type) {
+    case Data.SearchType.POSTS:
+      return Post.search(body.q, identityId, options)
+    
+    case Data.SearchType.USERS:
+      return User.search(body.q,identityId, options)
+    
+    case Data.SearchType.RELATED_USERS:
+      return User.searchRelateds(body.q, identityId, options)
+    
+    case Data.SearchType.PROJECTS:
+      return Project.search(body.q, options)
+
+    case Data.SearchType.ORGANIZATIONS:
+      return Org.search(body.q, options)
+    
+    default:
+      throw new BadRequestError(`type '${body.type}' is not valid`)
+  }
 };
 
 const history = async (identityId, {offset = 0, limit = 10}) => {

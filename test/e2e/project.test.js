@@ -6,6 +6,8 @@ import {create as createOrg} from './globals/org.js';
 import {
   create,
   get,
+  getAll,
+  getFiltered,
   getApplicant,
   addQuestion,
   apply,
@@ -31,7 +33,9 @@ beforeAll(async () => {
 });
 
 test('create', async () => create(request, data));
-// test('get', async () => get(request, data));
+test('get', async () => get(request, data));
+test('get all', async () => getAll(request, data));
+test('get filtered', async () => getFiltered(request, data));
 test('add questions', async () => addQuestion(request, data));
 test('apply', async () => apply(request, data));
 test('get applicants', async () => getApplicant(request, data));

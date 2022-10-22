@@ -8,6 +8,7 @@ var data = {
   projects: JSON.parse(
     (await fs.readFile('./test/data/projects.json')).toString(),
   ),
+  posts: JSON.parse((await fs.readFile('./test/data/posts.json')).toString()),
 };
 
 export default data;

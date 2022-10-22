@@ -6,8 +6,11 @@ import {
 export const get = async (request, data) => {
   for (const project of data.projects.objs) {
     if (project.invalid) continue;
-    console.log(project.id, '--------------------');
-    const response = await request.get(`/projects/${project.id}`);
+
+    const response = await request
+      .get(`/projects/${project.id}`)
+      .set('Authorization', data.users[0].access_token);
+
     expect(response.status).toBe(200);
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),
@@ -18,6 +21,55 @@ export const get = async (request, data) => {
       identity_meta: expect.any(Object),
     });
   }
+};
+
+export const getAll = async (request, data) => {
+  const response = await request
+    .get('/projects?sort=-updated_at')
+    .set('Authorization', data.users[0].access_token);
+
+  expect(response.status).toBe(200);
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+      },
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+      },
+    ],
+  });
+};
+
+export const getFiltered = async (request, data) => {
+  const response = await request
+    .get('/projects?filter.country=JP&filter.skills=ANDROID')
+    .set('Authorization', data.users[0].access_token);
+
+  expect(response.status).toBe(200);
+
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+      },
+    ],
+  });
 };
 
 export const getApplicant = async (request, data) => {

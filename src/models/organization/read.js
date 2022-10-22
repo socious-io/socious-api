@@ -2,17 +2,13 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {filtering, textSearch, sorting} from '../../utils/query.js';
 
-export const filterColumns = [
-    'country',
-    'type',
-    'social_causes'
-  ];
+export const filterColumns = {
+  country: String,
+  type: String,
+  social_causes: Array,
+};
 
-export const sortColumns = [
-  'created_at',
-  'updated_at',
-];
-
+export const sortColumns = ['created_at', 'updated_at'];
 
 export const all = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(
@@ -24,8 +20,8 @@ export const all = async ({offset = 0, limit = 10, filter, sort}) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    ${filtering(filter, filterColumns, false)}
-    ${sorting(sort, sortColumns)}
+    ${filtering(filter, filterColumns, false, 'org')}
+    ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
@@ -54,7 +50,7 @@ export const getAll = async (ids, sort) => {
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
     WHERE org.id=ANY(${ids})
-    ${sorting(sort, sortColumns)}
+    ${sorting(sort, sortColumns, 'org')}
     `);
   return rows;
 };
@@ -82,7 +78,6 @@ export const shortNameExists = async (shortname) => {
   }
 };
 
-
 export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(sql`
     SELECT
@@ -94,12 +89,15 @@ export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
     ${sorting(sort, sortColumns)}
     `);
 
-  const orgs = await getAll(rows.map(r => r.id).slice(offset, offset + limit), sort)
+  const orgs = await getAll(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
 
-  return orgs.map(r => {
+  return orgs.map((r) => {
     return {
       total_count: rows.length,
-      ...r
-    }
+      ...r,
+    };
   });
 };

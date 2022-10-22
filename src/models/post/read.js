@@ -3,19 +3,19 @@ import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {filtering, textSearch, sorting} from '../../utils/query.js';
 
-export const filterColumns = [
-    'causes_tags',
-    'hashtags',
-    'identity_tags',
-    'identity_id'
-  ];
+export const filterColumns = {
+  causes_tags: Array,
+  hashtags: Array,
+  identity_tags: Array,
+  identity_id: String,
+};
 
-export const sortColumns = [
-  'created_at',
-  'updated_at'
-];
+export const sortColumns = ['created_at', 'updated_at'];
 
-export const all = async (currentIdentity, {offset = 0, limit = 10, filter, sort}) => {
+export const all = async (
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(
     sql`SELECT 
       COUNT(*) OVER () as total_count,
@@ -33,8 +33,8 @@ export const all = async (currentIdentity, {offset = 0, limit = 10, filter, sort
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-    ${filtering(filter, filterColumns, false)}
-    ${sorting(sort, sortColumns)}
+    ${filtering(filter, filterColumns, false, 'posts')}
+    ${sorting(sort, sortColumns, 'posts')}
     LIMIT ${limit} OFFSET ${offset}`,
   );
 
@@ -79,12 +79,16 @@ export const getAll = async (ids, currentIdentity, sort) => {
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
     WHERE posts.id=ANY(${ids})
-    ${sorting(sort, sortColumns)}
+    ${sorting(sort, sortColumns, 'posts')}
   `);
   return rows;
 };
 
-export const search = async (q, currentIdentity, {offset = 0, limit = 10, filter, sort}) => {
+export const search = async (
+  q,
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(sql`
     SELECT
       p.id
@@ -94,13 +98,17 @@ export const search = async (q, currentIdentity, {offset = 0, limit = 10, filter
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}`);
 
-  const posts = await getAll(rows.map(r => r.id).slice(offset, offset + limit), currentIdentity, sort)
+  const posts = await getAll(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    currentIdentity,
+    sort,
+  );
 
-  return posts.map(r => {
+  return posts.map((r) => {
     return {
       total_count: rows.length,
-      ...r
-    }
+      ...r,
+    };
   });
 };
 

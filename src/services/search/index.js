@@ -5,9 +5,7 @@ import Org from '../../models/organization/index.js';
 import Project from '../../models/project/index.js';
 import Data from '@socious/data';
 import {app} from '../../index.js';
-import { BadRequestError } from '../../utils/errors.js';
-
-
+import {BadRequestError} from '../../utils/errors.js';
 
 const addHistory = async (body, identityId) => {
   await app.db.query(sql`
@@ -16,36 +14,31 @@ const addHistory = async (body, identityId) => {
   `);
 };
 
-const find = async (
-  body,
-  {identityId, shouldSave},
-  paginate
-) => {
+const find = async (body, {identityId, shouldSave}, paginate) => {
   await Data.SearchSchema.validateAsync(body);
 
-  const options = {...paginate, filter: body.filter, sort: body.sort}
-
+  const options = {...paginate, filter: body.filter, sort: body.sort};
 
   if (shouldSave) await addHistory(body, identityId);
 
   switch (body.type) {
     case Data.SearchType.POSTS:
-      return Post.search(body.q, identityId, options)
-    
+      return Post.search(body.q, identityId, options);
+
     case Data.SearchType.USERS:
-      return User.search(body.q,identityId, options)
-    
+      return User.search(body.q, identityId, options);
+
     case Data.SearchType.RELATED_USERS:
-      return User.searchRelateds(body.q, identityId, options)
-    
+      return User.searchRelateds(body.q, identityId, options);
+
     case Data.SearchType.PROJECTS:
-      return Project.search(body.q, options)
+      return Project.search(body.q, options);
 
     case Data.SearchType.ORGANIZATIONS:
-      return Org.search(body.q, options)
-    
+      return Org.search(body.q, options);
+
     default:
-      throw new BadRequestError(`type '${body.type}' is not valid`)
+      throw new BadRequestError(`type '${body.type}' is not valid`);
   }
 };
 

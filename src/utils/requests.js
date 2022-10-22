@@ -1,3 +1,14 @@
+const filters = (ctx) => {
+  const result = {};
+
+  for (const [key, val] of Object.entries(ctx.query)) {
+    if (!key.includes('filter.')) continue;
+    result[key.split('filter.')[1]] = val;
+  }
+
+  return result;
+};
+
 export const paginate = async (ctx, next) => {
   let page = parseInt(ctx.query.page) || 1;
   if (page < 1) page = 1;
@@ -7,7 +18,13 @@ export const paginate = async (ctx, next) => {
 
   // TODO: we can handle ordering system here
 
-  ctx.paginate = {page, limit, offset: (page - 1) * limit};
+  ctx.paginate = {
+    page,
+    limit,
+    offset: (page - 1) * limit,
+    filter: filters(ctx),
+    sort: ctx.query.sort,
+  };
 
   await next();
   /*

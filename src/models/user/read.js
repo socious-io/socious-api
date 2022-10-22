@@ -2,18 +2,13 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {filtering, textSearch, sorting} from '../../utils/query.js';
 
-export const filterColumns = [
-  'country',
-  'social_causes',
-  'skills',
-];
+export const filterColumns = {
+  country: String,
+  social_causes: Array,
+  skills: Array,
+};
 
-
-export const sortColumns = [
-  'created_at',
-  'updated_at',
-  'impact_score',
-];
+export const sortColumns = ['created_at', 'updated_at', 'impact_score'];
 
 export const get = async (id) => {
   return app.db.get(
@@ -209,9 +204,11 @@ export const getProfileByUsernameLimited = async (username) => {
   );
 };
 
-
-export const search = async (q, currentIdentity, {offset= 0, limit = 10, filter, sort}) => {
-
+export const search = async (
+  q,
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(sql`
     SELECT
       u.id
@@ -221,21 +218,26 @@ export const search = async (q, currentIdentity, {offset= 0, limit = 10, filter,
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `)
+  `);
 
-  const users = await getAllProfile(rows.map(r => r.id).slice(offset, offset + limit), sort)
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
 
-  return users.map(r => {
+  return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r
-    }
-  })
-}
+      ...r,
+    };
+  });
+};
 
-
-export const searchRelateds = async (q, currentIdentity, {offset= 0, limit = 10, filter, sort}) => {
-
+export const searchRelateds = async (
+  q,
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(sql`
     WITH fl AS (
       SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
@@ -251,14 +253,17 @@ export const searchRelateds = async (q, currentIdentity, {offset= 0, limit = 10,
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `)
+  `);
 
-  const users = await getAllProfile(rows.map(r => r.id).slice(offset, offset + limit), sort)
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
 
-  return users.map(r => {
+  return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r
-    }
-  })
-}
+      ...r,
+    };
+  });
+};

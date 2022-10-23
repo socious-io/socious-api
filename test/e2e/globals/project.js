@@ -378,3 +378,26 @@ export const feedbacks = async (request, data) => {
       });
   }
 };
+
+export const userApplicants = async (request, data) => {
+  for (const project of data.projects.objs) {
+    if (project.invalid) continue;
+    const response = await request
+      .get(`/user/applicants`)
+      .set('Authorization', data.users[0].access_token);
+
+    expect(response.status).toBe(200);
+    if (response.body.items.length > 0)
+      expect(response.body.items[0]).toMatchSnapshot({
+        id: expect.any(String),
+        project_id: expect.any(String),
+        user_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        due_date: expect.any(String),
+        organization: expect.any(Object),
+        project: expect.any(Object),
+        user: expect.any(Object),
+      });
+  }
+};

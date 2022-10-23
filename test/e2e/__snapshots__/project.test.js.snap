@@ -790,3 +790,63 @@ exports[`reject 1`] = `
   "weekly_limit": null,
 }
 `;
+
+exports[`user applicants 1`] = `
+{
+  "assignment_total": 30000,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": Any<String>,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": "Test",
+  "offer_rate": 9000,
+  "organization": Any<Object>,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "CLOSED",
+  "total_hours": 180,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`user applicants 2`] = `
+{
+  "assignment_total": 30000,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "due_date": Any<String>,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": "Test",
+  "offer_rate": 9000,
+  "organization": Any<Object>,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "CLOSED",
+  "total_hours": 180,
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+  "weekly_limit": null,
+}
+`;

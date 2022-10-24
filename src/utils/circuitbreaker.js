@@ -63,7 +63,6 @@ export class DBCircuitBreaker {
     let q = await this.getQueryFromFile(name);
     // Note: kwargs are unsafe
     Object.keys(kwargs).map((k) => {
-      console.log(k, '--------------', kwargs[k]);
       q = q.replaceAll(`{{${k}}}`, kwargs[k]);
     });
     return this.query(q, args);

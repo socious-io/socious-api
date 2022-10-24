@@ -26,7 +26,22 @@ const emitEvent = async (eventType, userId, id) => {
   }
 };
 
+const getSetting = async (userId, type) => {
+  let setting = (await Notif.settings(userId))?.filter(
+    (s) => s.type === type,
+  )[0];
+  if (!setting)
+    setting = {
+      in_app: true,
+      email: true,
+      push: true,
+    };
+  return setting;
+};
+
 const coordinateNotifs = async (userId, body) => {
+  const setting = await getSetting(userId, body.type);
+
   const consolidateExceptions = [
     Data.NotificationType.APPLICATION,
     Data.NotificationType.FOLLOWED,
@@ -53,7 +68,10 @@ const coordinateNotifs = async (userId, body) => {
       body: message,
       consolidate_number: consolidateNumbs,
     });
-    await emitEvent(Types.NOTIFICATION, userId, latest.id);
+
+    if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, latest.id);
+
+    if (setting.push) await pushNotifications([userId], message, body);
     return;
   }
 
@@ -63,8 +81,9 @@ const coordinateNotifs = async (userId, body) => {
     consolidate_number: 0,
   });
 
-  await emitEvent(Types.NOTIFICATION, userId, notifId);
-  await pushNotifications([userId], message, body);
+  if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, notifId);
+
+  if (setting.push) await pushNotifications([userId], message, body);
 };
 
 const pushNotifications = async (userIds, notification, data) => {

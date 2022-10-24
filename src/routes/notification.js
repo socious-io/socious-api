@@ -3,7 +3,24 @@ import Notif from '../models/notification/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {paginate} from '../utils/requests.js';
 import {checkIdParams} from '../utils/middlewares/route.js';
+import {validate} from '@socious/data';
 export const router = new Router();
+
+router.get('/settings', loginRequired, async (ctx) => {
+  ctx.body = {
+    settings: await Notif.settings(ctx.user.id),
+  };
+});
+
+router.post('/settings', loginRequired, async (ctx) => {
+  await validate.NotificationsSettingsSchema.validateAsync(ctx.request.body);
+  ctx.body = {
+    settings: await Notif.updateSettings(
+      ctx.user.id,
+      ctx.request.body.settings,
+    ),
+  };
+});
 
 router.get('/unreads', loginRequired, paginate, async (ctx) => {
   const notifications = await Notif.allUnreads(ctx.user.id, ctx.paginate);

@@ -1,6 +1,7 @@
 import Data from '@socious/data';
 import Config from '../../config.js';
 import publish from '../jobs/publish.js';
+import User from '../../models/user/index.js';
 import Device from '../../models/device/index.js';
 import Notif from '../../models/notification/index.js';
 import Identity from '../../models/identity/index.js';
@@ -26,6 +27,26 @@ const emitEvent = async (eventType, userId, id) => {
   }
 };
 
+const pushNotifications = async (userIds, message, data) => {
+  const devices = await Device.any(userIds);
+  publish('fcm', {tokens: devices.map((d) => d.token), message, data});
+};
+
+const email = async (userId, message, id) => {
+  const user = await User.get(userId);
+  publish('email', {
+    to: user.email,
+    subject: message.title,
+    template: 'templates/emails/notification.html',
+    kwargs: {
+      name: user.first_name,
+      title: message.title,
+      message: message.body,
+      link: `${Config.notifAppLink}/${id}`,
+    },
+  });
+};
+
 const getSetting = async (userId, type) => {
   let setting = (await Notif.settings(userId))?.filter(
     (s) => s.type === type,
@@ -39,9 +60,17 @@ const getSetting = async (userId, type) => {
   return setting;
 };
 
-const coordinateNotifs = async (userId, body) => {
+const send = async (userId, message, body, id) => {
   const setting = await getSetting(userId, body.type);
 
+  if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, id);
+
+  if (setting.push) await pushNotifications([userId], message, body);
+
+  if (setting.email) await email(userId, message, id);
+};
+
+const coordinateNotifs = async (userId, body) => {
   const consolidateExceptions = [
     Data.NotificationType.APPLICATION,
     Data.NotificationType.FOLLOWED,
@@ -69,10 +98,7 @@ const coordinateNotifs = async (userId, body) => {
       consolidate_number: consolidateNumbs,
     });
 
-    if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, latest.id);
-
-    if (setting.push) await pushNotifications([userId], message, body);
-    return;
+    return send(userId, message, body, latest.id);
   }
 
   var notifId = await Notif.create(userId, body.refId, body.type, {
@@ -81,14 +107,7 @@ const coordinateNotifs = async (userId, body) => {
     consolidate_number: 0,
   });
 
-  if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, notifId);
-
-  if (setting.push) await pushNotifications([userId], message, body);
-};
-
-const pushNotifications = async (userIds, notification, data) => {
-  const devices = await Device.any(userIds);
-  publish('fcm', {tokens: devices.map((d) => d.token), notification, data});
+  return send(userId, message, body, notifId);
 };
 
 const _push = async (eventType, userId, body) => {

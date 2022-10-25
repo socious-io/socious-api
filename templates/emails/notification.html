@@ -19,14 +19,16 @@
                     <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
                       <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                         Hi <b><%=name%></b>,</p>
-                      <p style="font-family: sans-serif; font-size: 15px; font-weight: bold; margin: 0; margin-bottom: 15px;"><% title %></p>
+                      <p style="font-family: sans-serif; font-size: 15px; font-weight: bold; margin: 0; margin-bottom: 15px;"><%= title %></p>
                       <br />
-                      <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"><% message %></p>
+                      <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"><%= message %></p>
                       <br>
-                      <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"> <br></p>
-
+                      <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                        View this notification directly on <a href="<%= link %>" style="color: #1F2F59; font-weight: bold;font-size: 12px !important;">Socious</a>
+                      </p>
+                      <br />
                       <p>In case you encounter any problem, please contact us at <a href="mailto:info@socious.io" style="color: #1F2F59;font-size: 14px !important;">support</a>.</p>
-                      <br>
+                      <br />
                       <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                         Regards, <br>
                         Team Socious</p>

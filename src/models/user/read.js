@@ -267,3 +267,20 @@ export const searchRelateds = async (
     };
   });
 };
+
+export const recommend = async (currentUser) => {
+  const {rows} = await app.db.query(sql`
+  SELECT u.id 
+  FROM users u
+  JOIN users current ON current.id=${currentUser}
+  WHERE
+    u.id NOT IN (SELECT following_identity_id FROM follows WHERE follower_identity_id=${currentUser}) AND
+    u.country=COALESCE(current.country, u.country) AND
+    u.social_causes @> COALESCE(current.social_causes, u.social_causes) AND
+    u.skills @> COALESCE(current.skills, u.skills)
+  ORDER BY random()
+  LIMIT 10
+  `);
+
+  return getAllProfile(rows.map((r) => r.id));
+};

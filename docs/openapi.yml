@@ -4,7 +4,9 @@ info:
   version: 2.1.2
 servers:
   - url: https://dev.socious.io/api/v2/
+  - url: https://socious.io/api/v2/
   - url: http://localhost:8370
+
 components:
   securitySchemes:
     bearerAuth:
@@ -34,6 +36,25 @@ components:
         - lte
         - gt
         - gte
+    notification_type:
+      type: string
+      enum:
+        - FOLLOWED
+        - COMMENT_LIKE
+        - POST_LIKE
+        - CHAT
+        - SHARE_POST
+        - SHARE_PROJECT
+        - COMMENT
+        - APPLICATION
+        - OFFER
+        - REJECT
+        - APPROVED
+        - HIRED
+        - PROJECT_COMPLETE
+        - EMPLOYEE_CANCELED
+        - EMPLOYER_CANCELED
+        - EMPLOYER_CONFIRMED
 paths:
   /site/options:
     get:
@@ -45,7 +66,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
 
   /auth/login:
     post:
@@ -1289,6 +1309,18 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /user/recommend:
+    get:
+      tags:
+        - users
+      summary: user recommend
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /user/update/profile:
     post:
       tags:
@@ -2045,6 +2077,119 @@ paths:
       tags:
         - employed
       summary: contest job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /notifications/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - notifications
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications:
+    get:
+      tags:
+        - notifications
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - notifications
+      summary: read one
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/all:
+    post:
+      tags:
+        - notifications
+      summary: read all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/settings:
+    get:
+      tags:
+        - notifications
+      summary: get current user notification settings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - notifications
+      summary: update current user notification settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                settings:
+                  - type: FOLLOWED
+                    in_app: true
+                    email: false
+                    push: true
+                  - type: APPLICATION
+                    email: true
+                    in_app: true
+                    push: true
       security:
         - bearerAuth: []
       responses:

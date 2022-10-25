@@ -20,7 +20,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
 });
 
 router.get('/', loginOptional, paginate, async (ctx) => {
-  ctx.body = await Project.all(ctx.paginate)
+  ctx.body = await Project.all(ctx.paginate);
 });
 
 router.post('/', loginRequired, async (ctx) => {

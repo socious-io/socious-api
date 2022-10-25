@@ -143,3 +143,7 @@ router.post(
     ctx.body = await User.removeExperience(ctx.params.id, ctx.user);
   },
 );
+
+router.get('/recommend', loginRequired, async (ctx) => {
+  ctx.body = await User.recommend(ctx.user.id);
+});

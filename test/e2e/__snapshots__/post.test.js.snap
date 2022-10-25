@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+{
+  "error": ""email" must be a valid email",
+}
+`;
+
+exports[`create posts 1`] = `
+{
+  "causes_tags": [
+    "SOCIAL",
+    "HEALTH",
+  ],
+  "content": "test content",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "hashtags": [
+    "TEST",
+  ],
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "identity_meta": Any<Object>,
+  "identity_tags": null,
+  "identity_type": "users",
+  "liked": false,
+  "likes": 0,
+  "media": null,
+  "search_tsv": "'content':2 'health':5 'social':4 'test':1,3",
+  "shared": 0,
+  "shared_from_identity": null,
+  "shared_id": null,
+  "shared_post": null,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`create posts 2`] = `
+{
+  "causes_tags": [
+    "SOCIAL",
+  ],
+  "content": "test content 2",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "hashtags": [
+    "TEST2",
+  ],
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "identity_meta": Any<Object>,
+  "identity_tags": null,
+  "identity_type": "users",
+  "liked": false,
+  "likes": 0,
+  "media": null,
+  "search_tsv": "'2':3 'content':2 'social':5 'test':1 'test2':4",
+  "shared": 0,
+  "shared_from_identity": null,
+  "shared_id": null,
+  "shared_post": null,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`filter posts 1`] = `
+{
+  "items": [
+    {
+      "causes_tags": [
+        "SOCIAL",
+        "HEALTH",
+      ],
+      "content": "test content",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "hashtags": [
+        "TEST",
+      ],
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_tags": null,
+      "identity_type": "users",
+      "liked": false,
+      "likes": 0,
+      "media": null,
+      "search_tsv": "'content':2 'health':5 'social':4 'test':1,3",
+      "shared": 0,
+      "shared_from_identity": null,
+      "shared_id": null,
+      "shared_post": null,
+      "updated_at": Any<String>,
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
+}
+`;
+
+exports[`get posts 1`] = `
+{
+  "items": [
+    {
+      "causes_tags": [
+        "SOCIAL",
+      ],
+      "content": "test content 2",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "hashtags": [
+        "TEST2",
+      ],
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_tags": null,
+      "identity_type": "users",
+      "liked": false,
+      "likes": 0,
+      "media": null,
+      "search_tsv": "'2':3 'content':2 'social':5 'test':1 'test2':4",
+      "shared": 0,
+      "shared_from_identity": null,
+      "shared_id": null,
+      "shared_post": null,
+      "updated_at": Any<String>,
+    },
+    {
+      "causes_tags": [
+        "SOCIAL",
+        "HEALTH",
+      ],
+      "content": "test content",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "hashtags": [
+        "TEST",
+      ],
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_tags": null,
+      "identity_type": "users",
+      "liked": false,
+      "likes": 0,
+      "media": null,
+      "search_tsv": "'content':2 'health':5 'social':4 'test':1,3",
+      "shared": 0,
+      "shared_from_identity": null,
+      "shared_id": null,
+      "shared_post": null,
+      "updated_at": Any<String>,
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 2,
+}
+`;

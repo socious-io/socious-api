@@ -25,7 +25,28 @@ components:
         - PROFICIENT
         - FLUENT
         - NATIVE
+    filter-operators:
+      type: string
+      enum:
+        - eq
+        - ne
+        - lt
+        - lte
+        - gt
+        - gte
 paths:
+  /site/options:
+    get:
+      tags:
+        - site
+      summary: filtering and sorting options
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+
   /auth/login:
     post:
       tags:

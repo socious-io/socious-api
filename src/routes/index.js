@@ -23,11 +23,14 @@ import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
 import {router as payment} from './payment.js';
 import {router as employed} from './employed.js';
+import {router as site} from './site.js';
 
 export default (app) => {
   const blueprint = new Router();
 
   const spec = yamljs.load('./docs/openapi.yml');
+
+  blueprint.use('/site', site.routes(), site.allowedMethods());
 
   blueprint.get(
     '/docs',

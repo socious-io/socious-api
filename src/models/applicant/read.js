@@ -3,18 +3,13 @@ import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import {filtering, sorting} from '../../utils/query.js';
 
-
 export const filterColumns = {
   project_id: String,
   user_id: String,
-  status: String
+  status: String,
 };
 
-export const sortColumns = [
-  'created_at',
-  'updated_at',
-];
-
+export const sortColumns = ['created_at', 'updated_at'];
 
 export const getAnswers = async (id) => {
   const {rows} = await app.db.query(
@@ -52,7 +47,10 @@ export const all = async ({offset = 0, limit = 10, filter, sort}) => {
   return rows;
 };
 
-export const getByUserId = async (userId, {offset = 0, limit = 10, filter, sort}) => {
+export const getByUserId = async (
+  userId,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(
     sql`
       SELECT 
@@ -75,7 +73,10 @@ export const getByUserId = async (userId, {offset = 0, limit = 10, filter, sort}
   return rows;
 };
 
-export const getByProjectId = async (projectId, {offset = 0, limit = 10, filter, sort}) => {
+export const getByProjectId = async (
+  projectId,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(
     sql`SELECT
           COUNT(a.*) OVER () as total_count,

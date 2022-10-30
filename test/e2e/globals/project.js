@@ -200,10 +200,12 @@ export const offer = async (request, data) => {
     expect(response.status).toBe(200);
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),
+      applicant_id: expect.any(String),
+      offerer_id: expect.any(String),
+      recipient_id: expect.any(String),
       project_id: expect.any(String),
       created_at: expect.any(String),
       updated_at: expect.any(String),
-      user_id: expect.any(String),
       due_date: expect.any(String),
     });
   }
@@ -239,16 +241,16 @@ export const approve = async (request, data) => {
   for (const user of data.users) {
     if (user.invalid) continue;
 
-    const applicants = await request
-      .get('/user/applicants')
+    const offers = await request
+      .get('/user/offers')
       .set('Authorization', user.access_token);
 
-    for (const applicant of applicants.body.items) {
+    for (const offer of offers.body.items) {
       const response = await request
-        .post(`/applicants/${applicant.id}/approve`)
+        .post(`/offers/${offer.id}/approve`)
         .set('Authorization', user.access_token);
 
-      if (applicant.status === 'OFFERED') {
+      if (offer.status === 'PENDING') {
         expect(response.status).toBe(200);
       } else {
         expect(response.status).toBe(400);
@@ -261,19 +263,19 @@ export const hire = async (request, data) => {
   for (const i in data.projects.objs) {
     if (data.projects.objs[i].invalid) continue;
 
-    const applicants = await request
-      .get(`/projects/${data.projects.objs[i].id}/applicants`)
+    const offers = await request
+      .get(`/projects/${data.projects.objs[i].id}/offers`)
       .set('Authorization', data.users[0].access_token)
       .set('Current-Identity', data.orgs[0].id);
 
-    for (const applicant of applicants.body.items) {
-      if (applicant.status != 'APPROVED') continue;
+    for (const offer of offers.body.items) {
+      if (offer.status != 'APPROVED') continue;
 
       // TODO: test with send and verify with STRIPE it self
       // Due Stripe sanctions and IR filtering for now we test on blow level of payments directly
       const paymentId = await createTrx({
         identity_id: data.orgs[0].id,
-        amount: applicant.assignment_total,
+        amount: offer.assignment_total,
         currency: data.projects.objs[i].payment_currency,
         service: 'STRIPE',
         meta: {
@@ -283,7 +285,7 @@ export const hire = async (request, data) => {
       await completeTrx(paymentId);
 
       const response = await request
-        .post(`/applicants/${applicant.id}/hire`)
+        .post(`/offers/${offer.id}/hire`)
         .set('Authorization', data.users[0].access_token)
         .set('Current-Identity', data.orgs[0].id);
 
@@ -293,13 +295,13 @@ export const hire = async (request, data) => {
 };
 
 export const complete = async (request, data) => {
-  const employeds = await request
-    .get('/user/employeds')
+  const missions = await request
+    .get('/user/missions')
     .set('Authorization', data.users[0].access_token);
 
-  for (const employed of employeds.body.items) {
+  for (const mission of missions.body.items) {
     const response = await request
-      .post(`/employeds/${employed.id}/complete`)
+      .post(`/missions/${mission.id}/complete`)
       .set('Authorization', data.users[0].access_token);
 
     expect(response.status).toBe(200);
@@ -307,13 +309,13 @@ export const complete = async (request, data) => {
 };
 
 export const cancel = async (request, data) => {
-  const employeds = await request
-    .get('/user/employeds')
+  const missions = await request
+    .get('/user/missions')
     .set('Authorization', data.users[1].access_token);
 
-  for (const employed of employeds.body.items) {
+  for (const mission of missions.body.items) {
     const response = await request
-      .post(`/employeds/${employed.id}/cancel`)
+      .post(`/missions/${mission.id}/cancel`)
       .set('Authorization', data.users[1].access_token);
 
     expect(response.status).toBe(200);
@@ -322,16 +324,16 @@ export const cancel = async (request, data) => {
 
 export const confirm = async (request, data) => {
   for (const project of data.projects.objs) {
-    const employeds = await request
-      .get(`/projects/${project.id}/employees`)
+    const missions = await request
+      .get(`/projects/${project.id}/missions`)
       .set('Authorization', data.users[0].access_token)
       .set('Current-Identity', data.orgs[0].id);
 
-    for (const employed of employeds.body.items) {
-      if (employed.status != 'COMPLETE') continue;
+    for (const mission of missions.body.items) {
+      if (mission.status != 'COMPLETE') continue;
 
       const response = await request
-        .post(`/employeds/${employed.id}/confirm`)
+        .post(`/missions/${mission.id}/confirm`)
         .set('Authorization', data.users[0].access_token)
         .set('Current-Identity', data.orgs[0].id);
 
@@ -342,14 +344,14 @@ export const confirm = async (request, data) => {
 
 export const feedback = async (request, data) => {
   for (const project of data.projects.objs) {
-    const employeds = await request
-      .get(`/projects/${project.id}/employees`)
+    const missions = await request
+      .get(`/projects/${project.id}/missions`)
       .set('Authorization', data.users[0].access_token)
       .set('Current-Identity', data.orgs[0].id);
 
-    for (const employed of employeds.body.items) {
+    for (const mission of missions.body.items) {
       const response = await request
-        .post(`/employeds/${employed.id}/feedback`)
+        .post(`/missions/${mission.id}/feedback`)
         .set('Authorization', data.users[0].access_token)
         .set('Current-Identity', data.orgs[0].id)
         .send({content: 'TEST'});
@@ -371,7 +373,7 @@ export const feedbacks = async (request, data) => {
       expect(response.body.items[0]).toMatchSnapshot({
         id: expect.any(String),
         project_id: expect.any(String),
-        employee_id: expect.any(String),
+        mission_id: expect.any(String),
         created_at: expect.any(String),
         identity_id: expect.any(String),
         identity: expect.any(Object),
@@ -394,7 +396,6 @@ export const userApplicants = async (request, data) => {
         user_id: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String),
-        due_date: expect.any(String),
         organization: expect.any(Object),
         project: expect.any(Object),
         user: expect.any(Object),

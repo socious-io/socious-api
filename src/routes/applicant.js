@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import {validate} from '@socious/data';
 import Applicant from '../models/applicant/index.js';
+import Offer from '../models/offer/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import {PermissionError} from '../utils/errors.js';
@@ -19,12 +20,12 @@ router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
 });
 
 router.post(
-  '/:id/withdraw',
+  '/:id/withdrawn',
   loginRequired,
   checkIdParams,
   applicantOwner,
   async (ctx) => {
-    ctx.body = await Applicant.withdraw(ctx.params.id);
+    ctx.body = await Applicant.withdrawn(ctx.params.id);
   },
 );
 
@@ -34,10 +35,18 @@ router.post(
   checkIdParams,
   projectOwner,
   async (ctx) => {
-    await validate.ApplicantOfferSchema.validateAsync(ctx.request.body);
-    ctx.body = await Applicant.offer(ctx.params.id, ctx.request.body);
+    await validate.OfferSchema.validateAsync(ctx.request.body);
 
     const project = ctx.applicant.project;
+
+    await Applicant.offer(ctx.params.id);
+
+    ctx.body = await Offer.send(project.id, {
+      ...ctx.request.body,
+      recipient_id: ctx.applicant.user_id,
+      offerer_id: ctx.identity.id,
+      applicant_id: ctx.applicant.id,
+    });
 
     Event.push(Event.Types.NOTIFICATION, ctx.applicant.user_id, {
       type: Notif.Types.OFFER,
@@ -67,36 +76,6 @@ router.post(
     });
   },
 );
-
-router.post('/:id/approve', loginRequired, applicantOwner, async (ctx) => {
-  ctx.body = await Applicant.approve(ctx.params.id);
-
-  const project = ctx.applicant.project;
-
-  Event.push(Event.Types.NOTIFICATION, project.identity_id, {
-    type: Notif.Types.APPROVED,
-    refId: ctx.body.id,
-    parentId: project.id,
-    identity: ctx.identity,
-  });
-});
-
-router.post('/:id/hire', loginRequired, projectOwner, async (ctx) => {
-  if (
-    ctx.applicant.project.total_escrow_amount < ctx.applicant.assignment_total
-  )
-    throw new PermissionError();
-  ctx.body = await Applicant.hire(ctx.params.id);
-
-  const project = ctx.applicant.project;
-
-  Event.push(Event.Types.NOTIFICATION, project.identity_id, {
-    type: Notif.Types.APPROVED,
-    refId: ctx.body.id,
-    parentId: project.id,
-    identity: ctx.identity,
-  });
-});
 
 router.post(
   '/update/:id',

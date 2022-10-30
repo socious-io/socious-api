@@ -74,21 +74,21 @@ export const makeMessage = (type, name) => {
         body: `${name} completed the project`,
       };
 
-    case Data.NotificationType.EMPLOYER_CONFIRMED:
+    case Data.NotificationType.ASSIGNER_CONFIRMED:
       return {
-        title: Data.NotificationTitle.EMPLOYER_CONFIRMED,
+        title: Data.NotificationTitle.ASSIGNER_CONFIRMED,
         body: `${name} confirmed your work submission`,
       };
 
-    case Data.NotificationType.EMPLOYER_CANCELED:
+    case Data.NotificationType.ASSIGNER_CANCELED:
       return {
-        title: Data.NotificationTitle.EMPLOYER_CANCELED,
+        title: Data.NotificationTitle.ASSIGNER_CANCELED,
         body: `${name} removed you from the project`,
       };
 
-    case Data.NotificationType.EMPLOYEE_CANCELED:
+    case Data.NotificationType.ASSIGNEE_CANCELED:
       return {
-        title: Data.NotificationTitle.EMPLOYEE_CANCELED,
+        title: Data.NotificationTitle.ASSIGNEE_CANCELED,
         body: `${name} left the project`,
       };
 

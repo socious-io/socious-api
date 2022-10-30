@@ -22,7 +22,8 @@ import {router as skill} from './skill.js';
 import {router as search} from './search.js';
 import {router as webhook} from './webhook.js';
 import {router as payment} from './payment.js';
-import {router as employed} from './employed.js';
+import {router as mission} from './mission.js';
+import {router as offer} from './offer.js';
 import {router as site} from './site.js';
 
 export default (app) => {
@@ -67,7 +68,8 @@ export default (app) => {
   blueprint.use('/skills', skill.routes(), skill.allowedMethods());
   blueprint.use('/search', search.routes(), search.allowedMethods());
   blueprint.use('/payments', payment.routes(), payment.allowedMethods());
-  blueprint.use('/employeds', employed.routes(), employed.allowedMethods());
+  blueprint.use('/missions', mission.routes(), mission.allowedMethods());
+  blueprint.use('/offers', offer.routes(), offer.allowedMethods());
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

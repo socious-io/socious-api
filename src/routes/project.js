@@ -3,7 +3,8 @@ import Data, {validate} from '@socious/data';
 import Project from '../models/project/index.js';
 import Applicant from '../models/applicant/index.js';
 import Notif from '../models/notification/index.js';
-import Employed from '../models/employed/index.js';
+import Mission from '../models/mission/index.js';
+import Offer from '../models/offer/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/requests.js';
 import {
@@ -122,16 +123,27 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
 });
 
 router.get(
-  '/:id/employees',
+  '/:id/missions',
   loginRequired,
   checkIdParams,
   paginate,
   async (ctx) => {
-    ctx.body = await Employed.employees(
-      ctx.identity.id,
-      ctx.params.id,
-      ctx.paginate,
-    );
+    ctx.paginate.filter.project_id = ctx.params.id;
+    ctx.paginate.filter.assigner_id = ctx.identity.id;
+
+    ctx.body = await Mission.getAll(ctx.paginate);
+  },
+);
+
+router.get(
+  '/:id/offers',
+  loginRequired,
+  checkIdParams,
+  paginate,
+  async (ctx) => {
+    ctx.paginate.filter.project_id = ctx.params.id;
+
+    ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate);
   },
 );
 
@@ -141,6 +153,6 @@ router.get(
   checkIdParams,
   paginate,
   async (ctx) => {
-    ctx.body = await Employed.feedbacks(ctx.params.id, ctx.paginate);
+    ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate);
   },
 );

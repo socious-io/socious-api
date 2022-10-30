@@ -4,7 +4,6 @@ import Applicant from '../models/applicant/index.js';
 import Offer from '../models/offer/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
-import {PermissionError} from '../utils/errors.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {

@@ -139,11 +139,35 @@ router.get(
   '/:id/offers',
   loginRequired,
   checkIdParams,
+  projectPermission,
   paginate,
   async (ctx) => {
     ctx.paginate.filter.project_id = ctx.params.id;
 
     ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate);
+  },
+);
+
+router.post(
+  '/:id/offer/:user_id',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    await validate.OfferSchema.validateAsync(ctx.request.body);
+
+    ctx.body = await Offer.send(ctx.params.id, {
+      ...ctx.request.body,
+      recipient_id: ctx.params.user_id,
+      offerer_id: ctx.identity.id,
+    });
+
+    Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
+      type: Notif.Types.OFFER,
+      refId: ctx.body.id,
+      parentId: ctx.params.id,
+      identity: ctx.identity,
+    });
   },
 );
 

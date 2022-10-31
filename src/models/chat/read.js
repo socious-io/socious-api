@@ -103,7 +103,8 @@ export const permissioned = async (
     SELECT COUNT(*) from chats_participants
     WHERE chat_id=${id} AND identity_id=${identityId} AND type=${type}
   `);
-  if (rows.length < 1) throw new PermissionError('Not allow');
+
+  if (rows[0].count < 1) throw new PermissionError('Not allow');
 };
 
 export const participants = async (id, {offset = 0, limit = 10}) => {

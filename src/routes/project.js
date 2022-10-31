@@ -46,7 +46,6 @@ router.get(
   '/:id/questions',
   loginRequired,
   checkIdParams,
-  projectPermission,
   async (ctx) => {
     ctx.body = {
       questions: await Project.getQuestions(ctx.params.id),

@@ -192,7 +192,7 @@ jobs:
           path: test-results
 
   deploy-dev:
-    needs: [build-dev, run-tests]
+    needs: [build, run-tests]
     name: Deploy to Dev
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ["backend-dev"]

@@ -100,7 +100,14 @@ export const updateProfile = async (request, data) => {
       .set('Authorization', data.users[i].access_token)
       .send(body);
 
+    if (i == 1) {
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchSnapshot();
+      continue;
+    }
+
     expect(response.status).toBe(200);
+
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),
       created_at: expect.any(String),

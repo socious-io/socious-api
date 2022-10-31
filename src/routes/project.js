@@ -42,16 +42,11 @@ router.post(
   },
 );
 
-router.get(
-  '/:id/questions',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    ctx.body = {
-      questions: await Project.getQuestions(ctx.params.id),
-    };
-  },
-);
+router.get('/:id/questions', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = {
+    questions: await Project.getQuestions(ctx.params.id),
+  };
+});
 
 router.post(
   '/:id/questions',

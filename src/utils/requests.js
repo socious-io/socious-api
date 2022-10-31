@@ -3,11 +3,11 @@ const filters = (ctx) => {
 
   for (let [key, val] of Object.entries(ctx.query)) {
     // for BC 2 filter routes
-    if (key === 'status') key = 'filter.status'
-    if (key === 'identity_id') key = 'filter.identity_id'
+    if (key === 'status') key = 'filter.status';
+    if (key === 'identity_id') key = 'filter.identity_id';
 
     if (!key.includes('filter.')) continue;
-    
+
     result[key.split('filter.')[1]] = val;
   }
 
@@ -20,7 +20,6 @@ export const paginate = async (ctx, next) => {
 
   let limit = parseInt(ctx.query.limit) || 10;
   if (limit < 1) limit = 10;
-
 
   ctx.paginate = {
     page,

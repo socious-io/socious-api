@@ -30,9 +30,11 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
     let op = operators[valueKeys[0]];
 
     let value = op ? val[valueKeys[0]] : val;
-
-    const splited = value.split(',');
-    if (splited.length > 1) value = splited;
+    
+    if (!Array.isArray(value)) {
+      const splited = value.split(',');
+      if (splited.length > 1) value = splited;
+    }
 
     if (columns[key] === Array) {
       value = `{${value}}`;

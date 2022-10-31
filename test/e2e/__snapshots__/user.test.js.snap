@@ -460,6 +460,6 @@ exports[`update profile 1`] = `
 
 exports[`update profile 2`] = `
 {
-  "error": "duplicate key value violates unique constraint "user_phone_idx"",
+  "error": "duplicate key value violates unique constraint "idx_phone_country_code"",
 }
 `;

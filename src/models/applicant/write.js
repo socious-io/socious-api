@@ -82,17 +82,23 @@ export const remove = async (id) => {
   );
 };
 
-export const withdraw = async (id) => {
+export const withdrawn = async (id) => {
   try {
-    app.db.get(sql`
+    return app.db.get(sql`
     UPDATE applicants SET 
       status=${StatusTypes.WITHDRAWN}
-    WHERE id=${id} AND STATUS NOT IN (${StatusTypes.APPROVED}, ${StatusTypes.REJECTED}, ${StatusTypes.HIRED})
+    WHERE id=${id} AND status NOT IN (${StatusTypes.APPROVED}, ${StatusTypes.REJECTED}, ${StatusTypes.HIRED})
     RETURNING *
   `);
   } catch {
     throw PermissionError('not allow');
   }
+};
+
+export const offer = async (id) => {
+  return app.db.get(
+    sql`UPDATE applicants SET status=${StatusTypes.OFFERED} WHERE id=${id} RETURNING *`,
+  );
 };
 
 // TODO: affter this update project owner should start payment flow
@@ -107,36 +113,6 @@ export const hire = async (id) => {
   return app.db.get(
     sql`UPDATE applicants SET status=${StatusTypes.HIRED} WHERE id=${id} AND status=${StatusTypes.APPROVED} RETURNING *`,
   );
-};
-
-export const offer = async (
-  id,
-  {
-    offer_rate,
-    offer_message,
-    due_date,
-    assignment_total,
-    total_hours,
-    weekly_limit,
-  },
-) => {
-  try {
-    const {rows} = await app.db.query(
-      sql`
-      UPDATE applicants SET
-        offer_rate=${offer_rate},
-        offer_message=${offer_message},
-        due_date=${due_date},
-        assignment_total=${assignment_total},
-        status=${StatusTypes.OFFERED},
-        total_hours=${total_hours},
-        weekly_limit=${weekly_limit}
-      WHERE id=${id} AND status=${StatusTypes.PENDING} RETURNING *`,
-    );
-    return rows[0];
-  } catch (err) {
-    throw new EntryError(err.message);
-  }
 };
 
 export const reject = async (id, {feedback}) => {

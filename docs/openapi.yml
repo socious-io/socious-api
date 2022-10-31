@@ -36,7 +36,7 @@ components:
         - lte
         - gt
         - gte
-    notification_type:
+    notification-type:
       type: string
       enum:
         - FOLLOWED
@@ -52,9 +52,9 @@ components:
         - APPROVED
         - HIRED
         - PROJECT_COMPLETE
-        - EMPLOYEE_CANCELED
-        - EMPLOYER_CANCELED
-        - EMPLOYER_CONFIRMED
+        - ASSIGNEE_CANCELED
+        - ASSIGNER_CANCELED
+        - ASSIGNER_CONFIRMED
 paths:
   /site/options:
     get:
@@ -432,11 +432,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /projects/{project_id}/employees:
+  /projects/{project_id}/missions:
     get:
       tags:
         - project
-      summary: get employees
+      summary: get missions
       security:
         - bearerAuth: []
       parameters:
@@ -498,6 +498,40 @@ paths:
           content:
             application/json: {}
 
+  /projects/{project_id}/offer/{user_id}:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: project offer direct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offer_text: test offer text
+                offer_rate: 500$
+                due_date: '2022-08-12T11:38:03.40'
+                assignment_total: 5
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
   /applicants/{applicant_id}/offer:
     parameters:
       - name: applicant_id
@@ -508,7 +542,7 @@ paths:
     post:
       tags:
         - project
-      summary: project applicatons
+      summary: offer to applicatons
       requestBody:
         content:
           application/json:
@@ -1623,11 +1657,29 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /user/employed:
+  /user/offers:
     get:
       tags:
         - users
-      summary: get user emplyeds
+      summary: get user offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/missions:
+    get:
+      tags:
+        - users
+      summary: get user missions
       security:
         - bearerAuth: []
       parameters:
@@ -1969,16 +2021,16 @@ paths:
           content:
             application/json: {}
 
-  /employed/{employee_id}/complete:
+  /missions/{mission_id}/complete:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: complete job
       security:
         - bearerAuth: []
@@ -1987,16 +2039,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/confirm:
+  /missions/{mission_id}/confirm:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: confirm job
       security:
         - bearerAuth: []
@@ -2005,16 +2057,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/cancel:
+  /missions/{mission_id}/cancel:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: cancel job
       security:
         - bearerAuth: []
@@ -2023,16 +2075,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/kickout:
+  /missions/{mission_id}/kickout:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: cancel job
       security:
         - bearerAuth: []
@@ -2041,16 +2093,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/feedback:
+  /missions/{mission_id}/feedback:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: feedback job
       requestBody:
         content:
@@ -2066,16 +2118,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/contest:
+  /missions/{mission_id}/contest:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: contest job
       security:
         - bearerAuth: []

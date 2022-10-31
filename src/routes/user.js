@@ -3,7 +3,8 @@ import Debug from 'debug';
 import User from '../models/user/index.js';
 import Applicant from '../models/applicant/index.js';
 import Auth from '../services/auth/index.js';
-import Employed from '../models/employed/index.js';
+import Mission from '../models/mission/index.js';
+import Offer from '../models/offer/index.js';
 import Skill from '../models/skill/index.js';
 import {paginate} from '../utils/requests.js';
 import {
@@ -76,15 +77,15 @@ router.get(
   },
 );
 
-router.get(
-  '/employeds',
-  loginRequired,
-  checkIdParams,
-  paginate,
-  async (ctx) => {
-    ctx.body = await Employed.projects(ctx.identity.id, ctx.paginate);
-  },
-);
+router.get('/missions', loginRequired, paginate, async (ctx) => {
+  ctx.paginate.filter.assignee_id = ctx.identity.id;
+
+  ctx.body = await Mission.getAll(ctx.paginate);
+});
+
+router.get('/offers', loginRequired, paginate, async (ctx) => {
+  ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate);
+});
 
 router.post('/languages', loginRequired, async (ctx) => {
   await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body);

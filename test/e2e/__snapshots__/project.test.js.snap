@@ -173,7 +173,6 @@ exports[`add questions 6`] = `
 exports[`apply 1`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 1",
@@ -181,7 +180,6 @@ exports[`apply 1`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -191,18 +189,15 @@ exports[`apply 1`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`apply 2`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 1",
@@ -210,7 +205,6 @@ exports[`apply 2`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -220,18 +214,15 @@ exports[`apply 2`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`apply 3`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -239,7 +230,6 @@ exports[`apply 3`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -249,18 +239,15 @@ exports[`apply 3`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`apply 4`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -268,7 +255,6 @@ exports[`apply 4`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -278,11 +264,9 @@ exports[`apply 4`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
@@ -559,7 +543,6 @@ exports[`get all 1`] = `
 exports[`get applicants 1`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 1",
@@ -567,7 +550,6 @@ exports[`get applicants 1`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -577,18 +559,15 @@ exports[`get applicants 1`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`get applicants 2`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 1",
@@ -596,7 +575,6 @@ exports[`get applicants 2`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -606,18 +584,15 @@ exports[`get applicants 2`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`get applicants 3`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -625,7 +600,6 @@ exports[`get applicants 3`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -635,18 +609,15 @@ exports[`get applicants 3`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`get applicants 4`] = `
 {
   "answers": Any<Array>,
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -654,7 +625,6 @@ exports[`get applicants 4`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": null,
   "id": Any<String>,
   "offer_message": null,
@@ -664,11 +634,9 @@ exports[`get applicants 4`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "PENDING",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
@@ -676,11 +644,11 @@ exports[`get feedbacks 1`] = `
 {
   "content": "TEST",
   "created_at": Any<String>,
-  "employee_id": Any<String>,
   "id": Any<String>,
   "identity": Any<Object>,
   "identity_id": Any<String>,
   "is_contest": false,
+  "mission_id": Any<String>,
   "project_id": Any<String>,
 }
 `;
@@ -739,34 +707,27 @@ exports[`get filtered 1`] = `
 
 exports[`offer 1`] = `
 {
+  "applicant_id": Any<String>,
   "assignment_total": 30000,
-  "attachment": null,
-  "closed_at": null,
-  "cover_letter": "test cover 2",
   "created_at": Any<String>,
-  "cv_link": "https://test.com/test.cv",
-  "cv_name": "test",
-  "deleted_at": null,
   "due_date": Any<String>,
-  "feedback": null,
   "id": Any<String>,
   "offer_message": "Test",
   "offer_rate": 9000,
-  "payment_rate": 30000,
-  "payment_type": "PAID",
+  "offerer_id": Any<String>,
+  "payment_scheme": null,
+  "payment_type": null,
   "project_id": Any<String>,
-  "share_contact_info": true,
-  "status": "OFFERED",
+  "recipient_id": Any<String>,
+  "status": "PENDING",
   "total_hours": 180,
   "updated_at": Any<String>,
-  "user_id": Any<String>,
   "weekly_limit": null,
 }
 `;
 
 exports[`reject 1`] = `
 {
-  "assignment_total": 0,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 1",
@@ -774,7 +735,6 @@ exports[`reject 1`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": null,
   "feedback": "TEST",
   "id": Any<String>,
   "offer_message": null,
@@ -784,16 +744,13 @@ exports[`reject 1`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "REJECTED",
-  "total_hours": 1,
   "updated_at": Any<String>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`user applicants 1`] = `
 {
-  "assignment_total": 30000,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -801,11 +758,10 @@ exports[`user applicants 1`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": Any<String>,
   "feedback": null,
   "id": Any<String>,
-  "offer_message": "Test",
-  "offer_rate": 9000,
+  "offer_message": null,
+  "offer_rate": null,
   "organization": Any<Object>,
   "payment_rate": 30000,
   "payment_type": "PAID",
@@ -813,17 +769,14 @@ exports[`user applicants 1`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "CLOSED",
-  "total_hours": 180,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;
 
 exports[`user applicants 2`] = `
 {
-  "assignment_total": 30000,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -831,11 +784,10 @@ exports[`user applicants 2`] = `
   "cv_link": "https://test.com/test.cv",
   "cv_name": "test",
   "deleted_at": null,
-  "due_date": Any<String>,
   "feedback": null,
   "id": Any<String>,
-  "offer_message": "Test",
-  "offer_rate": 9000,
+  "offer_message": null,
+  "offer_rate": null,
   "organization": Any<Object>,
   "payment_rate": 30000,
   "payment_type": "PAID",
@@ -843,10 +795,8 @@ exports[`user applicants 2`] = `
   "project_id": Any<String>,
   "share_contact_info": true,
   "status": "CLOSED",
-  "total_hours": 180,
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
-  "weekly_limit": null,
 }
 `;

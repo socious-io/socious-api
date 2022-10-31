@@ -34,6 +34,9 @@ const pushNotifications = async (userIds, message, data) => {
 
 const email = async (userId, message, id) => {
   const user = await User.get(userId);
+
+  if (!user.email_verified_at) return;
+
   publish('email', {
     to: user.email,
     subject: message.title,

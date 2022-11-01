@@ -40,12 +40,25 @@ test('start chat', async () => {
     ).toHaveLength(1);
 
     const chatsRes2 = await request
+      .get(`/chats/${response.body.id}`)
+      .set('Authorization', data.users[0].access_token)
+
+    expect(chatsRes2.status).toBe(200);
+
+    const chatsRes3 = await request
+      .get(`/chats/${response.body.id}`)
+      .set('Authorization', data.users[0].access_token)
+      .set('Current-Identity', data.orgs[0].id);
+
+    expect(chatsRes3.status).toBe(200);
+
+    const chatsRes4 = await request
       .get('/chats')
       .set('Authorization', data.users[0].access_token)
       .set('Current-Identity', data.orgs[1].id);
 
     expect(
-      chatsRes2.body.items.filter((c) => c.id === response.body.id),
+      chatsRes4.body.items.filter((c) => c.id === response.body.id),
     ).toHaveLength(0);
 
     const getOneRes = await request

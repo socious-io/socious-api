@@ -1,4 +1,4 @@
-import sql from 'sql-template-tag';
+import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import Data from '@socious/data';
@@ -97,11 +97,15 @@ export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
 export const permissioned = async (
   identityId,
   id,
-  type = MemberTypes.MEMBER,
+  type,
 ) => {
+  let typeFilter = raw('')
+  
+  if (type) typeFilter = sql`AND type=${type}`
+
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) from chats_participants
-    WHERE chat_id=${id} AND identity_id=${identityId} AND type=${type}
+    WHERE chat_id=${id} AND identity_id=${identityId} ${typeFilter}
   `);
 
   if (rows[0].count < 1) throw new PermissionError('Not allow');

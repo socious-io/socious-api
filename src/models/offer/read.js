@@ -47,3 +47,12 @@ export const recipient = async (identityId, id) => {
     WHERE o.recipient_id = ${identityId} AND o.id=${id}
   `);
 };
+
+export const permission = async (identityId, id) => {
+  return app.db.get(sql`
+    SELECT o.*, row_to_json(p.*) AS project
+    FROM offers o
+    JOIN projects p ON p.id=o.project_id
+    WHERE (o.recipient_id = ${identityId} OR o.offerer = ${identityId}) AND o.id=${id}
+  `);
+};

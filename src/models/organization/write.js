@@ -136,8 +136,7 @@ export const update = async (
       sql`
       UPDATE organizations SET 
         shortname=${shortname.toLowerCase()},
-        name=${name}, 
-        shortname=${shortname},
+        name=${name},
         bio=${bio}, 
         description=${description}, 
         email=${email}, 

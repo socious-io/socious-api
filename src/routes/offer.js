@@ -6,9 +6,24 @@ import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
-import {offerer, recipient, checkIdParams} from '../utils/middlewares/route.js';
+import {
+  offerPermission,
+  offerer,
+  recipient,
+  checkIdParams,
+} from '../utils/middlewares/route.js';
 
 export const router = new Router();
+
+router.get(
+  '/:id',
+  loginRequired,
+  checkIdParams,
+  offerPermission,
+  async (ctx) => {
+    ctx.body = ctx.offer;
+  },
+);
 
 router.post(
   '/:id/withdrawn',

@@ -13,6 +13,10 @@ import {
 
 export const router = new Router();
 
+router.get('/:id', loginRequired, checkIdParams, assigneer, async (ctx) => {
+  ctx.body = ctx.mission;
+});
+
 router.post(
   '/:id/complete',
   loginRequired,

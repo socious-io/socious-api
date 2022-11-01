@@ -2021,6 +2021,25 @@ paths:
           content:
             application/json: {}
 
+  /missions/{mission_id}:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - missions
+      summary: get mission
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
   /missions/{mission_id}/complete:
     parameters:
       - name: mission_id
@@ -2242,6 +2261,100 @@ paths:
                     email: true
                     in_app: true
                     push: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - offers
+      summary: get offer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /offers/{offer_id}/withrawn:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: withrawn offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/cancel:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: cancel offer from offerer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/approve:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: approve offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/hire:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: offerer hire the recepient
       security:
         - bearerAuth: []
       responses:

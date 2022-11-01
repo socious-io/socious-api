@@ -54,6 +54,16 @@ export const assigner = async (ctx, next) => {
   return next();
 };
 
+export const assignee = async (ctx, next) => {
+  ctx.mission = await Mission.assignee(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const offerPermission = async (ctx, next) => {
+  ctx.offer = await Offer.permission(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
 export const offerer = async (ctx, next) => {
   ctx.offer = await Offer.offerer(ctx.identity.id, ctx.params.id);
   return next();
@@ -61,10 +71,5 @@ export const offerer = async (ctx, next) => {
 
 export const recipient = async (ctx, next) => {
   ctx.offer = await Offer.recipient(ctx.identity.id, ctx.params.id);
-  return next();
-};
-
-export const assignee = async (ctx, next) => {
-  ctx.mission = await Mission.assignee(ctx.identity.id, ctx.params.id);
   return next();
 };

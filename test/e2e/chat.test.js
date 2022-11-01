@@ -41,7 +41,7 @@ test('start chat', async () => {
 
     const chatsRes2 = await request
       .get(`/chats/${response.body.id}`)
-      .set('Authorization', data.users[0].access_token)
+      .set('Authorization', data.users[0].access_token);
 
     expect(chatsRes2.status).toBe(200);
 

@@ -94,14 +94,10 @@ export const messagesReplies = async (id, {offset = 0, limit = 10}) => {
   return rows;
 };
 
-export const permissioned = async (
-  identityId,
-  id,
-  type,
-) => {
-  let typeFilter = raw('')
-  
-  if (type) typeFilter = sql`AND type=${type}`
+export const permissioned = async (identityId, id, type) => {
+  let typeFilter = raw('');
+
+  if (type) typeFilter = sql`AND type=${type}`;
 
   const {rows} = await app.db.query(sql`
     SELECT COUNT(*) from chats_participants

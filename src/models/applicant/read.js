@@ -1,6 +1,15 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
+import {filtering, sorting} from '../../utils/query.js';
+
+export const filterColumns = {
+  project_id: String,
+  user_id: String,
+  status: String,
+};
+
+export const sortColumns = ['created_at', 'updated_at'];
 
 export const getAnswers = async (id) => {
   const {rows} = await app.db.query(
@@ -23,7 +32,7 @@ export const get = async (id) => {
   return applicant;
 };
 
-export const all = async ({offset = 0, limit = 10}) => {
+export const all = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(
     sql`SELECT COUNT(a.*) OVER () as total_count,
       a.*, i.meta as user,
@@ -31,12 +40,17 @@ export const all = async ({offset = 0, limit = 10}) => {
       FROM applicants a
       JOIN identities i ON i.id=a.user_id
       LEFT JOIN media m ON m.id=a.attachment
-      ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+      ${filtering(filter, filterColumns, false, 'a')}
+      ${sorting(sort, sortColumns)}
+      LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
 
-export const getByUserId = async (userId, {offset = 0, limit = 10}) => {
+export const getByUserId = async (
+  userId,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(
     sql`
       SELECT 
@@ -50,13 +64,19 @@ export const getByUserId = async (userId, {offset = 0, limit = 10}) => {
       JOIN projects p ON p.id=a.project_id
       JOIN identities pi ON pi.id=p.identity_id
       LEFT JOIN media m ON m.id=a.attachment
-      WHERE a.user_id=${userId} 
-      ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+      WHERE 
+        a.user_id=${userId} 
+        ${filtering(filter, filterColumns, true, 'a')}
+      ${sorting(sort, sortColumns)}
+      LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
 
-export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
+export const getByProjectId = async (
+  projectId,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(
     sql`SELECT
           COUNT(a.*) OVER () as total_count,
@@ -65,8 +85,11 @@ export const getByProjectId = async (projectId, {offset = 0, limit = 10}) => {
         FROM applicants a
         JOIN identities i ON i.id=a.user_id
         LEFT JOIN media m ON m.id=a.attachment
-        WHERE a.project_id=${projectId} 
-        ORDER BY a.created_at DESC  LIMIT ${limit} OFFSET ${offset}`,
+        WHERE 
+          a.project_id=${projectId} 
+          ${filtering(filter, filterColumns, true, 'a')}
+        ${sorting(sort, sortColumns)}
+        LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };

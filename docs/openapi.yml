@@ -1,10 +1,12 @@
 openapi: 3.0.0
 info:
   title: Socious-API
-  version: 2.1.2
+  version: 2.2.0
 servers:
   - url: https://dev.socious.io/api/v2/
+  - url: https://socious.io/api/v2/
   - url: http://localhost:8370
+
 components:
   securitySchemes:
     bearerAuth:
@@ -25,7 +27,46 @@ components:
         - PROFICIENT
         - FLUENT
         - NATIVE
+    filter-operators:
+      type: string
+      enum:
+        - eq
+        - ne
+        - lt
+        - lte
+        - gt
+        - gte
+    notification-type:
+      type: string
+      enum:
+        - FOLLOWED
+        - COMMENT_LIKE
+        - POST_LIKE
+        - CHAT
+        - SHARE_POST
+        - SHARE_PROJECT
+        - COMMENT
+        - APPLICATION
+        - OFFER
+        - REJECT
+        - APPROVED
+        - HIRED
+        - PROJECT_COMPLETE
+        - ASSIGNEE_CANCELED
+        - ASSIGNER_CANCELED
+        - ASSIGNER_CONFIRMED
 paths:
+  /site/options:
+    get:
+      tags:
+        - site
+      summary: filtering and sorting options
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
   /auth/login:
     post:
       tags:
@@ -391,11 +432,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /projects/{project_id}/employees:
+  /projects/{project_id}/missions:
     get:
       tags:
         - project
-      summary: get employees
+      summary: get missions
       security:
         - bearerAuth: []
       parameters:
@@ -457,6 +498,40 @@ paths:
           content:
             application/json: {}
 
+  /projects/{project_id}/offer/{user_id}:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: project offer direct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offer_text: test offer text
+                offer_rate: 500$
+                due_date: '2022-08-12T11:38:03.40'
+                assignment_total: 5
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
   /applicants/{applicant_id}/offer:
     parameters:
       - name: applicant_id
@@ -467,7 +542,7 @@ paths:
     post:
       tags:
         - project
-      summary: project applicatons
+      summary: offer to applicatons
       requestBody:
         content:
           application/json:
@@ -1268,6 +1343,18 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /user/recommend:
+    get:
+      tags:
+        - users
+      summary: user recommend
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /user/update/profile:
     post:
       tags:
@@ -1570,11 +1657,29 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /user/employed:
+  /user/offers:
     get:
       tags:
         - users
-      summary: get user emplyeds
+      summary: get user offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/missions:
+    get:
+      tags:
+        - users
+      summary: get user missions
       security:
         - bearerAuth: []
       parameters:
@@ -1916,16 +2021,35 @@ paths:
           content:
             application/json: {}
 
-  /employed/{employee_id}/complete:
+  /missions/{mission_id}:
     parameters:
-      - name: employee_id
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - missions
+      summary: get mission
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /missions/{mission_id}/complete:
+    parameters:
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: complete job
       security:
         - bearerAuth: []
@@ -1934,16 +2058,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/confirm:
+  /missions/{mission_id}/confirm:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: confirm job
       security:
         - bearerAuth: []
@@ -1952,16 +2076,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/cancel:
+  /missions/{mission_id}/cancel:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: cancel job
       security:
         - bearerAuth: []
@@ -1970,16 +2094,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/kickout:
+  /missions/{mission_id}/kickout:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: cancel job
       security:
         - bearerAuth: []
@@ -1988,16 +2112,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/feedback:
+  /missions/{mission_id}/feedback:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: feedback job
       requestBody:
         content:
@@ -2013,17 +2137,224 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /employed/{employee_id}/contest:
+  /missions/{mission_id}/contest:
     parameters:
-      - name: employee_id
+      - name: mission_id
         in: path
         schema:
           type: string
         required: true
     post:
       tags:
-        - employed
+        - missions
       summary: contest job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /notifications/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - notifications
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications:
+    get:
+      tags:
+        - notifications
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - notifications
+      summary: read one
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/all:
+    post:
+      tags:
+        - notifications
+      summary: read all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/settings:
+    get:
+      tags:
+        - notifications
+      summary: get current user notification settings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - notifications
+      summary: update current user notification settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                settings:
+                  - type: FOLLOWED
+                    in_app: true
+                    email: false
+                    push: true
+                  - type: APPLICATION
+                    email: true
+                    in_app: true
+                    push: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - offers
+      summary: get offer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /offers/{offer_id}/withrawn:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: withrawn offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/cancel:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: cancel offer from offerer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/approve:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: approve offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/hire:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: offerer hire the recepient
       security:
         - bearerAuth: []
       responses:

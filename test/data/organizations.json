@@ -9,7 +9,7 @@
     "type": "COOP",
     "address": "address",
     "website": "http://test.com",
-    "social_causes": ["SOCIAL", "MENTAL"],
+    "social_causes": ["SOCIAL", "HEALTH"],
     "country": "JP",
     "mission": "test",
     "culture": "test"

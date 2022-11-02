@@ -1,11 +1,12 @@
 [
   {
-    "id": "c6c2fd78-dae6-40ca-b684-ad1429f0448f",
     "username": "test_username",
     "first_name": "test_name",
     "last_name": "last_name",
     "email": "test@test.io",
     "goals": "TEST",
+    "phone": "9999999999",
+    "mobile_country_code": "+98",
     "certificates": ["test"],
     "educations": ["test"],
     "bio": "TEST",
@@ -13,12 +14,13 @@
     "password": "test_password"
   },
   {
-    "id": "0029bc16-0a1c-4223-b9f5-d945f2bb810e",
     "username": "test_username_2",
     "first_name": "test_name_2",
     "last_name": "last_name_2",
     "goals": "TEST",
     "email": "test2@test.io",
+    "phone": "9999999999",
+    "mobile_country_code": "+98",
     "certificates": ["test"],
     "educations": ["test"],
     "bio": "TEST",
@@ -27,7 +29,6 @@
   },
   {
     "invalid": true,
-    "id": "0029bc16-0a1c-4223-b9f5-d945f2bb810e",
     "username": "test_username_2",
     "first_name": "test_name_2",
     "last_name": "last_name_2",

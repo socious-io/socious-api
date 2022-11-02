@@ -16,13 +16,7 @@ router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
 });
 
 router.get('/', loginOptional, paginate, async (ctx) => {
-  ctx.body = ctx.query.identity
-    ? await Post.allByIdentity(
-        ctx.identity.id,
-        ctx.query.identity,
-        ctx.paginate,
-      )
-    : await Post.all(ctx.identity.id, ctx.paginate);
+  ctx.body = await Post.all(ctx.identity.id, ctx.paginate);
 });
 
 router.post('/', loginRequired, async (ctx) => {

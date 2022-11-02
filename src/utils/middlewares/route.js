@@ -1,7 +1,8 @@
 import Org from '../../models/organization/index.js';
 import Chat from '../../models/chat/index.js';
 import Project from '../../models/project/index.js';
-import Employed from '../../models/employed/index.js';
+import Mission from '../../models/mission/index.js';
+import Offer from '../../models/offer/index.js';
 import Applicant from '../../models/applicant/index.js';
 import {validate} from '@socious/data';
 
@@ -43,17 +44,32 @@ export const orgMember = async (ctx, next) => {
   return next();
 };
 
-export const employeer = async (ctx, next) => {
-  ctx.employee = await Employed.employeer(ctx.identity.id, ctx.params.id);
+export const assigneer = async (ctx, next) => {
+  ctx.mission = await Mission.assigneer(ctx.identity.id, ctx.params.id);
   return next();
 };
 
-export const employer = async (ctx, next) => {
-  ctx.employee = await Employed.employer(ctx.identity.id, ctx.params.id);
+export const assigner = async (ctx, next) => {
+  ctx.mission = await Mission.assigner(ctx.identity.id, ctx.params.id);
   return next();
 };
 
-export const employee = async (ctx, next) => {
-  ctx.employee = await Employed.employee(ctx.identity.id, ctx.params.id);
+export const assignee = async (ctx, next) => {
+  ctx.mission = await Mission.assignee(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const offerPermission = async (ctx, next) => {
+  ctx.offer = await Offer.permission(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const offerer = async (ctx, next) => {
+  ctx.offer = await Offer.offerer(ctx.identity.id, ctx.params.id);
+  return next();
+};
+
+export const recipient = async (ctx, next) => {
+  ctx.offer = await Offer.recipient(ctx.identity.id, ctx.params.id);
   return next();
 };

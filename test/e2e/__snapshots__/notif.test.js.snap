@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+{
+  "error": ""email" must be a valid email",
+}
+`;
+
+exports[`get settings 1`] = `
+{
+  "settings": [
+    {
+      "email": false,
+      "in_app": true,
+      "push": false,
+      "type": "COMMENT",
+    },
+    {
+      "email": true,
+      "in_app": true,
+      "push": true,
+      "type": "APPLICATION",
+    },
+  ],
+}
+`;
+
+exports[`update settings 1`] = `
+{
+  "settings": [
+    {
+      "email": false,
+      "in_app": true,
+      "push": false,
+      "type": "COMMENT",
+    },
+    {
+      "email": true,
+      "in_app": true,
+      "push": true,
+      "type": "APPLICATION",
+    },
+  ],
+}
+`;

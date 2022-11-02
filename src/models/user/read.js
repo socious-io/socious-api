@@ -1,5 +1,14 @@
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
+import {filtering, textSearch, sorting} from '../../utils/query.js';
+
+export const filterColumns = {
+  country: String,
+  social_causes: Array,
+  skills: Array,
+};
+
+export const sortColumns = ['created_at', 'updated_at', 'impact_score'];
 
 export const get = async (id) => {
   return app.db.get(
@@ -136,7 +145,7 @@ export const getProfileLimited = async (id) => {
   );
 };
 
-export const getAllProfile = async (ids) => {
+export const getAllProfile = async (ids, sort) => {
   const {rows} = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
@@ -172,6 +181,7 @@ export const getAllProfile = async (ids) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     WHERE u.id=ANY(${ids})
+    ${sorting(sort, sortColumns)}
     `,
   );
   return rows;
@@ -194,4 +204,83 @@ export const getProfileByUsernameLimited = async (username) => {
   );
 };
 
-export const filterColumns = ['country', 'social_causes', 'skills'];
+export const search = async (
+  q,
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
+  const {rows} = await app.db.query(sql`
+    SELECT
+      u.id
+    FROM users u
+    WHERE
+      u.id <> ${currentIdentity} AND
+      u.search_tsv @@ to_tsquery(${textSearch(q)})
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+  `);
+
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
+
+  return users.map((r) => {
+    return {
+      total_count: rows.length,
+      ...r,
+    };
+  });
+};
+
+export const searchRelateds = async (
+  q,
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
+  const {rows} = await app.db.query(sql`
+    WITH fl AS (
+      SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
+    )
+    SELECT
+      u.id
+    FROM users u
+    WHERE
+      (
+        u.id IN (SELECT following_identity_id FROM fl) OR 
+        u.id IN (SELECT follower_identity_id FROM fl)
+      ) AND
+      u.search_tsv @@ to_tsquery(${textSearch(q)})
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+  `);
+
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
+
+  return users.map((r) => {
+    return {
+      total_count: rows.length,
+      ...r,
+    };
+  });
+};
+
+export const recommend = async (currentUser) => {
+  const {rows} = await app.db.query(sql`
+  SELECT u.id 
+  FROM users u
+  JOIN users current ON current.id=${currentUser}
+  WHERE
+    u.id NOT IN (SELECT following_identity_id FROM follows WHERE follower_identity_id=${currentUser}) AND
+    u.country=COALESCE(current.country, u.country) AND
+    u.social_causes @> COALESCE(current.social_causes, u.social_causes) AND
+    u.skills @> COALESCE(current.skills, u.skills)
+  ORDER BY random()
+  LIMIT 10
+  `);
+
+  return getAllProfile(rows.map((r) => r.id));
+};

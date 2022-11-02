@@ -1,6 +1,29 @@
-import sql, {raw} from 'sql-template-tag';
+import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
+import {filtering, textSearch, sorting} from '../../utils/query.js';
+
+export const filterColumns = {
+  country: String,
+  causes_tags: Array,
+  skills: Array,
+  payment_type: String,
+  payment_scheme: String,
+  status: String,
+  identity_id: String,
+  payment_currency: String,
+  project_type: String,
+  project_length: String,
+  other_party_title: String,
+};
+
+export const sortColumns = [
+  'created_at',
+  'updated_at',
+  'title',
+  'payment_range_higher',
+  'payment_range_lower',
+];
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
@@ -14,7 +37,7 @@ export const get = async (id, userId = undefined) => {
   `);
 };
 
-export const getAll = async (ids) => {
+export const getAll = async (ids, sort) => {
   const {rows} = await app.db.query(sql`
   SELECT p.*,
     i.type  as identity_type,
@@ -24,16 +47,12 @@ export const getAll = async (ids) => {
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
   WHERE p.id=ANY(${ids})
+  ${sorting(sort, sortColumns, 'p')}
   `);
   return rows;
 };
 
-export const all = async ({offset = 0, limit = 10}, status) => {
-  const where = status
-    ? status instanceof Array
-      ? sql`WHERE status = ANY(${status})`
-      : sql`WHERE status = ${status}`
-    : raw('');
+export const all = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
@@ -41,21 +60,9 @@ export const all = async ({offset = 0, limit = 10}, status) => {
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
-      ${where}
-      ORDER BY p.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
-  return rows;
-};
-
-export const allByIdentity = async (identityId, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
-      SELECT COUNT(*) OVER () as total_count, p.*,
-      i.type  as identity_type, i.meta as identity_meta,
-      array_to_json(p.causes_tags) AS causes_tags,
-      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
-      FROM projects p
-      JOIN identities i ON i.id=p.identity_id
-      WHERE identity_id=${identityId}
-      ORDER BY p.created_at DESC  LIMIT ${limit} OFFSET ${offset}`);
+      ${filtering(filter, filterColumns, false, 'p')}
+      ${sorting(sort, sortColumns, 'p')}
+      LIMIT ${limit} OFFSET ${offset}`);
   return rows;
 };
 
@@ -65,11 +72,26 @@ export const permissioned = async (identityId, id) => {
     throw new PermissionError('Not allow');
 };
 
-export const filterColumns = [
-  'country',
-  'causes_tags',
-  'skills',
-  'payment_type',
-  'payment_scheme',
-  'status',
-];
+export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
+  const {rows} = await app.db.query(sql`
+    SELECT
+      p.id
+    FROM projects p
+    WHERE
+      p.search_tsv @@ to_tsquery(${textSearch(q)})
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+  `);
+
+  const projects = await getAll(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
+
+  return projects.map((r) => {
+    return {
+      total_count: rows.length,
+      ...r,
+    };
+  });
+};

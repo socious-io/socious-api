@@ -2,7 +2,7 @@ import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
 import {register} from './globals/user.js';
-import {create} from './globals/org.js';
+import {create, getAll, getFiltered} from './globals/org.js';
 
 let server, request;
 
@@ -14,6 +14,8 @@ beforeAll(async () => {
 });
 
 test('create', async () => create(request, data));
+test('get all', async () => getAll(request, data));
+test('get filtered', async () => getFiltered(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

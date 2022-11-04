@@ -15,6 +15,7 @@ export const MailSenderTypes = {
   TEST: 'TEST',
 };
 
+// reference: https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xhtml or RFC6761
 export const testDomains = [
   'example',
   'example.com',

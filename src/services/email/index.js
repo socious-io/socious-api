@@ -29,8 +29,6 @@ const sendBySendgrid = async ({to, subject, html}) => {
 
   await sendgrid.send(body);
 
-  body.messageId = crypto.randomUUID();
-
   return body;
 };
 
@@ -42,6 +40,7 @@ export const sendHtmlEmail = async ({
   sender = MailSenderTypes.SENDGRID,
 }) => {
   const html = await ejs.renderFile(template, kwargs);
+  const date = new Date();
   let result = {};
   try {
     switch (sender) {
@@ -51,6 +50,7 @@ export const sendHtmlEmail = async ({
           from: config.mail.smtp.from,
           subject,
           html,
+          date,
         });
         break;
       case MailSenderTypes.SENDGRID:
@@ -71,12 +71,18 @@ export const sendHtmlEmail = async ({
   }
 
   await insert(
-    result.messageId,
+    result.messageId || crypto.randomUUID(),
     {
       service: sender,
       template,
       kwargs,
     },
     result,
+    to,
+    subject,
+    html,
+    'text/html',
+    sender,
+    date,
   );
 };

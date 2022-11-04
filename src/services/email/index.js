@@ -59,7 +59,7 @@ export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   const date = new Date();
   const sender = isTestEmail(to)
     ? MailSenderTypes.TEST
-    : MailSenderTypes.SENDGRID; // TODO config
+    : config.mail.defaultSender;
   let result = {};
   try {
     switch (sender) {

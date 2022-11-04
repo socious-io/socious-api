@@ -12,6 +12,28 @@ sendgrid.setApiKey(config.mail.sendgrid.apiKey);
 export const MailSenderTypes = {
   SMTP: 'SMTP',
   SENDGRID: 'SENDGRID',
+  TEST: 'TEST',
+};
+
+export const testDomains = [
+  'example',
+  'example.com',
+  'example.net',
+  'example.org',
+  'invalid',
+  'local',
+  'localhost',
+  'test',
+];
+
+export const isTestEmail = (address) => {
+  const domain = address.split('@')[1];
+  if (!domain) throw new Error('Invalid email');
+  for (const td of testDomains) {
+    if (td === domain) return true;
+    if (domain.endsWith(`.${domain}`)) return true;
+  }
+  return false;
 };
 
 const sendBySendgrid = async ({to, subject, html}) => {
@@ -32,15 +54,12 @@ const sendBySendgrid = async ({to, subject, html}) => {
   return body;
 };
 
-export const sendHtmlEmail = async ({
-  to,
-  subject,
-  template,
-  kwargs = {},
-  sender = MailSenderTypes.SENDGRID,
-}) => {
+export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   const html = await ejs.renderFile(template, kwargs);
   const date = new Date();
+  const sender = isTestEmail(to)
+    ? MailSenderTypes.TEST
+    : MailSenderTypes.SENDGRID; // TODO config
   let result = {};
   try {
     switch (sender) {
@@ -61,6 +80,9 @@ export const sendHtmlEmail = async ({
           html,
         });
         break;
+      case MailSenderTypes.TEST:
+        result = null;
+        break;
       default:
         throw Error(`Unkonw sender type ${sender}`);
     }
@@ -71,7 +93,7 @@ export const sendHtmlEmail = async ({
   }
 
   await insert(
-    result.messageId || crypto.randomUUID(),
+    result?.messageId || crypto.randomUUID(),
     {
       service: sender,
       template,

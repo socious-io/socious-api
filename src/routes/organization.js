@@ -8,6 +8,9 @@ import {
 import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/requests.js';
 export const router = new Router();
+import {ValidationError} from '../utils/errors.js';
+import config from '../config.js';
+import {isTestEmail} from '../services/email/index.js';
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
@@ -23,6 +26,8 @@ router.get('/', loginOptional, paginate, async (ctx) => {
 
 router.post('/', loginRequired, async (ctx) => {
   await validate.OrganizationSchema.validateAsync(ctx.request.body);
+  if (!config.mail.allowTest && isTestEmail(ctx.request.body.email))
+    throw new ValidationError('Invalid email');
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body);
   await Org.addMember(ctx.body.id, ctx.user.id);
 });
@@ -40,6 +45,8 @@ router.post(
   orgMember,
   async (ctx) => {
     await validate.OrganizationSchema.validateAsync(ctx.request.body);
+    if (!config.mail.allowTest && isTestEmail(ctx.request.body.email))
+      throw new ValidationError('Invalid email');
     ctx.body = await Org.update(ctx.params.id, ctx.request.body);
   },
 );

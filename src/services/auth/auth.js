@@ -5,6 +5,7 @@ import {
   AuthorizationError,
   NotMatchedError,
   PermissionError,
+  ValidationError,
 } from '../../utils/errors.js';
 import {
   authSchem,
@@ -17,6 +18,8 @@ import {
 } from './schema.js';
 import publish from '../jobs/publish.js';
 import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
+import config from '../../config.js';
+import {isTestEmail} from '../email/index.js';
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
@@ -54,6 +57,8 @@ export const basic = async (body) => {
 
 export const register = async (body) => {
   await registerSchem.validateAsync(body);
+  if (!config.mail.allowTest && isTestEmail(body.email))
+    throw new ValidationError('Invalid email');
 
   body.password = await hashPassword(body.password);
 

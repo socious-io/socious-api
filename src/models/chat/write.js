@@ -2,7 +2,7 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError, NotImplementedError} from '../../utils/errors.js';
 import Data from '@socious/data';
-import {find, addParticipantPermission} from './read.js';
+import {find, chatPermission} from './read.js';
 
 const MemberTypes = Data.ChatMemberType;
 const Types = Data.ChatType;
@@ -18,7 +18,7 @@ export const create = async (
   await Promise.all(
     participants
       .filter((p) => p !== identity.id)
-      .map((p) => addParticipantPermission(identity, p)),
+      .map((p) => chatPermission(identity, p)),
   );
 
   if (!participants.includes(identity.id)) participants.push(identity.id);

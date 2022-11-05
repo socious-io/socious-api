@@ -25,6 +25,7 @@ import {router as payment} from './payment.js';
 import {router as mission} from './mission.js';
 import {router as offer} from './offer.js';
 import {router as site} from './site.js';
+import {router as connect} from './connect.js';
 
 export default (app) => {
   const blueprint = new Router();
@@ -70,6 +71,7 @@ export default (app) => {
   blueprint.use('/payments', payment.routes(), payment.allowedMethods());
   blueprint.use('/missions', mission.routes(), mission.allowedMethods());
   blueprint.use('/offers', offer.routes(), offer.allowedMethods());
+  blueprint.use('/connections', connect.routes(), connect.allowedMethods());
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

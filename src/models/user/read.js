@@ -239,16 +239,18 @@ export const searchRelateds = async (
   {offset = 0, limit = 10, filter, sort},
 ) => {
   const {rows} = await app.db.query(sql`
-    WITH fl AS (
-      SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
+    WITH connected AS (
+      SELECT * FROM connections WHERE
+        (requester_id = ${currentIdentity} OR  requested_id = ${currentIdentity}) AND
+        c.status <> 'BLOCKED'
     )
     SELECT
       u.id
     FROM users u
     WHERE
       (
-        u.id IN (SELECT following_identity_id FROM fl) OR 
-        u.id IN (SELECT follower_identity_id FROM fl)
+        u.id IN (SELECT requester_id FROM connected) OR 
+        u.id IN (SELECT requested_id FROM connected)
       ) AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}

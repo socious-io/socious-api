@@ -6,7 +6,7 @@ import {
   loginRequired,
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 export const router = new Router();
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {

@@ -92,6 +92,12 @@ export const makeMessage = (type, name) => {
         body: `${name} left the project`,
       };
 
+    case Data.NotificationType.CONNECT:
+      return {
+        title: Data.NotificationTitle.CONNECT,
+        body: `${name} requested to connect with you`,
+      };
+
     default:
       throw new Error(`${type} is not valid to create message`);
   }

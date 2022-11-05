@@ -12,6 +12,29 @@ sendgrid.setApiKey(config.mail.sendgrid.apiKey);
 export const MailSenderTypes = {
   SMTP: 'SMTP',
   SENDGRID: 'SENDGRID',
+  TEST: 'TEST',
+};
+
+// reference: https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xhtml or RFC6761
+export const testDomains = [
+  'example',
+  'example.com',
+  'example.net',
+  'example.org',
+  'invalid',
+  'local',
+  'localhost',
+  'test',
+];
+
+export const isTestEmail = (address) => {
+  const domain = address.split('@')[1];
+  if (!domain) throw new Error('Invalid email');
+  for (const td of testDomains) {
+    if (td === domain) return true;
+    if (domain.endsWith(`.${domain}`)) return true;
+  }
+  return false;
 };
 
 const sendBySendgrid = async ({to, subject, html}) => {
@@ -29,19 +52,15 @@ const sendBySendgrid = async ({to, subject, html}) => {
 
   await sendgrid.send(body);
 
-  body.messageId = crypto.randomUUID();
-
   return body;
 };
 
-export const sendHtmlEmail = async ({
-  to,
-  subject,
-  template,
-  kwargs = {},
-  sender = MailSenderTypes.SENDGRID,
-}) => {
+export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   const html = await ejs.renderFile(template, kwargs);
+  const date = new Date();
+  const sender = isTestEmail(to)
+    ? MailSenderTypes.TEST
+    : config.mail.defaultSender;
   let result = {};
   try {
     switch (sender) {
@@ -51,6 +70,7 @@ export const sendHtmlEmail = async ({
           from: config.mail.smtp.from,
           subject,
           html,
+          date,
         });
         break;
       case MailSenderTypes.SENDGRID:
@@ -60,6 +80,9 @@ export const sendHtmlEmail = async ({
           subject,
           html,
         });
+        break;
+      case MailSenderTypes.TEST:
+        result = null;
         break;
       default:
         throw Error(`Unkonw sender type ${sender}`);
@@ -71,12 +94,18 @@ export const sendHtmlEmail = async ({
   }
 
   await insert(
-    result.messageId,
+    result?.messageId || crypto.randomUUID(),
     {
       service: sender,
       template,
       kwargs,
     },
     result,
+    to,
+    subject,
+    html,
+    'text/html',
+    sender,
+    date,
   );
 };

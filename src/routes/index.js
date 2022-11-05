@@ -25,8 +25,8 @@ import {router as payment} from './payment.js';
 import {router as mission} from './mission.js';
 import {router as offer} from './offer.js';
 import {router as site} from './site.js';
+import {router as testEmails} from './test-emails.js';
 import {router as connect} from './connect.js';
-
 export default (app) => {
   const blueprint = new Router();
 
@@ -72,6 +72,13 @@ export default (app) => {
   blueprint.use('/missions', mission.routes(), mission.allowedMethods());
   blueprint.use('/offers', offer.routes(), offer.allowedMethods());
   blueprint.use('/connections', connect.routes(), connect.allowedMethods());
+
+  if (Config.mail.allowTest)
+    blueprint.use(
+      '/test-emails',
+      testEmails.routes(),
+      testEmails.allowedMethods(),
+    );
 
   app.use(blueprint.routes(), blueprint.allowedMethods());
 };

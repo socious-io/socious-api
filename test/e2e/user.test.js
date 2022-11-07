@@ -11,6 +11,7 @@ import {
   updateLanguage,
   profileByUsername,
   updateProfile,
+  verifyUser,
 } from './globals/user.js';
 
 let server, request;
@@ -21,6 +22,7 @@ beforeAll(async () => {
 });
 
 test('register', async () => register(request, data));
+test('verify', async () => verifyUser(request, data));
 test('login', async () => login(request, data));
 test('add language', async () => addLanguage(request, data));
 test('add experience', async () => addExperience(request, data));

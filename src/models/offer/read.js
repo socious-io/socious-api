@@ -53,6 +53,6 @@ export const permission = async (identityId, id) => {
     SELECT o.*, row_to_json(p.*) AS project
     FROM offers o
     JOIN projects p ON p.id=o.project_id
-    WHERE (o.recipient_id = ${identityId} OR o.offerer = ${identityId}) AND o.id=${id}
+    WHERE (o.recipient_id = ${identityId} OR o.offerer_id = ${identityId}) AND o.id=${id}
   `);
 };

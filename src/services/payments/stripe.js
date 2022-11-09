@@ -35,42 +35,46 @@ export const checkout = async ({
     currency: currency,
     product: product.id,
   });
-
-  await app.db.query('BEGIN');
-  try {
-    const trx = await create({
-      identity_id,
-      amount,
-      currency,
-      service: Data.PaymentService.STRIPE,
-      meta,
-    });
-
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
+  return app.db.with(async (client) => {
+    await client.query('BEGIN');
+    try {
+      const trx = await create(
         {
-          price: price.id,
-          quantity: 1,
+          identity_id,
+          amount,
+          currency,
+          service: Data.PaymentService.STRIPE,
+          meta,
         },
-      ],
-      mode: 'payment',
-      success_url: `${callback}?id=${trx.id}&status=success`,
-      cancel_url: `${callback}?id=${trx.id}&status=cancel`,
-    });
+        client,
+      );
 
-    await setTransaction(trx.id, session.id);
-    await app.db.query('COMMIT');
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price: price.id,
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${callback}?id=${trx.id}&status=success`,
+        cancel_url: `${callback}?id=${trx.id}&status=cancel`,
+      });
 
-    return {
-      id: trx.id,
-      amount: trx.amount,
-      currency: trx.currency,
-      url: session.url,
-    };
-  } catch (err) {
-    await app.db.query('ROLLBACK');
-    throw err;
-  }
+      await setTransaction(trx.id, session.id, client);
+      await client.query('COMMIT');
+
+      return {
+        id: trx.id,
+        amount: trx.amount,
+        currency: trx.currency,
+        url: session.url,
+      };
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    }
+  });
 };
 
 export const expire = async (trx) => {

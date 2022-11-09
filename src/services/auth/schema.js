@@ -9,8 +9,8 @@ export const authSchem = Joi.object({
 });
 
 export const registerSchem = Joi.object({
-  first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
+  first_name: Joi.string(),
+  last_name: Joi.string(),
   username: Joi.string().regex(validate.usernamePattern),
   email: Joi.string().email().required(),
   password: Joi.string().min(8),

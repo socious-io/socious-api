@@ -2,15 +2,13 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 
-export const create = async ({
-  identity_id,
-  amount,
-  currency,
-  service,
-  meta,
-}) => {
+export const create = async (
+  {identity_id, amount, currency, service, meta},
+  client,
+) => {
+  const db = client || app.db;
   try {
-    const {rows} = await app.db.query(sql`
+    const {rows} = await db.query(sql`
   INSERT INTO payments (identity_id, amount, currency, service, meta)
   VALUES (${identity_id}, ${amount}, ${currency}, ${service}, ${meta})
   RETURNING *
@@ -21,9 +19,10 @@ export const create = async ({
   }
 };
 
-export const setTransaction = async (id, transaction) => {
+export const setTransaction = async (id, transaction, client) => {
+  const db = client || app.db;
   try {
-    const {rows} = await app.db.query(sql`
+    const {rows} = await db.query(sql`
       UPDATE payments SET transaction_id=${transaction} WHERE id=${id}
       RETURNING *
     `);

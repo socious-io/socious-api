@@ -18,9 +18,7 @@ export const organizationFromProject = async function (project) {
   //check if org exist in database
   const id = await getOrganization(org);
 
-  if (id) {
-    return id;
-  } else {
+  if (id) return id;
     //create new organization
 
     try {
@@ -40,15 +38,17 @@ export const organizationFromProject = async function (project) {
       //add dynamically properties to the request
       const body = {
         name: org.name,
-        ...(shName && {shortname: shName}),
-        ...(orgBio && {bio: orgBio}),
-        ...(orgBio && {description: orgBio}),
+        bio: orgBio,
+        shortname: shName,
         type: type,
-        ...(org.address?.city && {city: org.address.city}),
-        ...(org.address?.full && {address: org.address.full}),
-        ...(org.address?.country && {country: org.address.country}),
-        ...(org.url?.en && {website: org.url.en}),
+        city: org.address?.city,
+        address: org.address?.full,
+        country: org.address?.country,
+        website: org.url?.en,
         social_causes: [],
+        other_party_id: org.id,
+        other_party_url: org.url?.en,
+        other_party_title: 'IDEALIST'
       };
 
       //save organization to database
@@ -69,7 +69,6 @@ export const organizationFromProject = async function (project) {
       console.log('\x1b[31m%s\x1b[0m', err.message, err);
       return false;
     }
-  }
 };
 
 /**
@@ -115,12 +114,25 @@ async function organizationBio(org) {
 
 async function getOrganization(org) {
   try {
-    const name = org.name;
 
     //check if org egsist in database by its name
     const orgInDatabase = await app.db.get(
-      sql`SELECT id FROM organizations WHERE name = ${name} LIMIT 1`,
+      sql`SELECT id FROM organizations 
+        WHERE other_party_id=${org.id} OR 
+        name = ${org.name} OR 
+        website = ${org.url?.en} 
+      LIMIT 1`,
     );
+
+    if (!org.other_party_id)
+      await app.db.query(sql`
+        UPDATE organizations SET 
+          other_party_id=${org.other_party_id},
+          other_party_title='IDEALIST',
+          other_party_url=website,
+          updated_at=now()
+        WHERE id=${orgInDatabase.id}
+      `)
 
     return orgInDatabase.id;
   } catch (err) {

@@ -25,7 +25,7 @@ export async function createOrgFromProject(p) {
     }
 
     //check if org exist in table then update or insert // DO WE UPDATE???
-    const org_id_from_db = await findOrgFromTable(org.name);
+    const org_id_from_db = await findOrgFromTable(org);
 
     if (org_id_from_db) {
       return org_id_from_db;
@@ -60,10 +60,14 @@ export async function createOrgFromProject(p) {
  * @param {string} org_name
  * @returns uuid | false
  */
-async function findOrgFromTable(org_name) {
+async function findOrgFromTable(org) {
   try {
     const orgFromTable = await app.db.get(
-      sql`SELECT id, name FROM organizations WHERE name LIKE ${org_name}`,
+      sql`SELECT id FROM organizations 
+        WHERE other_party_id=${org.id} OR 
+        name = ${org.name} OR 
+        website = ${org.url?.en} 
+      LIMIT 1`
     );
     return orgFromTable.id;
   } catch (err) {

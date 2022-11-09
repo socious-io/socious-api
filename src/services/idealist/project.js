@@ -14,7 +14,6 @@ import project from '../../models/project/index.js';
  * @returns object || void
  */
 export const getProject = async function (projectTypes, id) {
-  try {
     let proj = await axios.get(
       `https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`,
       {
@@ -27,14 +26,9 @@ export const getProject = async function (projectTypes, id) {
       },
     );
 
-    if (proj.status === 200) {
-      return proj.data;
-    } else {
-      console.log('\x1b[31m%s\x1b[0m', proj.status + ', ' + proj.statusText);
-    }
-  } catch (err) {
-    console.log('\x1b[31m%s\x1b[0m', err.message);
-  }
+    if (proj.status !== 200) throw Error('fetching project')
+
+    return proj.data;
 };
 
 export const lastIdealistProject = async function (projectType) {
@@ -52,6 +46,9 @@ export const lastIdealistProject = async function (projectType) {
     return null;
   }
 };
+
+
+
 
 export const processProject = async function (p, type) {
   try {
@@ -90,21 +87,17 @@ async function saveProject(pro, type, orgId) {
       remote_preference: remotePreference,
       payment_type: paymentType,
       payment_scheme: paymentScheme,
-      ...(pro.salaryCurrency && {payment_currency: pro.salaryCurrency}),
-      ...(pro.salaryMinimum && {
-        payment_range_lower: pro.salaryMinimum.toString(),
-      }),
-      ...(pro.salaryMaximum && {
-        payment_range_higher: pro.salaryMaximum.toString(),
-      }),
-      ...(experienceLevel && {experience_level: experienceLevel}),
+      payment_currency: pro.salaryCurrency,
+      payment_range_lower: pro.salaryMinimum?.toString(),
+      payment_range_higher: pro.salaryMaximum?.toString(),
+      experience_level: experienceLevel,
       status: 'ACTIVE',
-      ...(pro.address?.country && {country: pro.address.country}),
-      ...(pro.address?.city && {city: pro.address.city}),
-      ...(pro.expires && {expires_at: pro.expires}), //check if works for date
+      country: pro.address?.country,
+      city: pro.address?.city,
+      expires_at: pro.expires, //check if works for date
       other_party_id: pro.id,
       other_party_title: type,
-      ...(pro.url && pro.url.en && {other_party_url: pro.url.en}),
+      other_party_url: pro.url?.en,
       updated_at: pro.updated,
       // updated_at is important to find the last downloaded project from Idealist
       // they are sorted by updated_at on their listings and it is used into the 'since' param
@@ -204,4 +197,28 @@ async function getExperienceLevel(p) {
   }
 
   return 0;
+}
+
+/**
+ * Set project status to EXPIRE
+ *
+ * @param {array} ids
+ * @returns int
+ */
+ export async function expireProjects(ids) {
+  let count = 0;
+
+  try {
+    const res = await app.db.query(sql`UPDATE projects SET status = 'EXPIRE'
+      WHERE status <> 'EXPIRE' AND (other_party_id = ANY(${ids}) OR expires_at < NOW())`);
+
+    if (res.rowCount > 0) {
+      count = res.rowCount;
+      //console.log(`${count} projects updated to EXPIRE.`);
+    }
+  } catch (err) {
+    console.log('\x1b[31m%s\x1b[0m', err.message);
+  }
+
+  return count;
 }

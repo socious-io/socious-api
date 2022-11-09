@@ -32,15 +32,21 @@ export async function getAllProjects(ids) {
     //for each type of project (job, volop and intenrship)
     let res = 0;
     let count = 0;
+    const failedProjectsIds = []
 
     console.log(`Loading ${types} projects...`);
 
     for (let x = 0; x < val.length; x++) {
       let obj = val[x]; //object {id , processed}
       count++;
-
+      let p;
+      try {
       //get project from Idealist
-      let p = await getProject(types, obj.id); //use queue?...
+        p = await getProject(types, obj.id); //use queue?...
+      } catch(err) {
+        failedProjectsIds.push(obj.id)
+      }
+
 
       let projectType;
 

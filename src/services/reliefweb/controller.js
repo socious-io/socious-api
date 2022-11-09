@@ -87,3 +87,6 @@ export async function listProjects() {
   }
   process.exit(0);
 }
+
+
+export async function validateCurrentProjects() {}

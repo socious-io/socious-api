@@ -6,7 +6,7 @@ import {configureHttp} from './http-agent/configure-http.js';
 
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {expireProjects} from './set_expire_project.js';
+import {expireProjects} from './project.js';
 
 const idealist_token = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 const since_timstamp = process.env.IDEALIST_SINCE; //'2022-09-22 00:00:00';

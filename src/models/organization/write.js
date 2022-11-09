@@ -68,10 +68,10 @@ export const insert = async (
     const {rows} = await app.db.query(
       sql`
       INSERT INTO organizations (
-        shortname, name, bio, description, email, phone, 
-        type, city, address, country, website, 
+        shortname, name, bio, description, email, phone,
+        type, city, address, country, website,
         social_causes, mobile_country_code, created_by, image, cover_image,
-        mission, culture) 
+        mission, culture)
         VALUES (${shortname.toLowerCase()}, ${name}, ${bio}, ${description}, ${email},
           ${phone}, ${type} ,${city}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
@@ -134,15 +134,16 @@ export const update = async (
   try {
     const {rows} = await app.db.query(
       sql`
-      UPDATE organizations SET 
+      UPDATE organizations SET
         shortname=${shortname.toLowerCase()},
         name=${name},
-        bio=${bio}, 
-        description=${description}, 
-        email=${email}, 
-        phone=${phone}, 
-        city=${city}, 
-        address=${address}, 
+        bio=${bio},
+        description=${description},
+        email=${email},
+        phone=${phone},
+        type=${type},
+        city=${city},
+        address=${address},
         website=${website},
         social_causes=${social_causes},
         country=${country},

@@ -26,27 +26,30 @@ export const create = async (
 
   const existing = await find(identity.id, {participants});
   if (existing.length > 0) return existing[0];
-
-  await app.db.query('BEGIN');
-  try {
-    const {rows} = await app.db.query(sql`
+  return app.db.with(async (client) => {
+    await client.query('BEGIN');
+    try {
+      const {rows} = await client.query(sql`
       INSERT INTO chats (name, description, type, participants, created_by)
         VALUES (${name}, ${description}, ${type}, ${participants}, ${identity.id})
         RETURNING *
     `);
-    const chat = rows[0];
-    await Promise.all(
-      participants
-        // current Identity will add automaticly as ADMIN
-        .filter((p) => p !== identity.id)
-        .map((p) => addParticipant(chat.id, p, identity.id)),
-    );
-    await app.db.query('COMMIT');
-    return chat;
-  } catch (err) {
-    await app.db.query('ROLLBACK');
-    throw new EntryError(err.message);
-  }
+      const chat = rows[0];
+      await Promise.all(
+        participants
+          // current Identity will add automaticly as ADMIN
+          .filter((p) => p !== identity.id)
+          .map((p) =>
+            addParticipant(chat.id, p, identity.id, MemberTypes.MEMBER, client),
+          ),
+      );
+      await client.query('COMMIT');
+      return chat;
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw new EntryError(err.message);
+    }
+  });
 };
 
 export const update = async (id, {name, description}) => {
@@ -78,9 +81,11 @@ export const addParticipant = async (
   participantId,
   joinedById,
   type = MemberTypes.MEMBER,
+  client,
 ) => {
   try {
-    const {rows} = await app.db.query(sql`
+    const db = client || app.db;
+    const {rows} = await db.query(sql`
     INSERT INTO chats_participants (identity_id, chat_id, type, joined_by)
     VALUES (${participantId}, ${chatId}, ${type}, ${joinedById}) RETURNING id
   `);

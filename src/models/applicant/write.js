@@ -18,9 +18,12 @@ export const insert = async (
     share_contact_info,
     attachment,
   },
+  client,
 ) => {
   try {
-    const {rows} = await app.db.query(
+    const db = client || app.db;
+
+    const {rows} = await db.query(
       sql`
       INSERT INTO applicants (
         project_id, user_id, cover_letter, payment_type, payment_rate,
@@ -56,9 +59,11 @@ export const update = async (
     share_contact_info,
     attachment,
   },
+  client,
 ) => {
   try {
-    const {rows} = await app.db.query(
+    const db = client || app.db;
+    const {rows} = await db.query(
       sql`
       UPDATE applicants SET
         cover_letter=${cover_letter},
@@ -136,13 +141,12 @@ export const giveAnswer = async (
   {id, answer, selected_option},
 ) => {
   try {
-    const {rows} = await app.db.query(sql`
+    return app.db.get(sql`
       INSERT INTO answers 
         (project_id, question_id, applicant_id, answer, selected_option)
         VALUES(${projectId}, ${id}, ${applicantId}, ${answer}, ${selected_option})
         RETURNING *
       `);
-    return rows[0];
   } catch (err) {
     throw new EntryError(err.message);
   }
@@ -169,30 +173,45 @@ export const apply = async (
   if (parseInt(rows[0]?.count) > answers?.length)
     throw new EntryError('answers are not sufficient');
 
-  await app.db.query('BEGIN');
-  try {
-    const applicant = await insert(projectId, userId, {
-      cover_letter,
-      payment_rate,
-      payment_type,
-      cv_link,
-      cv_name,
-      share_contact_info,
-      attachment,
-    });
-    let answersResult = [];
-    // not worked on promise all
-    for (const a of answers)
-      answersResult.push(await giveAnswer(applicant.id, projectId, a));
+  return app.db.with(async (client) => {
+    await client.query('BEGIN');
+    try {
+      const applicant = await insert(
+        projectId,
+        userId,
+        {
+          cover_letter,
+          payment_rate,
+          payment_type,
+          cv_link,
+          cv_name,
+          share_contact_info,
+          attachment,
+        },
+        client,
+      );
+      let answersResult = [];
+      // not worked on promise all
+      for (const a of answers) {
+        answersResult.push(
+          await client.get(sql`
+            INSERT INTO answers 
+            (project_id, question_id, applicant_id, answer, selected_option)
+            VALUES(${projectId}, ${a.id}, ${applicant.id}, ${a.answer}, ${a.selected_option})
+            RETURNING *
+          `),
+        );
+      }
 
-    applicant.answers = answersResult;
+      applicant.answers = answersResult;
 
-    await app.db.query('COMMIT');
-    return applicant;
-  } catch (err) {
-    await app.db.query('ROLLBACK');
-    throw new EntryError(err.message);
-  }
+      await client.query('COMMIT');
+      return applicant;
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw new EntryError(err.message);
+    }
+  });
 };
 
 export const editApply = async (
@@ -208,40 +227,52 @@ export const editApply = async (
     attachment,
   },
 ) => {
-  await app.db.query('BEGIN');
-  try {
-    const applicant = await update(id, {
-      cover_letter,
-      payment_type,
-      payment_rate,
-      cv_link,
-      cv_name,
-      share_contact_info,
-      attachment,
-    });
+  return app.db.with(async (client) => {
+    await client.query('BEGIN');
+    try {
+      const applicant = await update(
+        id,
+        {
+          cover_letter,
+          payment_type,
+          payment_rate,
+          cv_link,
+          cv_name,
+          share_contact_info,
+          attachment,
+        },
+        client,
+      );
 
-    const {rows} = await app.db.query(sql`
+      const {rows} = await client.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${applicant.project_id} and required=true
     `);
 
-    if (parseInt(rows[0]?.count) > answers?.length)
-      throw new EntryError('answers are not sufficient');
+      if (parseInt(rows[0]?.count) > answers?.length)
+        throw new EntryError('answers are not sufficient');
 
-    await app.db.query(sql`DELETE FROM answers WHERE applicant_id=${id}`);
+      await client.query(sql`DELETE FROM answers WHERE applicant_id=${id}`);
 
-    let answersResult = [];
-    // not worked on promise all
-    for (const a of answers)
-      answersResult.push(
-        await giveAnswer(applicant.id, applicant.project_id, a),
-      );
+      let answersResult = [];
+      // not worked on promise all
+      for (const a of answers) {
+        answersResult.push(
+          await client.get(sql`
+          INSERT INTO answers 
+          (project_id, question_id, applicant_id, answer, selected_option)
+          VALUES(${applicant.project_id}, ${a.id}, ${applicant.id}, ${a.answer}, ${a.selected_option})
+          RETURNING *
+        `),
+        );
+      }
 
-    applicant.answers = answers;
+      applicant.answers = answers;
 
-    await app.db.query('COMMIT');
-    return applicant;
-  } catch (err) {
-    await app.db.query('ROLLBACK');
-    throw new EntryError(err.message);
-  }
+      await client('COMMIT');
+      return applicant;
+    } catch (err) {
+      await client('ROLLBACK');
+      throw new EntryError(err.message);
+    }
+  });
 };

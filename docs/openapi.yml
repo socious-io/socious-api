@@ -1582,6 +1582,7 @@ paths:
       tags:
         - users
       summary: delete
+      description: Warning!!! this would delete user without any recovery method
       requestBody:
         content:
           application/json:

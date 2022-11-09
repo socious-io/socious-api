@@ -48,6 +48,17 @@ exports[`add language 2`] = `
 }
 `;
 
+exports[`delete user 1`] = `
+{
+  "deleted_at": Any<Object>,
+  "id": Any<String>,
+  "reason": "TEST",
+  "registered_at": Any<Object>,
+  "user_id": Any<String>,
+  "username": "test_username",
+}
+`;
+
 exports[`login 1`] = `
 {
   "error": ""email" must be a valid email",
@@ -86,6 +97,9 @@ exports[`profile 1`] = `
         "mission": "test",
         "mobile_country_code": null,
         "name": "test ORG",
+        "other_party_id": null,
+        "other_party_title": null,
+        "other_party_url": null,
         "phone": "9379911",
         "search_tsv": Any<String>,
         "shortname": Any<String>,
@@ -156,6 +170,9 @@ exports[`profile 2`] = `
         "mission": "test",
         "mobile_country_code": null,
         "name": "test ORG",
+        "other_party_id": null,
+        "other_party_title": null,
+        "other_party_url": null,
         "phone": "9379911",
         "search_tsv": Any<String>,
         "shortname": Any<String>,
@@ -226,6 +243,9 @@ exports[`profile by username 1`] = `
         "mission": "test",
         "mobile_country_code": null,
         "name": "test ORG",
+        "other_party_id": null,
+        "other_party_title": null,
+        "other_party_url": null,
         "phone": "9379911",
         "search_tsv": Any<String>,
         "shortname": Any<String>,
@@ -296,6 +316,9 @@ exports[`profile by username 2`] = `
         "mission": "test",
         "mobile_country_code": null,
         "name": "test ORG",
+        "other_party_id": null,
+        "other_party_title": null,
+        "other_party_url": null,
         "phone": "9379911",
         "search_tsv": Any<String>,
         "shortname": Any<String>,
@@ -420,6 +443,9 @@ exports[`update profile 1`] = `
         "mission": "test",
         "mobile_country_code": null,
         "name": "test ORG",
+        "other_party_id": null,
+        "other_party_title": null,
+        "other_party_url": null,
         "phone": "9379911",
         "search_tsv": Any<String>,
         "shortname": Any<String>,

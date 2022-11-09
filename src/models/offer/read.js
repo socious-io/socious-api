@@ -21,7 +21,8 @@ export const getAll = async (
   {limit = 10, offset = 0, filter, sort},
 ) => {
   const {rows} = await app.db.query(sql`
-    SELECT * FROM offers
+    SELECT *, COUNT(*) OVER () as total_count
+    FROM offers
     WHERE (recipient_id = ${identityId} OR offerer_id = ${identityId})
     ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}

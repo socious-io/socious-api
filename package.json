@@ -1,6 +1,6 @@
 {
   "name": "socious-api",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "",
   "author": "",
   "private": true,
@@ -102,10 +102,7 @@
   },
   "jest": {
     "testTimeout": 30000,
-    "moduleFileExtensions": [
-      "js",
-      "json"
-    ],
+    "moduleFileExtensions": ["js", "json"],
     "testRegex": "(tests/.*|(\\.|/)(test|spec))\\.js$",
     "testPathIgnorePatterns": [
       "/node_modules/",
@@ -113,9 +110,7 @@
       "/test-results/",
       "/coverage/"
     ],
-    "roots": [
-      "<rootDir>/test/"
-    ]
+    "roots": ["<rootDir>/test/"]
   },
   "jest-junit": {
     "outputDirectory": "test-results"

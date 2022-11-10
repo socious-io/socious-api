@@ -81,7 +81,7 @@ export class DBCircuitBreaker {
   async with(fn) {
     const client = await this.pool.connect();
     try {
-      await fn({
+      return fn({
         client,
         query: (...args) => {
           return this.policy.execute(() => client.query(...args));

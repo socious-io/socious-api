@@ -27,7 +27,8 @@ export const get = async (id) => {
 
 export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(sql`
-    SELECT 
+    SELECT
+      COUNT(*) OVER () as total_count, 
       m.*,
       row_to_json(a.*) AS applicant,
       row_to_json(p.*) AS project

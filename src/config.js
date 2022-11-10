@@ -31,6 +31,8 @@ export default {
         pass: process.env.MAIL_SMTP_PASS,
       },
     },
+    allowTest: boolVariable(process.env.ALLOW_TEST_EMAILS),
+    defaultSender: process.env.EMAIL_SENDER ?? 'SENDGRID',
   },
   database: {
     host: process.env.PGHOST,
@@ -98,6 +100,13 @@ export default {
   notifAppLink:
     process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
 };
+
+function boolVariable(val, defaultVal = true) {
+  if (val === '') return false;
+  if (val === 'false') return false;
+  if (val === 'true') return true;
+  return defaultVal;
+}
 
 /**
  * Normalize a port into a number, string, or false.

@@ -1,8 +1,16 @@
 import {start} from './src/services/idealist/index.js';
-import {checkIdealist} from './src/services/idealist/check_active.js';
+import {
+  checkIdealist,
+  verifyExists,
+} from './src/services/idealist/check_active.js';
 
-if (process.argv[2] === '--check') {
-  checkIdealist();
-} else {
-  start();
+switch (process.argv[2]) {
+  case '--check':
+    checkIdealist();
+    break;
+  case '--verify':
+    verifyExists();
+    break;
+  default:
+    start();
 }

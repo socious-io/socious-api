@@ -32,7 +32,7 @@ export async function getAllProjects(ids) {
     //for each type of project (job, volop and intenrship)
     let res = 0;
     let count = 0;
-    const failedProjectsIds = []
+    const failedProjectsIds = [];
 
     console.log(`Loading ${types} projects...`);
 
@@ -41,12 +41,11 @@ export async function getAllProjects(ids) {
       count++;
       let p;
       try {
-      //get project from Idealist
+        //get project from Idealist
         p = await getProject(types, obj.id); //use queue?...
-      } catch(err) {
-        failedProjectsIds.push(obj.id)
+      } catch (err) {
+        failedProjectsIds.push(obj.id);
       }
-
 
       let projectType;
 

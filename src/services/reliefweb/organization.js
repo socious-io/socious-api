@@ -27,10 +27,9 @@ export async function createOrgFromProject(p) {
     //check if org exist in table then update or insert // DO WE UPDATE???
     const orgId = await findOrgFromTable(org);
 
-
     if (orgId) return orgId;
-    
-      // create new organization
+
+    // create new organization
 
     org = await getOrganizationFromApi(p);
 
@@ -48,7 +47,6 @@ export async function createOrgFromProject(p) {
     }
 
     return newOrg.id;
-    
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
     return false;
@@ -67,7 +65,7 @@ async function findOrgFromTable(org) {
         WHERE other_party_id=${org.id} OR 
         name = ${org.name} OR
         website = ${org.url} 
-      LIMIT 1`
+      LIMIT 1`,
     );
 
     if (!org.other_party_id)
@@ -78,7 +76,7 @@ async function findOrgFromTable(org) {
           other_party_url=website,
           updated_at=now()
         WHERE id=${orgFromTable.id}
-      `)
+      `);
 
     return orgFromTable.id;
   } catch (err) {
@@ -159,7 +157,7 @@ async function parseOrganization(org) {
       social_causes: [],
       other_party_id: org.id,
       other_party_url: org.homepage || org.url,
-      other_party_title: 'RELIEFWEB'
+      other_party_title: 'RELIEFWEB',
     };
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);

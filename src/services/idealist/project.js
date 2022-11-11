@@ -14,21 +14,21 @@ import project from '../../models/project/index.js';
  * @returns object || void
  */
 export const getProject = async function (projectTypes, id) {
-    let proj = await axios.get(
-      `https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`,
-      {
-        auth: {
-          username: process.env.IDEALIST_TOKEN, //'743e1f3940484d7680130c748ed22758',
-          password: '',
-        },
-
-        timeout: 0,
+  let proj = await axios.get(
+    `https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`,
+    {
+      auth: {
+        username: process.env.IDEALIST_TOKEN, //'743e1f3940484d7680130c748ed22758',
+        password: '',
       },
-    );
 
-    if (proj.status !== 200) throw Error('fetching project')
+      timeout: 0,
+    },
+  );
 
-    return proj.data;
+  if (proj.status !== 200) throw Error('fetching project');
+
+  return proj.data;
 };
 
 export const lastIdealistProject = async function (projectType) {
@@ -46,9 +46,6 @@ export const lastIdealistProject = async function (projectType) {
     return null;
   }
 };
-
-
-
 
 export const processProject = async function (p, type) {
   try {
@@ -205,12 +202,18 @@ async function getExperienceLevel(p) {
  * @param {array} ids
  * @returns int
  */
- export async function expireProjects(ids) {
+export async function expireProjects(title, ids) {
   let count = 0;
 
   try {
-    const res = await app.db.query(sql`UPDATE projects SET status = 'EXPIRE'
-      WHERE status <> 'EXPIRE' AND (other_party_id = ANY(${ids}) OR expires_at < NOW())`);
+    const res = await app.db.query(sql`
+    UPDATE projects 
+    SET status = 'EXPIRE',
+      expires_at = NOW()
+    WHERE status <> 'EXPIRE' AND 
+      other_party_id = ANY(${ids} AND 
+      other_part_title=${title}
+    `);
 
     if (res.rowCount > 0) {
       count = res.rowCount;

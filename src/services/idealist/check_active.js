@@ -6,7 +6,7 @@ import {configureHttp} from './http-agent/configure-http.js';
 
 import sql from 'sql-template-tag';
 import {app} from '../../index.js';
-import {expireProjects} from './project.js';
+import {expireProjects, getProject} from './project.js';
 
 const idealist_token = process.env.IDEALIST_TOKEN; // '743e1f3940484d7680130c748ed22758';
 const since_timstamp = process.env.IDEALIST_SINCE; //'2022-09-22 00:00:00';
@@ -23,11 +23,50 @@ export async function checkIdealist() {
     const ids = await getListings(projectTypes[x]);
 
     //update database with expired projects
-    const count = await expireProjects(ids);
+    const count = await expireProjects(projectTypes[x], ids);
 
     console.log(`${count} ${projectTypes[x]} updated to status 'EXPIRE'`);
   }
 
+  process.exit(0);
+}
+
+export async function verifyExists() {
+  const limit = 50;
+  let offset = 0;
+  console.log(`checking all current DB idealist projects`);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {rows} = await app.db.query(sql`
+      SELECT id, other_party_title, other_party_id 
+      FROM projects 
+      WHERE 
+        other_party_id IS NOT NULL AND 
+        status='ACTIVE' AND
+        other_party_title=ANY(${projectTypes})
+      LIMIT ${limit} OFFSET ${offset}
+    `);
+    offset += limit;
+
+    if (rows.length < 1) break;
+    let exists = 0;
+    let expired = 0;
+    for (const project of rows) {
+      try {
+        await getProject(project.other_party_title, project.other_party_id);
+        exists++;
+      } catch {
+        await expireProjects(project.other_party_title, [
+          project.other_party_id,
+        ]);
+        expired++;
+        console.log(`${project.id} has been expired`);
+      }
+    }
+    console.log(
+      `${exists} of projects still exists on Idealist and ${expired} of them expired`,
+    );
+  }
   process.exit(0);
 }
 

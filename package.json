@@ -102,7 +102,10 @@
   },
   "jest": {
     "testTimeout": 30000,
-    "moduleFileExtensions": ["js", "json"],
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
     "testRegex": "(tests/.*|(\\.|/)(test|spec))\\.js$",
     "testPathIgnorePatterns": [
       "/node_modules/",
@@ -110,7 +113,9 @@
       "/test-results/",
       "/coverage/"
     ],
-    "roots": ["<rootDir>/test/"]
+    "roots": [
+      "<rootDir>/test/"
+    ]
   },
   "jest-junit": {
     "outputDirectory": "test-results"

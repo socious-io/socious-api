@@ -35,21 +35,22 @@ test('delete user', async () => {
   const response = await request
     .post('/user/delete')
     .send({
-      reason: 'TEST'
+      reason: 'TEST',
     })
     .set('Authorization', data.users[0].access_token);
 
   expect(response.status).toBe(200);
 
-  const deletedUser = await app.db.get(sql`SELECT * FROM deleted_users WHERE username=${data.users[0].username}`)
+  const deletedUser = await app.db.get(
+    sql`SELECT * FROM deleted_users WHERE username=${data.users[0].username}`,
+  );
 
   expect(deletedUser).toMatchSnapshot({
     id: expect.any(String),
     user_id: expect.any(String),
     registered_at: expect.any(Object),
     deleted_at: expect.any(Object),
-  })
-  
+  });
 });
 
 const cleanup = async () => {

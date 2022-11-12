@@ -7,7 +7,7 @@ export async function geoip(ip) {
       country: geo.country,
       region: geo.region,
       city: geo.city,
-      eu: geo.eu,
+      eu: geo.eu === '1',
       timezone: geo.timezone,
     };
   } catch (e) {

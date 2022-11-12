@@ -2553,6 +2553,14 @@ paths:
                           type: string
                         region_name:
                           type: string
+                        region_iso:
+                          type: string
+                        subregion_id:
+                          type: string
+                        subregion_name:
+                          type: string
+                        subregion_iso:
+                          type: string
                         alternate_name:
                           type: string
                         alt_language:
@@ -2574,7 +2582,11 @@ paths:
                     population: 1184
                     country_code: US
                     region_id: OH
+                    subregion_id: 169
                     region_name: Ohio
+                    region_iso: OH
+                    subregion_name: null
+                    subregion_iso: null
                   - id: 5128581
                     name: New York City
                     type: PPL
@@ -2586,4 +2598,8 @@ paths:
                     is_colloquial: true
                     is_short_name: false
                     region_id: NY
+                    subregion_id:
                     region_name: New York
+                    region_iso: NY
+                    subregion_name: null
+                    subregion_iso: null

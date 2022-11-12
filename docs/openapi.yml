@@ -2438,6 +2438,10 @@ paths:
               schema:
                 type: object
                 properties:
+                  id:
+                    type: number
+                    description: location id for geoname API
+                    example: 5128581
                   country:
                     type: string
                     description: ISO country code
@@ -2457,6 +2461,30 @@ paths:
                     type: string
                     description: IANA timezone
                     example: America/New_York
+                  admin1_code:
+                    type: string
+                    description: first-level division ISO code
+                    example: NY
+                  admin1_id:
+                    type: number
+                    description: first-level division ID for geoname
+                    example: 5128638
+                  admin1_name:
+                    type: string
+                    description: first-level division name
+                    example: New York
+                  admin2_code:
+                    type: string
+                    description: second-level division ISO code where applicable
+                    example:
+                  admin2_id:
+                    type: number
+                    description: second-level division ID for geoname where applicable
+                    example:
+                  admin2_name:
+                    type: string
+                    description: second-level division name where applicable
+                    example:
   /geo/locations/country/{countryCode}:
     get:
       tags:

@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import http from 'http';
+import compress from 'koa-compress';
 import morgan from 'koa-morgan';
 import pg from 'pg';
 import {DBCircuitBreaker} from './utils/circuitbreaker.js';
@@ -15,7 +16,6 @@ export const app = new Koa({proxy: true});
 app.keys = [Config.secret];
 app.users = {};
 app.use(koaLogger);
-
 app.use(
   morgan(':method :url :status :response-time ms - :res[content-length]', {
     skip(req, _) {
@@ -23,7 +23,9 @@ app.use(
     },
   }),
 );
+app.use(compress());
 app.silent = true;
+
 // configure the database via environment, see:
 // https://www.postgresql.org/docs/9.1/libpq-envars.html
 app.db = new DBCircuitBreaker(new pg.Pool());

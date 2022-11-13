@@ -56,7 +56,7 @@ export const insert = async (
         ${payment_currency}, ${payment_range_lower},
         ${payment_range_higher}, ${experience_level}, ${status},
         ${remote_preference}, ${project_type}, ${project_length},
-        ${skills}, ${causes_tags}, ${country}, ${city}, ${geoname_id}
+        ${skills}, ${causes_tags}, ${country}, ${city}, ${geoname_id},
         ${other_party_id}, ${other_party_title},
         ${other_party_url}, ${expires_at}, ${updated_at},
         ${weekly_hours_lower}, ${weekly_hours_higher}, ${commitment_hours_lower},

@@ -1,6 +1,6 @@
 {
   "name": "socious-api",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "",
   "author": "",
   "private": true,
@@ -41,7 +41,7 @@
     "@maxmind/geoip2-node": "^3.5.0",
     "@newrelic/winston-enricher": "^4.0.0",
     "@sendgrid/mail": "^7.7.0",
-    "@socious/data": "^1.0.23",
+    "@socious/data": "^1.0.27",
     "agentkeepalive": "^4.2.1",
     "aws-sdk": "^2.1248.0",
     "axios": "^1.1.3",

@@ -75,7 +75,7 @@ export const insert = async (
         social_causes, mobile_country_code, created_by, image, cover_image,
         mission, culture)
         VALUES (${shortname.toLowerCase()}, ${name}, ${bio}, ${description}, ${email},
-          ${phone}, ${type} ,${city}, ${geoname_id} ${address}, ${country},
+          ${phone}, ${type} ,${city}, ${geoname_id}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture})
         RETURNING *, array_to_json(social_causes) AS social_causes`,

@@ -32,6 +32,7 @@ export const updateProfile = async (
     phone,
     bio,
     city,
+    geoname_id,
     address,
     country,
     wallet_address,
@@ -49,8 +50,8 @@ export const updateProfile = async (
   const query = sql`
     UPDATE users SET 
       first_name=${first_name}, last_name=${last_name},
-      avatar=${avatar}, cover_image=${cover_image}, phone=${phone},
-      bio=${bio}, city=${city}, address=${address}, country=${country},
+      avatar=${avatar}, cover_image=${cover_image}, phone=${phone}, bio=${bio},
+      city=${city}, geoname_id=${geoname_id} address=${address}, country=${country},
       wallet_address=${wallet_address}, social_causes=${social_causes},
       skills=${skills}, mission=${mission}, language=${language},
       mobile_country_code=${mobile_country_code},username=${username.toLowerCase()},
@@ -95,9 +96,9 @@ export const remove = async (user, reason) => {
     await app.db.query(
       sql`INSERT INTO deleted_users (user_id, username, reason, registered_at)
     VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`,
-    )
+    );
     await app.db.query(sql`DELETE FROM users WHERE id=${user.id}`),
-    await app.db.query('COMMIT');
+      await app.db.query('COMMIT');
   } catch (err) {
     await app.db.query('ROLLBACK');
     throw err;

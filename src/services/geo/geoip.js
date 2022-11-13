@@ -3,8 +3,13 @@ import config from '../../config.js';
 
 const reader = await Reader.open(config.geoipDb).catch((_e) => null);
 
+// make life easier for development
+const local = ['192.168.0.1', '::1'];
+
 export async function geoip(ip) {
   if (reader === null) return {};
+
+  if (local.includes(ip)) ip = '91.234.192.9';
 
   let geo;
   try {

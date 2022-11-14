@@ -20,11 +20,11 @@ export const simplePush = async ({
     ...options,
     registration_ids: tokens,
     notification,
-    data,
   };
 
   try {
     const response = await axios.post(URL, body, {headers: HEADERS});
+    logger.info(JSON.stringify(body));
     logger.info(response.body || response.data);
   } catch (err) {
     logger.error(err);

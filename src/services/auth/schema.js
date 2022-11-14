@@ -9,11 +9,11 @@ export const authSchem = Joi.object({
 });
 
 export const registerSchem = Joi.object({
-  first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
+  first_name: Joi.string(),
+  last_name: Joi.string(),
   username: Joi.string().regex(validate.usernamePattern),
   email: Joi.string().email().required(),
-  password: Joi.string().min(8).required(),
+  password: Joi.string().min(8),
 });
 
 export const preregisterSchem = Joi.object({
@@ -34,12 +34,12 @@ export const newOTPSchem = Joi.alternatives().try(
 
 export const confirmOTPSchem = Joi.alternatives().try(
   Joi.object().keys({
-    code: Joi.string().min(4).max(4),
+    code: Joi.string().min(6).max(6),
     phone: Joi.string().regex(phonePattern).required(),
     email: Joi.string().email(),
   }),
   Joi.object().keys({
-    code: Joi.string().min(4).max(4),
+    code: Joi.string().min(6).max(6),
     phone: Joi.string().regex(phonePattern),
     email: Joi.string().email().required(),
   }),

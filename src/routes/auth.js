@@ -29,7 +29,10 @@ router.post('/web/login', async (ctx) => {
 });
 
 router.post('/register', async (ctx) => {
-  ctx.body = await Auth.register(ctx.request.body);
+  await Auth.register(ctx.request.body);
+  ctx.body = {
+    message: 'success',
+  };
 });
 
 router.post('/otp', async (ctx) => {

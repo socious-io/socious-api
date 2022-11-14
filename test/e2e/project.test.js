@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
-import {register} from './globals/user.js';
+import {registerAndVerify} from './globals/user.js';
 import {create as createOrg} from './globals/org.js';
 import {
   create,
@@ -30,7 +30,7 @@ beforeAll(async () => {
   server = app.listen();
   request = supertest(server);
 
-  await register(request, data);
+  await registerAndVerify(request, data);
   await createOrg(request, data);
 });
 

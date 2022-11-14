@@ -57,7 +57,7 @@
     "http-errors": "~2.0.0",
     "i18n-iso-countries": "^7.5.0",
     "jest-junit": "^14.0.1",
-    "joi": "^17.6.3",
+    "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",

@@ -11,6 +11,7 @@ export default {
   secret: process.env.SECRET,
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
+  geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   mail: {
     sendgrid: {
       from: {

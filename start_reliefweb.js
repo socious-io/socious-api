@@ -1,3 +1,12 @@
-import {listProjects} from './src/services/reliefweb/controller.js';
+import {
+  listProjects,
+  verifyExists,
+} from './src/services/reliefweb/controller.js';
 
-listProjects();
+switch (process.argv[2]) {
+  case '--verify':
+    verifyExists();
+    break;
+  default:
+    listProjects();
+}

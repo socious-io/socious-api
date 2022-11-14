@@ -8,6 +8,7 @@ import Identity from '../../models/identity/index.js';
 import Org from '../../models/organization/index.js';
 import {makeMessage} from './message.js';
 import axios from 'axios';
+import logger from '../../utils/logging.js';
 
 export const Types = {
   CHAT: 'chat',
@@ -29,7 +30,7 @@ const emitEvent = async (eventType, userId, id) => {
 
 const pushNotifications = async (userIds, message, data) => {
   const devices = await Device.any(userIds);
-  publish('fcm', {tokens: devices.map((d) => d.token), message, data});
+  publish('fcm', {tokens: devices.map((d) => d.token), notification: message, data});
 };
 
 const email = async (userId, message, id) => {
@@ -150,16 +151,21 @@ const batchPush = async (eventType, identityIds, body) => {
 };
 
 export const worker = async ({eventType, identityId, body}) => {
-  const identity = await Identity.get(identityId);
+  try {
+    const identities = await Identity.getByIds([identityId]);
+    const identity = identities[0];
 
-  if (identity.type === Data.IdentityType.ORG) {
-    const members = await Org.miniMembers(identityId);
-    return batchPush(
-      eventType,
-      members.map((m) => m.user_id),
-      body,
-    );
+    if (identity.type === Data.IdentityType.ORG) {
+      const members = await Org.miniMembers(identityId);
+      return batchPush(
+        eventType,
+        members.map((m) => m.user_id),
+        body,
+      );
+    }
+
+    return _push(eventType, identity.id, body);
+  } catch (err) {
+    logger.error(err.message);
   }
-
-  return _push(eventType, identity.id, body);
 };

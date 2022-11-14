@@ -27,6 +27,8 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
 
     const valueKeys = Object.keys(val);
 
+    const name = columns[key].as ?? `${prefix}${key}`;
+
     let op = operators[valueKeys[0]];
 
     let value = op ? val[valueKeys[0]] : val;
@@ -36,7 +38,7 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
       if (splited.length > 1) value = splited;
     }
 
-    if (columns[key] === Array) {
+    if (columns[key] === Array || columns[key].type === Array) {
       value = `{${value}}`;
       op = '@>';
     }
@@ -44,7 +46,7 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
     if (Array.isArray(value)) op = '';
 
     if (!op) op = '=';
-    const operation = raw(`${prefix}${key} ${op}`);
+    const operation = raw(`${name} ${op}`);
 
     if (Array.isArray(value)) {
       conditions.push(sql`${operation} ANY(${value})`);

@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
   title: Socious-API
-  version: 2.2.1
+  version: 2.2.2
 servers:
   - url: https://dev.socious.io/api/v2/
   - url: https://socious.io/api/v2/
-  - url: http://localhost:8370
+  - url: http://localhost:5065
 
 components:
   securitySchemes:
@@ -15,12 +15,14 @@ components:
   schemas:
     project-status:
       type: string
+      title: Project Status
       enum:
         - DRAFT
         - ACTIVE
         - EXPIRE
     language-level:
       type: string
+      title: Language Level
       enum:
         - BASIC
         - CONVERSANT
@@ -29,6 +31,7 @@ components:
         - NATIVE
     filter-operators:
       type: string
+      title: Filter Operators
       enum:
         - eq
         - ne
@@ -38,6 +41,7 @@ components:
         - gte
     notification-type:
       type: string
+      title: Notification Type
       enum:
         - FOLLOWED
         - COMMENT_LIKE
@@ -55,6 +59,40 @@ components:
         - ASSIGNEE_CANCELED
         - ASSIGNER_CANCELED
         - ASSIGNER_CONFIRMED
+    location_type:
+      type: string
+      title: Location Type
+      description: |
+        Type of location record (city, town, capital, etc)
+        - PPL: a city, town, village, or other agglomeration of buildings where people live and work
+        - PPLA: seat of a first-order administrative division (PPLC takes precedence over PPLA)
+        - PPLA2: seat of a second-order administrative division
+        - PPLA3: seat of a third-order administrative division
+        - PPLA4: seat of a fourth-order administrative division
+        - PPLA5: seat of a fifth-order administrative division
+        - PPLC: capital of a political entity
+        - PPLCH: former (historical) capital of a political entity
+        - PPLF: farm village
+        - PPLG: seat of government of a political entity
+        - PPLL: an area similar to a locality but with a small group of dwellings or other buildings
+        - PPLR: a populated place whose population is largely engaged in religious occupations
+        - PPLS: cities, towns, villages, or other agglomerations of buildings where people live and work
+        - STLMT: Israeli settlement
+      enum:
+        - PPL
+        - PPLA
+        - PPLA2
+        - PPLA3
+        - PPLA4
+        - PPLA5
+        - PPLC
+        - PPLCH
+        - PPLF
+        - PPLG
+        - PPLL
+        - PPLR
+        - PPLS
+        - STLMT
 paths:
   /site/options:
     get:
@@ -62,7 +100,7 @@ paths:
         - site
       summary: filtering and sorting options
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -78,10 +116,10 @@ paths:
             schema:
               type: object
               example:
-                email: "{{user_login}}"
-                password: "{{user_password}}"
+                email: '{{user_login}}'
+                password: '{{user_password}}'
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -106,9 +144,9 @@ paths:
           in: header
           schema:
             type: string
-          example: "{{refresh_token}}"
+          example: '{{refresh_token}}'
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -126,7 +164,7 @@ paths:
                 username: socious
                 email: info@socious.io
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Vary:
@@ -140,7 +178,7 @@ paths:
             Content-Length:
               schema:
                 type: integer
-                example: "30"
+                example: '30'
             Date:
               schema:
                 type: string
@@ -188,9 +226,9 @@ paths:
             schema:
               type: object
               example:
-                email: "{{user_login}}"
+                email: '{{user_login}}'
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -204,14 +242,14 @@ paths:
           in: query
           schema:
             type: integer
-          example: "207364"
+          example: '207364'
         - name: email
           in: query
           schema:
             type: string
           example: info@socious.io
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -226,9 +264,9 @@ paths:
             schema:
               type: object
               example:
-                email: "{{user_login}}"
+                email: '{{user_login}}'
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -243,9 +281,9 @@ paths:
             schema:
               type: object
               example:
-                refresh_token: "{{refresh_token}}"
+                refresh_token: '{{refresh_token}}'
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -266,14 +304,14 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/components/schemas/project-status"
+              $ref: '#/components/schemas/project-status'
             default: ACTIVE
           description: statuses to filter for
           example: ACTIVE
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -289,8 +327,8 @@ paths:
               example:
                 description: Data testing
                 experience_level: 1
-                payment_range_higher: "13"
-                payment_range_lower: "12"
+                payment_range_higher: '13'
+                payment_range_lower: '12'
                 payment_scheme: FIXED
                 payment_type: VOLUNTEER
                 remote_preference: HYBRID
@@ -302,7 +340,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -320,7 +358,7 @@ paths:
                 causes_tags:
                   - SOCIAL
                 country: AL
-                created_at: "2022-09-05T17:19:25.501Z"
+                created_at: '2022-09-05T17:19:25.501Z'
                 deleted_at: null
                 description: Structure dsdsd
                 experience_level: 1
@@ -331,8 +369,8 @@ paths:
                 passions:
                   - SOCIAL
                 payment_currency: null
-                payment_range_higher: "13"
-                payment_range_lower: "12"
+                payment_range_higher: '13'
+                payment_range_lower: '12'
                 payment_scheme: HOURLY
                 payment_type: PAID
                 project_length: LESS_THAN_A_DAY
@@ -343,8 +381,8 @@ paths:
                   - CSS
                   - AWS
                 status: ACTIVE
-                title: "Sdsdsd Demo New "
-                updated_at: "2022-09-05T17:19:25.501Z"
+                title: 'Sdsdsd Demo New '
+                updated_at: '2022-09-05T17:19:25.501Z'
       security:
         - bearerAuth: []
       parameters:
@@ -359,7 +397,7 @@ paths:
             type: string
           example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -377,7 +415,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -401,7 +439,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -421,14 +459,14 @@ paths:
                 share_contact_info: true
                 answers:
                   - id: 3fcc4216-0d0a-412d-9747-494e4dc8e53f
-                    answer: "yes"
+                    answer: 'yes'
                   - id: 7b9df588-50b2-4896-b343-b9f99c9b7ee1
                     selected_option: 1
-                    answer: "yes"
+                    answer: 'yes'
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -446,7 +484,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -464,7 +502,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -482,8 +520,8 @@ paths:
                 question: are you OK ?
                 required: false
                 options:
-                  - "yes"
-                  - "no"
+                  - 'yes'
+                  - 'no'
       security:
         - bearerAuth: []
       parameters:
@@ -493,7 +531,65 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/update/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: update question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                question: are you OK ?
+                required: false
+                options:
+                  - 'yes'
+                  - 'no'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/remove/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: remove question
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -522,12 +618,12 @@ paths:
               example:
                 offer_text: test offer text
                 offer_rate: 500$
-                due_date: "2022-08-12T11:38:03.40"
+                due_date: '2022-08-12T11:38:03.40'
                 assignment_total: 5
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -551,12 +647,12 @@ paths:
               example:
                 offer_text: test offer text
                 offer_rate: 500$
-                due_date: "2022-08-12T11:38:03.40"
+                due_date: '2022-08-12T11:38:03.40'
                 assignment_total: 5
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -574,7 +670,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -586,7 +682,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -608,7 +704,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -620,7 +716,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -638,7 +734,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -665,7 +761,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -691,7 +787,7 @@ paths:
             type: string
           example: d3c7223f-8ae6-4e16-9cbf-66b128dc5b74
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -709,7 +805,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -727,7 +823,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -745,7 +841,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -775,7 +871,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -786,7 +882,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -816,7 +912,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -839,7 +935,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -864,7 +960,7 @@ paths:
             type: string
           required: true
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -885,7 +981,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -896,7 +992,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -914,7 +1010,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -932,7 +1028,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -960,7 +1056,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -978,7 +1074,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -996,7 +1092,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1023,7 +1119,7 @@ paths:
             type: string
           example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1053,7 +1149,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1076,7 +1172,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1094,7 +1190,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1119,7 +1215,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1144,7 +1240,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1169,7 +1265,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1189,7 +1285,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1200,7 +1296,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1218,7 +1314,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1246,16 +1342,16 @@ paths:
                 description: San Pablo City, Laguna, Philippines
                 email: jayson.vergara.ilagan@gmail.com
                 mission: Asasas
-                mobile_country_code: "+81"
+                mobile_country_code: '+81'
                 name: Beat childhood cancer
-                phone: "9171260643"
+                phone: '9171260643'
                 social_causes:
                   - SOCIAL
                 website: https://asasas.com
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1273,7 +1369,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1298,7 +1394,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1321,7 +1417,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1339,7 +1435,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1351,7 +1447,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1372,8 +1468,8 @@ paths:
                 first_name: Jayson
                 last_name: Ilagan
                 mission: Hdhshsh
-                mobile_country_code: "+63"
-                phone: "5464542"
+                mobile_country_code: '+63'
+                phone: '5464542'
                 skills:
                   - ANGULARJS
                   - JAVASCRIPT
@@ -1390,7 +1486,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1409,13 +1505,13 @@ paths:
                 level: NATIVE
               properties:
                 level:
-                  $ref: "#/components/schemas/language-level"
+                  $ref: '#/components/schemas/language-level'
                 name:
                   type: string
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1440,13 +1536,13 @@ paths:
                 level: PROFICIENT
               properties:
                 level:
-                  $ref: "#/components/schemas/language-level"
+                  $ref: '#/components/schemas/language-level'
                 name:
                   type: string
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1464,7 +1560,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1487,7 +1583,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1516,7 +1612,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1534,7 +1630,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1554,7 +1650,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1573,7 +1669,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1593,7 +1689,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1611,7 +1707,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1636,7 +1732,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1654,7 +1750,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1672,7 +1768,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1690,7 +1786,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1708,7 +1804,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1732,7 +1828,7 @@ paths:
             type: string
           example: 2e67a3e9-7d0f-41fe-8039-38fb6928ab0c
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1756,7 +1852,7 @@ paths:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1777,7 +1873,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1788,7 +1884,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1809,7 +1905,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1828,7 +1924,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1848,7 +1944,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1868,7 +1964,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1896,7 +1992,7 @@ paths:
             type: string
           example: organizations
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1924,7 +2020,7 @@ paths:
             type: string
           example: organizations
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1950,7 +2046,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1978,7 +2074,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -1999,7 +2095,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2017,7 +2113,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2036,7 +2132,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2055,7 +2151,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2073,7 +2169,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2091,7 +2187,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2109,7 +2205,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2134,7 +2230,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2152,7 +2248,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2171,7 +2267,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2183,7 +2279,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2208,7 +2304,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2227,7 +2323,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2239,7 +2335,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2265,7 +2361,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2284,7 +2380,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2302,7 +2398,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2321,7 +2417,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2340,7 +2436,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
@@ -2359,7 +2455,209 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json: {}
+
+  /geo/ip:
+    get:
+      tags:
+        - geo
+      summary: get location of IP address
+      parameters:
+        - name: ip
+          in: query
+          description: IP address to check. If ommitted, checks request (client) address.
+          schema:
+            type: string
+          required: false
+          examples:
+            talinn:
+              summary: Talinn
+              value: 82.131.12.120
+            tokyo:
+              summary: Tokyo
+              value: 91.234.192.9
+            sao_paulo:
+              summary: São Paulo
+              value: 2.57.171.45
+            new_york:
+              summary: New York
+              value: 157.254.225.113
+            london:
+              summary: London
+              value: 185.192.70.165
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: location id for geoname API
+                    example: 5128581
+                  country:
+                    type: string
+                    description: ISO country code
+                    example: US
+                  region:
+                    type: string
+                    description: ISO 3166-2 or FIPS PUB 10-4 first-level region code
+                    example: NY
+                  city:
+                    type: string
+                    example: New York
+                  eu:
+                    type: boolean
+                    description: true if the location is in the European Union
+                    example: false
+                  timezone:
+                    type: string
+                    description: IANA timezone
+                    example: America/New_York
+                  admin1_code:
+                    type: string
+                    description: first-level division ISO code
+                    example: NY
+                  admin1_id:
+                    type: number
+                    description: first-level division ID for geoname
+                    example: 5128638
+                  admin1_name:
+                    type: string
+                    description: first-level division name
+                    example: New York
+                  admin2_code:
+                    type: string
+                    description: second-level division ISO code where applicable
+                    example:
+                  admin2_id:
+                    type: number
+                    description: second-level division ID for geoname where applicable
+                    example:
+                  admin2_name:
+                    type: string
+                    description: second-level division name where applicable
+                    example:
+  /geo/locations/country/{countryCode}:
+    get:
+      tags:
+        - geo
+      summary: get locations (cities, towns, etc) in country
+      parameters:
+        - name: countryCode
+          in: path
+          description: ISO (2-letter) country code
+          schema:
+            type: string
+            maxLength: 2
+            minLength: 2
+          example: US
+          required: true
+        - name: search
+          in: query
+          required: false
+          description: limit to locations matching this string
+          schema:
+            type: string
+          example: apple
+        - name: limit
+          in: query
+          schema:
+            type: number
+          example: 50
+        - name: page
+          in: query
+          schema:
+            type: number
+          example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: number
+                    example: 1
+                  limit:
+                    type: number
+                    example: 50
+                  total_count:
+                    type: number
+                    example: 18
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        type:
+                          $ref: '#/components/schemas/location_type'
+                        population:
+                          type: number
+                        country_code:
+                          type: string
+                        region_id:
+                          type: string
+                        region_name:
+                          type: string
+                        region_iso:
+                          type: string
+                        subregion_id:
+                          type: string
+                        subregion_name:
+                          type: string
+                        subregion_iso:
+                          type: string
+                        alternate_name:
+                          type: string
+                        alt_language:
+                          type: string
+                        is_historic:
+                          type: boolean
+                        is_colloquial:
+                          type: boolean
+                        is_short_name:
+                          type: boolean
+              example:
+                page: 1
+                limit: 50
+                total_count: 2
+                items:
+                  - id: 5145894
+                    name: Apple Creek
+                    type: PPL
+                    population: 1184
+                    country_code: US
+                    region_id: OH
+                    subregion_id: 169
+                    region_name: Ohio
+                    region_iso: OH
+                    subregion_name: null
+                    subregion_iso: null
+                  - id: 5128581
+                    name: New York City
+                    type: PPL
+                    population: 8804190
+                    country_code: US
+                    alternate_name: The Big Apple
+                    alt_language: en
+                    is_historic: false
+                    is_colloquial: true
+                    is_short_name: false
+                    region_id: NY
+                    subregion_id:
+                    region_name: New York
+                    region_iso: NY
+                    subregion_name: null
+                    subregion_iso: null

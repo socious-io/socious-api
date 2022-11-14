@@ -1,3 +1,4 @@
+import sql from 'sql-template-tag';
 import {app} from '../../../src/index.js';
 
 export const register = async (request, data) => {
@@ -15,13 +16,35 @@ export const register = async (request, data) => {
       expect(response.body).toMatchSnapshot();
     } else {
       expect(response.status).toBe(200);
-      expect(response.body.access_token).not.toBeNull();
-      expect(response.body.refresh_token).not.toBeNull();
-      expect(response.body.token_type).toBe('Bearer');
-      data.users[i].access_token = response.body.access_token;
     }
   }
-  await app.db.query(`UPDATE users SET status='ACTIVE'`);
+};
+
+export const verifyUser = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) continue;
+
+    const user = await app.db.get(
+      sql`SELECT * FROM users WHERE email=${data.users[i].email}`,
+    );
+    const otp = await app.db.get(
+      sql`SELECT code FROM otps WHERE user_id=${user.id}`,
+    );
+
+    const response = await request.get(
+      `/auth/otp/confirm?code=${otp.code}&email=${user.email}`,
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.access_token).not.toBeNull();
+    expect(response.body.refresh_token).not.toBeNull();
+    expect(response.body.token_type).toBe('Bearer');
+    data.users[i].access_token = response.body.access_token;
+  }
+};
+
+export const registerAndVerify = async (request, data) => {
+  await register(request, data);
+  await verifyUser(request, data);
 };
 
 export const login = async (request, data) => {

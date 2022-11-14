@@ -52,8 +52,8 @@ export const getProfile = async (id) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, country, geoname_id, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -92,8 +92,8 @@ export const getProfileByUsername = async (username) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, geoname_id, country, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -149,8 +149,8 @@ export const getAllProfile = async (ids, sort) => {
   const {rows} = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, country, geoname_id, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,

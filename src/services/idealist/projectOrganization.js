@@ -18,57 +18,53 @@ export const organizationFromProject = async function (project) {
   //check if org exist in database
   const id = await getOrganization(org);
 
-  if (id) {
-    return id;
-  } else {
-    //create new organization
+  if (id) return id;
+  //create new organization
 
-    try {
-      const orgBio = await organizationBio(org);
+  try {
+    const orgBio = await organizationBio(org);
 
-      let type = 'OTHER';
-      if (
-        org.orgType &&
-        Object.values(OrganizationType).includes(org.orgType)
-      ) {
-        type = org.orgType;
-      }
-
-      let shName = null;
-      shName = await shortname(org);
-
-      //add dynamically properties to the request
-      const body = {
-        name: org.name,
-        ...(shName && {shortname: shName}),
-        ...(orgBio && {bio: orgBio}),
-        ...(orgBio && {description: orgBio}),
-        type: type,
-        ...(org.address?.city && {city: org.address.city}),
-        ...(org.address?.full && {address: org.address.full}),
-        ...(org.address?.country && {country: org.address.country}),
-        ...(org.url?.en && {website: org.url.en}),
-        social_causes: [],
-      };
-
-      //save organization to database
-      const identityId = null;
-      const newOrg = await organization.insert(identityId, body);
-
-      if (org.logo) {
-        // save logo image
-        const newMedia = await media.insert(newOrg.id, 'logo', org.logo);
-
-        //save logo uuid into organizations table
-        await app.db.query(sql`UPDATE organizations 
-        SET image = ${newMedia.id} WHERE id = ${newOrg.id}`);
-      }
-
-      return newOrg.id;
-    } catch (err) {
-      console.log('\x1b[31m%s\x1b[0m', err.message, err);
-      return false;
+    let type = 'OTHER';
+    if (org.orgType && Object.values(OrganizationType).includes(org.orgType)) {
+      type = org.orgType;
     }
+
+    let shName = null;
+    shName = await shortname(org);
+
+    //add dynamically properties to the request
+    const body = {
+      name: org.name,
+      bio: orgBio,
+      shortname: shName,
+      type: type,
+      city: org.address?.city,
+      address: org.address?.full,
+      country: org.address?.country,
+      website: org.url?.en,
+      social_causes: [],
+      other_party_id: org.id,
+      other_party_url: org.url?.en,
+      other_party_title: 'IDEALIST',
+    };
+
+    //save organization to database
+    const identityId = null;
+    const newOrg = await organization.insert(identityId, body);
+
+    if (org.logo) {
+      // save logo image
+      const newMedia = await media.insert(newOrg.id, 'logo', org.logo);
+
+      //save logo uuid into organizations table
+      await app.db.query(sql`UPDATE organizations 
+        SET image = ${newMedia.id} WHERE id = ${newOrg.id}`);
+    }
+
+    return newOrg.id;
+  } catch (err) {
+    console.log('\x1b[31m%s\x1b[0m', err.message, err);
+    return false;
   }
 };
 
@@ -115,12 +111,24 @@ async function organizationBio(org) {
 
 async function getOrganization(org) {
   try {
-    const name = org.name;
-
     //check if org egsist in database by its name
     const orgInDatabase = await app.db.get(
-      sql`SELECT id FROM organizations WHERE name = ${name} LIMIT 1`,
+      sql`SELECT id FROM organizations 
+        WHERE other_party_id=${org.id} OR 
+        name = ${org.name} OR 
+        website = ${org.url?.en} 
+      LIMIT 1`,
     );
+
+    if (!org.other_party_id)
+      await app.db.query(sql`
+        UPDATE organizations SET 
+          other_party_id=${org.other_party_id},
+          other_party_title='IDEALIST',
+          other_party_url=website,
+          updated_at=now()
+        WHERE id=${orgInDatabase.id}
+      `);
 
     return orgInDatabase.id;
   } catch (err) {

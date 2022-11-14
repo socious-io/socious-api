@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
-import {register} from './globals/user.js';
+import {registerAndVerify} from './globals/user.js';
 import {create as createOrg} from './globals/org.js';
 import {
   create,
@@ -10,6 +10,7 @@ import {
   getFiltered,
   getApplicant,
   addQuestion,
+  removeQuestion,
   apply,
   offer,
   reject,
@@ -29,7 +30,7 @@ beforeAll(async () => {
   server = app.listen();
   request = supertest(server);
 
-  await register(request, data);
+  await registerAndVerify(request, data);
   await createOrg(request, data);
 });
 
@@ -50,6 +51,7 @@ test('confirm', async () => confirm(request, data));
 test('send feedback', async () => feedback(request, data));
 test('get feedbacks', async () => feedbacks(request, data));
 test('user applicants', async () => userApplicants(request, data));
+test('remove questions', async () => removeQuestion(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

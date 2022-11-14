@@ -24,7 +24,8 @@ export const simplePush = async ({
   };
 
   try {
-    await axios.post(URL, body, {headers: HEADERS});
+    const response = await axios.post(URL, body, {headers: HEADERS});
+    console.log(response.body)
   } catch (err) {
     logger.error(err);
   }

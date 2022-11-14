@@ -60,15 +60,15 @@ export const withdrawn = async (id) => {
     WHERE 
       id=${id} AND 
       status NOT IN (${Data.OfferStatus.HIRED}, ${Data.OfferStatus.CLOSED}, ${Data.OfferStatus.CANCELED})
+    RETURNING id
     `);
-    return get(id);
+    return get(rows[0].id);
   } catch (err) {
     throw new EntryError(err.message);
   }
 };
 
 export const approve = async (id) => {
-  console.log(await get(id), '------------__@@@@@');
   try {
     const {rows} = await app.db.query(sql`
     UPDATE offers SET 
@@ -76,10 +76,11 @@ export const approve = async (id) => {
     WHERE 
       id=${id} AND 
       status=${Data.OfferStatus.PENDING}
+    RETURNING id
   `);
-    return get(id);
+    return get(rows[0].id);
   } catch (err) {
-    console.log(err, '^^^^^^^^^^^^^^^^^^^');
+    throw new EntryError(err.message);
   }
 };
 

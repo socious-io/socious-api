@@ -147,6 +147,28 @@ export const addQuestion = async (request, data) => {
   }
 };
 
+export const removeQuestion = async (request, data) => {
+  for (const i in data.projects.objs) {
+    for (const question of data.projects.objs[i].questions) {
+      const response = await request
+        .post(`/projects/remove/${data.projects.objs[i].id}/questions/${question}`)
+        .set('Authorization', data.users[0].access_token)
+        .set('Current-Identity', data.orgs[0].id)
+        .send(question);
+
+      expect(response.status).toBe(200);
+    }
+
+    const response = await request
+        .get(`/projects/${data.projects.objs[i].id}/questions`)
+        .set('Authorization', data.users[0].access_token)
+
+    expect(response.status).toBe(200);
+    expect(response.body.questions).toHaveLength(0);
+
+  }
+};
+
 export const apply = async (request, data) => {
   for (const i in data.projects.objs) {
     const body = data.projects.applications[i];

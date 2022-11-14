@@ -75,6 +75,17 @@ router.post(
 );
 
 router.post(
+  '/remove/:id/questions/:question_id',
+  loginRequired,
+  checkIdParams,
+  projectPermission,
+  async (ctx) => {
+    await Project.removeQuestion(ctx.params.question_id);
+    ctx.body = {message: 'success'}
+  },
+);
+
+router.post(
   '/remove/:id',
   loginRequired,
   checkIdParams,

@@ -10,6 +10,7 @@ import {
   getFiltered,
   getApplicant,
   addQuestion,
+  removeQuestion,
   apply,
   offer,
   reject,
@@ -50,6 +51,7 @@ test('confirm', async () => confirm(request, data));
 test('send feedback', async () => feedback(request, data));
 test('get feedbacks', async () => feedbacks(request, data));
 test('user applicants', async () => userApplicants(request, data));
+test('remove questions', async () => removeQuestion(request, data));
 
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);

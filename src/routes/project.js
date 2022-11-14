@@ -81,7 +81,7 @@ router.post(
   projectPermission,
   async (ctx) => {
     await Project.removeQuestion(ctx.params.question_id);
-    ctx.body = {message: 'success'}
+    ctx.body = {message: 'success'};
   },
 );
 

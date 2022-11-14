@@ -535,6 +535,64 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/update/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: update question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                question: are you OK ?
+                required: false
+                options:
+                  - 'yes'
+                  - 'no'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/remove/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: remove question
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
 
   /projects/{project_id}/offer/{user_id}:
     parameters:

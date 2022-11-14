@@ -39,6 +39,6 @@ router.get('/options', loginOptional, async (ctx) => {
     offers: {
       filter_columns: Object.keys(Offer.filterColumns),
       sort_columns: Offer.sortColumns,
-    }
+    },
   };
 });

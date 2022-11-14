@@ -20,6 +20,7 @@ export const simplePush = async ({
     ...options,
     registration_ids: tokens,
     notification,
+    data
   };
 
   try {

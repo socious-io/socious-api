@@ -18,6 +18,19 @@
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
       "type": "node"
-    }
+    },
+    {
+      "name": "Debug Current File",
+      "program": "${relativeFile}",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeVersion": "16",
+      "runtimeArgs": ["--inspect"]
+    },
   ]
 }

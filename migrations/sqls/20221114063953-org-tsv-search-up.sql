@@ -18,3 +18,6 @@ BEGIN
   RETURN NEW;
 END  
 $$ LANGUAGE plpgsql;
+
+
+UPDATE organizations SET id=id;

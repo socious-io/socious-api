@@ -30,7 +30,11 @@ const emitEvent = async (eventType, userId, id) => {
 
 const pushNotifications = async (userIds, message, data) => {
   const devices = await Device.any(userIds);
-  publish('fcm', {tokens: devices.map((d) => d.token), notification: message, data});
+  publish('fcm', {
+    tokens: devices.map((d) => d.token),
+    notification: message,
+    data,
+  });
 };
 
 const email = async (userId, message, id) => {

@@ -84,7 +84,7 @@ export const register = async (body) => {
   );
 
   // sending OTP to verify user email after registeration
-  const code = await createOTP(
+  /* const code = await createOTP(
     user.id,
     OTPType.EMAIL,
     OTPPurposeType.ACTIVATION,
@@ -94,7 +94,8 @@ export const register = async (body) => {
     subject: 'Verify your account',
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
-  });
+  }); */
+  return signin(user.id);
 };
 
 export const sendOTP = async (body) => {
@@ -172,7 +173,7 @@ export const forgetPassword = async (body) => {
 };
 
 export const directChangePassword = async (user, body) => {
-  if (!user.password_expired || user.password)
+  if (!user.password_expired && user.password)
     throw new PermissionError('You can not change password directly');
 
   await directChangePasswordSchem.validateAsync(body);

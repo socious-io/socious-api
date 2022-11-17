@@ -40,7 +40,7 @@ export const makeMessage = (type, name) => {
 
     case Data.NotificationType.APPLICATION:
       return {
-        title: Data.NotificationTitle.POST_LIKE,
+        title: Data.NotificationTitle.APPLICATION,
         body: `${name} applied to your project`,
       };
 

@@ -176,6 +176,59 @@ exports[` 6`] = `
 }
 `;
 
+exports[`projects with filter 1`] = `
+{
+  "items": [
+    {
+      "applicants": 0,
+      "causes_tags": [
+        "SOCIAL",
+        "POVERTY",
+      ],
+      "city": "Tehran",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "IR",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "USD",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "LESS_THAN_A_MONTH",
+      "project_type": "ONE_OFF",
+      "remote_preference": "HYBRID",
+      "search_tsv": "'2':2 'data':3 'test':1,4",
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 2",
+      "total_escrow_amount": null,
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
+}
+`;
+
 exports[`search projects 1`] = `
 {
   "items": [

@@ -95,7 +95,7 @@ export const register = async (body) => {
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
   });
-  
+
   return signin(user.id);
 };
 
@@ -122,6 +122,25 @@ export const sendOTP = async (body) => {
       kwargs: {name: user.first_name, code},
     });
   }
+};
+
+export const resendVerifyCode = async (body) => {
+  await newOTPSchem.validateAsync(body);
+
+  const user = await User.getByEmail(body.email);
+
+  const code = await createOTP(
+    user.id,
+    OTPType.EMAIL,
+    OTPPurposeType.ACTIVATION,
+  );
+
+  publish('email', {
+    to: user.email,
+    subject: 'Verify your account',
+    template: 'templates/emails/active_user.html',
+    kwargs: {name: user.first_name, code},
+  });
 };
 
 export const confirmOTP = async (body) => {

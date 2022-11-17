@@ -54,6 +54,10 @@ const remove = async (userId, token) => {
   );
 };
 
+const cleanup = async (tokens) => {
+  return app.db.query(sql`DELETE FROM devices WHERE token=ANY(${tokens})`);
+};
+
 export default {
   insert,
   update,
@@ -61,4 +65,5 @@ export default {
   all,
   any,
   remove,
+  cleanup,
 };

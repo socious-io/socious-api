@@ -1,6 +1,7 @@
 import axios from 'axios';
 import config from '../../config.js';
 import logger from '../../utils/logging.js';
+import Device from '../../models/device/index.js';
 
 const URL = 'https://fcm.googleapis.com/fcm/send';
 
@@ -26,7 +27,15 @@ export const simplePush = async ({
   try {
     const response = await axios.post(URL, body, {headers: HEADERS});
     logger.info(JSON.stringify(body));
-    logger.info(response.body || response.data);
+    logger.info(response.data);
+
+    const failedTokens = [];
+
+    for (const i in response.data.results) {
+      if (response.data.results[i].error) failedTokens.push(tokens[i]);
+    }
+
+    await Device.cleanup(failedTokens);
   } catch (err) {
     logger.error(err);
   }

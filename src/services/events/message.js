@@ -92,6 +92,12 @@ export const makeMessage = (type, name) => {
         body: `${name} left the project`,
       };
 
+    case Data.NotificationType.MEMBERED:
+      return {
+        title: Data.NotificationTitle.MEMBERED,
+        body: `${name} add you to the organization`,
+      };
+
     default:
       throw new Error(`${type} is not valid to create message`);
   }

@@ -59,6 +59,8 @@ components:
         - ASSIGNEE_CANCELED
         - ASSIGNER_CANCELED
         - ASSIGNER_CONFIRMED
+        - CONNECT
+        - MEMBERED
     location_type:
       type: string
       title: Location Type

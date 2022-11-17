@@ -95,7 +95,7 @@ export const register = async (body) => {
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
   });
-  
+
   return signin(user.id);
 };
 

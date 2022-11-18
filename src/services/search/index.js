@@ -23,19 +23,25 @@ const find = async (body, {identityId, shouldSave}, paginate) => {
 
   switch (body.type) {
     case Data.SearchType.POSTS:
-      return Post.search(body.q, identityId, options);
+      return body.q
+        ? Post.search(body.q, identityId, options)
+        : Post.all(identityId, options);
 
     case Data.SearchType.USERS:
-      return User.search(body.q, identityId, options);
+      return body.q
+        ? User.search(body.q, identityId, options)
+        : User.getUsers(options);
 
     case Data.SearchType.RELATED_USERS:
-      return User.searchRelateds(body.q, identityId, options);
+      return body.q
+        ? User.searchRelateds(body.q, identityId, options)
+        : User.getRelateds(identityId, options);
 
     case Data.SearchType.PROJECTS:
-      return Project.search(body.q, options);
+      return body.q ? Project.search(body.q, options) : Project.all(options);
 
     case Data.SearchType.ORGANIZATIONS:
-      return Org.search(body.q, options);
+      return body.q ? Org.search(body.q, options) : Org.all(options);
 
     default:
       throw new BadRequestError(`type '${body.type}' is not valid`);

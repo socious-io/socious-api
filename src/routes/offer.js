@@ -4,6 +4,7 @@ import Applicant from '../models/applicant/index.js';
 import Offer from '../models/offer/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
+import Data from '@socious/data';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {
@@ -66,7 +67,10 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
-  if (ctx.offer.project.total_escrow_amount < ctx.offer.assignment_total)
+  if (
+    ctx.offer.project.total_escrow_amount < ctx.offer.assignment_total &&
+    ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER
+  )
     throw new PermissionError();
 
   ctx.body = Offer.hire(ctx.params.id);

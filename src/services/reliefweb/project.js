@@ -74,15 +74,15 @@ async function parseProject(p, type) {
       : p.body
       ? p.body
       : 'No information aviable',
-    ...(countryIso2 && {country: countryIso2}),
-    ...(p.city && p.city[0].name && {city: p.city[0].name}),
-    ...(experienceLevel && {experience_level: experienceLevel}),
+    country: countryIso2,
+    city: p.city[0].name,
+    experience_level: experienceLevel,
     status: 'ACTIVE',
-    ...(p.date?.closing && {expires_at: p.date.closing}),
+    expires_at: p.date.closing,
     other_party_id: p.id,
     other_party_title: type,
-    ...(p.url && {other_party_url: p.url}),
-    ...(p.date?.changed && {updated_at: p.date.changed}),
+    other_party_url: p.url,
+    updated_at: p.date.changed,
   };
 }
 

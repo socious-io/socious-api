@@ -55,12 +55,12 @@ export const send = async (
 export const withdrawn = async (id) => {
   try {
     const {rows} = await app.db.query(sql`
-      UPDATE offers SET 
-        status=${Data.OfferStatus.WITHDRAWN}
-      WHERE 
-        id=${id} AND 
-        status NOT IN (${Data.OfferStatus.HIRED}, ${Data.OfferStatus.CLOSED}, ${Data.OfferStatus.CANCELED})
-      RETURNING id
+    UPDATE offers SET 
+      status=${Data.OfferStatus.WITHDRAWN}
+    WHERE 
+      id=${id} AND 
+      status NOT IN (${Data.OfferStatus.HIRED}, ${Data.OfferStatus.CLOSED}, ${Data.OfferStatus.CANCELED})
+    RETURNING id
     `);
     return get(rows[0].id);
   } catch (err) {

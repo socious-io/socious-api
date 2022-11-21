@@ -3,21 +3,25 @@ import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import Data from '@socious/data';
 import Connect from '../connect/index.js';
+import {sorting} from '../../utils/query.js';
 
-export const all = async (identityId, {offset = 0, limit = 10}) => {
+export const sortColumns = ['updated_at', 'created_at'];
+
+export const all = async (identityId, {offset = 0, limit = 10, sort}) => {
   const {rows} = await app.db.query(
     sql`
     SELECT COUNT(*) OVER () as total_count, chats.*
       FROM chats JOIN chats_participants p ON p.chat_id=chats.id
     WHERE p.identity_id=${identityId}
-    ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+    ${sorting(sort, sortColumns, 'chats')}
+    LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
 
 export const filtered = async (
   identityId,
-  {offset = 0, limit = 10},
+  {offset = 0, limit = 10, sort},
   filter,
 ) => {
   const {rows} = await app.db.query(
@@ -29,7 +33,8 @@ export const filtered = async (
     JOIN identities i ON i.id=p2.identity_id 
     WHERE p.identity_id=${identityId}
     AND position(${filter.toLowerCase()} IN lower(i.meta->>'name')) > 0
-    ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+    ${sorting(sort, sortColumns, 'chats')}
+    LIMIT ${limit} OFFSET ${offset}`,
   );
   return rows;
 };
@@ -44,7 +49,7 @@ export const find = async (identityId, {participants}) => {
     SELECT COUNT(*) OVER () as total_count, chats.*
     FROM chats
     WHERE participants=${participants}
-    ORDER BY created_at`,
+    ORDER BY updated_at DESC`,
   );
   return rows;
 };
@@ -123,10 +128,14 @@ export const miniParticipants = async (id) => {
   return rows;
 };
 
-export const summary = async (identityId, {offset = 0, limit = 10}, filter) => {
+export const summary = async (
+  identityId,
+  {offset = 0, limit = 10, sort},
+  filter,
+) => {
   const chats = await (filter
-    ? filtered(identityId, {offset, limit}, filter)
-    : all(identityId, {offset, limit}));
+    ? filtered(identityId, {offset, limit, sort}, filter)
+    : all(identityId, {offset, limit, sort}));
 
   await app.db.with(async (client) => {
     for (const chat of chats) {

@@ -60,7 +60,7 @@ export const register = async (body) => {
   if (!config.mail.allowTest && isTestEmail(body.email))
     throw new ValidationError('Invalid email');
 
-  body.password = await hashPassword(body.password);
+  if (body.password) body.password = await hashPassword(body.password);
 
   // Generate username with email user and 4 random digit number if username not provided
   if (!body.username) {
@@ -84,7 +84,7 @@ export const register = async (body) => {
   );
 
   // sending OTP to verify user email after registeration
-  /* const code = await createOTP(
+  const code = await createOTP(
     user.id,
     OTPType.EMAIL,
     OTPPurposeType.ACTIVATION,
@@ -94,7 +94,8 @@ export const register = async (body) => {
     subject: 'Verify your account',
     template: 'templates/emails/active_user.html',
     kwargs: {name: user.first_name, code},
-  }); */
+  });
+
   return signin(user.id);
 };
 
@@ -121,6 +122,25 @@ export const sendOTP = async (body) => {
       kwargs: {name: user.first_name, code},
     });
   }
+};
+
+export const resendVerifyCode = async (body) => {
+  await newOTPSchem.validateAsync(body);
+
+  const user = await User.getByEmail(body.email);
+
+  const code = await createOTP(
+    user.id,
+    OTPType.EMAIL,
+    OTPPurposeType.ACTIVATION,
+  );
+
+  publish('email', {
+    to: user.email,
+    subject: 'Verify your account',
+    template: 'templates/emails/active_user.html',
+    kwargs: {name: user.first_name, code},
+  });
 };
 
 export const confirmOTP = async (body) => {
@@ -173,7 +193,7 @@ export const forgetPassword = async (body) => {
 };
 
 export const directChangePassword = async (user, body) => {
-  if (!user.password_expired)
+  if (!user.password_expired && user.password)
     throw new PermissionError('You can not change password directly');
 
   await directChangePasswordSchem.validateAsync(body);

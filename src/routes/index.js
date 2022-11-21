@@ -27,6 +27,8 @@ import {router as offer} from './offer.js';
 import {router as site} from './site.js';
 import {router as testEmails} from './test-emails.js';
 import {router as connect} from './connect.js';
+import {router as geo} from './geo.js';
+
 export default (app) => {
   const blueprint = new Router();
 
@@ -72,6 +74,7 @@ export default (app) => {
   blueprint.use('/missions', mission.routes(), mission.allowedMethods());
   blueprint.use('/offers', offer.routes(), offer.allowedMethods());
   blueprint.use('/connections', connect.routes(), connect.allowedMethods());
+  blueprint.use('/geo', geo.routes(), geo.allowedMethods());
 
   if (Config.mail.allowTest)
     blueprint.use(

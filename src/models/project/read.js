@@ -15,6 +15,7 @@ export const filterColumns = {
   project_type: String,
   project_length: String,
   other_party_title: String,
+  remote_preference: String,
 };
 
 export const sortColumns = [

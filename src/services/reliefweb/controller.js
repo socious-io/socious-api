@@ -1,4 +1,6 @@
 import axios from 'axios';
+import sql from 'sql-template-tag';
+import {app} from '../../index.js';
 import {configureHttp} from '../idealist/http-agent/configure-http.js';
 
 import {getLastReliefWebProjectId, processProject} from './project.js';
@@ -86,4 +88,72 @@ export async function listProjects() {
     console.log(err);
   }
   process.exit(0);
+}
+
+export async function verifyExists() {
+  const limit = 50;
+  let offset = 0;
+  console.log(`checking all current DB idealist projects`);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {rows} = await app.db.query(sql`
+      SELECT id, other_party_title, other_party_id 
+      FROM projects 
+      WHERE 
+        other_party_id IS NOT NULL AND 
+        status='ACTIVE' AND
+        other_party_title='reliefweb job'
+      LIMIT ${limit} OFFSET ${offset}
+    `);
+    offset += limit;
+
+    if (rows.length < 1) break;
+    let exists = 0;
+    let expired = 0;
+    for (const project of rows) {
+      const response = await axios.get(
+        `https://api.reliefweb.int/v1/jobs/${project.other_party_id}`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (response.status === 200) {
+        exists++;
+      } else {
+        await expireProjects(project.id);
+        expired++;
+        console.log(`${project.id} has been expired`);
+      }
+    }
+    console.log(
+      `${exists} of projects still exists on Idealist and ${expired} of them expired`,
+    );
+  }
+  process.exit(0);
+}
+
+export async function validateCurrentProjects() {}
+
+export async function expireProjects(id) {
+  let count = 0;
+
+  try {
+    const res = await app.db.query(sql`
+    UPDATE projects 
+    SET status = 'EXPIRE',
+      expires_at = NOW()
+    WHERE id=${id}
+    `);
+
+    if (res.rowCount > 0) {
+      count = res.rowCount;
+      //console.log(`${count} projects updated to EXPIRE.`);
+    }
+  } catch (err) {
+    console.log('\x1b[31m%s\x1b[0m', err.message);
+  }
+
+  return count;
 }

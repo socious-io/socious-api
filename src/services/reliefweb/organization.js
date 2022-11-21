@@ -9,7 +9,7 @@ import {iso3ToIso2} from './helpers.js';
 
 export async function createOrgFromProject(p) {
   try {
-    const org = p.source[0];
+    let org = p.source[0];
 
     if (!org) {
       console.log('\x1b[31m%s\x1b[0m', 'Organization not found in project');
@@ -25,30 +25,28 @@ export async function createOrgFromProject(p) {
     }
 
     //check if org exist in table then update or insert // DO WE UPDATE???
-    const org_id_from_db = await findOrgFromTable(org.name);
+    const orgId = await findOrgFromTable(org);
 
-    if (org_id_from_db) {
-      return org_id_from_db;
-    } else {
-      // create new organization
+    if (orgId) return orgId;
 
-      const org = await getOrganizationFromApi(p);
+    // create new organization
 
-      if (!org) return false;
+    org = await getOrganizationFromApi(p);
 
-      const body = await parseOrganization(org);
+    if (!org) return false;
 
-      const newOrg = await organization.insert(null, body);
+    const body = await parseOrganization(org);
 
-      //save logo to medias and update org with its uuid
-      if (newOrg && org?.logo?.url) {
-        const logo = await saveOrgLogoInMedias(newOrg.id, org.logo.url);
+    const newOrg = await organization.insert(null, body);
 
-        await saveLogoIdInOrganization(logo.id, newOrg.id);
-      }
+    //save logo to medias and update org with its uuid
+    if (newOrg && org?.logo?.url) {
+      const logo = await saveOrgLogoInMedias(newOrg.id, org.logo.url);
 
-      return newOrg.id;
+      await saveLogoIdInOrganization(logo.id, newOrg.id);
     }
+
+    return newOrg.id;
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);
     return false;
@@ -60,11 +58,26 @@ export async function createOrgFromProject(p) {
  * @param {string} org_name
  * @returns uuid | false
  */
-async function findOrgFromTable(org_name) {
+async function findOrgFromTable(org) {
   try {
     const orgFromTable = await app.db.get(
-      sql`SELECT id, name FROM organizations WHERE name LIKE ${org_name}`,
+      sql`SELECT id FROM organizations 
+        WHERE other_party_id=${org.id} OR 
+        name = ${org.name} OR
+        website = ${org.url} 
+      LIMIT 1`,
     );
+
+    if (!org.other_party_id)
+      await app.db.query(sql`
+        UPDATE organizations SET 
+          other_party_id=${org.other_party_id},
+          other_party_title='RELIEFWEB',
+          other_party_url=website,
+          updated_at=now()
+        WHERE id=${orgFromTable.id}
+      `);
+
     return orgFromTable.id;
   } catch (err) {
     if (err.status !== 400 && err.message !== 'Not matched') {
@@ -85,7 +98,7 @@ async function getOrganizationFromApi(p) {
           Accept: 'application/json',
         },
       });
-      org = org.data?.data[0].fields;
+      org = org.data[0].fields;
       return org;
     }
     return false;
@@ -135,13 +148,16 @@ async function parseOrganization(org) {
 
     return {
       name: org.name,
-      ...(shName && {shortname: shName}),
-      ...(orgBio && {bio: orgBio}),
-      ...(orgDesc && {description: orgDesc}),
+      shortname: shName,
+      bio: orgBio,
+      description: orgDesc,
       type: type,
-      ...(countryIso2 && {country: countryIso2}),
-      ...(org.homepage && {website: org.homepage}),
+      country: countryIso2,
+      website: org.homepage || org.url,
       social_causes: [],
+      other_party_id: org.id,
+      other_party_url: org.homepage || org.url,
+      other_party_title: 'RELIEFWEB',
     };
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err.message);

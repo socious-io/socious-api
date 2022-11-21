@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import {app} from '../../src/index.js';
 import data from '../data/index.js';
-import {register} from './globals/user.js';
+import {registerAndVerify} from './globals/user.js';
 import {create as createOrg} from './globals/org.js';
 import {create as createProject} from './globals/project.js';
 
@@ -11,7 +11,7 @@ beforeAll(async () => {
   server = app.listen();
   request = supertest(server);
 
-  await register(request, data);
+  await registerAndVerify(request, data);
   await createOrg(request, data);
   await createProject(request, data);
 });
@@ -34,6 +34,30 @@ test('search projects', async () => {
         identity_id: expect.any(String),
         identity_meta: expect.any(Object),
       },
+      {
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        identity_meta: expect.any(Object),
+      },
+    ],
+  });
+});
+
+test('projects with filter', async () => {
+  const response = await request
+    .post('/search')
+    .set('Authorization', data.users[0].access_token)
+    .send({
+      type: 'projects',
+      filter: {
+        payment_currency: 'USD',
+      },
+    });
+  expect(response.status).toBe(200);
+  expect(response.body).toMatchSnapshot({
+    items: [
       {
         created_at: expect.any(String),
         updated_at: expect.any(String),

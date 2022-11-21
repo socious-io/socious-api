@@ -40,7 +40,7 @@ export const makeMessage = (type, name) => {
 
     case Data.NotificationType.APPLICATION:
       return {
-        title: Data.NotificationTitle.POST_LIKE,
+        title: Data.NotificationTitle.APPLICATION,
         body: `${name} applied to your project`,
       };
 
@@ -92,12 +92,17 @@ export const makeMessage = (type, name) => {
         body: `${name} left the project`,
       };
 
+    case Data.NotificationType.MEMBERED:
+      return {
+        title: Data.NotificationTitle.MEMBERED,
+        body: `${name} add you to the organization`,
+      };
+
     case Data.NotificationType.CONNECT:
       return {
         title: Data.NotificationTitle.CONNECT,
         body: `${name} requested to connect with you`,
       };
-
     default:
       throw new Error(`${type} is not valid to create message`);
   }

@@ -52,8 +52,8 @@ export const getProfile = async (id) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, country, geoname_id, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -92,8 +92,8 @@ export const getProfileByUsername = async (username) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, geoname_id, country, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -149,8 +149,8 @@ export const getAllProfile = async (ids, sort) => {
   const {rows} = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, mission, bio, impact_score, skills,
-    followers, followings, u.created_at,
+    city, country, geoname_id, mission, bio, impact_score,
+    skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -254,6 +254,61 @@ export const searchRelateds = async (
       ) AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+  `);
+
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
+
+  return users.map((r) => {
+    return {
+      total_count: rows.length,
+      ...r,
+    };
+  });
+};
+
+export const getRelateds = async (
+  currentIdentity,
+  {offset = 0, limit = 10, filter, sort},
+) => {
+  const {rows} = await app.db.query(sql`
+    WITH fl AS (
+      SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
+    )
+    SELECT
+      u.id
+    FROM users u
+    WHERE
+      (
+        u.id IN (SELECT following_identity_id FROM fl) OR 
+        u.id IN (SELECT follower_identity_id FROM fl)
+      )
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+  `);
+
+  const users = await getAllProfile(
+    rows.map((r) => r.id).slice(offset, offset + limit),
+    sort,
+  );
+
+  return users.map((r) => {
+    return {
+      total_count: rows.length,
+      ...r,
+    };
+  });
+};
+
+export const getUsers = async ({offset = 0, limit = 10, filter, sort}) => {
+  const {rows} = await app.db.query(sql`
+    SELECT
+      u.id
+    FROM users u
+      ${filtering(filter, filterColumns, false)}
     ${sorting(sort, sortColumns)}
   `);
 

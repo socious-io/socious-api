@@ -1,6 +1,6 @@
 export const create = async (request, data) => {
   for (const i in data.orgs) {
-    const body = data.orgs[i];
+    const body = JSON.parse(JSON.stringify(data.orgs[i]));
     delete body.invalid;
 
     const response = await request
@@ -8,7 +8,7 @@ export const create = async (request, data) => {
       .set('Authorization', data.users[0].access_token)
       .send(body);
 
-    if (data.users[i].invalid) {
+    if (data.orgs[i].invalid) {
       expect(response.status).toBe(400);
       expect(response.body).toMatchSnapshot();
     } else {

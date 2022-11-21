@@ -6,7 +6,7 @@ import Notif from '../models/notification/index.js';
 import Mission from '../models/mission/index.js';
 import Offer from '../models/offer/index.js';
 import Event from '../services/events/index.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {
   loginOptional,
   loginRequired,

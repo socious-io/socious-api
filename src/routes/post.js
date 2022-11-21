@@ -3,7 +3,7 @@ import {validate} from '@socious/data';
 import Post from '../models/post/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {
   loginOptional,
   loginRequired,

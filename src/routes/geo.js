@@ -4,7 +4,7 @@ import {
   locationsByCountry,
   locationsSearchByCountry,
 } from '../services/geo/geoname.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 
 export const router = new Router();
 

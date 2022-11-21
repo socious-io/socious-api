@@ -1,6 +1,6 @@
 import compose from 'koa-compose';
 import Cors from '@koa/cors';
-import koaBody from 'koa-body';
+import {koaBody} from 'koa-body';
 import session from 'koa-session';
 import Config from '../../config.js';
 import logger from '../logging.js';

@@ -2,7 +2,7 @@ import sql, {raw} from 'sql-template-tag';
 import {app} from '../../index.js';
 import {PermissionError} from '../../utils/errors.js';
 import Data from '@socious/data';
-import Identity from '../identity/index.js';
+import Connect from '../connect/index.js';
 import {sorting} from '../../utils/query.js';
 
 export const sortColumns = ['updated_at', 'created_at'];
@@ -177,15 +177,9 @@ export const summary = async (
   return chats;
 };
 
-export const addParticipantPermission = async (identity, participantId) => {
+export const chatPermission = async (identity, participantId) => {
   // Access to ORGs to add any participants
   if (identity.type === Data.IdentityType.ORG) return;
 
-  const participant = await Identity.get(participantId, identity.id);
-
-  // All may access to create chat to ORG
-  if (participant.type === Data.IdentityType.ORG) return;
-
-  // Deny access if participant not followed
-  if (!participant.following) throw new PermissionError();
+  await Connect.related(identity.id, participantId);
 };

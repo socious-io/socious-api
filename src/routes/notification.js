@@ -1,7 +1,7 @@
 import Router from '@koa/router';
 import Notif from '../models/notification/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {checkIdParams} from '../utils/middlewares/route.js';
 import {validate} from '@socious/data';
 export const router = new Router();

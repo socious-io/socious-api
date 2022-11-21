@@ -3,7 +3,7 @@ import {BadRequestError} from '../utils/errors.js';
 import Follow from '../models/follow/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {checkIdParams} from '../utils/middlewares/route.js';
 

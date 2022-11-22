@@ -291,6 +291,20 @@ export const hire = async (request, data) => {
       .set('Authorization', data.users[0].access_token)
       .set('Current-Identity', data.orgs[0].id);
 
+    const card = await request
+      .post('/payments/cards')
+      .set('Authorization', data.users[0].access_token)
+      .set('Current-Identity', data.orgs[0].id)
+      .send({
+        holder_name: 'test',
+        numbers: '4242424242424242',
+        exp_month: 11,
+        exp_year: 2023,
+        cvc: '314',
+      });
+
+    console.log(card.body, '--------------------------------@@@');
+
     for (const offer of offers.body.items) {
       if (offer.status != 'APPROVED') continue;
 
@@ -301,6 +315,7 @@ export const hire = async (request, data) => {
         amount: offer.assignment_total,
         currency: data.projects.objs[i].payment_currency,
         service: 'STRIPE',
+        source: card.body.id,
         meta: {
           project_id: data.projects.objs[i].id,
         },

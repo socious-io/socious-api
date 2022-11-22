@@ -49,6 +49,11 @@ const getAll = async (userId, identityId) => {
   return rows;
 };
 
+// TODO: process commission flow
+const commissionFee = (identity) => {
+  return identity.type === Data.IdentityType.USER ? 0.1 : 0.03;
+};
+
 const permissioned = async (identity, userId) => {
   switch (identity.type) {
     case Data.IdentityType.ORG:
@@ -67,4 +72,5 @@ export default {
   getAll,
   getByIds,
   permissioned,
+  commissionFee,
 };

@@ -2939,9 +2939,9 @@ paths:
           content:
             application/json: {}
 
-  /payments/projects/:project_id:
+  /payments/offers/:offer_id:
     parameters:
-      - name: project_id
+      - name: offer_id
         in: path
         schema:
           type: string
@@ -2949,7 +2949,7 @@ paths:
     post:
       tags:
         - payments
-      summary: pay project escrow
+      summary: pay offer escrow
       security:
         - bearerAuth: []
       requestBody:

@@ -30,6 +30,23 @@ export const get = async (id) => {
   `);
 };
 
+export const getByOffer = async (offerId) => {
+  return app.db.get(sql`
+  SELECT 
+    m.*,
+    row_to_json(a.*) AS applicant,
+    row_to_json(p.*) AS project,
+    row_to_json(i1.*) AS assignee,
+    row_to_json(i2.*) AS assigner
+  FROM missions m
+  JOIN applicants a ON a.id=m.applicant_id
+  JOIN projects p ON p.id=m.project_id
+  JOIN identities i1 ON i1.id=m.assignee_id
+  JOIN identities i2 ON i2.id=m.assigner_id
+  WHERE m.offer_id=${offerId}
+  `);
+};
+
 export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
   const {rows} = await app.db.query(sql`
     SELECT

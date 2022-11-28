@@ -4,7 +4,7 @@ import {loginRequired} from '../utils/middlewares/authorization.js';
 import Payment from '../services/payments/index.js';
 import Identity from '../models/identity/index.js';
 import Project from '../models/project/index.js';
-import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
+import {checkIdParams, offerer} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/middlewares/requests.js';
 
 export const router = new Router();
@@ -19,21 +19,22 @@ router.post('/donate', loginRequired, async (ctx) => {
 });
 
 router.post(
-  '/projects/:id',
+  '/offers/:id',
   loginRequired,
   checkIdParams,
-  projectPermission,
+  offerer,
   async (ctx) => {
-    await validate.PaymentSchema.validateAsync(ctx.request.body);
-
-    const project = await Project.get(ctx.params.id);
+    await validate.EscrowSchema.validateAsync(ctx.request.body);
 
     ctx.body = await Payment.charge(ctx.identity.id, {
       ...ctx.request.body,
-      currency: project.currency,
+      currency: ctx.offer.project.currency,
+      amount: ctx.offer.total_assignment,
+      description: ctx.offer.project.name,
       meta: {
-        project_name: project.name,
-        project_id: project.id,
+        project_name: ctx.offer.project.name,
+        project_id: ctx.offer.project.id,
+        offer_id: ctx.offer.id
       },
     });
 
@@ -41,7 +42,13 @@ router.post(
     const amount =
       ctx.body.amount - ctx.body.amount * Identity.commissionFee(ctx.identity);
 
-    await Payment.escrow(ctx.body.id, project.currency, project.id, amount);
+    await Payment.escrow({
+      trx_id: ctx.body.id, 
+      currency: ctx.offer.project.currency,
+      project_id: ctx.offer.project.id,
+      offer_id: ctx.offer.id,
+      amount
+    });
   },
 );
 

@@ -1,4 +1,4 @@
-const stripe = require('stripe')('sk_test_51L8MQWFiHSKRe5D1tH0t3GioOvqdQbVZY27cOkcvwGts7LNPW8Ric1pkLZZk0R1lToYaFE20oM7mHFJBhFYMJB6r00mXaXXUZZ');
+const stripe = require('stripe')('sk_test_51M5Ka2LQaOCNi3AqRtBUIWHmYhP2NyTLmiMWDnDwmZCX8jegvz8TQTLj9H7E5S9qMZFDdwsL0UhSzjVBd9wUolzU00BRWCddL7');
 
 
 const main = async () => {
@@ -17,6 +17,7 @@ const main = async () => {
     }
   });
 
+  try {
 
   const charge = await stripe.payouts.create({
     amount: 2000,
@@ -24,8 +25,10 @@ const main = async () => {
     description: 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
   }, {stripeAccount: account.id});
 
-
   console.log(charge, '-------------------------')
+  } catch(e) {
+    console.log(e)
+  }
 
 }
 

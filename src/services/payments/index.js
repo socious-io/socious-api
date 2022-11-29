@@ -18,6 +18,7 @@ const charge = async (body) => {
 };
 
 export default {
+  stripe: Stripe.stripe,
   ...Card,
   ...Escrow,
   get,

@@ -15,7 +15,7 @@ import {
   recipient,
   checkIdParams,
 } from '../utils/middlewares/route.js';
-import { setEscrowMission } from '../services/payments/escrow.js';
+import {setEscrowMission} from '../services/payments/escrow.js';
 
 export const router = new Router();
 
@@ -70,8 +70,10 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
-  
-  const escrow = await Payment.getOpenEscrow(ctx.offer.id, ctx.offer.assignment_total);
+  const escrow = await Payment.getOpenEscrow(
+    ctx.offer.id,
+    ctx.offer.assignment_total,
+  );
 
   if (
     escrow.amount < ctx.offer.assignment_total &&
@@ -81,9 +83,9 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
 
   ctx.body = await Offer.hire(ctx.params.id);
 
-  const mission = await Mission.getByOffer(ctx.offer.id)
+  const mission = await Mission.getByOffer(ctx.offer.id);
 
-  await setEscrowMission(escrow.id, mission.id)
+  await setEscrowMission(escrow.id, mission.id);
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,
@@ -91,5 +93,4 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
     parentId: ctx.offer.project_id,
     identity: ctx.identity,
   });
-  
 });

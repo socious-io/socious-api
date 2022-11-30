@@ -1,10 +1,10 @@
 import Router from '@koa/router';
-import {validate} from '@socious/data';
+import Data, {validate} from '@socious/data';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import Payment from '../services/payments/index.js';
+import OAuthConnects from '../services/oauth_connects/index.js';
 import Identity from '../models/identity/index.js';
-import Project from '../models/project/index.js';
-import {checkIdParams, offerer} from '../utils/middlewares/route.js';
+import {checkIdParams, offerer, assignee} from '../utils/middlewares/route.js';
 import {paginate} from '../utils/middlewares/requests.js';
 
 export const router = new Router();
@@ -34,7 +34,7 @@ router.post(
       meta: {
         project_name: ctx.offer.project.name,
         project_id: ctx.offer.project.id,
-        offer_id: ctx.offer.id
+        offer_id: ctx.offer.id,
       },
     });
 
@@ -43,14 +43,30 @@ router.post(
       ctx.body.amount - ctx.body.amount * Identity.commissionFee(ctx.identity);
 
     await Payment.escrow({
-      trx_id: ctx.body.id, 
+      trx_id: ctx.body.id,
       currency: ctx.offer.project.currency,
       project_id: ctx.offer.project.id,
       offer_id: ctx.offer.id,
-      amount
+      amount,
     });
   },
 );
+
+
+router.post(
+  '/missions/:id/payout',
+  loginRequired,
+  checkIdParams,
+  assignee,
+  async (ctx) => {
+    const profile = await OAuthConnects.profile(
+      ctx.identity.id,
+      Data.OAuthProviders.STRIPE,
+    );
+    
+  }
+)
+
 
 router.post('/cards', loginRequired, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body);

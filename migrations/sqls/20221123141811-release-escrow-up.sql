@@ -1,4 +1,5 @@
 ALTER TABLE escrows 
+  ADD COLUMN release_id text,
   ADD COLUMN mission_id uuid,
   ADD COLUMN offer_id uuid NOT NULL;
 

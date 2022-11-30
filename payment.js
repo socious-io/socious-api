@@ -1,8 +1,8 @@
-const stripe = require('stripe')('sk_test_51M5Ka2LQaOCNi3AqRtBUIWHmYhP2NyTLmiMWDnDwmZCX8jegvz8TQTLj9H7E5S9qMZFDdwsL0UhSzjVBd9wUolzU00BRWCddL7');
-
+const stripe = require('stripe')(
+  'sk_test_51M5Ka2LQaOCNi3AqRtBUIWHmYhP2NyTLmiMWDnDwmZCX8jegvz8TQTLj9H7E5S9qMZFDdwsL0UhSzjVBd9wUolzU00BRWCddL7',
+);
 
 const main = async () => {
-
   const account = await stripe.accounts.create({
     country: 'US',
     type: 'standard',
@@ -14,25 +14,25 @@ const main = async () => {
       account_holder_type: 'individual',
       routing_number: '110000000',
       account_number: '000123456789',
-    }
+    },
   });
 
   try {
+    const charge = await stripe.payouts.create(
+      {
+        amount: 2000,
+        currency: 'usd',
+        description:
+          'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
+      },
+      {stripeAccount: account.id},
+    );
 
-  const charge = await stripe.payouts.create({
-    amount: 2000,
-    currency: 'usd',
-    description: 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
-  }, {stripeAccount: account.id});
-
-  console.log(charge, '-------------------------')
-  } catch(e) {
-    console.log(e)
+    console.log(charge, '-------------------------');
+  } catch (e) {
+    console.log(e);
   }
-
-}
-
-
+};
 
 main()
   .then(() => {

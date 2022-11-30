@@ -2,7 +2,13 @@ import sql from 'sql-template-tag';
 import {app} from '../../index.js';
 import {EntryError} from '../../utils/errors.js';
 
-export const escrow = async ({trx_id, project_id, offer_id, currency, amount}) => {
+export const escrow = async ({
+  trx_id,
+  project_id,
+  offer_id,
+  currency,
+  amount,
+}) => {
   try {
     const rows = await app.db.query(sql`
     INSERT INTO escrows (project_id, payment_id, offer_id, amount, currency)
@@ -27,11 +33,19 @@ export const setEscrowMission = async (id, missionId) => {
   } catch (err) {
     throw EntryError(err.message);
   }
-}
+};
 
 export const totalEscrow = async (projectId) => {
   const row = await app.db.get(sql`
     SELECT SUM(amount) FROM escrows WHERE project_id=${projectId} AND released_at IS NULL
+  `);
+
+  return row.sum;
+};
+
+export const releaseEscrow = async (id, releaseId) => {
+  const row = await app.db.get(sql`
+    UPDATE escrows SET release_id=${releaseId}, released_at=NOW() WHERE id=${id}
   `);
 
   return row.sum;

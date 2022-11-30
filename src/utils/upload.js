@@ -15,9 +15,9 @@ const makeExtention = (contentType) => {
     case Data.MediaContentType.PDF:
       return '.pdf';
     case Data.MediaContentType.DOC:
-      return '.doc'
+      return '.doc';
     case Data.MediaContentType.DOCX:
-        return '.docx'
+      return '.docx';
     default:
       throw Error('Unkown content type');
   }

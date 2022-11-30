@@ -8,10 +8,14 @@ const get = async (id, identityId) => {
   return app.db.get(sql`
     SELECT i.*,
     (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
-    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status
     FROM identities i
     LEFT JOIN follows er ON er.follower_identity_id=${identityId} AND er.following_identity_id=i.id
     LEFT JOIN follows ing ON ing.following_identity_id=${identityId} AND ing.follower_identity_id=i.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=${id} AND c.requester_id=${identityId}) OR
+      (c.requested_id=${identityId} AND c.requester_id=${id})
     WHERE i.id=${id}
   `);
 };
@@ -45,6 +49,11 @@ const getAll = async (userId, identityId) => {
   return rows;
 };
 
+// TODO: process commission flow
+const commissionFee = (identity) => {
+  return identity.type === Data.IdentityType.USER ? 0.1 : 0.03;
+};
+
 const permissioned = async (identity, userId) => {
   switch (identity.type) {
     case Data.IdentityType.ORG:
@@ -63,4 +72,5 @@ export default {
   getAll,
   getByIds,
   permissioned,
+  commissionFee,
 };

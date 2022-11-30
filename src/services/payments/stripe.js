@@ -1,8 +1,8 @@
-import {app} from '../../index.js';
 import Config from '../../config.js';
 import Data from '@socious/data';
 import Stripe from 'stripe';
-import {create, setTransaction, complete, cancel} from './transaction.js';
+import {getCard, responseCard, updateCardBrand} from './card.js';
+import {create, setCompleteTrx} from './transaction.js';
 
 const stripe = Stripe(Config.payments.stripe.secret_key);
 
@@ -16,86 +16,43 @@ const stripeAmount = (amount, currency) => {
   return amount;
 };
 
-export const checkout = async ({
-  identity_id,
-  name,
-  description,
-  amount,
-  currency,
-  meta,
-  callback,
-}) => {
-  const product = await stripe.products.create({
-    name,
-    description,
+export const charge = async (
+  identityId,
+  {amount, currency, meta, source, description},
+) => {
+  let card = getCard(source, identityId);
+
+  const token = await stripe.token.create({
+    number: card.number,
+    exp_month: card.exp_month,
+    exp_year: card.exp_year,
+    cvc: card.cvc,
   });
 
-  const price = await stripe.prices.create({
-    unit_amount: stripeAmount(amount),
-    currency: currency,
-    product: product.id,
+  card = await updateCardBrand(card.id, token.card.brand);
+
+  const trx = await create({
+    identityId,
+    amount,
+    currency,
+    service: Data.PaymentService.STRIPE,
+    meta,
+    source: card.id,
   });
-  return app.db.with(async (client) => {
-    await client.query('BEGIN');
-    try {
-      const trx = await create(
-        {
-          identity_id,
-          amount,
-          currency,
-          service: Data.PaymentService.STRIPE,
-          meta,
-        },
-        client,
-      );
 
-      const session = await stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price: price.id,
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: `${callback}?id=${trx.id}&status=success`,
-        cancel_url: `${callback}?id=${trx.id}&status=cancel`,
-      });
-
-      await setTransaction(trx.id, session.id, client);
-      await client.query('COMMIT');
-
-      return {
-        id: trx.id,
-        amount: trx.amount,
-        currency: trx.currency,
-        url: session.url,
-      };
-    } catch (err) {
-      await client.query('ROLLBACK');
-      throw err;
-    }
+  const charge = await stripe.charge.create({
+    amount: stripeAmount(amount, currency),
+    currency,
+    source: token,
+    description: description,
   });
-};
 
-export const expire = async (trx) => {
-  await stripe.checkout.sessions.expire(trx.transaction_id);
-  await cancel(trx.id);
-};
+  await setCompleteTrx(trx.id, charge.id);
 
-export const verify = async (trx) => {
-  const session = await stripe.checkout.sessions.retrieve(trx.transaction_id);
-
-  const isSuccess =
-    session.payment_status === 'paid' &&
-    session.amount_total === trx.amount &&
-    session.currency === trx.currency.toLowerCase() &&
-    session.status === 'complete';
-
-  if (isSuccess) {
-    await complete(trx.id);
-  } else {
-    await expire(trx.id);
-  }
-
-  return isSuccess;
+  return {
+    id: trx.id,
+    amount: trx.amount,
+    currency: trx.currency,
+    card: responseCard(card),
+  };
 };

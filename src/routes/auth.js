@@ -64,6 +64,11 @@ router.post('/forget-password', async (ctx) => {
   ctx.body = {message: 'success'};
 });
 
+router.post('/resend-verify-code', async (ctx) => {
+  await Auth.resendVerifyCode(ctx.request.body);
+  ctx.body = {message: 'success'};
+});
+
 router.post('/preregister', async (ctx) => {
   ctx.body = await Auth.preregister(ctx.request.body);
 });

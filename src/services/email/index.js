@@ -50,7 +50,9 @@ const sendBySendgrid = async ({to, subject, html}) => {
     ],
   };
 
-  await sendgrid.send(body);
+  const result = await sendgrid.send(body);
+
+  logger.info(JSON.stringify(result))
 
   return body;
 };

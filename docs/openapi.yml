@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Socious-API
-  version: 2.2.3
+  version: 2.2.4
 servers:
   - url: https://dev.socious.io/api/v2/
   - url: https://socious.io/api/v2/
@@ -59,6 +59,8 @@ components:
         - ASSIGNEE_CANCELED
         - ASSIGNER_CANCELED
         - ASSIGNER_CONFIRMED
+        - CONNECT
+        - MEMBERED
     location_type:
       type: string
       title: Location Type
@@ -258,6 +260,23 @@ paths:
       tags:
         - auth
       summary: forget password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: '{{user_login}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/resend-verify-code:
+    post:
+      tags:
+        - auth
+      summary: resend verify code
       requestBody:
         content:
           application/json:
@@ -2661,3 +2680,291 @@ paths:
                     region_iso: NY
                     subregion_name: null
                     subregion_iso: null
+  /connections:
+    get:
+      tags:
+        - connect
+      summary: get connections
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connections/{connect_id}:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - connect
+      summary: get a connect obj
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{identity_id}:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: send connect request to an identity
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              text: please connect to me
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{connect_id}/accept:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: accept connect request
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{connect_id}/block:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: block connect request
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{identity_id}/block/direct:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: block an identity
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards:
+    get:
+      tags:
+        - payments
+      summary: get identities cards
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - payments
+      summary: add new card
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                holder_name: test text
+                numbers: '4242424242424242'
+                exp_month: 11
+                exp_year: 2023
+                cvc: '314'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards/update/:card_id:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: update card
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                holder_name: test text
+                numbers: '4242424242424242'
+                exp_month: 11
+                exp_year: 2023
+                cvc: '314'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/cards/remove/:card_id:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: remove card
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards/:card_id:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - payments
+      summary: get a card
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/payment_id:
+    parameters:
+      - name: payment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - payments
+      summary: get a payment details
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/donate:
+    post:
+      tags:
+        - payments
+      summary: donate
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                amount: 2000
+                service: 'STRIPE'
+                source: <card_id>
+                currency: USD
+                description: test desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/projects/:project_id:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: pay project escrow
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                amount: 2000
+                service: 'STRIPE'
+                source: <card_id>
+                currency: USD
+                description: test desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}

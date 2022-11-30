@@ -26,6 +26,7 @@ import {router as mission} from './mission.js';
 import {router as offer} from './offer.js';
 import {router as site} from './site.js';
 import {router as testEmails} from './test-emails.js';
+import {router as connect} from './connect.js';
 import {router as geo} from './geo.js';
 
 export default (app) => {
@@ -54,23 +55,26 @@ export default (app) => {
     auth.routes(),
     auth.allowedMethods(),
   );
-  blueprint.use('/applicants', applicant.routes(), applicant.allowedMethods());
-  blueprint.use('/chats', chat.routes(), chat.allowedMethods());
-  blueprint.use('/devices', device.routes(), device.allowedMethods());
-  blueprint.use('/follows', follow.routes(), follow.allowedMethods());
-  blueprint.use('/geo', geo.routes(), geo.allowedMethods());
+  blueprint.use('/user', user.routes(), user.allowedMethods());
   blueprint.use('/identities', identity.routes(), identity.allowedMethods());
-  blueprint.use('/media', media.routes(), media.allowedMethods());
-  blueprint.use('/missions', mission.routes(), mission.allowedMethods());
-  blueprint.use('/notifications', notif.routes(), notif.allowedMethods());
-  blueprint.use('/offers', offer.routes(), offer.allowedMethods());
   blueprint.use('/orgs', org.routes(), org.allowedMethods());
-  blueprint.use('/payments', payment.routes(), payment.allowedMethods());
   blueprint.use('/posts', post.routes(), post.allowedMethods());
   blueprint.use('/projects', project.routes(), project.allowedMethods());
-  blueprint.use('/search', search.routes(), search.allowedMethods());
+  blueprint.use('/applicants', applicant.routes(), applicant.allowedMethods());
+  blueprint.use('/follows', follow.routes(), follow.allowedMethods());
+  blueprint.use('/notifications', notif.routes(), notif.allowedMethods());
+
+  blueprint.use('/chats', chat.routes(), chat.allowedMethods());
+  blueprint.use('/devices', device.routes(), device.allowedMethods());
+
+  blueprint.use('/media', media.routes(), media.allowedMethods());
   blueprint.use('/skills', skill.routes(), skill.allowedMethods());
-  blueprint.use('/user', user.routes(), user.allowedMethods());
+  blueprint.use('/search', search.routes(), search.allowedMethods());
+  blueprint.use('/payments', payment.routes(), payment.allowedMethods());
+  blueprint.use('/missions', mission.routes(), mission.allowedMethods());
+  blueprint.use('/offers', offer.routes(), offer.allowedMethods());
+  blueprint.use('/connections', connect.routes(), connect.allowedMethods());
+  blueprint.use('/geo', geo.routes(), geo.allowedMethods());
 
   if (Config.mail.allowTest)
     blueprint.use(

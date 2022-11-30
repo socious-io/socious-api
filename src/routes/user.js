@@ -6,7 +6,7 @@ import Auth from '../services/auth/index.js';
 import Mission from '../models/mission/index.js';
 import Offer from '../models/offer/index.js';
 import Skill from '../models/skill/index.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {
   loginOptional,
   loginRequired,

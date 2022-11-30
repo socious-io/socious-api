@@ -6,11 +6,14 @@ import {
   loginRequired,
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, orgMember} from '../utils/middlewares/route.js';
-import {paginate} from '../utils/requests.js';
-export const router = new Router();
+import {paginate} from '../utils/middlewares/requests.js';
 import {ValidationError} from '../utils/errors.js';
 import config from '../config.js';
 import {isTestEmail} from '../services/email/index.js';
+import Notif from '../models/notification/index.js';
+import Event from '../services/events/index.js';
+
+export const router = new Router();
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id);
@@ -69,6 +72,13 @@ router.post(
   async (ctx) => {
     await Org.addMember(ctx.params.id, ctx.params.user_id);
     ctx.body = {message: 'success'};
+
+    Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
+      type: Notif.Types.MEMBERED,
+      refId: ctx.body.id,
+      parentId: ctx.params.id,
+      identity: ctx.identity,
+    });
   },
 );
 

@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import {validate} from '@socious/data';
 import Event from '../services/events/index.js';
 import Chat from '../models/chat/index.js';
-import {paginate} from '../utils/requests.js';
+import {paginate} from '../utils/middlewares/requests.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {NotImplementedError} from '../utils/errors.js';
 import {chatPermission, checkIdParams} from '../utils/middlewares/route.js';

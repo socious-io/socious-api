@@ -45,6 +45,30 @@ test('search projects', async () => {
   });
 });
 
+test('projects with filter', async () => {
+  const response = await request
+    .post('/search')
+    .set('Authorization', data.users[0].access_token)
+    .send({
+      type: 'projects',
+      filter: {
+        payment_currency: 'USD',
+      },
+    });
+  expect(response.status).toBe(200);
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        identity_meta: expect.any(Object),
+      },
+    ],
+  });
+});
+
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);
   await app.db.query(`DELETE FROM organizations`);

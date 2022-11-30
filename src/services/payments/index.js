@@ -1,38 +1,16 @@
 import {NotImplementedError} from '../../utils/errors.js';
 import Data from '@socious/data';
-import {get} from './transaction.js';
+import {get, all} from './transaction.js';
+import * as Card from './card.js';
+import * as Escrow from './escrow.js';
 import * as Stripe from './stripe.js';
 
-const checkout = async (body) => {
+const charge = async (body) => {
   if (!body.currency) body.currency = Data.PaymentCurrency.USD;
 
   switch (body.service) {
     case 'STRIPE':
-      return Stripe.checkout(body);
-
-    default:
-      throw new NotImplementedError();
-  }
-};
-
-const verify = async (trxId) => {
-  const trx = await get(trxId);
-
-  switch (trx.service) {
-    case Data.PaymentService.STRIPE:
-      return Stripe.verify(trx);
-
-    default:
-      throw new NotImplementedError();
-  }
-};
-
-const cancel = async (trxId) => {
-  const trx = await get(trxId);
-
-  switch (trx.service) {
-    case 'STRIPE':
-      return Stripe.cancel(trx);
+      return Stripe.charge(body);
 
     default:
       throw new NotImplementedError();
@@ -40,8 +18,9 @@ const cancel = async (trxId) => {
 };
 
 export default {
+  ...Card,
+  ...Escrow,
   get,
-  checkout,
-  verify,
-  cancel,
+  all,
+  charge,
 };

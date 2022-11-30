@@ -4,6 +4,7 @@ import Applicant from '../models/applicant/index.js';
 import Offer from '../models/offer/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
+import Payment from '../services/payments/index.js';
 import Data from '@socious/data';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
@@ -67,8 +68,10 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
+  const totalEscrow = await Payment.totalEscrow(ctx.offer.project.id);
+
   if (
-    ctx.offer.project.total_escrow_amount < ctx.offer.assignment_total &&
+    totalEscrow < ctx.offer.assignment_total &&
     ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER
   )
     throw new PermissionError();

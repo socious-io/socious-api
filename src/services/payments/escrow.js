@@ -18,20 +18,20 @@ export const escrow = async ({
 
     return rows[0];
   } catch (err) {
-    throw EntryError(err.message);
+    throw new EntryError(err.message);
   }
 };
 
 export const setEscrowMission = async (id, missionId) => {
   try {
     const rows = await app.db.query(sql`
-      UPDATE escrwos SET mission_id=${missionId}  WHERE id=${id}
+      UPDATE escrows SET mission_id=${missionId}  WHERE id=${id}
       RETURNING *
     `);
 
     return rows[0];
   } catch (err) {
-    throw EntryError(err.message);
+    throw new EntryError(err.message);
   }
 };
 
@@ -41,6 +41,12 @@ export const totalEscrow = async (projectId) => {
   `);
 
   return row.sum;
+};
+
+export const getEscrow = async (missionId) => {
+  return app.db.get(
+    sql`SELECT * FROM escrows WHERE missionId=${missionId} AND released_at IS NULL`,
+  );
 };
 
 export const releaseEscrow = async (id, releaseId) => {

@@ -57,10 +57,8 @@ export const charge = async (
   };
 };
 
-
-
 export const payout = async ({amount, currency, description, destination}) => {
-  return await stripe.payouts.create(
+  return stripe.payouts.create(
     {
       amount: stripeAmount(amount, currency),
       currency,
@@ -68,5 +66,4 @@ export const payout = async ({amount, currency, description, destination}) => {
     },
     {stripeAccount: destination},
   );
-
-}
+};

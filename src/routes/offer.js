@@ -70,6 +70,7 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
+  console.log('------------------------------ 1')
   const escrow = await Payment.getOpenEscrow(
     ctx.offer.id,
     ctx.offer.assignment_total,
@@ -81,11 +82,23 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
   )
     throw new PermissionError();
 
+  console.log('------------------------------ 2')
+
   ctx.body = await Offer.hire(ctx.params.id);
 
-  const mission = await Mission.getByOffer(ctx.offer.id);
+  const mission = await Mission.insert({
+    project_id: ctx.offer.project.id,
+    offer_id: ctx.offer.id,
+    applicant_id: ctx.offer.applicant_id,
+    assignee_id: ctx.offer.recipient_id,
+    assigner_id: ctx.identity.id
+  })
+
+  console.log(mission, '--------------')
 
   await setEscrowMission(escrow.id, mission.id);
+
+  console.log('------------------------------ 5')
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,

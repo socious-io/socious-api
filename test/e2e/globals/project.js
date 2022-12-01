@@ -1,3 +1,4 @@
+import Payment from '../../../src/services/payments/index.js'
 import {
   create as createTrx,
   complete as completeTrx,
@@ -303,8 +304,6 @@ export const hire = async (request, data) => {
         cvc: '314',
       });
 
-    console.log(card.body, '--------------------------------@@@');
-
     for (const offer of offers.body.items) {
       if (offer.status != 'APPROVED') continue;
 
@@ -320,7 +319,16 @@ export const hire = async (request, data) => {
           project_id: data.projects.objs[i].id,
         },
       });
+
       await completeTrx(paymentId);
+
+      await Payment.escrow({
+        trx_id: paymentId,
+        currency: data.projects.objs[i].payment_currency,
+        project_id: offer.project_id,
+        offer_id: offer.id,
+        amount: offer.assignment_total,
+      });
 
       const response = await request
         .post(`/offers/${offer.id}/hire`)

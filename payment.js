@@ -27,8 +27,6 @@ const main = async () => {
       },
       {stripeAccount: account.id},
     );
-
-    console.log(charge, '-------------------------');
   } catch (e) {
     console.log(e);
   }

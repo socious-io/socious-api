@@ -1,4 +1,5 @@
-import Payment from '../../../src/services/payments/index.js'
+import Payment from '../../../src/services/payments/index.js';
+import Data from '@socious/data';
 import {
   create as createTrx,
   complete as completeTrx,
@@ -376,7 +377,7 @@ export const confirm = async (request, data) => {
       .set('Current-Identity', data.orgs[0].id);
 
     for (const mission of missions.body.items) {
-      if (mission.status != 'COMPLETE') continue;
+      if (mission.status != Data.MissionStatus.COMPLETE) continue;
 
       const response = await request
         .post(`/missions/${mission.id}/confirm`)

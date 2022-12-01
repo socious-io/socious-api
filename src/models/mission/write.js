@@ -4,9 +4,15 @@ import {app} from '../../index.js';
 
 import {get} from './read.js';
 
-export const insert = async ({project_id, assignee_id, assigner_id, offer_id, applicant_id}) => {
+export const insert = async ({
+  project_id,
+  assignee_id,
+  assigner_id,
+  offer_id,
+  applicant_id,
+}) => {
   try {
-  const {rows} = await app.db.query(sql`
+    const {rows} = await app.db.query(sql`
     INSERT INTO missions (project_id, assignee_id, assigner_id, offer_id, applicant_id) VALUES (
       ${project_id},
       ${assignee_id},
@@ -14,13 +20,12 @@ export const insert = async ({project_id, assignee_id, assigner_id, offer_id, ap
       ${offer_id},
       ${applicant_id})
     RETURNING *
-    `)
-  return rows[0]
-  }catch (err) {
-    throw new EntryError(err.message)
+    `);
+    return rows[0];
+  } catch (err) {
+    throw new EntryError(err.message);
   }
-
-}
+};
 
 export const complete = async (missionId) => {
   try {

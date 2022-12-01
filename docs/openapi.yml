@@ -306,6 +306,45 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /auth/stripe:
+    post:
+      tags:
+        - auth
+      summary: stripe connect
+      description:
+        please make sure we created 2 different link with this bottom template link for 2 different envirement testing (dev.socious.io) and production we may have
+        same redirect path with dev.socious.io/app/.. and socious.io/app/...  domain but CLIENT_ID would be different on each env and redirect_url must be register on Stripe console
+        https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&scope=read_write&redirect_uri=https://socious.io/app/{{STRIPE_CLIENT_REDIRECT_PATH}}
+        after client complete login or register Stripe would redirect client to our webapp redirect_url after that client app if it was success connect
+        must provide the code to BE and BE would result account id and user status for paying out
+        this would help to know Stripe oauth -> https://stripe.com/docs/connect/oauth-reference
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                code: '{{oauth_code}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  account_id: '{{stripe_account_id}}'
+                  status: '{{stripe_onboarding_status}}'
+  /auth/stripe/profile:
+    get:
+      tags:
+        - auth
+      summary: stripe connect profile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects:
     get:
       tags:
@@ -2939,9 +2978,9 @@ paths:
           content:
             application/json: {}
 
-  /payments/projects/:project_id:
+  /payments/offers/:offer_id:
     parameters:
-      - name: project_id
+      - name: offer_id
         in: path
         schema:
           type: string
@@ -2949,7 +2988,7 @@ paths:
     post:
       tags:
         - payments
-      summary: pay project escrow
+      summary: pay offer escrow
       security:
         - bearerAuth: []
       requestBody:
@@ -2963,6 +3002,25 @@ paths:
                 source: <card_id>
                 currency: USD
                 description: test desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/missions/:mission_id/payout:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: pay offer escrow
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Successful response

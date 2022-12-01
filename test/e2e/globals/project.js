@@ -1,3 +1,5 @@
+import Payment from '../../../src/services/payments/index.js';
+import Data from '@socious/data';
 import {
   create as createTrx,
   complete as completeTrx,
@@ -303,8 +305,6 @@ export const hire = async (request, data) => {
         cvc: '314',
       });
 
-    console.log(card.body, '--------------------------------@@@');
-
     for (const offer of offers.body.items) {
       if (offer.status != 'APPROVED') continue;
 
@@ -320,7 +320,16 @@ export const hire = async (request, data) => {
           project_id: data.projects.objs[i].id,
         },
       });
+
       await completeTrx(paymentId);
+
+      await Payment.escrow({
+        trx_id: paymentId,
+        currency: data.projects.objs[i].payment_currency,
+        project_id: offer.project_id,
+        offer_id: offer.id,
+        amount: offer.assignment_total,
+      });
 
       const response = await request
         .post(`/offers/${offer.id}/hire`)
@@ -368,7 +377,7 @@ export const confirm = async (request, data) => {
       .set('Current-Identity', data.orgs[0].id);
 
     for (const mission of missions.body.items) {
-      if (mission.status != 'COMPLETE') continue;
+      if (mission.status != Data.MissionStatus.COMPLETE) continue;
 
       const response = await request
         .post(`/missions/${mission.id}/confirm`)

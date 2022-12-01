@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import {getCard, responseCard, updateCardBrand} from './card.js';
 import {create, setCompleteTrx} from './transaction.js';
 
-const stripe = Stripe(Config.payments.stripe.secret_key);
+export const stripe = Stripe(Config.payments.stripe.secret_key);
 
 const stripeAmount = (amount, currency) => {
   switch (currency) {
@@ -55,4 +55,15 @@ export const charge = async (
     currency: trx.currency,
     card: responseCard(card),
   };
+};
+
+export const payout = async ({amount, currency, description, destination}) => {
+  return stripe.payouts.create(
+    {
+      amount: stripeAmount(amount, currency),
+      currency,
+      description,
+    },
+    {stripeAccount: destination},
+  );
 };

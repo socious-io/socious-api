@@ -311,13 +311,12 @@ paths:
       tags:
         - auth
       summary: stripe connect
-      description:
-        please make sure we created 2 different link with this bottom template link for 2 different envirement testing (dev.socious.io) and production we may have
+      description: 'please make sure we created 2 different link with this bottom template link for 2 different envirement testing (dev.socious.io) and production we may have
         same redirect path with dev.socious.io/app/.. and socious.io/app/...  domain but CLIENT_ID would be different on each env and redirect_url must be register on Stripe console
         https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&scope=read_write&redirect_uri=https://socious.io/app/{{STRIPE_CLIENT_REDIRECT_PATH}}
         after client complete login or register Stripe would redirect client to our webapp redirect_url after that client app if it was success connect
         must provide the code to BE and BE would result account id and user status for paying out
-        this would help to know Stripe oauth -> https://stripe.com/docs/connect/oauth-reference
+        this would help to know Stripe oauth -> https://stripe.com/docs/connect/oauth-reference'
       requestBody:
         content:
           application/json:

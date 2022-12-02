@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import {PermissionError} from '../utils/errors.js';
 import Applicant from '../models/applicant/index.js';
 import Offer from '../models/offer/index.js';
+import Mission from '../models/mission/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import Payment from '../services/payments/index.js';
@@ -14,6 +15,7 @@ import {
   recipient,
   checkIdParams,
 } from '../utils/middlewares/route.js';
+import {setEscrowMission} from '../services/payments/escrow.js';
 
 export const router = new Router();
 
@@ -68,15 +70,28 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
-  const totalEscrow = await Payment.totalEscrow(ctx.offer.project.id);
+  const escrow = await Payment.getOpenEscrow(
+    ctx.offer.id,
+    ctx.offer.assignment_total,
+  );
 
   if (
-    totalEscrow < ctx.offer.assignment_total &&
+    escrow.amount < ctx.offer.assignment_total &&
     ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER
   )
     throw new PermissionError();
 
-  ctx.body = Offer.hire(ctx.params.id);
+  ctx.body = await Offer.hire(ctx.params.id);
+
+  const mission = await Mission.insert({
+    project_id: ctx.offer.project.id,
+    offer_id: ctx.offer.id,
+    applicant_id: ctx.offer.applicant_id,
+    assignee_id: ctx.offer.recipient_id,
+    assigner_id: ctx.identity.id,
+  });
+
+  await setEscrowMission(escrow.id, mission.id);
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,

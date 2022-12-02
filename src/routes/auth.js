@@ -1,6 +1,9 @@
 import Router from '@koa/router';
 import Debug from 'debug';
 import Auth from '../services/auth/index.js';
+import Data from '@socious/data';
+import OAuthConnects from '../services/oauth_connects/index.js';
+import {loginRequired} from '../utils/middlewares/authorization.js';
 
 export const router = new Router();
 
@@ -71,4 +74,21 @@ router.post('/resend-verify-code', async (ctx) => {
 
 router.post('/preregister', async (ctx) => {
   ctx.body = await Auth.preregister(ctx.request.body);
+});
+
+router.post('/stripe', loginRequired, async (ctx) => {
+  await Data.OAuthStripeSchema.validateAsync(ctx.request.body);
+
+  ctx.body = await OAuthConnects.authorize(
+    ctx.identity.id,
+    Data.OAuthProviders.STRIPE,
+    ctx.request.body,
+  );
+});
+
+router.get('/stripe/profile', loginRequired, async (ctx) => {
+  ctx.body = await OAuthConnects.profile(
+    ctx.identity.id,
+    Data.OAuthProviders.STRIPE,
+  );
 });

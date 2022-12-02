@@ -26,9 +26,6 @@ ALTER TABLE escrows DROP COLUMN topup_id;
 DROP TABLE topups;
 
 
-ALTER TABLE escrows ADD COLUMN identity_id uuid NOT NULL;
-ALTER TABLE escrows ADD CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE SET NULL;
-
 DROP TRIGGER project_escrow_insert ON escrows;
 DROP TRIGGER project_escrow_update ON escrows;
 

@@ -43,7 +43,7 @@
     "@sendgrid/mail": "^7.7.0",
     "@socious/data": "^1.0.35",
     "agentkeepalive": "^4.2.1",
-    "aws-sdk": "^2.1262.0",
+    "aws-sdk": "^2.1267.0",
     "axios": "^1.2.0",
     "bcrypt": "^5.1.0",
     "chalk": "^5.1.2",

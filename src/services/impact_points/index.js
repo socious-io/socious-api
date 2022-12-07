@@ -1,11 +1,11 @@
 import {worker} from './worker.js';
 import publish from '../jobs/publish.js';
 
-const push = (mission) => {
+const calculate = (mission) => {
   publish('calculate_impact_points', {mission});
 };
 
 export default {
-  push,
+  calculate,
   worker,
 };

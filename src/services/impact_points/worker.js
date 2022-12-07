@@ -55,8 +55,8 @@ const calculate = ({
   return totalPoints + ratioPoints;
 };
 
-export const worker = async ({mission_id}) => {
-  const mission = await Mission.get(mission_id);
+export const worker = async ({mission}) => {
+  mission = await Mission.get(mission.id);
 
   if (mission !== Data.MissionStatus.CONFIRMED) {
     logger.error(`Sent not confirmed mission ${mission.id}`);
@@ -85,10 +85,12 @@ export const worker = async ({mission_id}) => {
     experience_level: mission.project.experience_level,
   });
 
+  const socialCause = mission.project.causes_tags[0];
+
   try {
     const history = await app.db.get(sql`
-      INSERT INTO impact_points_history (total_points, mission_id, identity_id)
-      VALUES (${totalPoints}, ${mission.id}, ${mission.assignee_id})
+      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category)
+      VALUES (${totalPoints}, ${mission.id}, ${mission.assignee_id}, ${socialCause}, ${Data.SocialCausesSDGMapping[socialCause]})
       RETURNING id
     `);
     logger.info(`Calculate impact point successfully ${history.id}`);

@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import Mission from '../models/mission/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
+import ImpactPoints from '../services/impact_points/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
 
 import {
@@ -58,6 +59,9 @@ router.post(
       parentId: project.id,
       identity: ctx.identity,
     });
+
+    ImpactPoints.calculate(ctx.mission);
+
   },
 );
 

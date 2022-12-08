@@ -3033,11 +3033,6 @@ paths:
         schema:
           type: string
         required: true
-      - name: id
-        in: path
-        schema:
-          type: string
-        required: true
     get:
       tags:
         - test

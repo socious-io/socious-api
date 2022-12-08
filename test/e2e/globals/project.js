@@ -4,6 +4,7 @@ import {
   create as createTrx,
   complete as completeTrx,
 } from '../../../src/services/payments/transaction.js';
+import ImpactPoints from '../../../src/services/impact_points/index.js';
 
 export const get = async (request, data) => {
   for (const project of data.projects.objs) {
@@ -385,6 +386,18 @@ export const confirm = async (request, data) => {
         .set('Current-Identity', data.orgs[0].id);
 
       expect(response.status).toBe(200);
+
+      await ImpactPoints.worker({mission});
+
+      const badges = await ImpactPoints.badges(mission.assignee_id);
+
+      expect({badges}).toMatchSnapshot({badges});
+
+      const profileRes = await request
+        .get(`/user/profile`)
+        .set('Authorization', data.users[0].access_token);
+
+      expect(profileRes.body.impact_points).toBe(3564);
     }
   }
 };

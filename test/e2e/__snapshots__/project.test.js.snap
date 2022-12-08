@@ -23,7 +23,7 @@ exports[` 2`] = `
   "geoname_id": null,
   "id": Any<String>,
   "image": null,
-  "impact_score": 0,
+  "impact_points": 0,
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
@@ -62,7 +62,7 @@ exports[` 3`] = `
   "geoname_id": null,
   "id": Any<String>,
   "image": null,
-  "impact_score": 0,
+  "impact_points": 0,
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
@@ -278,10 +278,21 @@ exports[`apply 4`] = `
 }
 `;
 
+exports[`confirm 1`] = `
+{
+  "badges": [
+    {
+      "count": 1,
+      "social_cause_category": "NO_POVERTY",
+      "total_points": 3564,
+    },
+  ],
+}
+`;
+
 exports[`create 1`] = `
 {
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tokyo",
@@ -323,7 +334,6 @@ exports[`create 1`] = `
 exports[`create 2`] = `
 {
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tehran",
@@ -367,7 +377,6 @@ exports[`get 1`] = `
   "applicants": 0,
   "applied": false,
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tokyo",
@@ -413,7 +422,6 @@ exports[`get 2`] = `
   "applicants": 0,
   "applied": false,
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tehran",
@@ -460,7 +468,6 @@ exports[`get all 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tehran",
@@ -502,7 +509,6 @@ exports[`get all 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tokyo",
@@ -667,7 +673,6 @@ exports[`get filtered 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tokyo",
@@ -723,8 +728,6 @@ exports[`offer 1`] = `
   "offer_message": "Test",
   "offer_rate": 9000,
   "offerer_id": Any<String>,
-  "payment_scheme": null,
-  "payment_type": null,
   "project_id": Any<String>,
   "recipient_id": Any<String>,
   "status": "PENDING",

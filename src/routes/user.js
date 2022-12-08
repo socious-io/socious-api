@@ -6,6 +6,7 @@ import Auth from '../services/auth/index.js';
 import Mission from '../models/mission/index.js';
 import Offer from '../models/offer/index.js';
 import Skill from '../models/skill/index.js';
+import ImpactPoints from '../services/impact_points/index.js';
 import {paginate} from '../utils/middlewares/requests.js';
 import {
   loginOptional,
@@ -147,4 +148,12 @@ router.post(
 
 router.get('/recommend', loginRequired, async (ctx) => {
   ctx.body = await User.recommend(ctx.user.id);
+});
+
+router.get('/badges', loginRequired, async (ctx) => {
+  ctx.body = {badges: await ImpactPoints.badges(ctx.identity.id)};
+});
+
+router.get('/impact-points', loginRequired, paginate, async (ctx) => {
+  ctx.body = await ImpactPoints.history(ctx.identity.id, ctx.paginate);
 });

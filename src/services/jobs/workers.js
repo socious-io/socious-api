@@ -1,6 +1,7 @@
 import {sendHtmlEmail} from '../email/index.js';
 import {simplePush} from '../fcm/index.js';
 import {worker as eventsWorker} from '../events/worker.js';
+import {worker as impactPointsWorker} from '../impact_points/worker.js';
 import logger from '../../utils/logging.js';
 import config from '../../config.js';
 import {connect, JSONCodec} from 'nats';
@@ -36,6 +37,7 @@ const register = {
   email: consumer(sendHtmlEmail),
   fcm: consumer(simplePush),
   notify: consumer(eventsWorker),
+  calculate_impact_points: consumer(impactPointsWorker),
 };
 
 for await (const [name, handler] of Object.entries(register)) {

@@ -1847,6 +1847,42 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /user/badges:
+    get:
+      tags:
+        - users
+      summary: get user badges
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/impact-points:
+    get:
+      tags:
+        - users
+      summary: get user impact points history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /identities:
     get:
       tags:

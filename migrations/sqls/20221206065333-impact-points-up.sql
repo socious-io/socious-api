@@ -61,7 +61,7 @@ CREATE TABLE impact_points_history (
   mission_id uuid,
   identity_id uuid NOT NULL,
   social_cause social_causes_type,
-  social_cause_category social_causes_categories_type,
+  social_cause_category sdg_type,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT fk_mission FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE SET NULL,
   CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES identities(id) ON DELETE CASCADE
@@ -73,6 +73,7 @@ RETURNS TRIGGER AS
 $$
 BEGIN
   UPDATE users SET impact_points = impact_points + NEW.total_points WHERE id=NEW.identity_id;
+  RETURN NEW;
 END;
 $$
 LANGUAGE PLPGSQL;

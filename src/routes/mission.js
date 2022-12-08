@@ -61,7 +61,6 @@ router.post(
     });
 
     ImpactPoints.calculate(ctx.mission);
-
   },
 );
 

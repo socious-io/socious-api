@@ -35,7 +35,7 @@ const experienceRatio = (level) => {
   }
 };
 
-const calculate = ({
+export const calculate = ({
   categories,
   total_hours,
   payment_type,
@@ -58,8 +58,8 @@ const calculate = ({
 export const worker = async ({mission}) => {
   mission = await Mission.get(mission.id);
 
-  if (mission !== Data.MissionStatus.CONFIRMED) {
-    logger.error(`Sent not confirmed mission ${mission.id}`);
+  if (mission.status !== Data.MissionStatus.CONFIRMED) {
+    logger.error(`Mission ${mission.id} is not confirmed`);
     return false;
   }
 
@@ -96,5 +96,8 @@ export const worker = async ({mission}) => {
     logger.info(`Calculate impact point successfully ${history.id}`);
   } catch (err) {
     logger.error(`Calculating impact points ${err.message}`);
+    return false;
   }
+
+  return true;
 };

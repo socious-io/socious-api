@@ -26,6 +26,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "cross-env ENV=testing node scripts/createdb.js ; db-migrate --dotenvCustomPath=test.env up --config ./migrations/database.json",
     "test": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit; npm run aftertest",
+    "test:unit": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --testPathPattern=test/unit --forceExit",
     "aftertest": "cross-env ENV=testing NEW_RELIC_ENABLED=false node scripts/dropdb.js",
     "test:watch": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --watch",
     "test:ci": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --ci --reporters='default' --reporters=jest-junit",

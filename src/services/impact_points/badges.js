@@ -33,10 +33,12 @@ export const history = async (identityId, {offset = 0, limit = 10}) => {
     COUNT(*) OVER () as total_count,
     i.*,
     row_to_json(m.*) AS mission,
-    row_to_json(p.*) AS project
+    row_to_json(p.*) AS project,
+    row_to_json(org.*) AS organization
   FROM impact_points_history i
   JOIN missions m ON m.id=i.mission_id
   JOIN projects p ON p.id=m.project_id
+  JOIN organizations org ON org.id=p.identity_id
   WHERE identity_id=${identityId}
   LIMIT ${limit} OFFSET ${offset}
   ORDER BY created_at DESC

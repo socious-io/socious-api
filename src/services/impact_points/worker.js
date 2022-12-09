@@ -5,6 +5,7 @@ import Offer from '../../models/offer/index.js';
 import Skill from '../../models/skill/index.js';
 import {app} from '../../index.js';
 import logger from '../../utils/logging.js';
+import {addHistory} from './badges.js';
 
 const RATIO = 0.1;
 
@@ -88,11 +89,13 @@ export const worker = async ({mission}) => {
   const socialCause = mission.project.causes_tags[0];
 
   try {
-    const history = await app.db.get(sql`
-      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category)
-      VALUES (${totalPoints}, ${mission.id}, ${mission.assignee_id}, ${socialCause}, ${Data.SocialCausesSDGMapping[socialCause]})
-      RETURNING id
-    `);
+    const history = await addHistory(mission.assignee_id, {
+      mission_id: mission.id,
+      total_points: totalPoints,
+      social_cause: socialCause,
+      social_cause_category: Data.SocialCausesSDGMapping[socialCause],
+    });
+
     logger.info(`Calculate impact point successfully ${history.id}`);
   } catch (err) {
     logger.error(`Calculating impact points ${err.message}`);

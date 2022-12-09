@@ -20,9 +20,12 @@ export const simpleMail = async ({to, subject, html}) => {
     ],
   };
 
-  const result = await mail.send(body);
-
-  logger.info(JSON.stringify(result));
+  try {
+    const result = await mail.send(body);
+    logger.info(JSON.stringify(result));
+  } catch (err) {
+    logger.error(JSON.stringify(err));
+  }
 
   return body;
 };
@@ -49,7 +52,9 @@ export const contactWorker = async (body) => {
   const request = {
     url: `/v3/marketing/contacts`,
     method: 'PUT',
-    body: body,
+    body: {
+      contacts: [body],
+    },
   };
 
   try {

@@ -4,6 +4,7 @@ import Auth from '../services/auth/index.js';
 import Data from '@socious/data';
 import OAuthConnects from '../services/oauth_connects/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
+import {putContact} from '../services/sendgrid/index.js';
 
 export const router = new Router();
 
@@ -36,6 +37,11 @@ router.post('/register', async (ctx) => {
   ctx.body = {
     message: 'success',
   };
+  putContact({
+    first_name: ctx.request.body.first_name,
+    last_name: ctx.request.body.last_name,
+    email: ctx.request.body.email,
+  });
 });
 
 router.post('/otp', async (ctx) => {

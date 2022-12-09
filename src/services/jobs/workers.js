@@ -1,5 +1,6 @@
 import {sendHtmlEmail} from '../email/index.js';
 import {simplePush} from '../fcm/index.js';
+import {contactWorker} from '../sendgrid/index.js';
 import {worker as eventsWorker} from '../events/worker.js';
 import {worker as impactPointsWorker} from '../impact_points/worker.js';
 import logger from '../../utils/logging.js';
@@ -38,6 +39,7 @@ const register = {
   fcm: consumer(simplePush),
   notify: consumer(eventsWorker),
   calculate_impact_points: consumer(impactPointsWorker),
+  sendgrid_add_contacts: consumer(contactWorker),
 };
 
 for await (const [name, handler] of Object.entries(register)) {

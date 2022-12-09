@@ -14,6 +14,7 @@ import {
 } from '../utils/middlewares/authorization.js';
 import {validate} from '@socious/data';
 import {checkIdParams} from '../utils/middlewares/route.js';
+import {putContact} from '../services/sendgrid/index.js';
 
 export const router = new Router();
 
@@ -41,9 +42,17 @@ router.get('/profile', loginRequired, async (ctx) => {
 
 router.post('/update/profile', loginRequired, async (ctx) => {
   await validate.UpdateProfileSchema.validateAsync(ctx.request.body);
+
   const skills = await Skill.getAllByNames(ctx.request.body.skills);
   ctx.request.body.skills = skills.map((s) => s.name);
+
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body);
+
+  putContact({
+    first_name: ctx.body.first_name,
+    last_name: ctx.body.last_name,
+    email: ctx.body.email,
+  });
 });
 
 router.post('/change-password', loginRequired, async (ctx) => {

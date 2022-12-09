@@ -1,13 +1,12 @@
 import {insert} from './write.js';
 import nodeMailer from 'nodemailer';
-import sendgrid from '@sendgrid/mail';
+import {simpleMail as sendgridMail} from '../sendgrid/index.js';
 import config from '../../config.js';
 import ejs from 'ejs';
 import crypto from 'crypto';
 import logger from '../../utils/logging.js';
 
 const smtp = nodeMailer.createTransport(config.mail.smtp);
-sendgrid.setApiKey(config.mail.sendgrid.apiKey);
 
 export const MailSenderTypes = {
   SMTP: 'SMTP',
@@ -50,7 +49,7 @@ const sendBySendgrid = async ({to, subject, html}) => {
     ],
   };
 
-  const result = await sendgrid.send(body);
+  const result = await sendgridMail.send(body);
 
   logger.info(JSON.stringify(result));
 

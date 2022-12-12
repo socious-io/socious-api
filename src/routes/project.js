@@ -16,6 +16,10 @@ import {PermissionError} from '../utils/errors.js';
 
 export const router = new Router();
 
+router.get('/categories', async (ctx) => {
+  ctx.body = {categories: await Project.jobCategories()};
+});
+
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Project.get(ctx.params.id, ctx.user.id);
 });

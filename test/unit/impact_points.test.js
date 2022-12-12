@@ -9,7 +9,7 @@ beforeAll(async () => {
 test('calculate', async () => {
   expect(
     calculate({
-      categories: [{hourly_wage_dollars: 20}],
+      category: {hourly_wage_dollars: 20},
       total_hours: 2,
       payment_type: Data.ProjectPaymentType.VOLUNTEER,
       experience_level: 2,
@@ -18,7 +18,7 @@ test('calculate', async () => {
 
   expect(
     calculate({
-      categories: [{hourly_wage_dollars: 20}],
+      category: {hourly_wage_dollars: 20},
       total_hours: 2,
       payment_type: Data.ProjectPaymentType.PAID,
       experience_level: 2,
@@ -27,7 +27,7 @@ test('calculate', async () => {
 
   expect(
     calculate({
-      categories: [{hourly_wage_dollars: 25}],
+      category: {hourly_wage_dollars: 25},
       total_hours: 5,
       payment_type: Data.ProjectPaymentType.PAID,
       experience_level: 3,
@@ -36,7 +36,7 @@ test('calculate', async () => {
 
   expect(
     calculate({
-      categories: [{hourly_wage_dollars: 20}],
+      category: {hourly_wage_dollars: 20},
       total_hours: 180,
       payment_type: Data.ProjectPaymentType.VOLUNTEER,
       experience_level: 1,

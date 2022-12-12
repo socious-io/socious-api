@@ -30,10 +30,12 @@ export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
+    row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
+    JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=${id}
   `);
 };
@@ -44,9 +46,11 @@ export const getAll = async (ids, sort) => {
     i.type  as identity_type,
     i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
+    row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
+    JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=ANY(${ids})
   ${sorting(sort, sortColumns, 'p')}
   `);
@@ -58,9 +62,11 @@ export const all = async ({offset = 0, limit = 10, filter, sort}) => {
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
+      row_to_json(j.*) AS job_category,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
+      JOIN job_categories j ON j.id=p.job_category_id
       ${filtering(filter, filterColumns, false, 'p')}
       ${sorting(sort, sortColumns, 'p')}
       LIMIT ${limit} OFFSET ${offset}`);
@@ -95,4 +101,13 @@ export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
       ...r,
     };
   });
+};
+
+export const jobCategories = async () => {
+  const {rows} = await app.db.query(sql`SELECT * FROM job_categories`);
+  return rows;
+};
+
+export const jobCategory = async (id) => {
+  return app.db.get(sql`SELECT * FROM job_categories WHERE id=${id}`);
 };

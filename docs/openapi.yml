@@ -344,6 +344,17 @@ paths:
           description: Successful response
           content:
             application/json: {}
+
+  /projects/categories:
+    get:
+      tags:
+        - project
+      summary: get all job categories
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects:
     get:
       tags:

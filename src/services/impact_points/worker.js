@@ -1,25 +1,11 @@
-import sql from 'sql-template-tag';
 import Data from '@socious/data';
 import Mission from '../../models/mission/index.js';
 import Offer from '../../models/offer/index.js';
-import Skill from '../../models/skill/index.js';
-import {app} from '../../index.js';
+import Project from '../../models/project/index.js';
 import logger from '../../utils/logging.js';
 import {addHistory} from './badges.js';
 
 const RATIO = 0.1;
-
-const fetchJobCategory = async (names) => {
-  const skills = await Skill.getAllByNames(names);
-
-  const {rows} = await app.db.query(sql`
-    SELECT * FROM job_categories WHERE id=ANY(${skills.map(
-      (s) => s.job_category_id,
-    )})
-  `);
-
-  return rows;
-};
 
 const experienceRatio = (level) => {
   switch (level) {
@@ -37,13 +23,12 @@ const experienceRatio = (level) => {
 };
 
 export const calculate = ({
-  categories,
+  category,
   total_hours,
   payment_type,
   experience_level,
 }) => {
-  let hourlyWage = 0;
-  for (const cat of categories) hourlyWage += cat.hourly_wage_dollars;
+  let hourlyWage = category.hourly_wage_dollars;
 
   let totalPoints = hourlyWage * total_hours;
 
@@ -63,16 +48,13 @@ export const worker = async ({mission}) => {
     logger.error(`Mission ${mission.id} is not confirmed`);
     return false;
   }
-
-  const categories = await fetchJobCategory(mission.project.skills);
-
-  if (categories.length < 1) {
+  let category;
+  try {
+    category = await Project.jobCategory(mission.project.job_category_id);
+  } catch {
     logger.error(
-      `Faild canculate impact score for ${
-        mission.id
-      } there are no job category for skills ${mission.project.skills.join(
-        ',',
-      )}`,
+      `Faild canculate impact score for ${mission.id},
+      there are no job category for project ${mission.project.id}`,
     );
     return false;
   }
@@ -80,7 +62,7 @@ export const worker = async ({mission}) => {
   const offer = await Offer.get(mission.offer_id);
 
   const totalPoints = calculate({
-    categories,
+    category,
     total_hours: offer.total_hours,
     payment_type: mission.project.payment_type,
     experience_level: mission.project.experience_level,

@@ -4,6 +4,7 @@ import Applicant from '../models/applicant/index.js';
 import Offer from '../models/offer/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
+import Analytics from '../services/analytics/index.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {
@@ -25,6 +26,12 @@ router.post(
   applicantOwner,
   async (ctx) => {
     ctx.body = await Applicant.withdrawn(ctx.params.id);
+
+    Analytics.track({
+      userId: ctx.user.id,
+      event: 'withdrawn_applicant',
+      meta: ctx.applicant,
+    });
   },
 );
 
@@ -53,6 +60,12 @@ router.post(
       parentId: project.id,
       identity: ctx.identity,
     });
+
+    Analytics.track({
+      userId: ctx.applicant.user_id,
+      event: 'offered_applicant',
+      meta: ctx.applicant,
+    });
   },
 );
 
@@ -72,6 +85,12 @@ router.post(
       refId: ctx.body.id,
       parentId: project.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.applicant.user_id,
+      event: 'rejected_applicant',
+      meta: ctx.applicant,
     });
   },
 );
@@ -97,5 +116,11 @@ router.post(
     ctx.body = {
       message: 'success',
     };
+
+    Analytics.track({
+      userId: ctx.applicant.user_id,
+      event: 'removed_applicant',
+      meta: ctx.applicant,
+    });
   },
 );

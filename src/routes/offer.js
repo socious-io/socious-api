@@ -7,6 +7,7 @@ import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import Payment from '../services/payments/index.js';
 import Data from '@socious/data';
+import Analytics from '../services/analytics/index.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {
@@ -38,6 +39,12 @@ router.post(
     ctx.body = Offer.withdrawn(ctx.params.id);
     if (ctx.offer.applicant_id)
       await Applicant.withdrawn(ctx.offer.applicant_id);
+
+    Analytics.track({
+      userId: ctx.user.id,
+      event: 'withdrawn_offer',
+      meta: ctx.mission,
+    });
   },
 );
 

@@ -42,7 +42,11 @@ export const calculate = ({
 };
 
 export const worker = async ({mission}) => {
-  mission = await Mission.get(mission.id);
+  try {
+    mission = await Mission.get(mission.id);
+  } catch (err) {
+    logger.error(`Mission ${mission.id} ${JSON.stringify(err)}`);
+  }
 
   if (mission.status !== Data.MissionStatus.CONFIRMED) {
     logger.error(`Mission ${mission.id} is not confirmed`);

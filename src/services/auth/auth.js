@@ -20,6 +20,7 @@ import publish from '../jobs/publish.js';
 import {OTPPurposeType, OTPType, createOTP, verifyOTP, getOTP} from './otp.js';
 import config from '../../config.js';
 import {isTestEmail} from '../email/index.js';
+import Analytics from '../analytics/index.js';
 
 const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000);
@@ -96,7 +97,7 @@ export const register = async (body) => {
     kwargs: {name: user.first_name, code},
   });
 
-  return signin(user.id);
+  return user;
 };
 
 export const sendOTP = async (body) => {
@@ -152,6 +153,14 @@ export const confirmOTP = async (body) => {
   const otp = await getOTP(user.id, body.code);
 
   await verifyOTP(otp.id);
+
+  if (user.status !== User.StatusType.ACTIVE) {
+    Analytics.track({
+      userId: user.id,
+      event: 'activate_user',
+      meta: {},
+    });
+  }
 
   if (otp.type === OTPType.EMAIL) await User.verifyEmail(otp.user_id);
   if (otp.type === OTPType.PHONE) await User.verifyPhone(otp.user_id);

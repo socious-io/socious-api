@@ -13,6 +13,7 @@ export default {
   jwtRefreshExpireTime: '30d',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
+  segmentAnalytics: process.env.SEGMENT_ANALYTICS,
   mail: {
     sendgrid: {
       from: {

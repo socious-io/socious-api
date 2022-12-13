@@ -13,6 +13,7 @@ import {
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
 import {PermissionError} from '../utils/errors.js';
+import Analytics from '../services/analytics/index.js';
 
 export const router = new Router();
 
@@ -176,6 +177,12 @@ router.post(
       refId: ctx.body.id,
       parentId: ctx.params.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.params.user_id,
+      event: 'offered_project',
+      meta: ctx.project,
     });
   },
 );

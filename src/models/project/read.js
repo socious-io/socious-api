@@ -77,6 +77,7 @@ export const permissioned = async (identityId, id) => {
   const project = await get(id);
   if (project.identity_id !== identityId)
     throw new PermissionError('Not allow');
+  return project;
 };
 
 export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {

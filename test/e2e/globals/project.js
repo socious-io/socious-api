@@ -115,7 +115,9 @@ export const create = async (request, data) => {
   for (const i in data.projects.objs) {
     const body = data.projects.objs[i];
     delete body.invalid;
-    body.job_category_id = categoriesRes.body.categories[i].id;
+    body.job_category_id = categoriesRes.body.categories.filter(
+      (c) => c.name === 'Other',
+    )[0].id;
 
     const response = await request
       .post('/projects')
@@ -411,7 +413,7 @@ export const confirm = async (request, data) => {
         .get(`/user/profile`)
         .set('Authorization', data.users[0].access_token);
 
-      expect(profileRes.body.impact_points).toBe(4455);
+      expect(profileRes.body.impact_points).toBe(3564);
     }
   }
 };

@@ -59,7 +59,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.offer.offerer_id, {
       type: Notif.Types.APPROVED,
-      refId: ctx.body.id,
+      refId: ctx.offer.id,
       parentId: ctx.offer.project_id,
       identity: ctx.identity,
     });
@@ -102,7 +102,7 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,
-    refId: ctx.body.id,
+    refId: ctx.offer.id,
     parentId: ctx.offer.project_id,
     identity: ctx.identity,
   });

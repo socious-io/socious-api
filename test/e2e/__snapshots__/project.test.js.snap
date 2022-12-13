@@ -284,7 +284,7 @@ exports[`confirm 1`] = `
     {
       "count": 1,
       "social_cause_category": "NO_POVERTY",
-      "total_points": 4455,
+      "total_points": 3564,
     },
   ],
 }

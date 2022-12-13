@@ -1,4 +1,5 @@
 import Segment from 'analytics-node';
+import User from '../../models/user/index.js';
 import config from '../../config.js';
 import publish from '../jobs/publish.js';
 import logger from '../../utils/logging.js';
@@ -28,11 +29,20 @@ const identifyWorker = async ({userId, email, meta}) => {
 };
 
 const trackWorker = async ({userId, event, meta}) => {
+  let user;
+  try {
+    user = await User.get(userId);
+  } catch (err) {
+    logger.error(JSON.stringify(err));
+  }
   try {
     analytics.track({
       userId,
       event,
-      properties: meta,
+      properties: {
+        email: user.email,
+        ...meta,
+      },
     });
   } catch (err) {
     logger.error(JSON.stringify(err));

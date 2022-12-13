@@ -34,7 +34,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.project.identity_id, {
       type: Notif.Types.PROJECT_COMPLETE,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
     });
@@ -62,7 +62,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.assignee_id, {
       type: Notif.Types.ASSIGNER_CONFIRMED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
     });
@@ -92,7 +92,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.project.identity_id, {
       type: Notif.Types.ASSIGNEE_CANCELED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
     });
@@ -120,7 +120,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.assignee_id, {
       type: Notif.Types.ASSIGNER_CANCELED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
     });

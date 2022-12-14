@@ -13,8 +13,13 @@ import {
 } from '../utils/middlewares/authorization.js';
 import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
 import {PermissionError} from '../utils/errors.js';
+import Analytics from '../services/analytics/index.js';
 
 export const router = new Router();
+
+router.get('/categories', async (ctx) => {
+  ctx.body = {categories: await Project.jobCategories()};
+});
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Project.get(ctx.params.id, ctx.user.id);
@@ -125,6 +130,12 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
     parentId: project.id,
     identity: ctx.identity,
   });
+
+  Analytics.track({
+    userId: ctx.params.user_id,
+    event: 'applied_project',
+    meta: ctx.body,
+  });
 });
 
 router.get(
@@ -172,6 +183,12 @@ router.post(
       refId: ctx.body.id,
       parentId: ctx.params.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.params.user_id,
+      event: 'offered_project',
+      meta: ctx.project,
     });
   },
 );

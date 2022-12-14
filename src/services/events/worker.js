@@ -38,7 +38,12 @@ const pushNotifications = async (userIds, message, data) => {
 };
 
 const email = async (userId, message, id) => {
-  const user = await User.get(userId);
+  let user = {};
+  try {
+    user = await User.get(userId);
+  } catch (err) {
+    logger.error(JSON.stringify(err));
+  }
 
   if (!user.email_verified_at) return;
 

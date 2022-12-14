@@ -23,7 +23,7 @@ exports[` 2`] = `
   "geoname_id": null,
   "id": Any<String>,
   "image": null,
-  "impact_score": 0,
+  "impact_points": 0,
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
@@ -62,7 +62,7 @@ exports[` 3`] = `
   "geoname_id": null,
   "id": Any<String>,
   "image": null,
-  "impact_score": 0,
+  "impact_points": 0,
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
@@ -93,7 +93,6 @@ exports[` 4`] = `
 exports[` 5`] = `
 {
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tokyo",
@@ -108,6 +107,7 @@ exports[` 5`] = `
   "geoname_id": null,
   "id": Any<String>,
   "identity_id": Any<String>,
+  "job_category_id": Any<String>,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -135,7 +135,6 @@ exports[` 5`] = `
 exports[` 6`] = `
 {
   "causes_tags": [
-    "SOCIAL",
     "POVERTY",
   ],
   "city": "Tehran",
@@ -150,6 +149,7 @@ exports[` 6`] = `
   "geoname_id": null,
   "id": Any<String>,
   "identity_id": Any<String>,
+  "job_category_id": Any<String>,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -180,7 +180,6 @@ exports[`projects with filter 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tehran",
@@ -197,6 +196,8 @@ exports[`projects with filter 1`] = `
       "identity_id": Any<String>,
       "identity_meta": Any<Object>,
       "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
       "other_party_id": null,
       "other_party_title": null,
       "other_party_url": null,
@@ -232,7 +233,6 @@ exports[`search projects 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tehran",
@@ -249,6 +249,8 @@ exports[`search projects 1`] = `
       "identity_id": Any<String>,
       "identity_meta": Any<Object>,
       "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
       "other_party_id": null,
       "other_party_title": null,
       "other_party_url": null,
@@ -274,7 +276,6 @@ exports[`search projects 1`] = `
     {
       "applicants": 0,
       "causes_tags": [
-        "SOCIAL",
         "POVERTY",
       ],
       "city": "Tokyo",
@@ -291,6 +292,8 @@ exports[`search projects 1`] = `
       "identity_id": Any<String>,
       "identity_meta": Any<Object>,
       "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
       "other_party_id": null,
       "other_party_title": null,
       "other_party_url": null,

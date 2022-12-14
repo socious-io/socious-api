@@ -26,7 +26,7 @@ export const chatPermission = async (ctx, next) => {
 };
 
 export const projectPermission = async (ctx, next) => {
-  await Project.permissioned(ctx.identity.id, ctx.params.id);
+  ctx.project = await Project.permissioned(ctx.identity.id, ctx.params.id);
   return next();
 };
 

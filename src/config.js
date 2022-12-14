@@ -12,13 +12,14 @@ export default {
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
+  sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
+  segmentAnalytics: process.env.SEGMENT_ANALYTICS,
   mail: {
     sendgrid: {
       from: {
         email: process.env.MAIL_SENDGRID_FROM || 'team@socious.io',
         name: process.env.MAIL_SENDGRID_NAME || 'Socious Team',
       },
-      apiKey: process.env.MAIL_SENDGRID_API_KEY,
     },
     smtp: {
       host: process.env.MAIL_SMTP_HOST,

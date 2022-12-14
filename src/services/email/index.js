@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import logger from '../../utils/logging.js';
 
 const smtp = nodeMailer.createTransport(config.mail.smtp);
-sendgrid.setApiKey(config.mail.sendgrid.apiKey);
+sendgrid.setApiKey(config.sendgridApiKey);
 
 export const MailSenderTypes = {
   SMTP: 'SMTP',

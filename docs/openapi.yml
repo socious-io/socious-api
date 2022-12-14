@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Socious-API
-  version: 2.2.5
+  version: 2.2.6
 servers:
   - url: https://dev.socious.io/api/v2/
   - url: https://socious.io/api/v2/
@@ -339,6 +339,17 @@ paths:
       tags:
         - auth
       summary: stripe connect profile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/categories:
+    get:
+      tags:
+        - project
+      summary: get all job categories
       responses:
         '200':
           description: Successful response
@@ -1847,6 +1858,42 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /user/badges:
+    get:
+      tags:
+        - users
+      summary: get user badges
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/impact-points:
+    get:
+      tags:
+        - users
+      summary: get user impact points history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /identities:
     get:
       tags:
@@ -2867,7 +2914,7 @@ paths:
           content:
             application/json: {}
 
-  /payments/cards/update/:card_id:
+  /payments/cards/update/{card_id}:
     parameters:
       - name: card_id
         in: path
@@ -2896,7 +2943,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /payments/cards/remove/:card_id:
+  /payments/cards/remove/{card_id}:
     parameters:
       - name: card_id
         in: path
@@ -2977,7 +3024,7 @@ paths:
           content:
             application/json: {}
 
-  /payments/offers/:offer_id:
+  /payments/offers/{offer_id}:
     parameters:
       - name: offer_id
         in: path
@@ -3007,7 +3054,7 @@ paths:
           content:
             application/json: {}
 
-  /payments/missions/:mission_id/payout:
+  /payments/missions/{mission_id}/payout:
     parameters:
       - name: mission_id
         in: path
@@ -3026,14 +3073,9 @@ paths:
           content:
             application/json: {}
 
-  /test-emails/:address:
+  /test-emails/{address}:
     parameters:
       - name: address
-        in: path
-        schema:
-          type: string
-        required: true
-      - name: id
         in: path
         schema:
           type: string
@@ -3050,7 +3092,7 @@ paths:
           content:
             application/json: {}
 
-  /test-emails/:address/:id:
+  /test-emails/{address}/{id}:
     parameters:
       - name: address
         in: path

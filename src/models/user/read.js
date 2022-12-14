@@ -8,7 +8,7 @@ export const filterColumns = {
   skills: Array,
 };
 
-export const sortColumns = ['created_at', 'updated_at', 'impact_score'];
+export const sortColumns = ['created_at', 'updated_at', 'impact_points'];
 
 export const get = async (id) => {
   return app.db.get(
@@ -52,7 +52,7 @@ export const getProfile = async (id) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, geoname_id, mission, bio, impact_score,
+    city, country, geoname_id, mission, bio, impact_points,
     skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
@@ -92,7 +92,7 @@ export const getProfileByUsername = async (username) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, geoname_id, country, mission, bio, impact_score,
+    city, geoname_id, country, mission, bio, impact_points,
     skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
@@ -132,7 +132,7 @@ export const getProfileLimited = async (id) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    mission, bio, impact_score, skills,
+    mission, bio, impact_points, skills,
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
@@ -149,7 +149,7 @@ export const getAllProfile = async (ids, sort) => {
   const {rows} = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
-    city, country, geoname_id, mission, bio, impact_score,
+    city, country, geoname_id, mission, bio, impact_points,
     skills, followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
@@ -191,7 +191,7 @@ export const getProfileByUsernameLimited = async (username) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
-    mission, bio, impact_score, skills,
+    mission, bio, impact_points, skills,
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,

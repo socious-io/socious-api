@@ -7,6 +7,7 @@ import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import Payment from '../services/payments/index.js';
 import Data from '@socious/data';
+import Analytics from '../services/analytics/index.js';
 
 import {loginRequired} from '../utils/middlewares/authorization.js';
 import {
@@ -38,6 +39,12 @@ router.post(
     ctx.body = Offer.withdrawn(ctx.params.id);
     if (ctx.offer.applicant_id)
       await Applicant.withdrawn(ctx.offer.applicant_id);
+
+    Analytics.track({
+      userId: ctx.user.id,
+      event: 'withdrawn_offer',
+      meta: ctx.mission,
+    });
   },
 );
 
@@ -52,7 +59,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.offer.offerer_id, {
       type: Notif.Types.APPROVED,
-      refId: ctx.body.id,
+      refId: ctx.offer.id,
       parentId: ctx.offer.project_id,
       identity: ctx.identity,
     });
@@ -95,7 +102,7 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,
-    refId: ctx.body.id,
+    refId: ctx.offer.id,
     parentId: ctx.offer.project_id,
     identity: ctx.identity,
   });

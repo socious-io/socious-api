@@ -31,6 +31,7 @@ export const insert = async (
     weekly_hours_higher,
     commitment_hours_lower,
     commitment_hours_higher,
+    job_category_id,
   },
 ) => {
   if (!updated_at) updated_at = raw('NOW()');
@@ -48,7 +49,8 @@ export const insert = async (
         weekly_hours_lower,
         weekly_hours_higher,
         commitment_hours_lower,
-        commitment_hours_higher
+        commitment_hours_higher,
+        job_category_id
       )
       VALUES (
         ${title}, ${description}, ${identityId}, 
@@ -60,7 +62,8 @@ export const insert = async (
         ${other_party_id}, ${other_party_title},
         ${other_party_url}, ${expires_at}, ${updated_at},
         ${weekly_hours_lower}, ${weekly_hours_higher}, ${commitment_hours_lower},
-        ${commitment_hours_higher}
+        ${commitment_hours_higher},
+        ${job_category_id}
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
@@ -99,6 +102,7 @@ export const update = async (
     weekly_hours_higher,
     commitment_hours_lower,
     commitment_hours_higher,
+    job_category_id,
   },
 ) => {
   if (!updated_at) updated_at = raw('NOW()');
@@ -131,7 +135,8 @@ export const update = async (
         weekly_hours_lower=${weekly_hours_lower},
         weekly_hours_higher=${weekly_hours_higher},
         commitment_hours_lower=${commitment_hours_lower},
-        commitment_hours_higher=${commitment_hours_higher}
+        commitment_hours_higher=${commitment_hours_higher},
+        job_category_id=${job_category_id}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
     );
     return rows[0];

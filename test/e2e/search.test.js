@@ -33,6 +33,8 @@ test('search projects', async () => {
         id: expect.any(String),
         identity_id: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
       {
         created_at: expect.any(String),
@@ -40,6 +42,8 @@ test('search projects', async () => {
         id: expect.any(String),
         identity_id: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
     ],
   });
@@ -64,6 +68,8 @@ test('projects with filter', async () => {
         id: expect.any(String),
         identity_id: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
     ],
   });

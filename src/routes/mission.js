@@ -2,7 +2,9 @@ import Router from '@koa/router';
 import Mission from '../models/mission/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
+import ImpactPoints from '../services/impact_points/index.js';
 import {loginRequired} from '../utils/middlewares/authorization.js';
+import Analytics from '../services/analytics/index.js';
 
 import {
   checkIdParams,
@@ -32,9 +34,15 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.project.identity_id, {
       type: Notif.Types.PROJECT_COMPLETE,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.user.id,
+      event: 'complete_mission',
+      meta: ctx.mission,
     });
   },
 );
@@ -52,11 +60,19 @@ router.post(
 
     const project = ctx.mission.project;
 
-    Event.push(Event.Types.NOTIFICATION, ctx.mission.identity_id, {
+    Event.push(Event.Types.NOTIFICATION, ctx.mission.assignee_id, {
       type: Notif.Types.ASSIGNER_CONFIRMED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
+    });
+
+    ImpactPoints.calculate(ctx.mission);
+
+    Analytics.track({
+      userId: ctx.mission.assignee_id,
+      event: 'confirmed_mission',
+      meta: ctx.mission,
     });
   },
 );
@@ -76,9 +92,15 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.mission.project.identity_id, {
       type: Notif.Types.ASSIGNEE_CANCELED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.user.id,
+      event: 'canceled_mission',
+      meta: ctx.mission,
     });
   },
 );
@@ -96,11 +118,17 @@ router.post(
 
     const project = ctx.mission.project;
 
-    Event.push(Event.Types.NOTIFICATION, ctx.employee.identity_id, {
+    Event.push(Event.Types.NOTIFICATION, ctx.mission.assignee_id, {
       type: Notif.Types.ASSIGNER_CANCELED,
-      refId: ctx.body.id,
+      refId: ctx.mission.id,
       parentId: project.id,
       identity: ctx.identity,
+    });
+
+    Analytics.track({
+      userId: ctx.mission.assignee_id,
+      event: 'kickedout_mission',
+      meta: ctx.mission,
     });
   },
 );

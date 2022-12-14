@@ -4,6 +4,7 @@ import {
   create as createTrx,
   complete as completeTrx,
 } from '../../../src/services/payments/transaction.js';
+import ImpactPoints from '../../../src/services/impact_points/index.js';
 
 export const get = async (request, data) => {
   for (const project of data.projects.objs) {
@@ -21,6 +22,8 @@ export const get = async (request, data) => {
       updated_at: expect.any(String),
       search_tsv: expect.any(String),
       identity_meta: expect.any(Object),
+      job_category_id: expect.any(String),
+      job_category: expect.any(Object),
     });
   }
 };
@@ -40,6 +43,8 @@ export const getAll = async (request, data) => {
         updated_at: expect.any(String),
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
       {
         id: expect.any(String),
@@ -48,6 +53,8 @@ export const getAll = async (request, data) => {
         updated_at: expect.any(String),
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
     ],
   });
@@ -69,6 +76,8 @@ export const getFiltered = async (request, data) => {
         updated_at: expect.any(String),
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
       },
     ],
   });
@@ -99,9 +108,16 @@ export const getApplicant = async (request, data) => {
 };
 
 export const create = async (request, data) => {
+  const categoriesRes = await request.get('/projects/categories');
+
+  expect(categoriesRes.status).toBe(200);
+
   for (const i in data.projects.objs) {
     const body = data.projects.objs[i];
     delete body.invalid;
+    body.job_category_id = categoriesRes.body.categories.filter(
+      (c) => c.name === 'Other',
+    )[0].id;
 
     const response = await request
       .post('/projects')
@@ -120,6 +136,7 @@ export const create = async (request, data) => {
         created_at: expect.any(String),
         updated_at: expect.any(String),
         search_tsv: expect.any(String),
+        job_category_id: expect.any(String),
       });
       data.projects.objs[i].id = response.body.id;
     }
@@ -385,6 +402,18 @@ export const confirm = async (request, data) => {
         .set('Current-Identity', data.orgs[0].id);
 
       expect(response.status).toBe(200);
+
+      await ImpactPoints.worker({mission});
+
+      const badges = await ImpactPoints.badges(mission.assignee_id);
+
+      expect({badges}).toMatchSnapshot({badges});
+
+      const profileRes = await request
+        .get(`/user/profile`)
+        .set('Authorization', data.users[0].access_token);
+
+      expect(profileRes.body.impact_points).toBe(3564);
     }
   }
 };

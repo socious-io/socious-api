@@ -130,6 +130,12 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
     parentId: project.id,
     identity: ctx.identity,
   });
+
+  Analytics.track({
+    userId: ctx.params.user_id,
+    event: 'applied_project',
+    meta: ctx.body,
+  });
 });
 
 router.get(

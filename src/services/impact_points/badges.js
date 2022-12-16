@@ -39,9 +39,9 @@ export const history = async (identityId, {offset = 0, limit = 10}) => {
   JOIN missions m ON m.id=i.mission_id
   JOIN projects p ON p.id=m.project_id
   JOIN organizations org ON org.id=p.identity_id
-  WHERE identity_id=${identityId}
+  WHERE i.identity_id=${identityId}
+  ORDER BY i.created_at DESC
   LIMIT ${limit} OFFSET ${offset}
-  ORDER BY created_at DESC
     `);
   return rows;
 };

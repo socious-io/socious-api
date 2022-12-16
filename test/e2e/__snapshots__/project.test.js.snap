@@ -279,15 +279,13 @@ exports[`apply 4`] = `
 `;
 
 exports[`confirm 1`] = `
-{
-  "badges": [
-    {
-      "count": 1,
-      "social_cause_category": "NO_POVERTY",
-      "total_points": 3564,
-    },
-  ],
-}
+[
+  {
+    "count": 1,
+    "social_cause_category": "NO_POVERTY",
+    "total_points": 3564,
+  },
+]
 `;
 
 exports[`create 1`] = `

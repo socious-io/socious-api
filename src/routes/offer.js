@@ -77,12 +77,21 @@ router.post(
 );
 
 router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
-  const escrow = await Payment.getOpenEscrow(
-    ctx.offer.id,
-    ctx.offer.assignment_total,
-  );
+  let escrow;
+
+  if (ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER) {
+    try {
+      escrow = await Payment.getOpenEscrow(
+        ctx.offer.id,
+        ctx.offer.assignment_total,
+      );
+    } catch(err) {
+      throw new PermissionError('payment escrow not found');
+    }
+  }
 
   if (
+    escrow &&
     escrow.amount < ctx.offer.assignment_total &&
     ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER
   )
@@ -98,7 +107,8 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
     assigner_id: ctx.identity.id,
   });
 
-  await setEscrowMission(escrow.id, mission.id);
+  if (ctx.offer.project.payment_type != Data.ProjectPaymentType.VOLUNTEER)
+    await setEscrowMission(escrow.id, mission.id);
 
   Event.push(Event.Types.NOTIFICATION, ctx.offer.recipient_id, {
     type: Notif.Types.HIRED,

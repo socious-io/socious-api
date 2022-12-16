@@ -405,13 +405,27 @@ export const confirm = async (request, data) => {
 
       await ImpactPoints.worker({mission});
 
-      const badges = await ImpactPoints.badges(mission.assignee_id);
+      const badgesRes = await request
+        .get(`/user/badges`)
+        .set('Authorization', data.users[0].access_token);
 
-      expect({badges}).toMatchSnapshot({badges});
+
+      expect(badgesRes.body.badges).toMatchSnapshot();      
+
+
+      const impactRes = await request
+        .get(`/user/impact-points`)
+        .set('Authorization', data.users[0].access_token);
+
+
+      expect(impactRes.body.items).toHaveLength(1);
+
 
       const profileRes = await request
         .get(`/user/profile`)
         .set('Authorization', data.users[0].access_token);
+
+      
 
       expect(profileRes.body.impact_points).toBe(3564);
     }

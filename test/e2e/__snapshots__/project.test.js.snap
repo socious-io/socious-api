@@ -278,6 +278,16 @@ exports[`apply 4`] = `
 }
 `;
 
+exports[`confirm 1`] = `
+[
+  {
+    "count": 1,
+    "social_cause_category": "NO_POVERTY",
+    "total_points": 3564,
+  },
+]
+`;
+
 exports[`create 1`] = `
 {
   "causes_tags": [
@@ -652,6 +662,19 @@ exports[`get applicants 4`] = `
 }
 `;
 
+exports[`get feedbacks 1`] = `
+{
+  "content": "TEST",
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "identity": Any<Object>,
+  "identity_id": Any<String>,
+  "is_contest": false,
+  "mission_id": Any<String>,
+  "project_id": Any<String>,
+}
+`;
+
 exports[`get filtered 1`] = `
 {
   "items": [
@@ -766,7 +789,7 @@ exports[`user applicants 1`] = `
   "project": Any<Object>,
   "project_id": Any<String>,
   "share_contact_info": true,
-  "status": "APPROVED",
+  "status": "CLOSED",
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,
@@ -792,7 +815,7 @@ exports[`user applicants 2`] = `
   "project": Any<Object>,
   "project_id": Any<String>,
   "share_contact_info": true,
-  "status": "APPROVED",
+  "status": "CLOSED",
   "updated_at": Any<String>,
   "user": Any<Object>,
   "user_id": Any<String>,

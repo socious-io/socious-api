@@ -66,7 +66,7 @@ export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
     JOIN projects p ON p.id=m.project_id
     JOIN identities i1 ON i1.id=m.assignee_id
     JOIN identities i2 ON i2.id=m.assigner_id
-    JOIN escrows es ON es.mission_id=m.id
+    LEFT JOIN escrows es ON es.mission_id=m.id
     ${filtering(filter, filterColumns, false, 'm')}
     ${sorting(sort, sortColumns, 'm')}
     LIMIT ${limit} OFFSET ${offset}

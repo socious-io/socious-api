@@ -85,7 +85,7 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
         ctx.offer.id,
         ctx.offer.assignment_total,
       );
-    } catch(err) {
+    } catch (err) {
       throw new PermissionError('payment escrow not found');
     }
   }

@@ -409,23 +409,17 @@ export const confirm = async (request, data) => {
         .get(`/user/badges`)
         .set('Authorization', data.users[0].access_token);
 
-
-      expect(badgesRes.body.badges).toMatchSnapshot();      
-
+      expect(badgesRes.body.badges).toMatchSnapshot();
 
       const impactRes = await request
         .get(`/user/impact-points`)
         .set('Authorization', data.users[0].access_token);
 
-
       expect(impactRes.body.items).toHaveLength(1);
-
 
       const profileRes = await request
         .get(`/user/profile`)
         .set('Authorization', data.users[0].access_token);
-
-      
 
       expect(profileRes.body.impact_points).toBe(3564);
     }

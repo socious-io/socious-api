@@ -88,7 +88,7 @@ export const cancel = async (id) => {
   try {
     const {rows} = await app.db.query(sql`
     UPDATE offers SET 
-      status=${Data.OfferStatus.APPROVED}
+      status=${Data.OfferStatus.CANCELED}
     WHERE 
       id=${id} AND 
       status NOT IN (${Data.OfferStatus.HIRED}, ${Data.OfferStatus.CLOSED}, ${Data.OfferStatus.CANCELED})

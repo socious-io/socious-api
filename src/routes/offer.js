@@ -26,7 +26,7 @@ router.get(
   checkIdParams,
   offerPermission,
   async (ctx) => {
-    ctx.body = ctx.offer;
+    ctx.body = await Offer.get(ctx.offer.id);
   },
 );
 

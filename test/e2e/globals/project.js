@@ -242,9 +242,13 @@ export const offer = async (request, data) => {
     expect(response.status).toBe(200);
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),
+      applicant: expect.any(Object),
       applicant_id: expect.any(String),
+      offerer: expect.any(Object),
       offerer_id: expect.any(String),
+      recipient: expect.any(Object),
       recipient_id: expect.any(String),
+      project: expect.any(Object),
       project_id: expect.any(String),
       created_at: expect.any(String),
       updated_at: expect.any(String),

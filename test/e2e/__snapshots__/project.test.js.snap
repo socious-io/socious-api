@@ -730,6 +730,7 @@ exports[`get filtered 1`] = `
 
 exports[`offer 1`] = `
 {
+  "applicant": Any<Object>,
   "applicant_id": Any<String>,
   "assignment_total": 30000,
   "created_at": Any<String>,
@@ -737,8 +738,11 @@ exports[`offer 1`] = `
   "id": Any<String>,
   "offer_message": "Test",
   "offer_rate": 9000,
+  "offerer": Any<Object>,
   "offerer_id": Any<String>,
+  "project": Any<Object>,
   "project_id": Any<String>,
+  "recipient": Any<Object>,
   "recipient_id": Any<String>,
   "status": "PENDING",
   "total_hours": 180,

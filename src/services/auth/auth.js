@@ -90,10 +90,10 @@ export const register = async (body) => {
     OTPType.EMAIL,
     OTPPurposeType.ACTIVATION,
   );
-  publish('email', {
+  publish('tmp_email', {
     to: user.email,
     subject: 'Verify your account',
-    template: 'templates/emails/active_user.html',
+    template: config.mail.templates.activation,
     kwargs: {name: user.first_name, code},
   });
 

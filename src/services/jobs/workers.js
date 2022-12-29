@@ -1,4 +1,4 @@
-import {sendHtmlEmail} from '../email/index.js';
+import {sendHtmlEmail, sendTemplateEmail} from '../email/index.js';
 import {simplePush} from '../fcm/index.js';
 import {contactWorker} from '../sendgrid/index.js';
 import {worker as eventsWorker} from '../events/worker.js';
@@ -37,6 +37,7 @@ const consumer = (handler) => {
 // register all queues and handlers
 const register = {
   email: consumer(sendHtmlEmail),
+  tmp_email: consumer(sendTemplateEmail),
   fcm: consumer(simplePush),
   notify: consumer(eventsWorker),
   calculate_impact_points: consumer(impactPointsWorker),

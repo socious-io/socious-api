@@ -37,6 +37,27 @@ export const isTestEmail = (address) => {
   return false;
 };
 
+const sendTemplateBySendgrid = async ({to, subject, template, kwargs={}}) => {
+  const body = {
+    personalizations: [
+      {
+        to: [{email: to}],
+        dynamic_template_data: kwargs,
+        template_id: [template]
+
+      }
+    ],
+    subject,
+    from: config.mail.sendgrid.from,
+  };
+
+  const result = await sendgrid.send(body);
+
+  logger.info(JSON.stringify(result));
+
+  return body;
+};
+
 const sendBySendgrid = async ({to, subject, html}) => {
   const body = {
     personalizations: [{to: [{email: to}]}],
@@ -60,9 +81,7 @@ const sendBySendgrid = async ({to, subject, html}) => {
 export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   const html = await ejs.renderFile(template, kwargs);
   const date = new Date();
-  const sender = isTestEmail(to)
-    ? MailSenderTypes.TEST
-    : config.mail.defaultSender;
+  const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender;
   let result = {};
   try {
     switch (sender) {
@@ -107,6 +126,47 @@ export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
     subject,
     html,
     'text/html',
+    sender,
+    date,
+  );
+};
+
+
+export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) => {
+  const sender = isTestEmail(to) ? MailSenderTypes.TEST: config.mail.defaultSender;
+  const date = new Date();
+  let result = {};
+  try {
+    switch (sender) {
+      case MailSenderTypes.TEST:
+        result = null;
+        break;
+      default:
+        result = await sendTemplateBySendgrid({
+          to,
+          from: config.mail.sendgrid.from,
+          subject,
+          template,
+          kwargs
+        });
+    }
+  } catch (err) {
+    logger.error(err);
+    return;
+  }
+
+  await insert(
+    result?.messageId || crypto.randomUUID(),
+    {
+      service: sender,
+      template,
+      kwargs,
+    },
+    result,
+    to,
+    subject,
+    `${Object.keys(kwargs).map(key => `${key}=${kwargs[key]}`).join("&")}`,
+    template,
     sender,
     date,
   );

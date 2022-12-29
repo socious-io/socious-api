@@ -35,6 +35,9 @@ export default {
     },
     allowTest: boolVariable(process.env.ALLOW_TEST_EMAILS),
     defaultSender: process.env.EMAIL_SENDER ?? 'SENDGRID',
+    templates: {
+      activation: 'd-432f96333bbb4323be449124da5657ae'
+    }
   },
   database: {
     host: process.env.PGHOST,

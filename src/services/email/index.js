@@ -43,10 +43,9 @@ const sendTemplateBySendgrid = async ({to, subject, template, kwargs={}}) => {
       {
         to: [{email: to}],
         dynamic_template_data: kwargs,
-        template_id: template
-
       }
     ],
+    template_id: template,
     subject,
     from: config.mail.sendgrid.from,
   };

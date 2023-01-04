@@ -1,3 +1,4 @@
+import Data from '@socious/data';
 import {config} from 'dotenv';
 
 const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env';
@@ -36,7 +37,30 @@ export default {
     allowTest: boolVariable(process.env.ALLOW_TEST_EMAILS),
     defaultSender: process.env.EMAIL_SENDER ?? 'SENDGRID',
     templates: {
-      activation: 'd-d242926eac4e4c33a166764638cf6e7f'
+      activation: 'd-d242926eac4e4c33a166764638cf6e7f',
+      forgetPassword: 'd-d7aea3b78df042e8a2fdc83953960259',
+      otp: 'd-0146441b623f4cb78833c50eb1a8c813',
+      notifications: {
+        FOLLOWED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        COMMENT_LIKE: 'd-7c4f194c10f14c099a201c403668c6bb',
+        POST_LIKE: 'd-7c4f194c10f14c099a201c403668c6bb',
+        CHAT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        SHARE_POST: 'd-7c4f194c10f14c099a201c403668c6bb',
+        SHARE_PROJECT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        COMMENT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        APPLICATION: 'd-7c4f194c10f14c099a201c403668c6bb',
+        OFFER: 'd-7c4f194c10f14c099a201c403668c6bb',
+        REJECT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        APPROVED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        HIRED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        PROJECT_COMPLETE: 'd-7c4f194c10f14c099a201c403668c6bb',
+        ASSIGNEE_CANCELED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        ASSIGNER_CANCELED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        ASSIGNER_CONFIRMED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        CONNECT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        ACCEPT_CONNECT: 'd-7c4f194c10f14c099a201c403668c6bb',
+        MEMBERED: 'd-7c4f194c10f14c099a201c403668c6bb',
+      }
     }
   },
   database: {

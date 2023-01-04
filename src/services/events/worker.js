@@ -37,7 +37,7 @@ const pushNotifications = async (userIds, message, data) => {
   });
 };
 
-const email = async (userId, message, id) => {
+const email = async (notifType, userId, message, id) => {
   let user = {};
   try {
     user = await User.get(userId);
@@ -47,10 +47,10 @@ const email = async (userId, message, id) => {
 
   if (!user.email_verified_at) return;
 
-  publish('email', {
+  publish('tmp_email', {
     to: user.email,
     subject: message.title,
-    template: 'templates/emails/notification.html',
+    template: Config.mail.templates.notifications[notifType],
     kwargs: {
       name: user.first_name,
       title: message.title,

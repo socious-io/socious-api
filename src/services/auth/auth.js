@@ -116,10 +116,10 @@ export const sendOTP = async (body) => {
   const code = await createOTP(user.id, otpType);
 
   if (otpType === OTPType.EMAIL) {
-    publish('email', {
+    publish('tmp_email', {
       to: user.email,
-      subject: 'OTP',
-      template: 'templates/emails/otp.html',
+      subject: 'One time password',
+      template: config.mail.templates.otp,
       kwargs: {name: user.first_name, code},
     });
   }
@@ -135,11 +135,10 @@ export const resendVerifyCode = async (body) => {
     OTPType.EMAIL,
     OTPPurposeType.ACTIVATION,
   );
-
-  publish('email', {
+  publish('tmp_email', {
     to: user.email,
     subject: 'Verify your account',
-    template: 'templates/emails/active_user.html',
+    template: config.mail.templates.activation,
     kwargs: {name: user.first_name, code},
   });
 };
@@ -192,10 +191,10 @@ export const forgetPassword = async (body) => {
   );
 
   if (otpType === OTPType.EMAIL) {
-    publish('email', {
+    publish('tmp_email', {
       to: user.email,
-      subject: 'OTP',
-      template: 'templates/emails/forget_password.html',
+      subject: 'Reset Password',
+      template: config.mail.templates.forgetPassword,
       kwargs: {name: user.first_name, code},
     });
   }

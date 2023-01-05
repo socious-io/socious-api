@@ -62,6 +62,14 @@ router.post(
   connectRequested,
   async (ctx) => {
     ctx.body = await Connect.accept(ctx.params.id);
+
+    Event.push(Event.Types.NOTIFICATION, ctx.body.requester_id, {
+      type: Notif.Types.ACCEPT_CONNECT,
+      refId: ctx.body.id,
+      parentId: ctx.body.id,
+      identity: ctx.identity,
+    });
+    
   },
 );
 

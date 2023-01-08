@@ -45,7 +45,7 @@ const email = async (notifType, userId, message, id) => {
     logger.error(`[notify] => ${JSON.stringify(err)}`);
   }
 
-  if (!user.email_verified_at) return;
+  // if (!user.email_verified_at) return;
 
   publish('tmp_email', {
     to: user.email,

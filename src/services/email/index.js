@@ -52,7 +52,7 @@ const sendTemplateBySendgrid = async ({to, subject, template, kwargs={}}) => {
 
   const result = await sendgrid.send(body);
 
-  logger.info(JSON.stringify(result));
+  logger.info(`[email] => ${JSON.stringify(result)}`);
 
   return body;
 };
@@ -150,7 +150,7 @@ export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) =>
         });
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(`[tmp_email] => ${err.message}`);
     return;
   }
 

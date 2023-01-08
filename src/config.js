@@ -1,4 +1,3 @@
-import Data from '@socious/data';
 import {config} from 'dotenv';
 
 const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env';
@@ -14,7 +13,7 @@ export default {
   jwtRefreshExpireTime: '30d',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
-  segmentAnalytics: process.env.SEGMENT_ANALYTICS,
+  segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
   mail: {
     sendgrid: {
       from: {

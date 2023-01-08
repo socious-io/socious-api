@@ -42,7 +42,7 @@ const email = async (notifType, userId, message, id) => {
   try {
     user = await User.get(userId);
   } catch (err) {
-    logger.error(JSON.stringify(err));
+    logger.error(`[notify] => ${JSON.stringify(err)}`);
   }
 
   if (!user.email_verified_at) return;
@@ -172,9 +172,8 @@ export const worker = async ({eventType, identityId, body}) => {
         body,
       );
     }
-
     return _push(eventType, identity.id, body);
   } catch (err) {
-    logger.error(err.message);
+    logger.error(`[notify] => ${err.message}`);
   }
 };

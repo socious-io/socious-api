@@ -53,8 +53,6 @@ const email = async (notifType, userId, message, id) => {
     template: Config.mail.templates.notifications[notifType],
     kwargs: {
       name: user.first_name,
-      title: message.title,
-      message: message.body,
       link: `${Config.notifAppLink}/${id}`,
     },
   });

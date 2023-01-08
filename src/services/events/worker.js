@@ -80,7 +80,7 @@ const send = async (userId, message, body, id) => {
 
   if (setting.push) await pushNotifications([userId], message, body);
 
-  if (setting.email) await email(userId, message, id);
+  if (setting.email) await email(body.type, userId, message, id);
 };
 
 const coordinateNotifs = async (userId, body) => {

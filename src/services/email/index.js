@@ -37,7 +37,7 @@ export const isTestEmail = (address) => {
   return false;
 };
 
-const sendTemplateBySendgrid = async ({to, subject, template, kwargs={}}) => {
+const sendTemplateBySendgrid = async ({to, template, kwargs={}}) => {
   const body = {
     personalizations: [
       {
@@ -46,7 +46,6 @@ const sendTemplateBySendgrid = async ({to, subject, template, kwargs={}}) => {
       }
     ],
     template_id: template,
-    subject,
     from: config.mail.sendgrid.from,
   };
 
@@ -144,7 +143,6 @@ export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) =>
         result = await sendTemplateBySendgrid({
           to,
           from: config.mail.sendgrid.from,
-          subject,
           template,
           kwargs
         });

@@ -75,7 +75,7 @@ router.post(
 
     Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
       type: Notif.Types.MEMBERED,
-      refId: ctx.body.id,
+      refId: ctx.params.user_id,
       parentId: ctx.params.id,
       identity: ctx.identity,
     });

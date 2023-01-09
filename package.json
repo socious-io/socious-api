@@ -80,7 +80,7 @@
     "sanitize-html": "^2.8.1",
     "socket.io": "^4.5.4",
     "sql-template-tag": "^5.0.3",
-    "stripe": "^11.5.0",
+    "stripe": "^11.6.0",
     "supertest-koa-agent": "^0.3.2",
     "winston": "^3.8.2",
     "yamljs": "^0.3.0"

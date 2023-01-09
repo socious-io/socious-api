@@ -41,7 +41,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.APPLICATION:
       return {
         title: Data.NotificationTitle.APPLICATION,
-        body: `${name} applied to your project`,
+        body: `${name} applied to your job`,
       };
 
     case Data.NotificationType.OFFER:

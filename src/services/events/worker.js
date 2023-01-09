@@ -121,7 +121,7 @@ const coordinateNotifs = async (userId, body) => {
     consolidate_number: 0,
   });
 
-  return send(userId, message, body, notifId);
+  return send(userId, message, body, notifId, body.identity?.meta?.name);
 };
 
 const _push = async (eventType, userId, body) => {

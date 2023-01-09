@@ -51,7 +51,7 @@ export default {
         OFFER: 'd-f43f679352b947bb8af7d95101e37086',
         REJECT: 'd-dc4cb57947284a5cb2c3c33abbafb96b',
         APPROVED: 'd-f46c948afada4dc5862d751b7480364b',
-        HIRED: 'd-8d94367eacb5411fb6188a8ba06363df ',
+        HIRED: 'd-8d94367eacb5411fb6188a8ba06363df',
         PROJECT_COMPLETE: 'd-731d6e77e1b4412d8e7b8fbbc7f418db',
         ASSIGNEE_CANCELED: 'd-0df6e8629f644986b2d6ff9b758058bc',
         ASSIGNER_CANCELED: 'd-65e541665d20410d806089be8fa4d4d9',

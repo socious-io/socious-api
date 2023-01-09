@@ -37,7 +37,7 @@ const pushNotifications = async (userIds, message, data) => {
   });
 };
 
-const email = async (notifType, userId, message, id) => {
+const email = async (notifType, userId, message, id, identityName) => {
   let user = {};
   try {
     user = await User.get(userId);
@@ -52,6 +52,7 @@ const email = async (notifType, userId, message, id) => {
     subject: message.title,
     template: Config.mail.templates.notifications[notifType],
     kwargs: {
+      notify_name: identityName,
       name: user.first_name,
       // link: `${Config.notifAppLink}/${id}`,
       // TODO: fix it after webapp released
@@ -73,14 +74,14 @@ const getSetting = async (userId, type) => {
   return setting;
 };
 
-const send = async (userId, message, body, id) => {
+const send = async (userId, message, body, id, identityName) => {
   const setting = await getSetting(userId, body.type);
 
   if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, id);
 
   if (setting.push) await pushNotifications([userId], message, body);
 
-  if (setting.email) await email(body.type, userId, message, id);
+  if (setting.email) await email(body.type, userId, message, id, identityName);
 };
 
 const coordinateNotifs = async (userId, body) => {
@@ -111,7 +112,7 @@ const coordinateNotifs = async (userId, body) => {
       consolidate_number: consolidateNumbs,
     });
 
-    return send(userId, message, body, latest.id);
+    return send(userId, message, body, latest.id, body.identity?.meta?.name);
   }
 
   var notifId = await Notif.create(userId, body.refId, body.type, {

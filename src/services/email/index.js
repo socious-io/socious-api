@@ -37,13 +37,13 @@ export const isTestEmail = (address) => {
   return false;
 };
 
-const sendTemplateBySendgrid = async ({to, template, kwargs={}}) => {
+const sendTemplateBySendgrid = async ({to, template, kwargs = {}}) => {
   const body = {
     personalizations: [
       {
         to: [{email: to}],
         dynamic_template_data: kwargs,
-      }
+      },
     ],
     template_id: template,
     from: config.mail.sendgrid.from,
@@ -79,7 +79,9 @@ const sendBySendgrid = async ({to, subject, html}) => {
 export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   const html = await ejs.renderFile(template, kwargs);
   const date = new Date();
-  const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender;
+  const sender = isTestEmail(to)
+    ? MailSenderTypes.TEST
+    : config.mail.defaultSender;
   let result = {};
   try {
     switch (sender) {
@@ -129,9 +131,15 @@ export const sendHtmlEmail = async ({to, subject, template, kwargs = {}}) => {
   );
 };
 
-
-export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) => {
-  const sender = isTestEmail(to) ? MailSenderTypes.TEST: config.mail.defaultSender;
+export const sendTemplateEmail = async ({
+  to,
+  subject,
+  template,
+  kwargs = {},
+}) => {
+  const sender = isTestEmail(to)
+    ? MailSenderTypes.TEST
+    : config.mail.defaultSender;
   const date = new Date();
   let result = {};
   try {
@@ -144,7 +152,7 @@ export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) =>
           to,
           from: config.mail.sendgrid.from,
           template,
-          kwargs
+          kwargs,
         });
     }
   } catch (err) {
@@ -162,7 +170,9 @@ export const sendTemplateEmail = async ({to, subject, template, kwargs = {}}) =>
     result,
     to,
     subject,
-    `${Object.keys(kwargs).map(key => `${key}=${kwargs[key]}`).join("&")}`,
+    `${Object.keys(kwargs)
+      .map((key) => `${key}=${kwargs[key]}`)
+      .join('&')}`,
     template,
     sender,
     date,

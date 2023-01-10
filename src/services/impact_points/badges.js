@@ -14,12 +14,18 @@ export const badges = async (identityId) => {
 
 export const addHistory = async (
   identityId,
-  {mission_id, social_cause, social_cause_category, total_points},
+  {
+    mission_id,
+    social_cause,
+    social_cause_category,
+    total_points,
+    submitted_work_id,
+  },
 ) => {
   try {
     return app.db.get(sql`
-      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category)
-      VALUES (${total_points}, ${mission_id}, ${identityId}, ${social_cause}, ${social_cause_category})
+      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category, submitted_work_id)
+      VALUES (${total_points}, ${mission_id}, ${identityId}, ${social_cause}, ${social_cause_category}, ${submitted_work_id})
       RETURNING id
     `);
   } catch (err) {
@@ -44,4 +50,11 @@ export const history = async (identityId, {offset = 0, limit = 10}) => {
   LIMIT ${limit} OFFSET ${offset}
     `);
   return rows;
+};
+
+export const impactPointsCalculatedWorksIds = async (missionId) => {
+  const {rows} = await app.db.query(sql`
+    SELECT submitted_work_id FROM impact_points_history WHERE mission_id=${missionId}
+  `);
+  return rows.map((r) => r.submitted_work_id);
 };

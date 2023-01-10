@@ -19,9 +19,40 @@ export const insert = async ({
       ${assigner_id},
       ${offer_id},
       ${applicant_id})
+    RETURNING id
+    `);
+    return get(rows[0].id);
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};
+
+export const submitWork = async ({
+  missin_id,
+  project_id,
+  total_hours,
+  start,
+  end,
+}) => {
+  try {
+    const {rows} = await app.db.query(sql`
+    INSERT INTO submitted_works (project_id, mission_id, total_hours, start, end) 
+    VALUES (${project_id}, ${missin_id}, ${total_hours}, ${start}, ${end})
     RETURNING *
     `);
-    return rows[0];
+    return get(rows[0].missin_id);
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};
+
+export const confirmWork = async (id) => {
+  try {
+    const {rows} = await app.db.query(sql`
+      UPDATE submitted_works SET status='CONFIRMED' WHERE id=${id}
+      RETURNING *
+      `);
+    return get(rows[0].missin_id);
   } catch (err) {
     throw new EntryError(err.message);
   }

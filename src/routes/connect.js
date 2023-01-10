@@ -69,7 +69,6 @@ router.post(
       parentId: ctx.body.id,
       identity: ctx.identity,
     });
-    
   },
 );
 

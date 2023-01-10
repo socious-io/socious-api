@@ -2277,6 +2277,29 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /missions/{mission_id}/confirm/{work_id}:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: work_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: confirm job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /missions/{mission_id}/cancel:
     parameters:
       - name: mission_id
@@ -2331,6 +2354,33 @@ paths:
               type: object
             example:
               content: test
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/submitworks:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: feedback job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              total_hours: 5
+              start_at: 2021-10-16T13:32:30.211Z
+              end_at: 2021-10-16T13:32:30.211Z
       security:
         - bearerAuth: []
       responses:

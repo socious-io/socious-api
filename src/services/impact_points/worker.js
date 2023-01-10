@@ -3,7 +3,7 @@ import Mission from '../../models/mission/index.js';
 import Offer from '../../models/offer/index.js';
 import Project from '../../models/project/index.js';
 import logger from '../../utils/logging.js';
-import {addHistory} from './badges.js';
+import {addHistory, impactPointsCalculatedWorksIds} from './badges.js';
 
 const RATIO = 0.1;
 
@@ -48,10 +48,14 @@ export const worker = async ({mission}) => {
     logger.error(`Mission ${mission.id} ${JSON.stringify(err)}`);
   }
 
-  if (mission.status !== Data.MissionStatus.CONFIRMED) {
+  if (
+    mission.project.payment_scheme == Data.ProjectPaymentSchemeType.FIXED &&
+    mission.status !== Data.MissionStatus.CONFIRMED
+  ) {
     logger.error(`Mission ${mission.id} is not confirmed`);
     return false;
   }
+
   let category;
   try {
     category = await Project.jobCategory(mission.project.job_category_id);
@@ -63,11 +67,40 @@ export const worker = async ({mission}) => {
     return false;
   }
 
-  const offer = await Offer.get(mission.offer_id);
+  let totalHours = 0;
+  let workId;
+
+  if (mission.project.payment_scheme == Data.ProjectPaymentSchemeType.FIXED) {
+    const offer = await Offer.get(mission.offer_id);
+    totalHours = offer.total_hours;
+  } else {
+    // Hourly basis jobs
+    const calculatedWorks = await impactPointsCalculatedWorksIds(mission.id);
+    const works = mission.submitted_works.filter(
+      (w) => !calculatedWorks.includes(w.id),
+    );
+
+    if (works.length < 1) {
+      logger.error(
+        `Faild canculate impact score for ${mission.id},
+        there are no submitted works for this mission that exists or not calculated already`,
+      );
+      return false;
+    }
+    workId = works[0].id;
+    totalHours = works[0].total_hours;
+  }
+
+  if (totalHours < 1) {
+    logger.error(
+      `Faild canculate impact score for ${mission.id}, total hours is under 1 hour`,
+    );
+    return false;
+  }
 
   const totalPoints = calculate({
     category,
-    total_hours: offer.total_hours,
+    total_hours: totalHours,
     payment_type: mission.project.payment_type,
     experience_level: mission.project.experience_level,
   });
@@ -80,6 +113,7 @@ export const worker = async ({mission}) => {
       total_points: totalPoints,
       social_cause: socialCause,
       social_cause_category: Data.SocialCausesSDGMapping[socialCause],
+      submitted_work_id: workId,
     });
 
     logger.info(`Calculate impact point successfully ${history.id}`);

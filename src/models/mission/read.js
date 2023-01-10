@@ -21,7 +21,21 @@ export const get = async (id) => {
     row_to_json(p.*) AS project,
     row_to_json(i1.*) AS assignee,
     row_to_json(i2.*) AS assigner,
-    row_to_json(es.*) AS escrow
+    row_to_json(es.*) AS escrow,
+    (SELECT
+      jsonb_agg(
+        json_build_object(
+          'id', s.id, 
+          'status', s.status, 
+          'total_hours', s.total_hours,
+          'start_at', s.start_at,
+          'end_at', s.end_at,
+          'created_at', s.created_at 
+        )
+      )
+      FROM submitted_works s
+      WHERE s.mission_id=m.id
+    ) AS submitted_works
   FROM missions m
   LEFT JOIN applicants a ON a.id=m.applicant_id
   JOIN projects p ON p.id=m.project_id
@@ -40,7 +54,21 @@ export const getByOffer = async (offerId) => {
     row_to_json(p.*) AS project,
     row_to_json(i1.*) AS assignee,
     row_to_json(i2.*) AS assigner,
-    row_to_json(es.*) AS escrow
+    row_to_json(es.*) AS escrow,
+    (SELECT
+      jsonb_agg(
+        json_build_object(
+          'id', s.id, 
+          'status', s.status, 
+          'total_hours', s.total_hours,
+          'start_at', s.start_at,
+          'end_at', s.end_at,
+          'created_at', s.created_at 
+        )
+      )
+      FROM submitted_works s
+      WHERE s.mission_id=m.id
+    ) AS submitted_works
   FROM missions m
   LEFT JOIN applicants a ON a.id=m.applicant_id
   JOIN projects p ON p.id=m.project_id
@@ -60,7 +88,21 @@ export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
       row_to_json(p.*) AS project,
       row_to_json(i1.*) AS assignee,
       row_to_json(i2.*) AS assigner,
-      row_to_json(es.*) AS escrow
+      row_to_json(es.*) AS escrow,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', s.id,
+            'status', s.status, 
+            'total_hours', s.total_hours,
+            'start_at', s.start_at,
+            'end_at', s.end_at,
+            'created_at', s.created_at 
+          )
+        )
+        FROM submitted_works s
+        WHERE s.mission_id=m.id
+      ) AS submitted_works
     FROM missions m
     LEFT JOIN applicants a ON a.id=m.applicant_id
     JOIN projects p ON p.id=m.project_id

@@ -58,9 +58,9 @@ export default {
         ASSIGNER_CONFIRMED: 'd-c8701ca45acc4922a6551575953952d4',
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
-        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443'
-      }
-    }
+        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
+      },
+    },
   },
   database: {
     host: process.env.PGHOST,

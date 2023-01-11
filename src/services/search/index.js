@@ -30,7 +30,7 @@ const find = async (body, {identityId, shouldSave}, paginate) => {
     case Data.SearchType.USERS:
       return body.q
         ? User.search(body.q, identityId, options)
-        : User.getUsers(options);
+        : User.getUsers(identityId, options);
 
     case Data.SearchType.RELATED_USERS:
       return body.q

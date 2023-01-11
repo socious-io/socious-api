@@ -26,15 +26,17 @@ router.post('/', loginRequired, async (ctx) => {
 });
 
 router.post('/:id/report', loginRequired, async (ctx) => {
-
-  await validate.ReportSchema.validateAsync(ctx.request.body)
-  await Report.report({...ctx.request.body, post_id: ctx.params.id, identity_id: ctx.identity.id})
+  await validate.ReportSchema.validateAsync(ctx.request.body);
+  await Report.report({
+    ...ctx.request.body,
+    post_id: ctx.params.id,
+    identity_id: ctx.identity.id,
+  });
 
   ctx.body = {
-    message: 'success'
-  }
+    message: 'success',
+  };
 });
-
 
 router.post('/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.PostSchema.validateAsync(ctx.request.body);
@@ -115,13 +117,16 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
 });
 
 router.post('/comments/:id/report', loginRequired, async (ctx) => {
-
-  await validate.ReportSchema.validateAsync(ctx.request.body)
-  await Report.report({...ctx.request.body, comment_id: ctx.params.id, identity_id: ctx.identity.id})
+  await validate.ReportSchema.validateAsync(ctx.request.body);
+  await Report.report({
+    ...ctx.request.body,
+    comment_id: ctx.params.id,
+    identity_id: ctx.identity.id,
+  });
 
   ctx.body = {
-    message: 'success'
-  }
+    message: 'success',
+  };
 });
 
 router.post(

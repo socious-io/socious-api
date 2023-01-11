@@ -22,6 +22,7 @@ export const all = async (
       posts.*, i.type  as identity_type, i.meta as identity_meta,
       array_to_json(posts.causes_tags) as causes_tags,
       EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
+      COALESCE(r.id IS NOT NULL, false) AS reported,
       row_to_json(sp.*) AS shared_post,
       row_to_json(sp_i.*) AS shared_from_identity,
       (SELECT
@@ -33,7 +34,9 @@ export const all = async (
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-    ${filtering(filter, filterColumns, false, 'posts')}
+    LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+    WHERE (r.blocked IS NULL OR r.blocked = false)
+    ${filtering(filter, filterColumns, true, 'posts')}
     ${sorting(sort, sortColumns, 'posts')}
     LIMIT ${limit} OFFSET ${offset}`,
   );
@@ -47,6 +50,7 @@ export const get = async (id, currentIdentity) => {
     array_to_json(posts.causes_tags) as causes_tags,
     i.type AS identity_type, i.meta AS identity_meta, 
     EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
+    COALESCE(r.id IS NOT NULL, false) AS reported,
     (SELECT
       jsonb_agg(json_build_object('url', m.url, 'id', m.id))
       FROM media m
@@ -58,7 +62,9 @@ export const get = async (id, currentIdentity) => {
   JOIN identities i ON posts.identity_id=i.id
   LEFT JOIN posts sp ON sp.id = posts.shared_id
   LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-  WHERE posts.id=${id}`);
+  LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+  WHERE posts.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
+  `);
 };
 
 export const getAll = async (ids, currentIdentity, sort) => {
@@ -67,6 +73,7 @@ export const getAll = async (ids, currentIdentity, sort) => {
       array_to_json(posts.causes_tags) as causes_tags,
       i.type AS identity_type, i.meta AS identity_meta, 
       EXISTS (SELECT id FROM likes WHERE (post_id=posts.id OR post_id=posts.shared_id) AND identity_id=${currentIdentity}) AS liked,
+      COALESCE(r.id IS NOT NULL, false) AS reported,
       (SELECT
         jsonb_agg(json_build_object('url', m.url, 'id', m.id))
         FROM media m
@@ -78,7 +85,8 @@ export const getAll = async (ids, currentIdentity, sort) => {
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-    WHERE posts.id=ANY(${ids})
+    LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+    WHERE posts.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns, 'posts')}
   `);
   return rows;

@@ -45,13 +45,16 @@ export const comments = async (
   SELECT 
   COUNT(*) OVER () as total_count,
   c.*, i.type  as identity_type, i.meta as identity_meta,
+  COALESCE(r.id IS NOT NULL, false) AS reported,
   EXISTS (
     SELECT id FROM likes WHERE post_id=${id} AND 
     identity_id=${currentIdentity} AND
     comment_id=c.id
   ) AS liked
-  FROM comments c JOIN identities i ON c.identity_id=i.id
-  WHERE post_id=${id} AND reply_id IS NULL
+  FROM comments c 
+  JOIN identities i ON c.identity_id=i.id
+  LEFT JOIN reports r ON r.comment_id=c.id AND r.identity_id=${currentIdentity}
+  WHERE post_id=${id} AND reply_id IS NULL AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
@@ -65,13 +68,16 @@ export const commentsReplies = async (
   const {rows} = await app.db.query(sql`
   SELECT COUNT(*) OVER () as total_count,
   c.*, i.type  as identity_type, i.meta as identity_meta,
+  COALESCE(r.id IS NOT NULL, false) AS reported,
   EXISTS (
     SELECT id FROM likes WHERE post_id=${id} AND 
     identity_id=${currentIdentity} AND
     comment_id=c.id
   ) AS liked
-  FROM comments c JOIN identities i ON c.identity_id=i.id
-  WHERE reply_id=${id}
+  FROM comments c 
+  JOIN identities i ON c.identity_id=i.id
+  LEFT JOIN reports r ON r.comment_id=c.id AND r.identity_id=${currentIdentity}
+  WHERE reply_id=${id} AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;

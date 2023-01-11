@@ -26,26 +26,31 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
     ctx.body = await User.getProfileLimited(ctx.params.id);
     return;
   }
-  ctx.body = await User.getProfile(ctx.params.id);
+  ctx.body = await User.getProfile(ctx.params.id, ctx.identity.id);
 });
 
 router.post('/:id/report', loginRequired, async (ctx) => {
-
-  await validate.ReportSchema.validateAsync(ctx.request.body)
-  await Report.report({...ctx.request.body, user_id: ctx.params.id, identity_id: ctx.identity.id})
+  await validate.ReportSchema.validateAsync(ctx.request.body);
+  await Report.report({
+    ...ctx.request.body,
+    user_id: ctx.params.id,
+    identity_id: ctx.identity.id,
+  });
 
   ctx.body = {
-    message: 'success'
-  }
+    message: 'success',
+  };
 });
-
 
 router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
   if (ctx.user.status === User.StatusType.INACTIVE) {
     ctx.body = await User.getProfileByUsernameLimited(ctx.params.username);
     return;
   }
-  ctx.body = await User.getProfileByUsername(ctx.params.username);
+  ctx.body = await User.getProfileByUsername(
+    ctx.params.username,
+    ctx.identity.id,
+  );
 });
 
 router.get('/profile', loginRequired, async (ctx) => {

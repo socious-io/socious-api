@@ -48,7 +48,7 @@ export const currentProfile = async (user) => {
   return user;
 };
 
-export const getProfile = async (id) => {
+export const getProfile = async (id, currentIdentity) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
@@ -57,6 +57,7 @@ export const getProfile = async (id) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
+    COALESCE(r.id IS NOT NULL, false) AS reported,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -83,12 +84,13 @@ export const getProfile = async (id) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
-    WHERE u.id=${id}
+    LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    WHERE u.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
     `,
   );
 };
 
-export const getProfileByUsername = async (username) => {
+export const getProfileByUsername = async (username, currentIdentity) => {
   return app.db.get(
     sql`
     SELECT u.id, username, first_name, last_name,
@@ -97,6 +99,7 @@ export const getProfileByUsername = async (username) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
+    COALESCE(r.id IS NOT NULL, false) AS reported,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -123,7 +126,8 @@ export const getProfileByUsername = async (username) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
-    WHERE u.username=${username.toLowerCase()}
+    LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    WHERE u.username=${username.toLowerCase()} AND (r.blocked IS NULL OR r.blocked = false)
     `,
   );
 };
@@ -145,7 +149,7 @@ export const getProfileLimited = async (id) => {
   );
 };
 
-export const getAllProfile = async (ids, sort) => {
+export const getAllProfile = async (ids, sort, currentIdentity) => {
   const {rows} = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
@@ -154,6 +158,7 @@ export const getAllProfile = async (ids, sort) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
+    COALESCE(r.id IS NOT NULL, false) AS reported,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -180,7 +185,8 @@ export const getAllProfile = async (ids, sort) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
-    WHERE u.id=ANY(${ids})
+    LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    WHERE u.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns)}
     `,
   );
@@ -303,7 +309,10 @@ export const getRelateds = async (
   });
 };
 
-export const getUsers = async ({offset = 0, limit = 10, filter, sort}) => {
+export const getUsers = async (
+  identityId,
+  {offset = 0, limit = 10, filter, sort},
+) => {
   const {rows} = await app.db.query(sql`
     SELECT
       u.id
@@ -315,6 +324,7 @@ export const getUsers = async ({offset = 0, limit = 10, filter, sort}) => {
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
     sort,
+    identityId,
   );
 
   return users.map((r) => {

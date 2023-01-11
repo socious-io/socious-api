@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import {validate} from '@socious/data';
 import Post from '../models/post/index.js';
 import Notif from '../models/notification/index.js';
+import Report from '../models/report/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/middlewares/requests.js';
 import {
@@ -23,6 +24,17 @@ router.post('/', loginRequired, async (ctx) => {
   await validate.PostSchema.validateAsync(ctx.request.body);
   ctx.body = await Post.insert(ctx.identity.id, ctx.request.body);
 });
+
+router.post('/:id/report', loginRequired, async (ctx) => {
+
+  await validate.ReportSchema.validateAsync(ctx.request.body)
+  await Report.report({...ctx.request.body, post_id: ctx.params.id, identity_id: ctx.identity.id})
+
+  ctx.body = {
+    message: 'success'
+  }
+});
+
 
 router.post('/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.PostSchema.validateAsync(ctx.request.body);
@@ -100,6 +112,16 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
     parentId: post.id,
     identity: ctx.identity,
   });
+});
+
+router.post('/comments/:id/report', loginRequired, async (ctx) => {
+
+  await validate.ReportSchema.validateAsync(ctx.request.body)
+  await Report.report({...ctx.request.body, comment_id: ctx.params.id, identity_id: ctx.identity.id})
+
+  ctx.body = {
+    message: 'success'
+  }
 });
 
 router.post(

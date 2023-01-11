@@ -1128,6 +1128,32 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /posts/{post_id}/report:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: report post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /posts/comments/{comment_id}:
     parameters:
       - name: comment_id
@@ -1139,6 +1165,32 @@ paths:
       tags:
         - post
       summary: replies
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/comments/{comment_id}/report:
+    parameters:
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: report comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
       security:
         - bearerAuth: []
       responses:
@@ -1494,6 +1546,38 @@ paths:
       tags:
         - users
       summary: profile
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{user_id}/report:
+    parameters:
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: report user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
       security:
         - bearerAuth: []
       parameters:

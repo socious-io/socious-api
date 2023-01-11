@@ -55,6 +55,7 @@ test('delete user', async () => {
   });
 });
 
+
 const cleanup = async () => {
   await app.db.query(`DELETE FROM users`);
   await app.db.query(`DELETE FROM organizations`);

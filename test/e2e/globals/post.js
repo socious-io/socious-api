@@ -42,6 +42,25 @@ export const getAll = async (request, data) => {
   });
 };
 
+export const repost = async (request, data) => {
+  const response = await request
+    .get(`/posts`)
+    .set('Authorization', data.users[0].access_token);
+
+  expect(response.status).toBe(200);
+  for (const post of response.body.items) {
+    const reportResponse = await request
+    .post(`/posts/${post.id}/report`)
+    .send({
+      comment: 'test'
+    })
+    .set('Authorization', data.users[0].access_token);
+
+    expect(reportResponse.status).toBe(200);
+    expect(reportResponse.body).toMatchSnapshot();
+  }
+};
+
 export const getFiltered = async (request, data) => {
   const response = await request
     .get(`/posts?filter.hashtags=TEST&filter.causes_tags=SOCIAL,HEALTH`)

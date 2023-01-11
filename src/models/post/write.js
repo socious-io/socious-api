@@ -66,3 +66,24 @@ export const share = async (id, identityId, {content}) => {
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM posts WHERE id=${id}`);
 };
+
+
+export const report = async ({
+  identity_id,
+  post_id,
+  comment,
+  blocked,
+}) => {
+  try {
+    const {rows} = await app.db.query(sql`
+      INSERT INTO reports (identity_id, post_id, comment, blocked)
+      VALUES (${identity_id}, ${post_id}, ${comment}, ${blocked})
+      ON CONFLICT (identity_id, post_id) 
+      DO UPDATE SET comment=${comment}, blocked=${blocked}
+      RETURNING id
+    `);
+    return rows[0].id;
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};

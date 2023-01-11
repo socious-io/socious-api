@@ -27,7 +27,7 @@ router.post('/', loginRequired, async (ctx) => {
 
 router.post('/:id/report', loginRequired, async (ctx) => {
   await validate.ReportSchema.validateAsync(ctx.request.body);
-  await Report.report({
+  await Post.report({
     ...ctx.request.body,
     post_id: ctx.params.id,
     identity_id: ctx.identity.id,

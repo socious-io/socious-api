@@ -53,8 +53,8 @@ export const comments = async (
   ) AS liked
   FROM comments c 
   JOIN identities i ON c.identity_id=i.id
-  LEFT JOIN reports r ON r.comment_id=c.id AND r.identity_id=${currentIdentity}
-  WHERE post_id=${id} AND reply_id IS NULL AND (r.blocked IS NULL OR r.blocked = false)
+  LEFT JOIN reports r ON (r.comment_id=c.id OR r.user_id=c.identity_id) AND r.identity_id=${currentIdentity}
+  WHERE c.post_id=${id} AND c.reply_id IS NULL AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
@@ -76,8 +76,8 @@ export const commentsReplies = async (
   ) AS liked
   FROM comments c 
   JOIN identities i ON c.identity_id=i.id
-  LEFT JOIN reports r ON r.comment_id=c.id AND r.identity_id=${currentIdentity}
-  WHERE reply_id=${id} AND (r.blocked IS NULL OR r.blocked = false)
+  LEFT JOIN reports r ON (r.comment_id=c.id OR r.user_id=c.identity_id) AND r.identity_id=${currentIdentity}
+  WHERE c.reply_id=${id} AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
   `);
   return rows;
@@ -95,7 +95,7 @@ export const reportComment = async ({
 }) => {
   try {
     const {rows} = await app.db.query(sql`
-      INSERT INTO reports (identity_id, post_id, comment, blocked)
+      INSERT INTO reports (identity_id, comment_id, comment, blocked)
       VALUES (${identity_id}, ${comment_id}, ${comment}, ${blocked})
       ON CONFLICT (identity_id, comment_id)
       DO UPDATE SET comment=${comment}, blocked=${blocked}

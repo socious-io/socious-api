@@ -34,7 +34,7 @@ export const all = async (
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-    LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+    LEFT JOIN reports r ON (r.post_id=posts.id OR r.user_id=posts.identity_id) AND r.identity_id=${currentIdentity}
     WHERE (r.blocked IS NULL OR r.blocked = false)
     ${filtering(filter, filterColumns, true, 'posts')}
     ${sorting(sort, sortColumns, 'posts')}
@@ -62,7 +62,7 @@ export const get = async (id, currentIdentity) => {
   JOIN identities i ON posts.identity_id=i.id
   LEFT JOIN posts sp ON sp.id = posts.shared_id
   LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-  LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+  LEFT JOIN reports r ON (r.post_id=posts.id OR r.user_id=posts.identity_id) AND r.identity_id=${currentIdentity}
   WHERE posts.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
   `);
 };
@@ -85,7 +85,7 @@ export const getAll = async (ids, currentIdentity, sort) => {
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
     LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
-    LEFT JOIN reports r ON r.post_id=posts.id AND r.identity_id=${currentIdentity}
+    LEFT JOIN reports r ON (r.post_id=posts.id OR r.user_id=posts.identity_id) AND r.identity_id=${currentIdentity}
     WHERE posts.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns, 'posts')}
   `);

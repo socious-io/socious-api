@@ -110,7 +110,7 @@ export const remove = async (user, reason) => {
 export const report = async ({identity_id, user_id, comment, blocked}) => {
   try {
     const {rows} = await app.db.query(sql`
-      INSERT INTO reports (identity_id, post_id, comment, blocked)
+      INSERT INTO reports (identity_id, user_id, comment, blocked)
       VALUES (${identity_id}, ${user_id}, ${comment}, ${blocked})
       ON CONFLICT (identity_id, user_id) 
       DO UPDATE SET comment=${comment}, blocked=${blocked}

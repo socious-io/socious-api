@@ -2,7 +2,6 @@ import Router from '@koa/router';
 import {validate} from '@socious/data';
 import Post from '../models/post/index.js';
 import Notif from '../models/notification/index.js';
-import Report from '../models/report/index.js';
 import Event from '../services/events/index.js';
 import {paginate} from '../utils/middlewares/requests.js';
 import {
@@ -118,7 +117,7 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
 
 router.post('/comments/:id/report', loginRequired, async (ctx) => {
   await validate.ReportSchema.validateAsync(ctx.request.body);
-  await Report.report({
+  await Post.reportComment({
     ...ctx.request.body,
     comment_id: ctx.params.id,
     identity_id: ctx.identity.id,

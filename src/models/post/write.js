@@ -67,13 +67,7 @@ export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM posts WHERE id=${id}`);
 };
 
-
-export const report = async ({
-  identity_id,
-  post_id,
-  comment,
-  blocked,
-}) => {
+export const report = async ({identity_id, post_id, comment, blocked}) => {
   try {
     const {rows} = await app.db.query(sql`
       INSERT INTO reports (identity_id, post_id, comment, blocked)

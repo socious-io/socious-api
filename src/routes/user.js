@@ -6,7 +6,6 @@ import Auth from '../services/auth/index.js';
 import Mission from '../models/mission/index.js';
 import Offer from '../models/offer/index.js';
 import Skill from '../models/skill/index.js';
-import Report from '../models/report/index.js';
 import ImpactPoints from '../services/impact_points/index.js';
 import {paginate} from '../utils/middlewares/requests.js';
 import {
@@ -31,7 +30,7 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
 
 router.post('/:id/report', loginRequired, async (ctx) => {
   await validate.ReportSchema.validateAsync(ctx.request.body);
-  await Report.report({
+  await User.report({
     ...ctx.request.body,
     user_id: ctx.params.id,
     identity_id: ctx.identity.id,

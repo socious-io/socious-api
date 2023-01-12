@@ -86,3 +86,23 @@ export const commentsReplies = async (
 export const getComment = async (id) => {
   return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`);
 };
+
+export const reportComment = async ({
+  identity_id,
+  comment_id,
+  comment,
+  blocked,
+}) => {
+  try {
+    const {rows} = await app.db.query(sql`
+      INSERT INTO reports (identity_id, post_id, comment, blocked)
+      VALUES (${identity_id}, ${comment_id}, ${comment}, ${blocked})
+      ON CONFLICT (identity_id, comment_id)
+      DO UPDATE SET comment=${comment}, blocked=${blocked}
+      RETURNING id
+    `);
+    return rows[0].id;
+  } catch (err) {
+    throw new EntryError(err.message);
+  }
+};

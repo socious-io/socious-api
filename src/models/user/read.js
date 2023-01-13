@@ -229,6 +229,7 @@ export const search = async (
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
     sort,
+    currentIdentity
   );
 
   return users.map((r) => {
@@ -320,7 +321,7 @@ export const getUsers = async (
       ${filtering(filter, filterColumns, false)}
     ${sorting(sort, sortColumns)}
   `);
-
+  
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
     sort,

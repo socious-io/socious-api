@@ -35,5 +35,9 @@ router.post('/notify', async (ctx) => {
 });
 
 router.post('/proofspace/claim', async (ctx) => {
+  console.log('---------- ProofSpace ------------------');
+  console.log(ctx.request.header);
+  console.log(ctx.request.body);
+  console.log('----------------------------------------');
   ctx.body = await Webhook.proofSpaceClaim(ctx.request.body);
 });

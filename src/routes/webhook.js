@@ -3,10 +3,11 @@ import Chat from '../models/chat/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import Webhook from '../services/webhooks/index.js';
+import {accessWebhooks} from '../utils/middlewares/authorization.js';
 
 export const router = new Router();
 
-router.post('/notify', async (ctx) => {
+router.post('/notify', accessWebhooks, async (ctx) => {
   const body = ctx.request.body;
 
   const connections = ctx.app.users[body.user_id];

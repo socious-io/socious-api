@@ -1,6 +1,5 @@
 import Router from '@koa/router';
 import Config from '../config.js';
-import {accessWebhooks} from '../utils/middlewares/authorization.js';
 import {koaSwagger} from 'koa2-swagger-ui';
 import yamljs from 'yamljs';
 import blocker from '../utils/middlewares/blocker.js';
@@ -41,12 +40,7 @@ export default (app) => {
     koaSwagger({routePrefix: false, swaggerOptions: {spec}}),
   );
 
-  blueprint.use(
-    '/webhooks',
-    accessWebhooks,
-    webhook.routes(),
-    webhook.allowedMethods(),
-  );
+  blueprint.use('/webhooks', webhook.routes(), webhook.allowedMethods());
 
   blueprint.use('/ping', ping.routes(), ping.allowedMethods());
   blueprint.use(

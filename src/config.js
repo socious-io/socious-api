@@ -62,6 +62,12 @@ export default {
       },
     },
   },
+  services: {
+    proofspace: {
+      credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,
+      schemaId: process.env.PROOFSPACE_SCHEMA_ID,
+    },
+  },
   database: {
     host: process.env.PGHOST,
     port: process.env.PGPORT,

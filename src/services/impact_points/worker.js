@@ -76,11 +76,11 @@ export const worker = async ({mission}) => {
   } else {
     // Hourly basis jobs
     const calculatedWorks = await impactPointsCalculatedWorksIds(mission.id);
-    const works = mission.submitted_works.filter(
+    const works = mission.submitted_works?.filter(
       (w) => !calculatedWorks.includes(w.id),
     );
 
-    if (works.length < 1) {
+    if (!works || works.length < 1) {
       logger.error(
         `Faild canculate impact score for ${mission.id},
         there are no submitted works for this mission that exists or not calculated already`,

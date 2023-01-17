@@ -3,7 +3,9 @@ import Chat from '../models/chat/index.js';
 import Notif from '../models/notification/index.js';
 import Event from '../services/events/index.js';
 import Webhook from '../services/webhooks/index.js';
+// import Config from '../config.js';
 import {accessWebhooks} from '../utils/middlewares/authorization.js';
+// import jwt from 'koa-jwt';
 
 export const router = new Router();
 
@@ -35,10 +37,14 @@ router.post('/notify', accessWebhooks, async (ctx) => {
   ctx.body = {sent: true};
 });
 
-router.post('/proofspace/claim', async (ctx) => {
-  console.log('---------- ProofSpace ------------------');
-  console.log(ctx.request.header);
-  console.log(ctx.request.body);
-  console.log('----------------------------------------');
-  ctx.body = await Webhook.proofSpaceClaim(ctx.request.body);
-});
+router.post(
+  '/proofspace/claim',
+  // jwt({secret: Config.services.proofspace.secret}),
+  async (ctx) => {
+    console.log('---------- ProofSpace ------------------');
+    console.log(ctx.request.header);
+    console.log(ctx.request.body);
+    console.log('----------------------------------------');
+    ctx.body = await Webhook.proofSpaceClaim(ctx.request.body);
+  },
+);

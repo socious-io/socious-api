@@ -66,7 +66,7 @@ export default {
     proofspace: {
       credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,
       schemaId: process.env.PROOFSPACE_SCHEMA_ID,
-      secret: process.env.PROOFSPACE_SECRET_KEY,
+      secretKey: process.env.PROOFSPACE_SECRET_KEY,
     },
   },
   database: {
@@ -134,6 +134,7 @@ export default {
   },
   notifAppLink:
     process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
+  privateKey: process.env.SECRET_KEY,
 };
 
 function boolVariable(val, defaultVal = true) {

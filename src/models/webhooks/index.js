@@ -13,3 +13,7 @@ export const insert = async (party, body) => {
     throw new EntryError(err.message);
   }
 };
+
+export default {
+  insert,
+};

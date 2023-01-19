@@ -3,6 +3,7 @@ import Mission from '../../models/mission/index.js';
 import Offer from '../../models/offer/index.js';
 import Project from '../../models/project/index.js';
 import logger from '../../utils/logging.js';
+import ProofSpace from '../proofspace/index.js';
 import {addHistory, impactPointsCalculatedWorksIds} from './badges.js';
 
 const RATIO = 0.1;
@@ -117,6 +118,8 @@ export const worker = async ({mission}) => {
     });
 
     logger.info(`Calculate impact point successfully ${history.id}`);
+
+    ProofSpace.Sync({impact_point_id: history.id});
   } catch (err) {
     logger.error(`Calculating impact points ${err.message}`);
     return false;

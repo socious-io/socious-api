@@ -1,4 +1,5 @@
 import axios from 'axios';
+import crypto from 'crypto';
 import Config from '../../config.js';
 import Webhook from '../../models/webhooks/index.js';
 import User from '../../models/user/index.js';
@@ -13,6 +14,20 @@ import logger from '../../utils/logging.js';
 const partyName = 'PROOFSPACE';
 
 export const Claim = async (body, headers) => {
+  const signature = headers['x-body-signature'];
+  if (!signature) {
+    throw new PermissionError('X-Body-Signature header is absent');
+  }
+  const buff = Buffer.from(JSON.stringify(body));
+  const verified = crypto.verify(
+    'sha3-256',
+    buff,
+    Config.services.proofspace.webhookKey,
+    Buffer.from(signature, 'base64'),
+  );
+
+  if (!verified) throw new PermissionError('Invalid Body Signature');
+
   await Webhook.insert(partyName, body);
 
   const fields = body.receivedCredentials[0]?.fields;

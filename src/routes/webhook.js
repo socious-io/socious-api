@@ -38,8 +38,8 @@ router.post('/notify', accessWebhooks, async (ctx) => {
 
 router.post('/proofspace/claim', async (ctx) => {
   console.log('---------- ProofSpace ------------------');
-  console.log(ctx.request.header);
-  console.log(ctx.request.body);
+  console.log(JSON.stringify(ctx.request.header));
+  console.log(JSON.stringify(ctx.request.body));
   console.log('----------------------------------------');
   ctx.body = await ProofSpace.Claim(ctx.request.body, ctx.request.header);
 });

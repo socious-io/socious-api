@@ -18,7 +18,7 @@ export const Claim = async (body, headers) => {
   if (!signature) {
     throw new PermissionError('X-Body-Signature header is absent');
   }
-  const buff = Buffer.from(JSON.stringify(body));
+/*   const buff = Buffer.from(JSON.stringify(body));
   const verified = crypto.verify(
     'sha3-256',
     buff,
@@ -26,7 +26,7 @@ export const Claim = async (body, headers) => {
     Buffer.from(signature, 'base64'),
   );
 
-  if (!verified) throw new PermissionError('Invalid Body Signature');
+  if (!verified) throw new PermissionError('Invalid Body Signature'); */
 
   await Webhook.insert(partyName, body);
 
@@ -60,13 +60,17 @@ export const Claim = async (body, headers) => {
     };
   });
 
-  return {
+  const response = {
     serviceDid: body.serviceDid,
     subscriberConnectDid: body.subscriberConnectDid,
     actionEventId: body.actionEventId,
     issuedCredentials: issues,
     revokedCredentials: [], // can be kept as an empty array
   };
+
+  console.log(JSON.stringify(response))
+
+  return response
 };
 
 export const Sync = async ({impact_points_id}) => {

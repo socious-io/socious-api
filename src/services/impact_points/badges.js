@@ -64,7 +64,7 @@ export const get = async (id) => {
   JOIN missions m ON m.id=i.mission_id
   JOIN projects p ON p.id=m.project_id
   JOIN organizations org ON org.id=p.identity_id
-  WHERE id=${id}
+  WHERE i.id=${id}
     `)
   return rows
 }

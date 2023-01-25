@@ -1,22 +1,22 @@
-import Router from '@koa/router';
-import Follow from '../models/follow/index.js';
-import Connect from '../models/connect/index.js';
-import Notif from '../models/notification/index.js';
-import Event from '../services/events/index.js';
-import {validate} from '@socious/data';
-import {loginRequired} from '../utils/middlewares/authorization.js';
+import Router from '@koa/router'
+import Follow from '../models/follow/index.js'
+import Connect from '../models/connect/index.js'
+import Notif from '../models/notification/index.js'
+import Event from '../services/events/index.js'
+import { validate } from '@socious/data'
+import { loginRequired } from '../utils/middlewares/authorization.js'
 import {
   checkIdParams,
   connectRequested,
-  connectPermission,
-} from '../utils/middlewares/route.js';
-import {paginate} from '../utils/middlewares/requests.js';
+  connectPermission
+} from '../utils/middlewares/route.js'
+import { paginate } from '../utils/middlewares/requests.js'
 
-export const router = new Router();
+export const router = new Router()
 
 router.get('/', loginRequired, paginate, async (ctx) => {
-  ctx.body = await Connect.all(ctx.identity.id, ctx.paginate);
-});
+  ctx.body = await Connect.all(ctx.identity.id, ctx.paginate)
+})
 
 router.get(
   '/:id',
@@ -24,24 +24,24 @@ router.get(
   checkIdParams,
   connectPermission,
   async (ctx) => {
-    ctx.body = await Connect.get(ctx.params.id);
-  },
-);
+    ctx.body = await Connect.get(ctx.params.id)
+  }
+)
 
 router.post('/:identity_id', loginRequired, async (ctx) => {
-  await validate.ConnectSchema.validateAsync(ctx.request.body);
+  await validate.ConnectSchema.validateAsync(ctx.request.body)
   ctx.body = await Connect.send(ctx.identity.id, {
     ...ctx.request.body,
-    requested_id: ctx.params.identity_id,
-  });
+    requested_id: ctx.params.identity_id
+  })
 
   Event.push(Event.Types.NOTIFICATION, ctx.params.identity_id, {
     type: Notif.Types.CONNECT,
     refId: ctx.body.id,
     parentId: ctx.body.id,
-    identity: ctx.identity,
-  });
-});
+    identity: ctx.identity
+  })
+})
 
 router.post(
   '/:identity_id/block/direct',
@@ -50,10 +50,10 @@ router.post(
   async (ctx) => {
     ctx.body = await Connect.directBlock(
       ctx.identity.id,
-      ctx.params.identity_id,
-    );
-  },
-);
+      ctx.params.identity_id
+    )
+  }
+)
 
 router.post(
   '/:id/accept',
@@ -61,16 +61,16 @@ router.post(
   checkIdParams,
   connectRequested,
   async (ctx) => {
-    ctx.body = await Connect.accept(ctx.params.id);
+    ctx.body = await Connect.accept(ctx.params.id)
 
     Event.push(Event.Types.NOTIFICATION, ctx.body.requester_id, {
       type: Notif.Types.ACCEPT_CONNECT,
       refId: ctx.body.id,
       parentId: ctx.body.id,
-      identity: ctx.identity,
-    });
-  },
-);
+      identity: ctx.identity
+    })
+  }
+)
 
 router.post(
   '/:id/block',
@@ -78,14 +78,14 @@ router.post(
   checkIdParams,
   connectPermission,
   async (ctx) => {
-    ctx.body = await Connect.block(ctx.params.id);
+    ctx.body = await Connect.block(ctx.params.id)
     await Follow.unfollow(
       ctx.connection.requested_id,
-      ctx.connection.requester_id,
-    );
+      ctx.connection.requester_id
+    )
     await Follow.unfollow(
       ctx.connection.requester_id,
-      ctx.connection.requested_id,
-    );
-  },
-);
+      ctx.connection.requested_id
+    )
+  }
+)

@@ -1,7 +1,7 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {PermissionError} from '../../utils/errors.js';
-import {filtering, textSearch, sorting} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { PermissionError } from '../../utils/errors.js'
+import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   country: String,
@@ -15,16 +15,16 @@ export const filterColumns = {
   project_type: String,
   project_length: String,
   other_party_title: String,
-  remote_preference: String,
-};
+  remote_preference: String
+}
 
 export const sortColumns = [
   'created_at',
   'updated_at',
   'title',
   'payment_range_higher',
-  'payment_range_lower',
-];
+  'payment_range_lower'
+]
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
@@ -37,11 +37,11 @@ export const get = async (id, userId = undefined) => {
     JOIN identities i ON i.id=p.identity_id
     JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=${id}
-  `);
-};
+  `)
+}
 
 export const getAll = async (ids, sort) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
   SELECT p.*,
     i.type  as identity_type,
     i.meta as identity_meta,
@@ -53,12 +53,12 @@ export const getAll = async (ids, sort) => {
     JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=ANY(${ids})
   ${sorting(sort, sortColumns, 'p')}
-  `);
-  return rows;
-};
+  `)
+  return rows
+}
 
-export const all = async ({offset = 0, limit = 10, filter, sort}) => {
-  const {rows} = await app.db.query(sql`
+export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
@@ -69,19 +69,20 @@ export const all = async ({offset = 0, limit = 10, filter, sort}) => {
       JOIN job_categories j ON j.id=p.job_category_id
       ${filtering(filter, filterColumns, false, 'p')}
       ${sorting(sort, sortColumns, 'p')}
-      LIMIT ${limit} OFFSET ${offset}`);
-  return rows;
-};
+      LIMIT ${limit} OFFSET ${offset}`)
+  return rows
+}
 
 export const permissioned = async (identityId, id) => {
-  const project = await get(id);
-  if (project.identity_id !== identityId)
-    throw new PermissionError('Not allow');
-  return project;
-};
+  const project = await get(id)
+  if (project.identity_id !== identityId) {
+    throw new PermissionError('Not allow')
+  }
+  return project
+}
 
-export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
-  const {rows} = await app.db.query(sql`
+export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(sql`
     SELECT
       p.id
     FROM projects p
@@ -89,26 +90,26 @@ export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
       p.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `);
+  `)
 
   const projects = await getAll(
     rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-  );
+    sort
+  )
 
   return projects.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const jobCategories = async () => {
-  const {rows} = await app.db.query(sql`SELECT * FROM job_categories`);
-  return rows;
-};
+  const { rows } = await app.db.query(sql`SELECT * FROM job_categories`)
+  return rows
+}
 
 export const jobCategory = async (id) => {
-  return app.db.get(sql`SELECT * FROM job_categories WHERE id=${id}`);
-};
+  return app.db.get(sql`SELECT * FROM job_categories WHERE id=${id}`)
+}

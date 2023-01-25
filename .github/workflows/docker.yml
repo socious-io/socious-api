@@ -171,6 +171,10 @@ jobs:
       - name: Pull image
         run: docker pull ${{ steps.meta.outputs.tags }}
 
+      - name: Lint tests
+        if: always()
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run lint
+
       - name: Prepare tests
         run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
 

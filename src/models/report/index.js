@@ -1,6 +1,6 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { EntryError } from '../../utils/errors.js'
 
 const report = async ({
   identity_id,
@@ -9,20 +9,20 @@ const report = async ({
   comment_id,
   org_id,
   comment,
-  blocked,
+  blocked
 }) => {
   try {
-    const {rows} = await app.db.query(sql`
+    const { rows } = await app.db.query(sql`
       INSERT INTO reports (identity_id, post_id, user_id, comment_id, org_id, comment, blocked)
       VALUES (${identity_id}, ${post_id}, ${user_id}, ${comment_id}, ${org_id}, ${comment}, ${blocked})
       RETURNING id
-    `);
-    return rows[0].id;
+    `)
+    return rows[0].id
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export default {
-  report,
-};
+  report
+}

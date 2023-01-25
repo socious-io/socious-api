@@ -54,9 +54,9 @@
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
       "answers": [
-        {"selected_option": 2},
-        {"selected_option": 1},
-        {"answer": "TEST"}
+        { "selected_option": 2 },
+        { "selected_option": 1 },
+        { "answer": "TEST" }
       ]
     },
     {
@@ -66,7 +66,7 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{"selected_option": 3}, {"selected_option": 2}]
+      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
     },
     {
       "invalid": true,
@@ -76,7 +76,7 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{"selected_option": 3}, {"selected_option": 2}]
+      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
     }
   ],
   "questions": [

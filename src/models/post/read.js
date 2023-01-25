@@ -1,22 +1,22 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {PermissionError} from '../../utils/errors.js';
-import {filtering, textSearch, sorting} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { PermissionError } from '../../utils/errors.js'
+import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   causes_tags: Array,
   hashtags: Array,
   identity_tags: Array,
-  identity_id: String,
-};
+  identity_id: String
+}
 
-export const sortColumns = ['created_at', 'updated_at'];
+export const sortColumns = ['created_at', 'updated_at']
 
 export const all = async (
   currentIdentity,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(
+  const { rows } = await app.db.query(
     sql`SELECT 
       COUNT(*) OVER () as total_count,
       posts.*, i.type  as identity_type, i.meta as identity_meta,
@@ -38,11 +38,11 @@ export const all = async (
     WHERE (r.blocked IS NULL OR r.blocked = false)
     ${filtering(filter, filterColumns, true, 'posts')}
     ${sorting(sort, sortColumns, 'posts')}
-    LIMIT ${limit} OFFSET ${offset}`,
-  );
+    LIMIT ${limit} OFFSET ${offset}`
+  )
 
-  return rows;
-};
+  return rows
+}
 
 export const get = async (id, currentIdentity) => {
   return app.db.get(sql`
@@ -64,11 +64,11 @@ export const get = async (id, currentIdentity) => {
   LEFT JOIN identities sp_i ON sp.identity_id = sp_i.id
   LEFT JOIN reports r ON (r.post_id=posts.id OR r.user_id=posts.identity_id) AND r.identity_id=${currentIdentity}
   WHERE posts.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
-  `);
-};
+  `)
+}
 
 export const getAll = async (ids, currentIdentity, sort) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT posts.*,
       array_to_json(posts.causes_tags) as causes_tags,
       i.type AS identity_type, i.meta AS identity_meta, 
@@ -88,43 +88,43 @@ export const getAll = async (ids, currentIdentity, sort) => {
     LEFT JOIN reports r ON (r.post_id=posts.id OR r.user_id=posts.identity_id) AND r.identity_id=${currentIdentity}
     WHERE posts.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns, 'posts')}
-  `);
-  return rows;
-};
+  `)
+  return rows
+}
 
 export const search = async (
   q,
   currentIdentity,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT
       p.id
     FROM posts p
     WHERE
       p.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}`);
+    ${sorting(sort, sortColumns)}`)
 
   const posts = await getAll(
     rows.map((r) => r.id).slice(offset, offset + limit),
     currentIdentity,
-    sort,
-  );
+    sort
+  )
 
   return posts.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const miniGet = async (id) => {
-  return app.db.get(sql`SELECT * FROM POSTS WHERE id=${id}`);
-};
+  return app.db.get(sql`SELECT * FROM POSTS WHERE id=${id}`)
+}
 
 export const permissioned = async (identityId, id) => {
-  const post = await miniGet(id);
-  if (post.identity_id !== identityId) throw new PermissionError('Not allow');
-};
+  const post = await miniGet(id)
+  if (post.identity_id !== identityId) throw new PermissionError('Not allow')
+}

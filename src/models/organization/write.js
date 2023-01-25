@@ -1,11 +1,11 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
-import {shortNameExists} from './read.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { EntryError } from '../../utils/errors.js'
+import { shortNameExists } from './read.js'
 
 const generateShortname = (name, website) => {
-  const rand = Math.floor(1000 + Math.random() * 9000);
-  if (website)
+  const rand = Math.floor(1000 + Math.random() * 9000)
+  if (website) {
     return `${website
       .split(/([^.]+)\.[^.]+$/)[1]
       .replace(/https?:/, '')
@@ -14,9 +14,10 @@ const generateShortname = (name, website) => {
       .toLowerCase()
       .replace(/[^a-z0-9._-]/, '-')
       .replace(/[._-]{2,}/, '-')
-      .slice(0, 36)}${rand}`.toLowerCase();
-  return `${name.replaceAll(' ', '_').slice(0, 36)}${rand}`.toLowerCase();
-};
+      .slice(0, 36)}${rand}`.toLowerCase()
+  }
+  return `${name.replaceAll(' ', '_').slice(0, 36)}${rand}`.toLowerCase()
+}
 
 export const insert = async (
   identityId,
@@ -38,13 +39,13 @@ export const insert = async (
     mission,
     culture,
     image,
-    cover_image,
-  },
+    cover_image
+  }
 ) => {
   // temp logic
   if (!shortname) {
-    shortname = generateShortname(name, website);
-    if (await shortNameExists(shortname))
+    shortname = generateShortname(name, website)
+    if (await shortNameExists(shortname)) {
       return insert(identityId, {
         shortname,
         name,
@@ -63,11 +64,12 @@ export const insert = async (
         mission,
         culture,
         image,
-        cover_image,
-      });
+        cover_image
+      })
+    }
   }
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       INSERT INTO organizations (
         shortname, name, bio, description, email, phone,
@@ -78,13 +80,13 @@ export const insert = async (
           ${phone}, ${type} ,${city}, ${geoname_id}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture})
-        RETURNING *, array_to_json(social_causes) AS social_causes`,
-    );
-    return rows[0];
+        RETURNING *, array_to_json(social_causes) AS social_causes`
+    )
+    return rows[0]
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const update = async (
   id,
@@ -106,13 +108,13 @@ export const update = async (
     mission,
     culture,
     image,
-    cover_image,
-  },
+    cover_image
+  }
 ) => {
   // temp logic
   if (!shortname) {
-    shortname = generateShortname(name, website);
-    if (await shortNameExists(shortname))
+    shortname = generateShortname(name, website)
+    if (await shortNameExists(shortname)) {
       return update(id, {
         shortname,
         name,
@@ -131,12 +133,13 @@ export const update = async (
         mission,
         culture,
         image,
-        cover_image,
-      });
+        cover_image
+      })
+    }
   }
 
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       UPDATE organizations SET
         shortname=${shortname.toLowerCase()},
@@ -157,14 +160,14 @@ export const update = async (
         cover_image=${cover_image},
         mission=${mission},
         culture=${culture}
-      WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`,
-    );
-    return rows[0];
+      WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`
+    )
+    return rows[0]
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`);
-};
+  await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`)
+}

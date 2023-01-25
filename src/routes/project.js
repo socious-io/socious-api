@@ -1,41 +1,41 @@
-import Router from '@koa/router';
-import Data, {validate} from '@socious/data';
-import Project from '../models/project/index.js';
-import Applicant from '../models/applicant/index.js';
-import Notif from '../models/notification/index.js';
-import Mission from '../models/mission/index.js';
-import Offer from '../models/offer/index.js';
-import Event from '../services/events/index.js';
-import {paginate} from '../utils/middlewares/requests.js';
+import Router from '@koa/router'
+import Data, { validate } from '@socious/data'
+import Project from '../models/project/index.js'
+import Applicant from '../models/applicant/index.js'
+import Notif from '../models/notification/index.js'
+import Mission from '../models/mission/index.js'
+import Offer from '../models/offer/index.js'
+import Event from '../services/events/index.js'
+import { paginate } from '../utils/middlewares/requests.js'
 import {
   loginOptional,
-  loginRequired,
-} from '../utils/middlewares/authorization.js';
-import {checkIdParams, projectPermission} from '../utils/middlewares/route.js';
-import {PermissionError} from '../utils/errors.js';
-import Analytics from '../services/analytics/index.js';
+  loginRequired
+} from '../utils/middlewares/authorization.js'
+import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
+import { PermissionError } from '../utils/errors.js'
+import Analytics from '../services/analytics/index.js'
 
-export const router = new Router();
+export const router = new Router()
 
 router.get('/categories', async (ctx) => {
-  ctx.body = {categories: await Project.jobCategories()};
-});
+  ctx.body = { categories: await Project.jobCategories() }
+})
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
-  ctx.body = await Project.get(ctx.params.id, ctx.user.id);
-});
+  ctx.body = await Project.get(ctx.params.id, ctx.user.id)
+})
 
 router.get('/', loginOptional, paginate, async (ctx) => {
-  ctx.body = await Project.all(ctx.paginate);
-});
+  ctx.body = await Project.all(ctx.paginate)
+})
 
 router.post('/', loginRequired, async (ctx) => {
   // only organizations allow to create projects
-  if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError();
+  if (ctx.identity.type !== Data.IdentityType.ORG) throw new PermissionError()
 
-  await validate.ProjectSchema.validateAsync(ctx.request.body);
-  ctx.body = await Project.insert(ctx.identity.id, ctx.request.body);
-});
+  await validate.ProjectSchema.validateAsync(ctx.request.body)
+  ctx.body = await Project.insert(ctx.identity.id, ctx.request.body)
+})
 
 router.post(
   '/update/:id',
@@ -43,16 +43,16 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await validate.ProjectSchema.validateAsync(ctx.request.body);
-    ctx.body = await Project.update(ctx.params.id, ctx.request.body);
-  },
-);
+    await validate.ProjectSchema.validateAsync(ctx.request.body)
+    ctx.body = await Project.update(ctx.params.id, ctx.request.body)
+  }
+)
 
 router.get('/:id/questions', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = {
-    questions: await Project.getQuestions(ctx.params.id),
-  };
-});
+    questions: await Project.getQuestions(ctx.params.id)
+  }
+})
 
 router.post(
   '/:id/questions',
@@ -60,10 +60,10 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await validate.QuestionSchema.validateAsync(ctx.request.body);
-    ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body);
-  },
-);
+    await validate.QuestionSchema.validateAsync(ctx.request.body)
+    ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body)
+  }
+)
 
 router.post(
   '/update/:id/questions/:question_id',
@@ -71,13 +71,13 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await validate.QuestionSchema.validateAsync(ctx.request.body);
+    await validate.QuestionSchema.validateAsync(ctx.request.body)
     ctx.body = await Project.updateQuestion(
       ctx.params.question_id,
-      ctx.request.body,
-    );
-  },
-);
+      ctx.request.body
+    )
+  }
+)
 
 router.post(
   '/remove/:id/questions/:question_id',
@@ -85,10 +85,10 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await Project.removeQuestion(ctx.params.question_id);
-    ctx.body = {message: 'success'};
-  },
-);
+    await Project.removeQuestion(ctx.params.question_id)
+    ctx.body = { message: 'success' }
+  }
+)
 
 router.post(
   '/remove/:id',
@@ -96,12 +96,12 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await Project.remove(ctx.params.id);
+    await Project.remove(ctx.params.id)
     ctx.body = {
-      message: 'success',
-    };
-  },
-);
+      message: 'success'
+    }
+  }
+)
 
 router.get(
   '/:id/applicants',
@@ -109,34 +109,30 @@ router.get(
   paginate,
   checkIdParams,
   async (ctx) => {
-    ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate);
-  },
-);
+    ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate)
+  }
+)
 
 router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
-  await validate.ApplicantSchema.validateAsync(ctx.request.body);
+  await validate.ApplicantSchema.validateAsync(ctx.request.body)
 
-  ctx.body = await Applicant.apply(
-    ctx.params.id,
-    ctx.user.id,
-    ctx.request.body,
-  );
+  ctx.body = await Applicant.apply(ctx.params.id, ctx.user.id, ctx.request.body)
 
-  const project = await Project.get(ctx.body.project_id);
+  const project = await Project.get(ctx.body.project_id)
 
   Event.push(Event.Types.NOTIFICATION, project.identity_id, {
     type: Notif.Types.APPLICATION,
     refId: ctx.body.id,
     parentId: project.id,
-    identity: ctx.identity,
-  });
+    identity: ctx.identity
+  })
 
   Analytics.track({
     userId: ctx.params.user_id,
     event: 'applied_project',
-    meta: ctx.body,
-  });
-});
+    meta: ctx.body
+  })
+})
 
 router.get(
   '/:id/missions',
@@ -144,12 +140,12 @@ router.get(
   checkIdParams,
   paginate,
   async (ctx) => {
-    ctx.paginate.filter.project_id = ctx.params.id;
-    ctx.paginate.filter.assigner_id = ctx.identity.id;
+    ctx.paginate.filter.project_id = ctx.params.id
+    ctx.paginate.filter.assigner_id = ctx.identity.id
 
-    ctx.body = await Mission.getAll(ctx.paginate);
-  },
-);
+    ctx.body = await Mission.getAll(ctx.paginate)
+  }
+)
 
 router.get(
   '/:id/offers',
@@ -158,11 +154,11 @@ router.get(
   projectPermission,
   paginate,
   async (ctx) => {
-    ctx.paginate.filter.project_id = ctx.params.id;
+    ctx.paginate.filter.project_id = ctx.params.id
 
-    ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate);
-  },
-);
+    ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate)
+  }
+)
 
 router.post(
   '/:id/offer/:user_id',
@@ -170,28 +166,28 @@ router.post(
   checkIdParams,
   projectPermission,
   async (ctx) => {
-    await validate.OfferSchema.validateAsync(ctx.request.body);
+    await validate.OfferSchema.validateAsync(ctx.request.body)
 
     ctx.body = await Offer.send(ctx.params.id, {
       ...ctx.request.body,
       recipient_id: ctx.params.user_id,
-      offerer_id: ctx.identity.id,
-    });
+      offerer_id: ctx.identity.id
+    })
 
     Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
       type: Notif.Types.OFFER,
       refId: ctx.body.id,
       parentId: ctx.params.id,
-      identity: ctx.identity,
-    });
+      identity: ctx.identity
+    })
 
     Analytics.track({
       userId: ctx.params.user_id,
       event: 'offered_project',
-      meta: ctx.project,
-    });
-  },
-);
+      meta: ctx.project
+    })
+  }
+)
 
 router.get(
   '/:id/feedbacks',
@@ -199,6 +195,6 @@ router.get(
   checkIdParams,
   paginate,
   async (ctx) => {
-    ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate);
-  },
-);
+    ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate)
+  }
+)

@@ -1,33 +1,33 @@
-import {NotImplementedError} from '../../utils/errors.js';
-import Data from '@socious/data';
-import {get, all} from './transaction.js';
-import * as Card from './card.js';
-import * as Escrow from './escrow.js';
-import * as Stripe from './stripe.js';
+import { NotImplementedError } from '../../utils/errors.js'
+import Data from '@socious/data'
+import { get, all } from './transaction.js'
+import * as Card from './card.js'
+import * as Escrow from './escrow.js'
+import * as Stripe from './stripe.js'
 
 const charge = async (identityId, body) => {
-  if (!body.currency) body.currency = Data.PaymentCurrency.USD;
+  if (!body.currency) body.currency = Data.PaymentCurrency.USD
 
   switch (body.service) {
     case 'STRIPE':
-      return Stripe.charge(identityId, body);
+      return Stripe.charge(identityId, body)
 
     default:
-      throw new NotImplementedError();
+      throw new NotImplementedError()
   }
-};
+}
 
 const payout = async (service, body) => {
-  if (!body.currency) body.currency = Data.PaymentCurrency.USD;
+  if (!body.currency) body.currency = Data.PaymentCurrency.USD
 
   switch (service) {
     case 'STRIPE':
-      return Stripe.payout(body);
+      return Stripe.payout(body)
 
     default:
-      throw new NotImplementedError();
+      throw new NotImplementedError()
   }
-};
+}
 
 export default {
   stripe: Stripe.stripe,
@@ -36,5 +36,5 @@ export default {
   get,
   all,
   charge,
-  payout,
-};
+  payout
+}

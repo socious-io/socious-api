@@ -1,17 +1,17 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {filtering, textSearch, sorting} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   country: String,
   type: String,
-  social_causes: Array,
-};
+  social_causes: Array
+}
 
-export const sortColumns = ['created_at', 'updated_at'];
+export const sortColumns = ['created_at', 'updated_at']
 
-export const all = async ({offset = 0, limit = 10, filter, sort}) => {
-  const {rows} = await app.db.query(
+export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, 
     org.*,
     array_to_json(org.social_causes) AS social_causes,
@@ -22,10 +22,10 @@ export const all = async ({offset = 0, limit = 10, filter, sort}) => {
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
     ${filtering(filter, filterColumns, false, 'org')}
     ${sorting(sort, sortColumns, 'org')}
-    LIMIT ${limit} OFFSET ${offset}`,
-  );
-  return rows;
-};
+    LIMIT ${limit} OFFSET ${offset}`
+  )
+  return rows
+}
 
 export const get = async (id) => {
   return app.db.get(sql`
@@ -36,11 +36,11 @@ export const get = async (id) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    WHERE org.id=${id}`);
-};
+    WHERE org.id=${id}`)
+}
 
 export const getAll = async (ids, sort) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT 
       org.*,
       array_to_json(org.social_causes) AS social_causes,
@@ -51,9 +51,9 @@ export const getAll = async (ids, sort) => {
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
     WHERE org.id=ANY(${ids})
     ${sorting(sort, sortColumns, 'org')}
-    `);
-  return rows;
-};
+    `)
+  return rows
+}
 
 export const getByShortname = async (shortname) => {
   return app.db.get(sql`
@@ -64,22 +64,22 @@ export const getByShortname = async (shortname) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
-    WHERE org.shortname=${shortname.toLowerCase()}`);
-};
+    WHERE org.shortname=${shortname.toLowerCase()}`)
+}
 
 export const shortNameExists = async (shortname) => {
   try {
     await app.db.get(
-      sql`SELECT * FROM organizations WHERE shortname=${shortname.toLowerCase()}`,
-    );
-    return true;
+      sql`SELECT * FROM organizations WHERE shortname=${shortname.toLowerCase()}`
+    )
+    return true
   } catch {
-    return false;
+    return false
   }
-};
+}
 
-export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
-  const {rows} = await app.db.query(sql`
+export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(sql`
     SELECT
       org.id
     FROM organizations org
@@ -87,17 +87,17 @@ export const search = async (q, {offset = 0, limit = 10, filter, sort}) => {
       org.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-    `);
+    `)
 
   const orgs = await getAll(
     rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-  );
+    sort
+  )
 
   return orgs.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}

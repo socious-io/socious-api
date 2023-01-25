@@ -1,16 +1,16 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { EntryError } from '../../utils/errors.js'
 
 export const badges = async (identityId) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT SUM(total_points) AS total_points, COUNT(*)::int , social_cause_category 
     FROM impact_points_history
     WHERE identity_id=${identityId}
     GROUP BY social_cause_category
-  `);
-  return rows;
-};
+  `)
+  return rows
+}
 
 export const addHistory = async (
   identityId,
@@ -19,22 +19,22 @@ export const addHistory = async (
     social_cause,
     social_cause_category,
     total_points,
-    submitted_work_id,
-  },
+    submitted_work_id
+  }
 ) => {
   try {
     return app.db.get(sql`
       INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category, submitted_work_id)
       VALUES (${total_points}, ${mission_id}, ${identityId}, ${social_cause}, ${social_cause_category}, ${submitted_work_id})
       RETURNING id
-    `);
+    `)
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
-export const history = async (identityId, {offset = 0, limit = 10}) => {
-  const {rows} = await app.db.query(sql`
+export const history = async (identityId, { offset = 0, limit = 10 }) => {
+  const { rows } = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
     i.*,
@@ -48,12 +48,12 @@ export const history = async (identityId, {offset = 0, limit = 10}) => {
   WHERE i.identity_id=${identityId}
   ORDER BY i.created_at DESC
   LIMIT ${limit} OFFSET ${offset}
-    `);
-  return rows;
-};
+    `)
+  return rows
+}
 
 export const get = async (id) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
     i.*,
@@ -65,13 +65,13 @@ export const get = async (id) => {
   JOIN projects p ON p.id=m.project_id
   JOIN organizations org ON org.id=p.identity_id
   WHERE id=${id}
-    `);
-  return rows;
-};
+    `)
+  return rows
+}
 
 export const impactPointsCalculatedWorksIds = async (missionId) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT submitted_work_id FROM impact_points_history WHERE mission_id=${missionId}
-  `);
-  return rows.map((r) => r.submitted_work_id);
-};
+  `)
+  return rows.map((r) => r.submitted_work_id)
+}

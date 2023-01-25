@@ -1,50 +1,66 @@
-import sql, {join} from 'sql-template-tag';
-import {app} from '../../index.js';
-import {filtering, sorting} from '../../utils/query.js';
+import sql, { join } from 'sql-template-tag'
+import { app } from '../../index.js'
+import { filtering, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   region_name: {
     type: String,
-    as: 'adm.name',
+    as: 'adm.name'
   },
   region_code: {
-    type: String,
+    type: String
   },
   region_iso: {
     type: String,
-    as: 'adm.iso_code',
+    as: 'adm.iso_code'
   },
   region_fips: {
     type: String,
-    as: 'adm.fips_code',
+    as: 'adm.fips_code'
   },
   population: {
     type: Number,
-    as: 'loc.population',
-  },
-};
+    as: 'loc.population'
+  }
+}
 
-export const sortColumns = ['name', 'population', 'id'];
+export const sortColumns = ['name', 'population', 'id']
 
+/**
+ *
+ * @param filter
+ * @example
+ */
 function filterRegion(filter) {
-  if (filter.region_code == null) return filtering(filter, filterColumns, true);
-  const region_code = filter.region_code;
-  delete filter.region_code;
+  if (filter.region_code == null) return filtering(filter, filterColumns, true)
+  const region_code = filter.region_code
+  delete filter.region_code
   return join(
     [
       filtering(filter, filterColumns, true),
       sql`(adm.iso_code = ${region_code} OR adm.fips_code = ${region_code}
-      OR adm2.iso_code = ${region_code} OR adm2.fips_code = ${region_code} OR adm2.admin2_code = ${region_code})`,
+      OR adm2.iso_code = ${region_code} OR adm2.fips_code = ${region_code} OR adm2.admin2_code = ${region_code})`
     ],
-    ' AND ',
-  );
+    ' AND '
+  )
 }
 
+/**
+ *
+ * @param countryCode
+ * @param root0
+ * @param root0.offset
+ * @param root0.limit
+ * @param root0.filter
+ * @param root0.sort
+ * @example
+ */
 export async function locationsByCountry(
   countryCode,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) {
-  const {rows} = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
+  const { rows } = await app.db
+    .query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,
@@ -56,17 +72,29 @@ export async function locationsByCountry(
     ${filterRegion(filter)}
     ${sorting(sort || 'name', sortColumns, 'loc')}
     LIMIT ${limit} OFFSET ${offset}
-  `);
-  return rows;
+  `)
+  return rows
 }
 
+/**
+ *
+ * @param countryCode
+ * @param search
+ * @param root0
+ * @param root0.offset
+ * @param root0.limit
+ * @param root0.filter
+ * @param root0.sort
+ * @example
+ */
 export async function locationsSearchByCountry(
   countryCode,
   search,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) {
-  const searchPat = `%${search}%`;
-  const {rows} = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
+  const searchPat = `%${search}%`
+  const { rows } = await app.db
+    .query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,
@@ -79,10 +107,10 @@ export async function locationsSearchByCountry(
     ${filterRegion(filter)}
     ${sorting(sort || 'name', sortColumns, 'loc')}
     LIMIT ${limit} OFFSET ${offset}
-  `);
-  if (rows.length && rows[0].total_count >= limit) return rows;
+  `)
+  if (rows.length && rows[0].total_count >= limit) return rows
 
-  const {rows: rowsAlt} = await app.db.query(sql`SELECT
+  const { rows: rowsAlt } = await app.db.query(sql`SELECT
     COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     alt.alternate_name, alt.iso_language as alt_language,
@@ -99,6 +127,6 @@ export async function locationsSearchByCountry(
     ${filterRegion(filter)}
     ${sorting(sort || 'name', sortColumns, 'loc')}
     LIMIT ${limit} OFFSET ${offset}
-  `);
-  return rows.concat(rowsAlt);
+  `)
+  return rows.concat(rowsAlt)
 }

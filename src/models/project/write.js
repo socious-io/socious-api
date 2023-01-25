@@ -1,6 +1,6 @@
-import sql, {raw} from 'sql-template-tag';
-import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
+import sql, { raw } from 'sql-template-tag'
+import { app } from '../../index.js'
+import { EntryError } from '../../utils/errors.js'
 
 export const insert = async (
   identityId,
@@ -31,12 +31,12 @@ export const insert = async (
     weekly_hours_higher,
     commitment_hours_lower,
     commitment_hours_higher,
-    job_category_id,
-  },
+    job_category_id
+  }
 ) => {
-  if (!updated_at) updated_at = raw('NOW()');
+  if (!updated_at) updated_at = raw('NOW()')
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       INSERT INTO projects (
         title, description, identity_id, 
@@ -65,13 +65,13 @@ export const insert = async (
         ${commitment_hours_higher},
         ${job_category_id}
       )
-      RETURNING *, array_to_json(causes_tags) AS causes_tags`,
-    );
-    return rows[0];
+      RETURNING *, array_to_json(causes_tags) AS causes_tags`
+    )
+    return rows[0]
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const update = async (
   id,
@@ -102,12 +102,12 @@ export const update = async (
     weekly_hours_higher,
     commitment_hours_lower,
     commitment_hours_higher,
-    job_category_id,
-  },
+    job_category_id
+  }
 ) => {
-  if (!updated_at) updated_at = raw('NOW()');
+  if (!updated_at) updated_at = raw('NOW()')
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       UPDATE projects SET
         title=${title},
@@ -137,14 +137,14 @@ export const update = async (
         commitment_hours_lower=${commitment_hours_lower},
         commitment_hours_higher=${commitment_hours_higher},
         job_category_id=${job_category_id}
-      WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`,
-    );
-    return rows[0];
+      WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`
+    )
+    return rows[0]
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM projects WHERE id=${id}`);
-};
+  await app.db.query(sql`DELETE FROM projects WHERE id=${id}`)
+}

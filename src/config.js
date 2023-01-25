@@ -1,8 +1,8 @@
-import {config} from 'dotenv';
+import { config } from 'dotenv'
 
-const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env';
+const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env'
 
-config({path: envFile});
+config({ path: envFile })
 
 export default {
   env: process.env.ENV || 'development',
@@ -18,8 +18,8 @@ export default {
     sendgrid: {
       from: {
         email: process.env.MAIL_SENDGRID_FROM || 'team@socious.io',
-        name: process.env.MAIL_SENDGRID_NAME || 'Socious Team',
-      },
+        name: process.env.MAIL_SENDGRID_NAME || 'Socious Team'
+      }
     },
     smtp: {
       host: process.env.MAIL_SMTP_HOST,
@@ -30,8 +30,8 @@ export default {
       secure: process.env.MAIL_SMTP_SECURE ?? false, // true for 465, false for other ports ref: nodeMailer document
       auth: {
         user: process.env.MAIL_SMTP_USER,
-        pass: process.env.MAIL_SMTP_PASS,
-      },
+        pass: process.env.MAIL_SMTP_PASS
+      }
     },
     allowTest: boolVariable(process.env.ALLOW_TEST_EMAILS),
     defaultSender: process.env.EMAIL_SENDER ?? 'SENDGRID',
@@ -58,27 +58,27 @@ export default {
         ASSIGNER_CONFIRMED: 'd-c8701ca45acc4922a6551575953952d4',
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
-        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
-      },
-    },
+        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443'
+      }
+    }
   },
   services: {
     proofspace: {
       credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,
       schemaId: process.env.PROOFSPACE_SCHEMA_ID,
-      webhookKey: process.env.PROOFSPACE_WEBHOOK_KEY,
-    },
+      webhookKey: process.env.PROOFSPACE_WEBHOOK_KEY
+    }
   },
   database: {
     host: process.env.PGHOST,
     port: process.env.PGPORT,
     db: process.env.PGDATABASE,
     user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
+    password: process.env.PGPASSWORD
   },
   nats: {
     servers: process.env.NATS_HOSTS?.split(','),
-    token: process.env.NATS_TOKEN,
+    token: process.env.NATS_TOKEN
   },
   session: {
     key: 'Socious.sess',
@@ -90,11 +90,11 @@ export default {
     rolling: false,
     renew: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : null,
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : null
   },
   webhooks: {
     token: process.env.WEBHOOKS_TOKEN || 'test_secret_token',
-    addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks',
+    addr: process.env.WEBHOOKS_ADDR || 'http://localhost:8370/webhooks'
   },
   requestBlocker: {
     // We may tagname blocker configs and use it on other groups and routes
@@ -102,8 +102,8 @@ export default {
       resetTimer: process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
       blockerTimer:
         process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
-      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10,
-    },
+      retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
+    }
   },
   aws: {
     cdn_url:
@@ -112,55 +112,64 @@ export default {
     bucket: process.env.AWS_BUCKET || 'socious',
     key_id: process.env.AWS_ACCESS_KEY_ID,
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1',
+    region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1'
   },
   socket: {},
   fcm: {
-    key: process.env.FCM_KEY,
+    key: process.env.FCM_KEY
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(
-      ',',
-    ),
+    origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',')
   },
   payments: {
     stripe: {
-      secret_key: process.env.STRIPE_SECRET_KEY,
-    },
+      secret_key: process.env.STRIPE_SECRET_KEY
+    }
   },
   idealist: {
     wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
-    wait_break: process.env.WAIT_BREAK || 1000,
+    wait_break: process.env.WAIT_BREAK || 1000
   },
   notifAppLink:
     process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
   privateKey: process.env.PRIVATE_KEY,
-  publicKey: process.env.PUBLIC_KEY,
-};
+  publicKey: process.env.PUBLIC_KEY
+}
 
+/**
+ *
+ * @param val
+ * @param defaultVal
+ * @example
+ */
 function boolVariable(val, defaultVal = true) {
-  if (val === '') return false;
-  if (val === 'false') return false;
-  if (val === 'true') return true;
-  return defaultVal;
+  if (val === '') return false
+  if (val === 'false') return false
+  if (val === 'true') return true
+  return defaultVal
 }
 
 /**
  * Normalize a port into a number, string, or false.
  */
 
+/**
+ *
+ * @param val
+ * @example
+ */
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10)
 
   if (isNaN(port)) {
     // named pipe
-    return val;
+    return val
   }
 
   if (port >= 0) {
     // port number
-    return port;
+    return port
   }
 
-  return false;
+  return false
 }

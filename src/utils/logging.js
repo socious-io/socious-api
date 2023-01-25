@@ -1,39 +1,39 @@
-import winston from 'winston';
-import newrelicFormatter from '@newrelic/winston-enricher';
+import winston from 'winston'
+import newrelicFormatter from '@newrelic/winston-enricher'
 
-const newrelicWinstonFormatter = newrelicFormatter(winston);
+const newrelicWinstonFormatter = newrelicFormatter(winston)
 
 const logger = winston.createLogger({
   level: 'info',
   format: newrelicWinstonFormatter(),
-  transports: [new winston.transports.Console()],
-});
+  transports: [new winston.transports.Console()]
+})
 
 export const koaLogger = async (ctx, next) => {
-  const start = new Date();
+  const start = new Date()
 
-  ctx.logger = logger;
+  ctx.logger = logger
 
-  await next();
+  await next()
 
-  const ms = new Date() - start;
+  const ms = new Date() - start
 
-  let msg = `${ctx.method} | ${ctx.originalUrl} | ${ctx.status} | ${ms}ms`;
+  let msg = `${ctx.method} | ${ctx.originalUrl} | ${ctx.status} | ${ms}ms`
 
-  let logLevel;
+  let logLevel
   if (ctx.status >= 500) {
-    msg += ` | ${JSON.stringify(ctx.body)}`;
-    logLevel = 'error';
+    msg += ` | ${JSON.stringify(ctx.body)}`
+    logLevel = 'error'
   }
   if (ctx.status >= 400) {
-    msg += ` | ${JSON.stringify(ctx.body)}`;
-    logLevel = 'warn';
+    msg += ` | ${JSON.stringify(ctx.body)}`
+    logLevel = 'warn'
   }
   if (ctx.status >= 100) {
-    logLevel = 'info';
+    logLevel = 'info'
   }
 
-  logger.log(logLevel, msg);
-};
+  logger.log(logLevel, msg)
+}
 
-export default logger;
+export default logger

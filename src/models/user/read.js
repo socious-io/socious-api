@@ -1,52 +1,52 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {filtering, textSearch, sorting} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   country: String,
   social_causes: Array,
-  skills: Array,
-};
+  skills: Array
+}
 
-export const sortColumns = ['created_at', 'updated_at', 'impact_points'];
+export const sortColumns = ['created_at', 'updated_at', 'impact_points']
 
 export const get = async (id) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`,
-  );
-};
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`
+  )
+}
 
 export const getByUsername = async (username) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE username=${username.toLowerCase()}`,
-  );
-};
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE username=${username.toLowerCase()}`
+  )
+}
 
 export const getByEmail = async (email) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE email=${email.toLowerCase()}`,
-  );
-};
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE email=${email.toLowerCase()}`
+  )
+}
 
 export const getByPhone = async (phone) => {
   return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE phone=${phone}`,
-  );
-};
+    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE phone=${phone}`
+  )
+}
 
 export const currentProfile = async (user) => {
-  const {rows} = await app.db.query(
-    sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`,
-  );
-  delete user.password;
+  const { rows } = await app.db.query(
+    sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`
+  )
+  delete user.password
 
   for (const row of rows) {
-    if (row.id == user.avatar) user.avatar = row;
-    if (row.id == user.cover_image) user.cover_image = row;
+    if (row.id == user.avatar) user.avatar = row
+    if (row.id == user.cover_image) user.cover_image = row
   }
 
-  return user;
-};
+  return user
+}
 
 export const getProfile = async (id, currentIdentity) => {
   return app.db.get(
@@ -86,9 +86,9 @@ export const getProfile = async (id, currentIdentity) => {
     LEFT JOIN media cover ON cover.id=u.cover_image
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
     WHERE u.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
-    `,
-  );
-};
+    `
+  )
+}
 
 export const getProfileByUsername = async (username, currentIdentity) => {
   return app.db.get(
@@ -128,9 +128,9 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     LEFT JOIN media cover ON cover.id=u.cover_image
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
     WHERE u.username=${username.toLowerCase()} AND (r.blocked IS NULL OR r.blocked = false)
-    `,
-  );
-};
+    `
+  )
+}
 
 export const getProfileLimited = async (id) => {
   return app.db.get(
@@ -145,12 +145,12 @@ export const getProfileLimited = async (id) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     WHERE u.id=${id}
-    `,
-  );
-};
+    `
+  )
+}
 
 export const getAllProfile = async (ids, sort, currentIdentity) => {
-  const {rows} = await app.db.query(
+  const { rows } = await app.db.query(
     sql`
     SELECT u.id, username, first_name, last_name,
     city, country, geoname_id, mission, bio, impact_points,
@@ -188,10 +188,10 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
     WHERE u.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns)}
-    `,
-  );
-  return rows;
-};
+    `
+  )
+  return rows
+}
 
 export const getProfileByUsernameLimited = async (username) => {
   return app.db.get(
@@ -206,16 +206,16 @@ export const getProfileByUsernameLimited = async (username) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     WHERE u.username=${username.toLowerCase()}
-    `,
-  );
-};
+    `
+  )
+}
 
 export const search = async (
   q,
   currentIdentity,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT
       u.id
     FROM users u
@@ -224,28 +224,28 @@ export const search = async (
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `);
+  `)
 
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
     sort,
-    currentIdentity,
-  );
+    currentIdentity
+  )
 
   return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const searchRelateds = async (
   q,
   currentIdentity,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     WITH connected AS (
       SELECT * FROM connections WHERE
         (requester_id = ${currentIdentity} OR  requested_id = ${currentIdentity}) AND
@@ -262,26 +262,26 @@ export const searchRelateds = async (
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `);
+  `)
 
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-  );
+    sort
+  )
 
   return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const getRelateds = async (
   currentIdentity,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     WITH fl AS (
       SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
     )
@@ -295,49 +295,49 @@ export const getRelateds = async (
       )
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
-  `);
+  `)
 
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-  );
+    sort
+  )
 
   return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const getUsers = async (
   identityId,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT
       u.id
     FROM users u
       ${filtering(filter, filterColumns, false)}
     ${sorting(sort, sortColumns)}
-  `);
+  `)
 
   const users = await getAllProfile(
     rows.map((r) => r.id).slice(offset, offset + limit),
     sort,
-    identityId,
-  );
+    identityId
+  )
 
   return users.map((r) => {
     return {
       total_count: rows.length,
-      ...r,
-    };
-  });
-};
+      ...r
+    }
+  })
+}
 
 export const recommend = async (currentUser) => {
-  const {rows} = await app.db.query(sql`
+  const { rows } = await app.db.query(sql`
   SELECT u.id 
   FROM users u
   JOIN users current ON current.id=${currentUser}
@@ -348,7 +348,7 @@ export const recommend = async (currentUser) => {
     u.skills @> COALESCE(current.skills, u.skills)
   ORDER BY random()
   LIMIT 10
-  `);
+  `)
 
-  return getAllProfile(rows.map((r) => r.id));
-};
+  return getAllProfile(rows.map((r) => r.id))
+}

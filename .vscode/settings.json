@@ -1,10 +1,11 @@
 {
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.formatOnPaste": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
   "scss.lint.unknownAtRules": "ignore",
+  "eslint.options": { "configFile": ".eslintrc.cjs" },
   "eslint.workingDirectories": [
     {
       "mode": "auto"

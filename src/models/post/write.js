@@ -1,37 +1,37 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {EntryError} from '../../utils/errors.js';
-import sanitizeHtml from 'sanitize-html';
-import {get} from './read.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { EntryError } from '../../utils/errors.js'
+import sanitizeHtml from 'sanitize-html'
+import { get } from './read.js'
 
 export const insert = async (
   identityId,
-  {content, causes_tags, hashtags, identity_tags, media},
+  { content, causes_tags, hashtags, identity_tags, media }
 ) => {
-  content = sanitizeHtml(content);
+  content = sanitizeHtml(content)
 
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags, media) 
         VALUES (${content}, ${identityId}, ${causes_tags}, ${hashtags}, ${identity_tags}, ${media})
-        RETURNING id`,
-    );
-    return get(rows[0].id, identityId);
+        RETURNING id`
+    )
+    return get(rows[0].id, identityId)
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const update = async (
   id,
   identityId,
-  {content, causes_tags, hashtags, identity_tags, media},
+  { content, causes_tags, hashtags, identity_tags, media }
 ) => {
-  content = sanitizeHtml(content);
+  content = sanitizeHtml(content)
 
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       UPDATE posts SET
         content=${content},
@@ -39,45 +39,45 @@ export const update = async (
         hashtags=${hashtags},
         identity_tags=${identity_tags},
         media=${media}
-      WHERE id=${id} RETURNING id`,
-    );
-    return get(rows[0].id, identityId);
+      WHERE id=${id} RETURNING id`
+    )
+    return get(rows[0].id, identityId)
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
-export const share = async (id, identityId, {content}) => {
-  content = sanitizeHtml(content || '');
+export const share = async (id, identityId, { content }) => {
+  content = sanitizeHtml(content || '')
 
   try {
-    const {rows} = await app.db.query(
+    const { rows } = await app.db.query(
       sql`
       INSERT INTO posts (shared_id, identity_id, content)
         VALUES (${id}, ${identityId}, ${content})
-        RETURNING id`,
-    );
-    return get(rows[0].id, identityId);
+        RETURNING id`
+    )
+    return get(rows[0].id, identityId)
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}
 
 export const remove = async (id) => {
-  await app.db.query(sql`DELETE FROM posts WHERE id=${id}`);
-};
+  await app.db.query(sql`DELETE FROM posts WHERE id=${id}`)
+}
 
-export const report = async ({identity_id, post_id, comment, blocked}) => {
+export const report = async ({ identity_id, post_id, comment, blocked }) => {
   try {
-    const {rows} = await app.db.query(sql`
+    const { rows } = await app.db.query(sql`
       INSERT INTO reports (identity_id, post_id, comment, blocked)
       VALUES (${identity_id}, ${post_id}, ${comment}, ${blocked})
       ON CONFLICT (identity_id, post_id) 
       DO UPDATE SET comment=${comment}, blocked=${blocked}
       RETURNING id
-    `);
-    return rows[0].id;
+    `)
+    return rows[0].id
   } catch (err) {
-    throw new EntryError(err.message);
+    throw new EntryError(err.message)
   }
-};
+}

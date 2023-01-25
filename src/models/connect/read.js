@@ -1,19 +1,19 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
-import {PermissionError} from '../../utils/errors.js';
-import {sorting, filtering} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
+import { PermissionError } from '../../utils/errors.js'
+import { sorting, filtering } from '../../utils/query.js'
 
 export const filterColumns = {
-  status: String,
-};
+  status: String
+}
 
-export const sortColumns = ['created_at', 'updated_at', 'connected_at'];
+export const sortColumns = ['created_at', 'updated_at', 'connected_at']
 
 export const all = async (
   identityId,
-  {offset = 0, limit = 10, filter, sort},
+  { offset = 0, limit = 10, filter, sort }
 ) => {
-  const {rows} = await app.db.query(
+  const { rows } = await app.db.query(
     sql`SELECT 
     COUNT(c.*) OVER () as total_count, c.*, row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester
     FROM connections c
@@ -22,11 +22,11 @@ export const all = async (
     WHERE (requested_id = ${identityId} OR requester_id=${identityId})
     ${filtering(filter, filterColumns, true, 'c')}
     ${sorting(sort, sortColumns, 'c')}
-    LIMIT ${limit} OFFSET ${offset}`,
-  );
+    LIMIT ${limit} OFFSET ${offset}`
+  )
 
-  return rows;
-};
+  return rows
+}
 
 export const get = async (id) => {
   return app.db.get(
@@ -35,9 +35,9 @@ export const get = async (id) => {
     JOIN identities i1 ON i1.id=c.requested_id
     JOIN identities i2 ON i2.id=c.requester_id    
     WHERE c.id=${id}
-  `,
-  );
-};
+  `
+  )
+}
 
 export const requested = async (identityId, id) => {
   try {
@@ -47,12 +47,12 @@ export const requested = async (identityId, id) => {
     JOIN identities i1 ON i1.id=c.requested_id
     JOIN identities i2 ON i2.id=c.requester_id    
     WHERE c.id=${id} AND requested_id = ${identityId}
-  `,
-    );
+  `
+    )
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}
 
 export const requester = async (identityId, id) => {
   try {
@@ -62,12 +62,12 @@ export const requester = async (identityId, id) => {
     JOIN identities i1 ON i1.id=c.requested_id
     JOIN identities i2 ON i2.id=c.requester_id    
     WHERE c.id=${id} AND requester_id = ${identityId}
-  `,
-    );
+  `
+    )
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}
 
 export const permission = async (identityId, id) => {
   try {
@@ -79,12 +79,12 @@ export const permission = async (identityId, id) => {
       WHERE 
         c.id=${id} AND 
         (requester_id = ${identityId} OR requested_id = ${identityId})
-    `,
-    );
+    `
+    )
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}
 
 export const related = async (identityId1, identityId2) => {
   try {
@@ -99,9 +99,9 @@ export const related = async (identityId1, identityId2) => {
           (requester_id = ${identityId2} AND requested_id = ${identityId1})
         ) AND
         c.status <> 'BLOCKED'
-    `,
-    );
+    `
+    )
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}

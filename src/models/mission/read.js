@@ -1,17 +1,17 @@
-import sql from 'sql-template-tag';
-import {PermissionError} from '../../utils/errors.js';
-import {app} from '../../index.js';
-import {filtering, sorting} from '../../utils/query.js';
+import sql from 'sql-template-tag'
+import { PermissionError } from '../../utils/errors.js'
+import { app } from '../../index.js'
+import { filtering, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   project_id: String,
   applicant_id: String,
   assigner_id: String,
   assignee_id: String,
-  status: String,
-};
+  status: String
+}
 
-export const sortColumns = ['created_at', 'updated_at'];
+export const sortColumns = ['created_at', 'updated_at']
 
 export const get = async (id) => {
   return app.db.get(sql`
@@ -43,8 +43,8 @@ export const get = async (id) => {
   JOIN identities i2 ON i2.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id
   WHERE m.id=${id}
-  `);
-};
+  `)
+}
 
 export const getByOffer = async (offerId) => {
   return app.db.get(sql`
@@ -76,11 +76,11 @@ export const getByOffer = async (offerId) => {
   JOIN identities i2 ON i2.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id
   WHERE m.offer_id=${offerId}
-  `);
-};
+  `)
+}
 
-export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
-  const {rows} = await app.db.query(sql`
+export const getAll = async ({ offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count, 
       m.*,
@@ -112,9 +112,9 @@ export const getAll = async ({offset = 0, limit = 10, filter, sort}) => {
     ${filtering(filter, filterColumns, false, 'm')}
     ${sorting(sort, sortColumns, 'm')}
     LIMIT ${limit} OFFSET ${offset}
-    `);
-  return rows;
-};
+    `)
+  return rows
+}
 
 export const assignee = async (identityId, id) => {
   try {
@@ -122,11 +122,11 @@ export const assignee = async (identityId, id) => {
       SELECT m.*, row_to_json(p.*) AS project
       FROM missions m
       JOIN projects p ON p.id=m.project_id
-      WHERE m.id=${id} AND m.assignee_id=${identityId}`);
+      WHERE m.id=${id} AND m.assignee_id=${identityId}`)
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}
 
 export const assigner = async (identityId, id) => {
   try {
@@ -137,11 +137,11 @@ export const assigner = async (identityId, id) => {
       FROM missions m
       JOIN projects p ON p.id=m.project_id
       WHERE m.id=${id} AND m.assigner_id=${identityId}
-      `);
+      `)
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}
 
 // assigner or assignee
 export const assigneer = async (identityId, id) => {
@@ -153,8 +153,8 @@ export const assigneer = async (identityId, id) => {
       FROM missions m
       JOIN projects p ON p.id=m.project_id
       WHERE m.id=${id} AND (m.assignee_id=${identityId} OR m.assigner_id=${identityId})
-      `);
+      `)
   } catch {
-    throw new PermissionError();
+    throw new PermissionError()
   }
-};
+}

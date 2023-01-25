@@ -1,5 +1,5 @@
-import sql from 'sql-template-tag';
-import {app} from '../../index.js';
+import sql from 'sql-template-tag'
+import { app } from '../../index.js'
 
 export const insert = async (
   id,
@@ -10,7 +10,7 @@ export const insert = async (
   body,
   body_type,
   service,
-  date,
+  date
 ) => {
   await app.db.query(
     sql`INSERT INTO emails
@@ -18,6 +18,6 @@ export const insert = async (
       VALUES (
         ${id}::uuid, ${options}, ${info},
         ${to}, ${subject}, ${body}, ${body_type},
-        ${service}::email_service_type, ${date})`,
-  );
-};
+        ${service}::email_service_type, ${date})`
+  )
+}

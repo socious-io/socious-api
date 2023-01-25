@@ -1,45 +1,45 @@
 const filters = (ctx) => {
-  const result = {};
+  const result = {}
 
   for (let [key, val] of Object.entries(ctx.query)) {
     // for BC 2 filter routes
-    if (key === 'status') key = 'filter.status';
-    if (key === 'identity_id') key = 'filter.identity_id';
+    if (key === 'status') key = 'filter.status'
+    if (key === 'identity_id') key = 'filter.identity_id'
 
-    if (!key.includes('filter.')) continue;
+    if (!key.includes('filter.')) continue
 
-    result[key.split('filter.')[1]] = val;
+    result[key.split('filter.')[1]] = val
   }
 
-  return result;
-};
+  return result
+}
 
 export const paginate = async (ctx, next) => {
-  let page = parseInt(ctx.query.page) || 1;
-  if (page < 1) page = 1;
+  let page = parseInt(ctx.query.page) || 1
+  if (page < 1) page = 1
 
-  let limit = parseInt(ctx.query.limit) || 10;
-  if (limit < 1) limit = 10;
+  let limit = parseInt(ctx.query.limit) || 10
+  if (limit < 1) limit = 10
 
   ctx.paginate = {
     page,
     limit,
     offset: (page - 1) * limit,
     filter: filters(ctx),
-    sort: ctx.query.sort,
-  };
+    sort: ctx.query.sort
+  }
 
-  await next();
+  await next()
   /*
     Making client suitable response expect total_count from query results array
   */
-  const response = {page: page, limit: limit, total_count: 0, items: []};
+  const response = { page, limit, total_count: 0, items: [] }
 
   for (const i in ctx.body) {
-    if (i == 0) response.total_count = parseInt(ctx.body[i].total_count);
-    delete ctx.body[i].total_count;
-    response.items.push(ctx.body[i]);
+    if (i == 0) response.total_count = parseInt(ctx.body[i].total_count)
+    delete ctx.body[i].total_count
+    response.items.push(ctx.body[i])
   }
 
-  ctx.body = response;
-};
+  ctx.body = response
+}

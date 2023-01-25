@@ -1,5 +1,4 @@
 import Router from '@koa/router'
-import Debug from 'debug'
 import Auth from '../services/auth/index.js'
 import Data from '@socious/data'
 import OAuthConnects from '../services/oauth_connects/index.js'

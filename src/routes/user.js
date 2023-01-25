@@ -1,5 +1,4 @@
 import Router from '@koa/router'
-import Debug from 'debug'
 import User from '../models/user/index.js'
 import Applicant from '../models/applicant/index.js'
 import Auth from '../services/auth/index.js'

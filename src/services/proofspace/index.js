@@ -1,5 +1,6 @@
 import axios from 'axios'
-// import crypto from 'crypto'
+import fs from 'fs/promises'
+import crypto from 'crypto'
 import Config from '../../config.js'
 import Webhook from '../../models/webhooks/index.js'
 import User from '../../models/user/index.js'
@@ -19,14 +20,16 @@ export const Claim = async (body, headers) => {
     throw new PermissionError('X-Body-Signature header is absent')
   }
 
-  /* const buff = Buffer.from(JSON.stringify(body))
+  const publicKey = await fs.readFile(Config.services.proofspace.webhookKey)
+
+  const buff = Buffer.from(JSON.stringify(body))
   const verified = crypto.verify(
     'sha3-256',
     buff,
-    Config.services.proofspace.webhookKey,
+    publicKey.toString(),
     Buffer.from(signature, 'base64')
   )
-  if (!verified) throw new PermissionError('Invalid Body Signature') */
+  if (!verified) throw new PermissionError('Invalid Body Signature')
 
   await Webhook.insert(partyName, body)
 
@@ -106,8 +109,8 @@ export const SyncWorker = async ({ impact_points_id }) => {
     utcIssuedAt: r.created_at.getTime(),
     revoked: false
   }
-
-  const sign = new Sign(Config.privateKey, '')
+  const privateKey = await fs.readFile(Config.privateKey)
+  const sign = new Sign(privateKey.toString(), '')
   const headers = {
     'x-body-signature': sign.sign(sign.binaryJson(body))
   }

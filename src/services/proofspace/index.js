@@ -43,7 +43,7 @@ export const Claim = async (body, headers) => {
   const issues = records.map((r) => {
     return {
       credentialId: Config.services.proofspace.credentialId,
-      schemaId: Config.services.proofspace.schemaId,
+      schemaId: Config.services.proofspace.schemaId.replace('"', ''),
       fields: [
         {
           name: 'Organisation',

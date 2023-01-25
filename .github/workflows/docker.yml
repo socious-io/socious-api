@@ -233,13 +233,13 @@ jobs:
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
-          docker run -d --restart always -p 5061:5061 -h socious-api -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+          docker run -d --restart always -p 5061:5061 -h socious-api -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
 
       - name: Docker run workers
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
           docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
-          docker run -d --restart always -h socious-workers -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
+          docker run -d --restart always -h socious-workers -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
 
   deploy-prod:
     needs: [build]

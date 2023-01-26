@@ -92,8 +92,8 @@ export const SyncWorker = async ({ impact_points_id }) => {
   let r
   try {
     r = await ImpactPoints.get(impact_points_id)
-  } catch {
-    logger.error('fetching point')
+  } catch (err) {
+    logger.error(`sync proofspace fetching point : ${err.message}`)
     return
   }
 
@@ -101,8 +101,8 @@ export const SyncWorker = async ({ impact_points_id }) => {
   
   try {
     user = await User.get(r.identity_id)
-  } catch {
-    logger.error('fetching user')
+  } catch (err) {
+    logger.error(`sync proofspace fetching user : ${err.message}`)
     return
   }
 

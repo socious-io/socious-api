@@ -53,7 +53,7 @@ export const history = async (identityId, { offset = 0, limit = 10 }) => {
 }
 
 export const get = async (id) => {
-  const { rows } = await app.db.query(sql`
+  return app.db.get(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
     i.*,
@@ -66,7 +66,6 @@ export const get = async (id) => {
   LEFT JOIN organizations org ON org.id=p.identity_id
   WHERE i.id=${id}
     `)
-  return rows
 }
 
 export const impactPointsCalculatedWorksIds = async (missionId) => {

@@ -61,9 +61,9 @@ export const get = async (id) => {
     row_to_json(p.*) AS project,
     row_to_json(org.*) AS organization
   FROM impact_points_history i
-  JOIN missions m ON m.id=i.mission_id
-  JOIN projects p ON p.id=m.project_id
-  JOIN organizations org ON org.id=p.identity_id
+  LEFT JOIN missions m ON m.id=i.mission_id
+  LEFT JOIN projects p ON p.id=m.project_id
+  LEFT JOIN organizations org ON org.id=p.identity_id
   WHERE i.id=${id}
     `)
   return rows

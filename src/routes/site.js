@@ -50,7 +50,7 @@ router.post('/publish', loginOptional, async (ctx) => {
   if (ctx.request.header['secret-key'] !== Config.secret)
     throw new PermissionError()
 
-  publish(ctx.request.name, ctx.request.data)
+  publish(ctx.request.body.name, ctx.request.body.data)
 
   ctx.body = {
     message: 'success'

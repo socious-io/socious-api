@@ -1,3 +1,4 @@
+import Config from '../config.js'
 import Router from '@koa/router'
 import Project from '../models/project/index.js'
 import Post from '../models/post/index.js'
@@ -7,6 +8,8 @@ import Applicant from '../models/applicant/index.js'
 import Offer from '../models/offer/index.js'
 import Mission from '../models/mission/index.js'
 import { loginOptional } from '../utils/middlewares/authorization.js'
+import { PermissionError } from '../utils/errors.js'
+import publish from '../services/jobs/publish.js'
 
 export const router = new Router()
 
@@ -40,5 +43,16 @@ router.get('/options', loginOptional, async (ctx) => {
       filter_columns: Object.keys(Offer.filterColumns),
       sort_columns: Offer.sortColumns
     }
+  }
+})
+
+router.post('/publish', loginOptional, async (ctx) => {
+  if (ctx.request.header['secret-key'] !== Config.secret)
+    throw new PermissionError()
+
+  publish(ctx.request.name, ctx.request.data)
+
+  ctx.body = {
+    message: 'success'
   }
 })

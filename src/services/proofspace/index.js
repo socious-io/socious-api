@@ -89,8 +89,22 @@ export const Sync = async ({ impact_points_id }) => {
 }
 
 export const SyncWorker = async ({ impact_points_id }) => {
-  const r = await ImpactPoints.get(impact_points_id)
-  const user = await User.get(r.identity_id)
+  let r
+  try {
+    r = await ImpactPoints.get(impact_points_id)
+  } catch {
+    logger.error('fetching point')
+    return
+  }
+
+  let user
+  
+  try {
+    user = await User.get(r.identity_id)
+  } catch {
+    logger.error('fetching user')
+    return
+  }
 
   const body = {
     credentialId: Config.services.proofspace.credentialId,

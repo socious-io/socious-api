@@ -138,14 +138,15 @@ export const SyncWorker = async ({ impact_points_id }) => {
 
   const privateKey = await fs.readFile(Config.privateKey)
   const sign = new Sign(privateKey.toString(), '')
+  const binaryBody = sign.binaryJson(body)
   const headers = {
-    'x-body-signature': sign.sign(sign.binaryJson(body))
+    'x-body-signature': sign.sign(binaryBody)
   }
 
   const URL = `https://platform.proofspace.id/service/${Config.services.proofspace.serviceId}/webhook-accept/credentials-issued`
 
   try {
-    const response = await axios.post(URL, body, { headers })
+    const response = await axios.post(URL, binaryBody, { headers })
     logger.info(JSON.stringify(body))
     logger.info(response.data)
   } catch (err) {

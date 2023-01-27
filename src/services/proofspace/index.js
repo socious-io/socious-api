@@ -106,7 +106,7 @@ export const SyncWorker = async ({ impact_points_id }) => {
     return
   }
 
-  const body = {
+  const issue = [{
     credentialId: Config.services.proofspace.credentialId,
     schemaId: Config.services.proofspace.schemaId,
     fields: [
@@ -115,19 +115,34 @@ export const SyncWorker = async ({ impact_points_id }) => {
         value: r.organization.name || r.organization.shortname
       },
       { name: 'Type of Mission', value: r.social_cause_category },
-      { name: 'Start Date', value: r.mission.created_at.split('T')[0] },
-      { name: 'End Date', value: r.created_at.toISOString().split('T')[0] },
+      { name: 'Start Date', value: `${Math.round(
+        new Date(r.mission.created_at).getTime() / 1000
+      )}` },
+      { name: 'End Date', value: `${Math.round(r.created_at.getTime() / 1000)}` },
       { name: 'Impact Points Earned', value: `${r.total_points}` },
       { name: 'Cumulative Impact Points', value: `${user.impact_points}` }
     ],
     utcIssuedAt: r.created_at.getTime(),
     revoked: false
+  }]
+
+  const body = {
+    serviceDid: Config.services.proofspace.serviceId,
+    subscriberConnectDid: user.proofspace_connect_id,
+    subscriberEventId: '1',
+    credentials: issue,
+    revokedCredentials: [],
+    issuedAt: new Date().getTime(),
+    ok: true
   }
+
   const privateKey = await fs.readFile(Config.privateKey)
   const sign = new Sign(privateKey.toString(), '')
   const headers = {
     'x-body-signature': sign.sign(sign.binaryJson(body))
   }
+
+  const URL = `https://platform.proofspace.id/service/${Config.services.proofspace.serviceId}/webhook-accept/credentials-issued`
 
   try {
     const response = await axios.post(URL, body, { headers })

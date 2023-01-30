@@ -67,7 +67,7 @@
     "koa-jwt": "^4.0.3",
     "koa-morgan": "^1.0.1",
     "koa-session": "^6.3.1",
-    "koa2-swagger-ui": "^5.6.0",
+    "koa2-swagger-ui": "^5.7.0",
     "luxon": "^3.2.1",
     "morgan": "~1.10.0",
     "mutexify": "^1.4.0",

@@ -18,17 +18,11 @@ export default ({ resetTimer, blockerTimer, retryCount }) =>
     const ip = ctx.request.header['x-real-ip'] || ctx.request.ip
     const now = new Date()
 
-    if (
-      retryBlockerData[ip]?.blocked <
-      new Date(now.getTime() + blockerTimer).getTime()
-    ) {
+    if (retryBlockerData[ip]?.blocked < new Date(now.getTime() + blockerTimer).getTime()) {
       throw new TooManyRequestsError()
     }
 
-    if (
-      retryBlockerData[ip]?.blocked ||
-      retryBlockerData[ip]?.reset < now.getTime()
-    ) {
+    if (retryBlockerData[ip]?.blocked || retryBlockerData[ip]?.reset < now.getTime()) {
       delete retryBlockerData[ip]
     }
 

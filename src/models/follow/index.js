@@ -4,11 +4,7 @@ import { BadRequestError, EntryError } from '../../utils/errors.js'
 
 export const filterColumns = ['name', 'type']
 
-const followings = async (
-  identityId,
-  { offset = 0, limit = 10 },
-  filter = {}
-) => {
+const followings = async (identityId, { offset = 0, limit = 10 }, filter = {}) => {
   let filtering = ''
   if (filter.name) {
     filtering += ` AND position('${filter.name.toLowerCase()}' IN lower(i.meta->>'name')) > 0`
@@ -34,11 +30,7 @@ const followings = async (
   return rows
 }
 
-const followers = async (
-  identityId,
-  { offset = 0, limit = 10 },
-  filter = {}
-) => {
+const followers = async (identityId, { offset = 0, limit = 10 }, filter = {}) => {
   let filtering = ''
   if (filter.name) {
     filtering += ` AND position('${filter.name.toLowerCase()}' IN lower(i.meta->>'name')) > 0`

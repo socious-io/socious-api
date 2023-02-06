@@ -4,13 +4,7 @@ import { app } from '../../index.js'
 
 import { get } from './read.js'
 
-export const insert = async ({
-  project_id,
-  assignee_id,
-  assigner_id,
-  offer_id,
-  applicant_id
-}) => {
+export const insert = async ({ project_id, assignee_id, assigner_id, offer_id, applicant_id }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO missions (project_id, assignee_id, assigner_id, offer_id, applicant_id) VALUES (
@@ -27,13 +21,7 @@ export const insert = async ({
   }
 }
 
-export const submitWork = async ({
-  missin_id,
-  project_id,
-  total_hours,
-  start,
-  end
-}) => {
+export const submitWork = async ({ missin_id, project_id, total_hours, start, end }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO submitted_works (project_id, mission_id, total_hours, start, end) 

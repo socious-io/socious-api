@@ -35,20 +35,12 @@ export default (app) => {
 
   blueprint.use('/site', site.routes(), site.allowedMethods())
 
-  blueprint.get(
-    '/docs',
-    koaSwagger({ routePrefix: false, swaggerOptions: { spec } })
-  )
+  blueprint.get('/docs', koaSwagger({ routePrefix: false, swaggerOptions: { spec } }))
 
   blueprint.use('/webhooks', webhook.routes(), webhook.allowedMethods())
 
   blueprint.use('/ping', ping.routes(), ping.allowedMethods())
-  blueprint.use(
-    '/auth',
-    blocker(Config.requestBlocker.auth),
-    auth.routes(),
-    auth.allowedMethods()
-  )
+  blueprint.use('/auth', blocker(Config.requestBlocker.auth), auth.routes(), auth.allowedMethods())
   blueprint.use('/user', user.routes(), user.allowedMethods())
   blueprint.use('/identities', identity.routes(), identity.allowedMethods())
   blueprint.use('/orgs', org.routes(), org.allowedMethods())
@@ -71,11 +63,7 @@ export default (app) => {
   blueprint.use('/geo', geo.routes(), geo.allowedMethods())
 
   if (Config.mail.allowTest) {
-    blueprint.use(
-      '/test-emails',
-      testEmails.routes(),
-      testEmails.allowedMethods()
-    )
+    blueprint.use('/test-emails', testEmails.routes(), testEmails.allowedMethods())
   }
 
   app.use(blueprint.routes(), blueprint.allowedMethods())

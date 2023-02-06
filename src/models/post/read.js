@@ -12,10 +12,7 @@ export const filterColumns = {
 
 export const sortColumns = ['created_at', 'updated_at']
 
-export const all = async (
-  currentIdentity,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const all = async (currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`SELECT 
       COUNT(*) OVER () as total_count,
@@ -92,11 +89,7 @@ export const getAll = async (ids, currentIdentity, sort) => {
   return rows
 }
 
-export const search = async (
-  q,
-  currentIdentity,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
       p.id
@@ -106,11 +99,7 @@ export const search = async (
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}`)
 
-  const posts = await getAll(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    currentIdentity,
-    sort
-  )
+  const posts = await getAll(rows.map((r) => r.id).slice(offset, offset + limit), currentIdentity, sort)
 
   return posts.map((r) => {
     return {

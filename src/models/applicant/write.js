@@ -9,15 +9,7 @@ const StatusTypes = Data.ApplicantStatus
 export const insert = async (
   projectId,
   userId,
-  {
-    cover_letter,
-    payment_type,
-    payment_rate,
-    cv_link,
-    cv_name,
-    share_contact_info,
-    attachment
-  },
+  { cover_letter, payment_type, payment_rate, cv_link, cv_name, share_contact_info, attachment },
   client
 ) => {
   try {
@@ -50,15 +42,7 @@ export const insert = async (
 
 export const update = async (
   id,
-  {
-    cover_letter,
-    payment_type,
-    payment_rate,
-    cv_link,
-    cv_name,
-    share_contact_info,
-    attachment
-  },
+  { cover_letter, payment_type, payment_rate, cv_link, cv_name, share_contact_info, attachment },
   client
 ) => {
   try {
@@ -101,9 +85,7 @@ export const withdrawn = async (id) => {
 }
 
 export const offer = async (id) => {
-  return app.db.get(
-    sql`UPDATE applicants SET status=${StatusTypes.OFFERED} WHERE id=${id} RETURNING *`
-  )
+  return app.db.get(sql`UPDATE applicants SET status=${StatusTypes.OFFERED} WHERE id=${id} RETURNING *`)
 }
 
 // TODO: affter this update project owner should start payment flow
@@ -135,11 +117,7 @@ export const reject = async (id, { feedback }) => {
   }
 }
 
-export const giveAnswer = async (
-  applicantId,
-  projectId,
-  { id, answer, selected_option }
-) => {
+export const giveAnswer = async (applicantId, projectId, { id, answer, selected_option }) => {
   try {
     return app.db.get(sql`
       INSERT INTO answers 
@@ -155,16 +133,7 @@ export const giveAnswer = async (
 export const apply = async (
   projectId,
   userId,
-  {
-    answers = [],
-    cover_letter,
-    payment_type,
-    payment_rate,
-    cv_link,
-    cv_name,
-    share_contact_info,
-    attachment
-  }
+  { answers = [], cover_letter, payment_type, payment_rate, cv_link, cv_name, share_contact_info, attachment }
 ) => {
   const { rows } = await app.db.query(sql`
     SELECT count(*) FROM questions WHERE project_id=${projectId} and required=true
@@ -217,16 +186,7 @@ export const apply = async (
 
 export const editApply = async (
   id,
-  {
-    answers = [],
-    cover_letter,
-    payment_type,
-    payment_rate,
-    cv_link,
-    cv_name,
-    share_contact_info,
-    attachment
-  }
+  { answers = [], cover_letter, payment_type, payment_rate, cv_link, cv_name, share_contact_info, attachment }
 ) => {
   return app.db.with(async (client) => {
     await client.query('BEGIN')

@@ -2,13 +2,7 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const escrow = async ({
-  trx_id,
-  project_id,
-  offer_id,
-  currency,
-  amount
-}) => {
+export const escrow = async ({ trx_id, project_id, offer_id, currency, amount }) => {
   try {
     const rows = await app.db.query(sql`
     INSERT INTO escrows (project_id, payment_id, offer_id, amount, currency)
@@ -44,9 +38,7 @@ export const totalEscrow = async (projectId) => {
 }
 
 export const getEscrow = async (missionId) => {
-  return app.db.get(
-    sql`SELECT * FROM escrows WHERE missionId=${missionId} AND released_at IS NULL`
-  )
+  return app.db.get(sql`SELECT * FROM escrows WHERE missionId=${missionId} AND released_at IS NULL`)
 }
 
 export const releaseEscrow = async (id, releaseId) => {

@@ -2,10 +2,7 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async (
-  { identity_id, amount, currency, service, meta, source },
-  client
-) => {
+export const create = async ({ identity_id, amount, currency, service, meta, source }, client) => {
   const db = client || app.db
   try {
     const { rows } = await db.query(sql`
@@ -63,9 +60,7 @@ export const cancel = async (id) => {
 }
 
 export const get = async (id, identityId) => {
-  return app.db.get(
-    sql`SELECT * FROM payments WHERE id=${id} AND identity_id=${identityId}`
-  )
+  return app.db.get(sql`SELECT * FROM payments WHERE id=${id} AND identity_id=${identityId}`)
 }
 
 export const all = async (identityId, { limit = 10, offset = 0 }) => {

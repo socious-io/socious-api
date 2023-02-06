@@ -38,9 +38,7 @@ test('update settings', async () => {
 })
 
 test('get settings', async () => {
-  const response = await request
-    .get('/notifications/settings')
-    .set('Authorization', data.users[0].access_token)
+  const response = await request.get('/notifications/settings').set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot()

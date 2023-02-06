@@ -59,22 +59,13 @@ try {
       modification_date
     ] = line.split('\t')
     const population = isNaN(population_) ? 0 : Number(population_)
-    if (
-      FEATURE_CODE_BLACKLIST.includes(feature_code) ||
-      population < POPULATION_MIN
-    ) {
+    if (FEATURE_CODE_BLACKLIST.includes(feature_code) || population < POPULATION_MIN) {
       process.stdout.write('.')
       continue
     }
 
-    if (
-      FEATURE_CODE_WHITELIST.includes(feature_code) ||
-      feature_code.startsWith('PPL')
-    ) {
-      if (
-        feature_code === 'ADM2' &&
-        !IMPORT_ADMIN2_FOR.includes(country_code)
-      ) {
+    if (FEATURE_CODE_WHITELIST.includes(feature_code) || feature_code.startsWith('PPL')) {
+      if (feature_code === 'ADM2' && !IMPORT_ADMIN2_FOR.includes(country_code)) {
         process.stdout.write('.')
         continue
       }
@@ -173,9 +164,7 @@ try {
     ] = line.split('\t')
     // if (iso_language.length <= 3) {
     if (['', 'en'].includes(iso_language)) {
-      const { rows } = await client.query(
-        sql`SELECT id FROM geonames WHERE id = ${geoname_id} LIMIT 1`
-      )
+      const { rows } = await client.query(sql`SELECT id FROM geonames WHERE id = ${geoname_id} LIMIT 1`)
       if (rows.length === 0) {
         process.stdout.write('_')
         continue

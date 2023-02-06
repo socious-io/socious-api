@@ -34,9 +34,7 @@ test('start chat', async () => {
 
   expect(chatsRes.status).toBe(200)
 
-  expect(
-    chatsRes.body.items.filter((c) => c.id === response.body.id)
-  ).toHaveLength(1)
+  expect(chatsRes.body.items.filter((c) => c.id === response.body.id)).toHaveLength(1)
 
   const chatsRes2 = await request
     .get(`/chats/${response.body.id}`)
@@ -52,17 +50,11 @@ test('start chat', async () => {
 
   expect(chatsRes3.status).toBe(200)
 
-  const chatsRes4 = await request
-    .get('/chats')
-    .set('Authorization', data.users[0].access_token)
+  const chatsRes4 = await request.get('/chats').set('Authorization', data.users[0].access_token)
 
-  expect(
-    chatsRes4.body.items.filter((c) => c.id === response.body.id)
-  ).toHaveLength(0)
+  expect(chatsRes4.body.items.filter((c) => c.id === response.body.id)).toHaveLength(0)
 
-  const getOneRes = await request
-    .get(`/chats/${response.body.id}`)
-    .set('Authorization', data.users[1].access_token)
+  const getOneRes = await request.get(`/chats/${response.body.id}`).set('Authorization', data.users[1].access_token)
 
   expect(getOneRes.status).toBe(403)
 })

@@ -3,13 +3,7 @@ import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 import { StatusType } from './enums.js'
 import { getProfile } from './read.js'
-export const insert = async (
-  first_name,
-  last_name,
-  username,
-  email,
-  hashedPasswd
-) => {
+export const insert = async (first_name, last_name, username, email, hashedPasswd) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO users (first_name, last_name, username, email, password) 
@@ -67,9 +61,7 @@ export const updateProfile = async (
 }
 
 export const updatePassword = async (id, newPassword) => {
-  await app.db.query(
-    sql`UPDATE users SET password=${newPassword}, password_expired=false WHERE id=${id}`
-  )
+  await app.db.query(sql`UPDATE users SET password=${newPassword}, password_expired=false WHERE id=${id}`)
 }
 
 export const expirePassword = async (id) => {
@@ -77,15 +69,11 @@ export const expirePassword = async (id) => {
 }
 
 export const verifyEmail = async (id) => {
-  await app.db.query(
-    sql`UPDATE users SET email_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`
-  )
+  await app.db.query(sql`UPDATE users SET email_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`)
 }
 
 export const verifyPhone = async (id) => {
-  await app.db.query(
-    sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`
-  )
+  await app.db.query(sql`UPDATE users SET phone_verified_at=now(),status=${StatusType.ACTIVE} WHERE id=${id}`)
 }
 
 export const remove = async (user, reason) => {
@@ -96,8 +84,7 @@ export const remove = async (user, reason) => {
         sql`INSERT INTO deleted_users (user_id, username, reason, registered_at)
     VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`
       )
-      await client.query(sql`DELETE FROM users WHERE id=${user.id}`),
-        await client.query('COMMIT')
+      await client.query(sql`DELETE FROM users WHERE id=${user.id}`), await client.query('COMMIT')
     } catch (err) {
       await client.query('ROLLBACK')
       throw err

@@ -7,10 +7,7 @@ import Offer from '../models/offer/index.js'
 import Skill from '../models/skill/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
-import {
-  loginOptional,
-  loginRequired
-} from '../utils/middlewares/authorization.js'
+import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
@@ -43,10 +40,7 @@ router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
     ctx.body = await User.getProfileByUsernameLimited(ctx.params.username)
     return
   }
-  ctx.body = await User.getProfileByUsername(
-    ctx.params.username,
-    ctx.identity.id
-  )
+  ctx.body = await User.getProfileByUsername(ctx.params.username, ctx.identity.id)
 })
 
 router.get('/profile', loginRequired, async (ctx) => {
@@ -90,15 +84,9 @@ router.post('/delete', loginRequired, async (ctx) => {
   }
 })
 
-router.get(
-  '/applicants',
-  loginRequired,
-  checkIdParams,
-  paginate,
-  async (ctx) => {
-    ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate)
-  }
-)
+router.get('/applicants', loginRequired, checkIdParams, paginate, async (ctx) => {
+  ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate)
+})
 
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.identity.id
@@ -115,58 +103,30 @@ router.post('/languages', loginRequired, async (ctx) => {
   ctx.body = await User.addLanguage(ctx.user, ctx.request.body)
 })
 
-router.post(
-  '/languages/update/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body)
-    ctx.body = await User.editLanguage(
-      ctx.params.id,
-      ctx.user,
-      ctx.request.body
-    )
-  }
-)
+router.post('/languages/update/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.editLanguage(ctx.params.id, ctx.user, ctx.request.body)
+})
 
-router.post(
-  '/languages/remove/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body)
-    ctx.body = await User.removeLanguage(ctx.params.id, ctx.user)
-  }
-)
+router.post('/languages/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileAddLanguageSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.removeLanguage(ctx.params.id, ctx.user)
+})
 
 router.post('/experiences', loginRequired, async (ctx) => {
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
   ctx.body = await User.addExperience(ctx.user, ctx.request.body)
 })
 
-router.post(
-  '/experiences/update/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
-    ctx.body = await User.editExperience(
-      ctx.params.id,
-      ctx.user,
-      ctx.request.body
-    )
-  }
-)
+router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.editExperience(ctx.params.id, ctx.user, ctx.request.body)
+})
 
-router.post(
-  '/experiences/remove/:id',
-  loginRequired,
-  checkIdParams,
-  async (ctx) => {
-    await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
-    ctx.body = await User.removeExperience(ctx.params.id, ctx.user)
-  }
-)
+router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.removeExperience(ctx.params.id, ctx.user)
+})
 
 router.get('/recommend', loginRequired, async (ctx) => {
   ctx.body = await User.recommend(ctx.user.id)

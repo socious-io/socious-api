@@ -13,9 +13,7 @@ export const getToken = (id, refresh = false) => {
 export const verifyToken = async (token, refresh = false) => {
   token = token.replace('Bearer', '')
   if (refresh) {
-    const { rows } = await app.db.query(
-      sql`SELECT * FROM tokens_blacklist WHERE token=${token}`
-    )
+    const { rows } = await app.db.query(sql`SELECT * FROM tokens_blacklist WHERE token=${token}`)
     if (rows.length > 0) throw new UnauthorizedError()
   }
 

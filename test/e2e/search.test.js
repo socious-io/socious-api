@@ -17,13 +17,10 @@ beforeAll(async () => {
 })
 
 test('search projects', async () => {
-  const response = await request
-    .post('/search')
-    .set('Authorization', data.users[0].access_token)
-    .send({
-      q: 'test',
-      type: 'projects'
-    })
+  const response = await request.post('/search').set('Authorization', data.users[0].access_token).send({
+    q: 'test',
+    type: 'projects'
+  })
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     items: [

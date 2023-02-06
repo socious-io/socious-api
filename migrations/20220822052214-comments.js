@@ -33,11 +33,7 @@ exports.up = function (db) {
 }
 
 exports.down = function (db) {
-  var filePath = path.join(
-    __dirname,
-    'sqls',
-    '20220822052214-comments-down.sql'
-  )
+  var filePath = path.join(__dirname, 'sqls', '20220822052214-comments-down.sql')
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
       if (err) return reject(err)

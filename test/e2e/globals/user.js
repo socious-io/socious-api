@@ -24,16 +24,10 @@ export const verifyUser = async (request, data) => {
   for (const i in data.users) {
     if (data.users[i].invalid) continue
 
-    const user = await app.db.get(
-      sql`SELECT * FROM users WHERE email=${data.users[i].email}`
-    )
-    const otp = await app.db.get(
-      sql`SELECT code FROM otps WHERE user_id=${user.id}`
-    )
+    const user = await app.db.get(sql`SELECT * FROM users WHERE email=${data.users[i].email}`)
+    const otp = await app.db.get(sql`SELECT code FROM otps WHERE user_id=${user.id}`)
 
-    const response = await request.get(
-      `/auth/otp/confirm?code=${otp.code}&email=${user.email}`
-    )
+    const response = await request.get(`/auth/otp/confirm?code=${otp.code}&email=${user.email}`)
     expect(response.status).toBe(200)
     expect(response.body.access_token).not.toBeNull()
     expect(response.body.refresh_token).not.toBeNull()
@@ -73,9 +67,7 @@ export const profile = async (request, data) => {
     if (data.users[i].invalid) {
       continue
     }
-    const response = await request
-      .get('/user/profile')
-      .set('Authorization', data.users[i].access_token)
+    const response = await request.get('/user/profile').set('Authorization', data.users[i].access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({
@@ -162,13 +154,10 @@ export const addLanguage = async (request, data) => {
     if (data.users[i].invalid) {
       continue
     }
-    const response = await request
-      .post('/user/languages')
-      .set('Authorization', data.users[i].access_token)
-      .send({
-        name: 'FA',
-        level: 'NATIVE'
-      })
+    const response = await request.post('/user/languages').set('Authorization', data.users[i].access_token).send({
+      name: 'FA',
+      level: 'NATIVE'
+    })
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({
@@ -211,10 +200,7 @@ export const addExperience = async (request, data) => {
 
     delete body.invalid
 
-    const response = await request
-      .post('/orgs')
-      .set('Authorization', data.users[0].access_token)
-      .send(body)
+    const response = await request.post('/orgs').set('Authorization', data.users[0].access_token).send(body)
 
     expect(response.status).toBe(200)
     data.orgs[i].id = response.body.id
@@ -224,15 +210,12 @@ export const addExperience = async (request, data) => {
     if (data.users[i].invalid) {
       continue
     }
-    const response = await request
-      .post('/user/experiences')
-      .set('Authorization', data.users[i].access_token)
-      .send({
-        org_id: data.orgs[0].id,
-        title: 'Test',
-        description: 'Test',
-        start_at: '2022-10-16T13:32:30.211Z'
-      })
+    const response = await request.post('/user/experiences').set('Authorization', data.users[i].access_token).send({
+      org_id: data.orgs[0].id,
+      title: 'Test',
+      description: 'Test',
+      start_at: '2022-10-16T13:32:30.211Z'
+    })
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({

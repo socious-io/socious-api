@@ -187,15 +187,11 @@ async function shortname(org) {
       shortname = shortname.substring(1)
     }
 
-    shortname =
-      shortname.toLowerCase().slice(0, 32) +
-      Math.floor(1000 + Math.random() * 9000)
+    shortname = shortname.toLowerCase().slice(0, 32) + Math.floor(1000 + Math.random() * 9000)
 
     return shortname
   } catch (err) {
-    console.log(
-      `Error parsing shortname for organization ${org.id}: ${err.message}`
-    )
+    console.log(`Error parsing shortname for organization ${org.id}: ${err.message}`)
     return false
   }
 }

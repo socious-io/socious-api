@@ -30,14 +30,7 @@ export const simpleMail = async ({ to, subject, html }) => {
   return body
 }
 
-export const putContact = ({
-  email,
-  city,
-  country,
-  first_name,
-  last_name,
-  meta
-}) => {
+export const putContact = ({ email, city, country, first_name, last_name, meta }) => {
   publish('sendgrid_add_contacts', {
     email,
     city,

@@ -16,10 +16,7 @@ const stripeAmount = (amount, currency) => {
   return amount
 }
 
-export const charge = async (
-  identityId,
-  { amount, currency, meta, source, description }
-) => {
+export const charge = async (identityId, { amount, currency, meta, source, description }) => {
   let card = getCard(source, identityId)
 
   const token = await stripe.token.create({
@@ -57,12 +54,7 @@ export const charge = async (
   }
 }
 
-export const payout = async ({
-  amount,
-  currency,
-  description,
-  destination
-}) => {
+export const payout = async ({ amount, currency, description, destination }) => {
   return stripe.payouts.create(
     {
       amount: stripeAmount(amount, currency),

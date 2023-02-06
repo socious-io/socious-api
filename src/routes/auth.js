@@ -94,16 +94,9 @@ router.post('/preregister', async (ctx) => {
 router.post('/stripe', loginRequired, async (ctx) => {
   await Data.OAuthStripeSchema.validateAsync(ctx.request.body)
 
-  ctx.body = await OAuthConnects.authorize(
-    ctx.identity.id,
-    Data.OAuthProviders.STRIPE,
-    ctx.request.body
-  )
+  ctx.body = await OAuthConnects.authorize(ctx.identity.id, Data.OAuthProviders.STRIPE, ctx.request.body)
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {
-  ctx.body = await OAuthConnects.profile(
-    ctx.identity.id,
-    Data.OAuthProviders.STRIPE
-  )
+  ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
 })

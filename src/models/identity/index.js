@@ -21,9 +21,7 @@ const get = async (id, identityId) => {
 }
 
 const getByIds = async (ids) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM identities WHERE id = ANY(${ids})`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM identities WHERE id = ANY(${ids})`)
   return rows
 }
 
@@ -38,9 +36,7 @@ const getAll = async (userId, identityId) => {
     JOIN identities i ON i.id=m.org_id
     WHERE user_id=${userId}
   `)
-  const primary = await app.db.get(
-    sql`SELECT * FROM identities WHERE id=${userId}`
-  )
+  const primary = await app.db.get(sql`SELECT * FROM identities WHERE id=${userId}`)
   rows.push({
     current: primary.id === identityId,
     primary: true,

@@ -1,10 +1,7 @@
 import Router from '@koa/router'
 import { validate } from '@socious/data'
 import Org from '../models/organization/index.js'
-import {
-  loginOptional,
-  loginRequired
-} from '../utils/middlewares/authorization.js'
+import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, orgMember } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { ValidationError } from '../utils/errors.js'
@@ -42,55 +39,31 @@ router.get('/check', loginRequired, async (ctx) => {
   }
 })
 
-router.post(
-  '/update/:id',
-  loginRequired,
-  checkIdParams,
-  orgMember,
-  async (ctx) => {
-    await validate.OrganizationSchema.validateAsync(ctx.request.body)
-    if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
-      throw new ValidationError('Invalid email')
-    }
-    ctx.body = await Org.update(ctx.params.id, ctx.request.body)
+router.post('/update/:id', loginRequired, checkIdParams, orgMember, async (ctx) => {
+  await validate.OrganizationSchema.validateAsync(ctx.request.body)
+  if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
+    throw new ValidationError('Invalid email')
   }
-)
+  ctx.body = await Org.update(ctx.params.id, ctx.request.body)
+})
 
-router.get(
-  '/:id/members',
-  loginRequired,
-  checkIdParams,
-  paginate,
-  async (ctx) => {
-    ctx.body = await Org.members(ctx.params.id, ctx.paginate)
-  }
-)
+router.get('/:id/members', loginRequired, checkIdParams, paginate, async (ctx) => {
+  ctx.body = await Org.members(ctx.params.id, ctx.paginate)
+})
 
-router.post(
-  '/:id/members/:user_id',
-  loginRequired,
-  checkIdParams,
-  orgMember,
-  async (ctx) => {
-    await Org.addMember(ctx.params.id, ctx.params.user_id)
-    ctx.body = { message: 'success' }
+router.post('/:id/members/:user_id', loginRequired, checkIdParams, orgMember, async (ctx) => {
+  await Org.addMember(ctx.params.id, ctx.params.user_id)
+  ctx.body = { message: 'success' }
 
-    Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
-      type: Notif.Types.MEMBERED,
-      refId: ctx.params.user_id,
-      parentId: ctx.params.id,
-      identity: ctx.identity
-    })
-  }
-)
+  Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
+    type: Notif.Types.MEMBERED,
+    refId: ctx.params.user_id,
+    parentId: ctx.params.id,
+    identity: ctx.identity
+  })
+})
 
-router.post(
-  '/remove/:id/members/:user_id',
-  loginRequired,
-  checkIdParams,
-  orgMember,
-  async (ctx) => {
-    await Org.removeMember(ctx.params.id, ctx.params.user_id)
-    ctx.body = { message: 'success' }
-  }
-)
+router.post('/remove/:id/members/:user_id', loginRequired, checkIdParams, orgMember, async (ctx) => {
+  await Org.removeMember(ctx.params.id, ctx.params.user_id)
+  ctx.body = { message: 'success' }
+})

@@ -87,11 +87,7 @@ async function parseProject(p, type) {
 
   return {
     title: p.title,
-    description: p['body-html']
-      ? p['body-html']
-      : p.body
-      ? p.body
-      : 'No information aviable',
+    description: p['body-html'] ? p['body-html'] : p.body ? p.body : 'No information aviable',
     country: countryIso2,
     city: p.city[0].name,
     experience_level: experienceLevel,
@@ -135,9 +131,7 @@ async function getExperienceLevel(p) {
  */
 async function getProjectFromDb(p) {
   try {
-    const pr = await app.db.get(
-      sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`
-    )
+    const pr = await app.db.get(sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`)
 
     return pr.id
   } catch (err) {

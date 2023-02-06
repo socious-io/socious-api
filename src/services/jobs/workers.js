@@ -20,11 +20,7 @@ const consumer = (handler) => {
     const pad = ''.padEnd(c)
     for await (const q of queue) {
       const body = decoder.decode(q.data)
-      logger.info(
-        `[${subj}]${pad} #${queue.getProcessed()} - ${
-          q.subject
-        } ${JSON.stringify(body)}`
-      )
+      logger.info(`[${subj}]${pad} #${queue.getProcessed()} - ${q.subject} ${JSON.stringify(body)}`)
 
       try {
         handler(body)

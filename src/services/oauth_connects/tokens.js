@@ -2,10 +2,7 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const upsert = async (
-  identityId,
-  { provider, mui, access_token, refresh_token, expire, status, meta }
-) => {
+export const upsert = async (identityId, { provider, mui, access_token, refresh_token, expire, status, meta }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO oauth_connects

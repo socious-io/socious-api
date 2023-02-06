@@ -16,10 +16,7 @@ retry.onFailure(({ duration, handled, reason }) => {
 // Create a circuit breaker that'll stop calling the executed function for 10
 // seconds if it fails 5 times in a row. This can give time for e.g. a database
 // to recover without getting tons of traffic.
-export const circuitBreaker = Policy.handleAll().circuitBreaker(
-  10 * 1000,
-  new ConsecutiveBreaker(5)
-)
+export const circuitBreaker = Policy.handleAll().circuitBreaker(10 * 1000, new ConsecutiveBreaker(5))
 circuitBreaker.onFailure(({ duration, handled, reason }) => {
   debug(`circuit breaker call ran in ${duration}ms and failed with`, reason)
   debug(handled ? 'error was handled' : 'error was not handled')
@@ -33,10 +30,7 @@ const policies = {
   retry,
   circuitBreaker,
   retryWithBreaker,
-  SSO: Policy.wrap(
-    Policy.handleAll().retry().attempts(30).exponential({ initialDelay: 1000 }),
-    circuitBreaker
-  )
+  SSO: Policy.wrap(Policy.handleAll().retry().attempts(30).exponential({ initialDelay: 1000 }), circuitBreaker)
 }
 
 export const policyByName = (name) => policies[name]
@@ -46,9 +40,7 @@ export class DBCircuitBreaker {
   cache = {}
   constructor(pool, policy) {
     this.pool = pool
-    this.policy = policyByName(
-      policy || process.env.DEFAULT_DB_CIRCUIT_BREAKER || 'none'
-    )
+    this.policy = policyByName(policy || process.env.DEFAULT_DB_CIRCUIT_BREAKER || 'none')
   }
 
   async getQueryFromFile(name) {

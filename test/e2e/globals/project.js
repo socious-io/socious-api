@@ -1,18 +1,13 @@
 import Payment from '../../../src/services/payments/index.js'
 import Data from '@socious/data'
-import {
-  create as createTrx,
-  complete as completeTrx
-} from '../../../src/services/payments/transaction.js'
+import { create as createTrx, complete as completeTrx } from '../../../src/services/payments/transaction.js'
 import ImpactPoints from '../../../src/services/impact_points/index.js'
 
 export const get = async (request, data) => {
   for (const project of data.projects.objs) {
     if (project.invalid) continue
 
-    const response = await request
-      .get(`/projects/${project.id}`)
-      .set('Authorization', data.users[0].access_token)
+    const response = await request.get(`/projects/${project.id}`).set('Authorization', data.users[0].access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({
@@ -29,9 +24,7 @@ export const get = async (request, data) => {
 }
 
 export const getAll = async (request, data) => {
-  const response = await request
-    .get('/projects?sort=-updated_at')
-    .set('Authorization', data.users[0].access_token)
+  const response = await request.get('/projects?sort=-updated_at').set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
@@ -88,9 +81,7 @@ export const getApplicant = async (request, data) => {
     if (data.projects.objs[i].invalid) continue
 
     for (const id of data.projects.objs[i].applications) {
-      const response = await request
-        .get(`/applicants/${id}`)
-        .set('Authorization', data.users[0].access_token)
+      const response = await request.get(`/applicants/${id}`).set('Authorization', data.users[0].access_token)
 
       expect(response.status).toBe(200)
       expect(response.body).toMatchSnapshot({
@@ -115,9 +106,7 @@ export const create = async (request, data) => {
   for (const i in data.projects.objs) {
     const body = data.projects.objs[i]
     delete body.invalid
-    body.job_category_id = categoriesRes.body.categories.filter(
-      (c) => c.name === 'Other'
-    )[0].id
+    body.job_category_id = categoriesRes.body.categories.filter((c) => c.name === 'Other')[0].id
 
     const response = await request
       .post('/projects')
@@ -171,9 +160,7 @@ export const removeQuestion = async (request, data) => {
   for (const i in data.projects.objs) {
     for (const question of data.projects.objs[i].questions) {
       const response = await request
-        .post(
-          `/projects/remove/${data.projects.objs[i].id}/questions/${question}`
-        )
+        .post(`/projects/remove/${data.projects.objs[i].id}/questions/${question}`)
         .set('Authorization', data.users[0].access_token)
         .set('Current-Identity', data.orgs[0].id)
         .send(question)
@@ -289,14 +276,10 @@ export const approve = async (request, data) => {
   for (const user of data.users) {
     if (user.invalid) continue
 
-    const offers = await request
-      .get('/user/offers')
-      .set('Authorization', user.access_token)
+    const offers = await request.get('/user/offers').set('Authorization', user.access_token)
 
     for (const offer of offers.body.items) {
-      const response = await request
-        .post(`/offers/${offer.id}/approve`)
-        .set('Authorization', user.access_token)
+      const response = await request.post(`/offers/${offer.id}/approve`).set('Authorization', user.access_token)
 
       if (offer.status === 'PENDING') {
         expect(response.status).toBe(200)
@@ -365,9 +348,7 @@ export const hire = async (request, data) => {
 }
 
 export const complete = async (request, data) => {
-  const missions = await request
-    .get('/user/missions')
-    .set('Authorization', data.users[0].access_token)
+  const missions = await request.get('/user/missions').set('Authorization', data.users[0].access_token)
 
   for (const mission of missions.body.items) {
     const response = await request
@@ -379,9 +360,7 @@ export const complete = async (request, data) => {
 }
 
 export const cancel = async (request, data) => {
-  const missions = await request
-    .get('/user/missions')
-    .set('Authorization', data.users[1].access_token)
+  const missions = await request.get('/user/missions').set('Authorization', data.users[1].access_token)
 
   for (const mission of missions.body.items) {
     const response = await request
@@ -411,21 +390,15 @@ export const confirm = async (request, data) => {
 
       await ImpactPoints.worker({ mission })
 
-      const badgesRes = await request
-        .get('/user/badges')
-        .set('Authorization', data.users[0].access_token)
+      const badgesRes = await request.get('/user/badges').set('Authorization', data.users[0].access_token)
 
       expect(badgesRes.body.badges).toMatchSnapshot()
 
-      const impactRes = await request
-        .get('/user/impact-points')
-        .set('Authorization', data.users[0].access_token)
+      const impactRes = await request.get('/user/impact-points').set('Authorization', data.users[0].access_token)
 
       expect(impactRes.body.items).toHaveLength(1)
 
-      const profileRes = await request
-        .get('/user/profile')
-        .set('Authorization', data.users[0].access_token)
+      const profileRes = await request.get('/user/profile').set('Authorization', data.users[0].access_token)
 
       expect(profileRes.body.impact_points).toBe(3564)
     }
@@ -475,9 +448,7 @@ export const feedbacks = async (request, data) => {
 export const userApplicants = async (request, data) => {
   for (const project of data.projects.objs) {
     if (project.invalid) continue
-    const response = await request
-      .get('/user/applicants')
-      .set('Authorization', data.users[0].access_token)
+    const response = await request.get('/user/applicants').set('Authorization', data.users[0].access_token)
 
     expect(response.status).toBe(200)
     if (response.body.items.length > 0) {

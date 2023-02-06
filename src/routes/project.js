@@ -7,10 +7,7 @@ import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
 import Event from '../services/events/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
-import {
-  loginOptional,
-  loginRequired
-} from '../utils/middlewares/authorization.js'
+import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
 import { PermissionError } from '../utils/errors.js'
 import Analytics from '../services/analytics/index.js'
@@ -37,16 +34,10 @@ router.post('/', loginRequired, async (ctx) => {
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body)
 })
 
-router.post(
-  '/update/:id',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await validate.ProjectSchema.validateAsync(ctx.request.body)
-    ctx.body = await Project.update(ctx.params.id, ctx.request.body)
-  }
-)
+router.post('/update/:id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await validate.ProjectSchema.validateAsync(ctx.request.body)
+  ctx.body = await Project.update(ctx.params.id, ctx.request.body)
+})
 
 router.get('/:id/questions', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = {
@@ -54,64 +45,31 @@ router.get('/:id/questions', loginRequired, checkIdParams, async (ctx) => {
   }
 })
 
-router.post(
-  '/:id/questions',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await validate.QuestionSchema.validateAsync(ctx.request.body)
-    ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body)
-  }
-)
+router.post('/:id/questions', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await validate.QuestionSchema.validateAsync(ctx.request.body)
+  ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body)
+})
 
-router.post(
-  '/update/:id/questions/:question_id',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await validate.QuestionSchema.validateAsync(ctx.request.body)
-    ctx.body = await Project.updateQuestion(
-      ctx.params.question_id,
-      ctx.request.body
-    )
-  }
-)
+router.post('/update/:id/questions/:question_id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await validate.QuestionSchema.validateAsync(ctx.request.body)
+  ctx.body = await Project.updateQuestion(ctx.params.question_id, ctx.request.body)
+})
 
-router.post(
-  '/remove/:id/questions/:question_id',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await Project.removeQuestion(ctx.params.question_id)
-    ctx.body = { message: 'success' }
-  }
-)
+router.post('/remove/:id/questions/:question_id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await Project.removeQuestion(ctx.params.question_id)
+  ctx.body = { message: 'success' }
+})
 
-router.post(
-  '/remove/:id',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await Project.remove(ctx.params.id)
-    ctx.body = {
-      message: 'success'
-    }
+router.post('/remove/:id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await Project.remove(ctx.params.id)
+  ctx.body = {
+    message: 'success'
   }
-)
+})
 
-router.get(
-  '/:id/applicants',
-  loginRequired,
-  paginate,
-  checkIdParams,
-  async (ctx) => {
-    ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate)
-  }
-)
+router.get('/:id/applicants', loginRequired, paginate, checkIdParams, async (ctx) => {
+  ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate)
+})
 
 router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   await validate.ApplicantSchema.validateAsync(ctx.request.body)
@@ -134,67 +92,42 @@ router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   })
 })
 
-router.get(
-  '/:id/missions',
-  loginRequired,
-  checkIdParams,
-  paginate,
-  async (ctx) => {
-    ctx.paginate.filter.project_id = ctx.params.id
-    ctx.paginate.filter.assigner_id = ctx.identity.id
+router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) => {
+  ctx.paginate.filter.project_id = ctx.params.id
+  ctx.paginate.filter.assigner_id = ctx.identity.id
 
-    ctx.body = await Mission.getAll(ctx.paginate)
-  }
-)
+  ctx.body = await Mission.getAll(ctx.paginate)
+})
 
-router.get(
-  '/:id/offers',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  paginate,
-  async (ctx) => {
-    ctx.paginate.filter.project_id = ctx.params.id
+router.get('/:id/offers', loginRequired, checkIdParams, projectPermission, paginate, async (ctx) => {
+  ctx.paginate.filter.project_id = ctx.params.id
 
-    ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate)
-  }
-)
+  ctx.body = await Offer.getAll(ctx.identity.id, ctx.paginate)
+})
 
-router.post(
-  '/:id/offer/:user_id',
-  loginRequired,
-  checkIdParams,
-  projectPermission,
-  async (ctx) => {
-    await validate.OfferSchema.validateAsync(ctx.request.body)
+router.post('/:id/offer/:user_id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  await validate.OfferSchema.validateAsync(ctx.request.body)
 
-    ctx.body = await Offer.send(ctx.params.id, {
-      ...ctx.request.body,
-      recipient_id: ctx.params.user_id,
-      offerer_id: ctx.identity.id
-    })
+  ctx.body = await Offer.send(ctx.params.id, {
+    ...ctx.request.body,
+    recipient_id: ctx.params.user_id,
+    offerer_id: ctx.identity.id
+  })
 
-    Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
-      type: Notif.Types.OFFER,
-      refId: ctx.body.id,
-      parentId: ctx.params.id,
-      identity: ctx.identity
-    })
+  Event.push(Event.Types.NOTIFICATION, ctx.params.user_id, {
+    type: Notif.Types.OFFER,
+    refId: ctx.body.id,
+    parentId: ctx.params.id,
+    identity: ctx.identity
+  })
 
-    Analytics.track({
-      userId: ctx.params.user_id,
-      event: 'offered_project',
-      meta: ctx.project
-    })
-  }
-)
+  Analytics.track({
+    userId: ctx.params.user_id,
+    event: 'offered_project',
+    meta: ctx.project
+  })
+})
 
-router.get(
-  '/:id/feedbacks',
-  loginRequired,
-  checkIdParams,
-  paginate,
-  async (ctx) => {
-    ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate)
-  }
-)
+router.get('/:id/feedbacks', loginRequired, checkIdParams, paginate, async (ctx) => {
+  ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate)
+})

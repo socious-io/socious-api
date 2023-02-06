@@ -88,9 +88,7 @@ export async function getAllProjects(ids) {
         if (config.idealist.wait_between_project > 0) {
           process.stdout.clearLine(0)
           process.stdout.cursorTo(0)
-          process.stdout.write(
-            `Waiting ${config.idealist.wait_break / 1000} secons`
-          )
+          process.stdout.write(`Waiting ${config.idealist.wait_break / 1000} secons`)
           await sleep(config.idealist.wait_break)
         }
         count = 0
@@ -101,10 +99,7 @@ export async function getAllProjects(ids) {
 
     process.stdout.write('\n')
 
-    console.log(
-      '\x1b[33m%s\x1b[0m',
-      `${res} ${types} projects processed from Idealist.`
-    )
+    console.log('\x1b[33m%s\x1b[0m', `${res} ${types} projects processed from Idealist.`)
   }
 }
 
@@ -132,10 +127,7 @@ export async function getListings(projectTypes) {
 
     if (since_timstamp) since = since_timstamp
     if (!idealist_token) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        'Idealist token not found! Please check if it is set into the .env file.'
-      )
+      console.log('\x1b[31m%s\x1b[0m', 'Idealist token not found! Please check if it is set into the .env file.')
       process.exit(1)
     }
 
@@ -198,9 +190,7 @@ export async function getListings(projectTypes) {
       ttl--
     }
 
-    console.log(
-      `${allProjects.length} ${projectTypes} will be loaded from Idealist.`
-    )
+    console.log(`${allProjects.length} ${projectTypes} will be loaded from Idealist.`)
 
     return allProjects // returns all ids from one type
   } catch (err) {

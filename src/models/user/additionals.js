@@ -31,15 +31,10 @@ export const editLanguage = async (id, user, { name, level }) => {
 }
 
 export const removeLanguage = async (id, user) => {
-  await app.db.query(
-    sql`DELETE FROM languages WHERE id=${id}, user_id=${user.id}`
-  )
+  await app.db.query(sql`DELETE FROM languages WHERE id=${id}, user_id=${user.id}`)
 }
 
-export const addExperience = async (
-  user,
-  { org_id, title, description, skills, start_at, end_at }
-) => {
+export const addExperience = async (user, { org_id, title, description, skills, start_at, end_at }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO experiences (
@@ -68,11 +63,7 @@ export const addExperience = async (
   }
 }
 
-export const editExperience = async (
-  id,
-  user,
-  { org_id, title, description, skills, start_at, end_at }
-) => {
+export const editExperience = async (id, user, { org_id, title, description, skills, start_at, end_at }) => {
   try {
     const { rows } = await app.db.query(sql`
     UPDATE experiences SET
@@ -92,7 +83,5 @@ export const editExperience = async (
 }
 
 export const removeExperience = async (id, user) => {
-  await app.db.query(
-    sql`DELETE FROM experiences WHERE id=${id}, user_id=${user.id}`
-  )
+  await app.db.query(sql`DELETE FROM experiences WHERE id=${id}, user_id=${user.id}`)
 }

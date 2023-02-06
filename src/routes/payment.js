@@ -19,79 +19,62 @@ router.post('/donate', loginRequired, async (ctx) => {
   ctx.body = await Payment.charge(ctx.identity.id, ctx.request.body)
 })
 
-router.post(
-  '/offers/:id',
-  loginRequired,
-  checkIdParams,
-  offerer,
-  async (ctx) => {
-    await validate.EscrowSchema.validateAsync(ctx.request.body)
+router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) => {
+  await validate.EscrowSchema.validateAsync(ctx.request.body)
 
-    ctx.body = await Payment.charge(ctx.identity.id, {
-      ...ctx.request.body,
-      currency: ctx.offer.project.currency,
-      amount: ctx.offer.total_assignment,
-      description: ctx.offer.project.name,
-      meta: {
-        project_name: ctx.offer.project.name,
-        project_id: ctx.offer.project.id,
-        offer_id: ctx.offer.id
-      }
-    })
-
-    // put escrow amount with calculate commission fee
-    const amount =
-      ctx.body.amount - ctx.body.amount * Identity.commissionFee(ctx.identity)
-
-    await Payment.escrow({
-      trx_id: ctx.body.id,
-      currency: ctx.offer.project.currency,
+  ctx.body = await Payment.charge(ctx.identity.id, {
+    ...ctx.request.body,
+    currency: ctx.offer.project.currency,
+    amount: ctx.offer.total_assignment,
+    description: ctx.offer.project.name,
+    meta: {
+      project_name: ctx.offer.project.name,
       project_id: ctx.offer.project.id,
-      offer_id: ctx.offer.id,
-      amount
-    })
+      offer_id: ctx.offer.id
+    }
+  })
+
+  // put escrow amount with calculate commission fee
+  const amount = ctx.body.amount - ctx.body.amount * Identity.commissionFee(ctx.identity)
+
+  await Payment.escrow({
+    trx_id: ctx.body.id,
+    currency: ctx.offer.project.currency,
+    project_id: ctx.offer.project.id,
+    offer_id: ctx.offer.id,
+    amount
+  })
+})
+
+router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, async (ctx) => {
+  if (ctx.mission.status !== Data.MissionStatus.CONFIRMED) {
+    throw new BadRequestError('Mission complete not approved')
   }
-)
 
-router.post(
-  '/missions/:id/payout',
-  loginRequired,
-  checkIdParams,
-  assignee,
-  async (ctx) => {
-    if (ctx.mission.status !== Data.MissionStatus.CONFIRMED) {
-      throw new BadRequestError('Mission complete not approved')
-    }
+  const profile = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
 
-    const profile = await OAuthConnects.profile(
-      ctx.identity.id,
-      Data.OAuthProviders.STRIPE
-    )
-
-    if (profile.status !== Data.UserStatusType.ACTIVE) {
-      throw new BadRequestError('Stripe account unboarding required')
-    }
-
-    const escrow = await Payment.getEscrow(ctx.mission.id)
-
-    // payout escrow amount with calculate commission fee
-    const amount =
-      escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity)
-
-    const payout = await Payment.payout(Data.PaymentService.STRIPE, {
-      amount,
-      currency: escrow.currency,
-      destination: profile.stripe_user_id
-    })
-
-    await Payment.releaseEscrow(escrow.id, payout.id)
-
-    ctx.body = {
-      message: 'success',
-      transaction_id: payout.id
-    }
+  if (profile.status !== Data.UserStatusType.ACTIVE) {
+    throw new BadRequestError('Stripe account unboarding required')
   }
-)
+
+  const escrow = await Payment.getEscrow(ctx.mission.id)
+
+  // payout escrow amount with calculate commission fee
+  const amount = escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity)
+
+  const payout = await Payment.payout(Data.PaymentService.STRIPE, {
+    amount,
+    currency: escrow.currency,
+    destination: profile.stripe_user_id
+  })
+
+  await Payment.releaseEscrow(escrow.id, payout.id)
+
+  ctx.body = {
+    message: 'success',
+    transaction_id: payout.id
+  }
+})
 
 router.post('/cards', loginRequired, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
@@ -109,11 +92,7 @@ router.post('/cards/remove/:id', loginRequired, checkIdParams, async (ctx) => {
 
 router.post('/cards/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
-  const card = await Payment.updateCard(
-    ctx.params.id,
-    ctx.identity.id,
-    ctx.request.body
-  )
+  const card = await Payment.updateCard(ctx.params.id, ctx.identity.id, ctx.request.body)
 
   ctx.body = Payment.responseCard(card)
 })

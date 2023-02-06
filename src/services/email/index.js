@@ -79,9 +79,7 @@ const sendBySendgrid = async ({ to, subject, html }) => {
 export const sendHtmlEmail = async ({ to, subject, template, kwargs = {} }) => {
   const html = await ejs.renderFile(template, kwargs)
   const date = new Date()
-  const sender = isTestEmail(to)
-    ? MailSenderTypes.TEST
-    : config.mail.defaultSender
+  const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender
   let result = {}
   try {
     switch (sender) {
@@ -131,15 +129,8 @@ export const sendHtmlEmail = async ({ to, subject, template, kwargs = {} }) => {
   )
 }
 
-export const sendTemplateEmail = async ({
-  to,
-  subject,
-  template,
-  kwargs = {}
-}) => {
-  const sender = isTestEmail(to)
-    ? MailSenderTypes.TEST
-    : config.mail.defaultSender
+export const sendTemplateEmail = async ({ to, subject, template, kwargs = {} }) => {
+  const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender
   const date = new Date()
   let result = {}
   try {

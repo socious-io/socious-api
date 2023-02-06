@@ -22,7 +22,5 @@ export const unlike = async (id, identityId, commentId = null) => {
       sql`DELETE FROM likes WHERE post_id=${id} AND identity_id=${identityId} AND comment_id=${commentId}`
     )
   }
-  return app.db.query(
-    sql`DELETE FROM likes WHERE post_id=${id} AND identity_id=${identityId} AND comment_id IS NULL`
-  )
+  return app.db.query(sql`DELETE FROM likes WHERE post_id=${id} AND identity_id=${identityId} AND comment_id IS NULL`)
 }

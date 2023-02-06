@@ -31,16 +31,10 @@ export const updateComment = async (id, identityId, { content }) => {
 }
 
 export const removeComment = async (id, identityId) => {
-  return app.db.query(
-    sql`DELETE FROM comments WHERE id=${id} AND identity_id=${identityId}`
-  )
+  return app.db.query(sql`DELETE FROM comments WHERE id=${id} AND identity_id=${identityId}`)
 }
 
-export const comments = async (
-  id,
-  currentIdentity,
-  { offset = 0, limit = 10 }
-) => {
+export const comments = async (id, currentIdentity, { offset = 0, limit = 10 }) => {
   const { rows } = await app.db.query(sql`
   SELECT 
   COUNT(*) OVER () as total_count,
@@ -60,11 +54,7 @@ export const comments = async (
   return rows
 }
 
-export const commentsReplies = async (
-  id,
-  currentIdentity,
-  { offset = 0, limit = 10 }
-) => {
+export const commentsReplies = async (id, currentIdentity, { offset = 0, limit = 10 }) => {
   const { rows } = await app.db.query(sql`
   SELECT COUNT(*) OVER () as total_count,
   c.*, i.type  as identity_type, i.meta as identity_meta,
@@ -87,12 +77,7 @@ export const getComment = async (id) => {
   return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`)
 }
 
-export const reportComment = async ({
-  identity_id,
-  comment_id,
-  comment,
-  blocked
-}) => {
+export const reportComment = async ({ identity_id, comment_id, comment, blocked }) => {
   try {
     const { rows } = await app.db.query(sql`
       INSERT INTO reports (identity_id, comment_id, comment, blocked)

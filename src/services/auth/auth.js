@@ -1,12 +1,7 @@
 import User from '../../models/user/index.js'
 import * as bcrypt from 'bcrypt'
 import { signin } from './jwt.js'
-import {
-  AuthorizationError,
-  NotMatchedError,
-  PermissionError,
-  ValidationError
-} from '../../utils/errors.js'
+import { AuthorizationError, NotMatchedError, PermissionError, ValidationError } from '../../utils/errors.js'
 import {
   authSchem,
   registerSchem,
@@ -78,20 +73,10 @@ export const register = async (body) => {
     }
   }
 
-  const user = await User.insert(
-    body.first_name,
-    body.last_name,
-    body.username,
-    body.email,
-    body.password
-  )
+  const user = await User.insert(body.first_name, body.last_name, body.username, body.email, body.password)
 
   // sending OTP to verify user email after registeration
-  const code = await createOTP(
-    user.id,
-    OTPType.EMAIL,
-    OTPPurposeType.ACTIVATION
-  )
+  const code = await createOTP(user.id, OTPType.EMAIL, OTPPurposeType.ACTIVATION)
   publish('tmp_email', {
     to: user.email,
     subject: 'Verify your account',
@@ -132,11 +117,7 @@ export const resendVerifyCode = async (body) => {
 
   const user = await User.getByEmail(body.email)
 
-  const code = await createOTP(
-    user.id,
-    OTPType.EMAIL,
-    OTPPurposeType.ACTIVATION
-  )
+  const code = await createOTP(user.id, OTPType.EMAIL, OTPPurposeType.ACTIVATION)
   publish('tmp_email', {
     to: user.email,
     subject: 'Verify your account',
@@ -147,9 +128,7 @@ export const resendVerifyCode = async (body) => {
 
 export const confirmOTP = async (body) => {
   await confirmOTPSchem.validateAsync(body)
-  const user = body.email
-    ? await User.getByEmail(body.email)
-    : await User.getByPhone(body.phone)
+  const user = body.email ? await User.getByEmail(body.email) : await User.getByPhone(body.phone)
 
   const otp = await getOTP(user.id, body.code)
 

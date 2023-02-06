@@ -18,13 +18,7 @@ export const filterColumns = {
   remote_preference: String
 }
 
-export const sortColumns = [
-  'created_at',
-  'updated_at',
-  'title',
-  'payment_range_higher',
-  'payment_range_lower'
-]
+export const sortColumns = ['created_at', 'updated_at', 'title', 'payment_range_higher', 'payment_range_lower']
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`
@@ -92,10 +86,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
     ${sorting(sort, sortColumns)}
   `)
 
-  const projects = await getAll(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort
-  )
+  const projects = await getAll(rows.map((r) => r.id).slice(offset, offset + limit), sort)
 
   return projects.map((r) => {
     return {

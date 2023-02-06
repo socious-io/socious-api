@@ -437,6 +437,7 @@ export interface ISkillsEntity {
 
 export interface IUsersEntity {
   address?: string | null
+  proofspace_connect_id?: string | null
   avatar?: string | null
   bio?: string | null
   certificates?: string[] | null

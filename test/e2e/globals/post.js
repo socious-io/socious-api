@@ -1,9 +1,6 @@
 export const create = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request
-      .post('/posts')
-      .set('Authorization', data.users[0].access_token)
-      .send(data.posts[i])
+    const response = await request.post('/posts').set('Authorization', data.users[0].access_token).send(data.posts[i])
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({
@@ -17,9 +14,7 @@ export const create = async (request, data) => {
 }
 
 export const getAll = async (request, data) => {
-  const response = await request
-    .get('/posts')
-    .set('Authorization', data.users[0].access_token)
+  const response = await request.get('/posts').set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
@@ -43,9 +38,7 @@ export const getAll = async (request, data) => {
 }
 
 export const repost = async (request, data) => {
-  const response = await request
-    .get('/posts')
-    .set('Authorization', data.users[0].access_token)
+  const response = await request.get('/posts').set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
   for (const post of response.body.items) {

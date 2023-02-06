@@ -19,11 +19,7 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   return rows
 }
 
-export const filtered = async (
-  identityId,
-  { offset = 0, limit = 10, sort },
-  filter
-) => {
+export const filtered = async (identityId, { offset = 0, limit = 10, sort }, filter) => {
   const { rows } = await app.db.query(
     sql`
     SELECT COUNT(*) OVER () as total_count, chats.*
@@ -59,9 +55,7 @@ export const get = async (id) => {
 }
 
 export const getAll = async (ids) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM chats WHERE id=ANY(${ids})`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM chats WHERE id=ANY(${ids})`)
   return rows
 }
 
@@ -128,11 +122,7 @@ export const miniParticipants = async (id) => {
   return rows
 }
 
-export const summary = async (
-  identityId,
-  { offset = 0, limit = 10, sort },
-  filter
-) => {
+export const summary = async (identityId, { offset = 0, limit = 10, sort }, filter) => {
   const chats = await (filter
     ? filtered(identityId, { offset, limit, sort }, filter)
     : all(identityId, { offset, limit, sort }))

@@ -39,15 +39,11 @@ export async function listProjects() {
         .catch(function (error) {
           if (error.response) {
             // console.log(error.response);
-            throw new Error(
-              `Error in response getting listings, ${error.response.status}`
-            )
+            throw new Error(`Error in response getting listings, ${error.response.status}`)
             // console.log(error.response.headers);
           } else if (error.request) {
             // console.log(error.request);
-            throw new Error(
-              `Error in request getting listings for, ${error.message}`
-            )
+            throw new Error(`Error in request getting listings for, ${error.message}`)
           } else {
             console.log(`Other error getting listing for, ${error.message}`)
           }
@@ -76,9 +72,7 @@ export async function listProjects() {
         }
       } else if (response.status < 500) {
         next = false
-        console.log(
-          `Error while getting reliefweb projects: ${response.status}`
-        )
+        console.log(`Error while getting reliefweb projects: ${response.status}`)
       } else {
         console.log(`Error getting reliefweb projects: ${response.status}`)
         console.log(response)
@@ -119,14 +113,11 @@ export async function verifyExists() {
     let exists = 0
     let expired = 0
     for (const project of rows) {
-      const response = await axios.get(
-        `https://api.reliefweb.int/v1/jobs/${project.other_party_id}`,
-        {
-          headers: {
-            Accept: 'application/json'
-          }
+      const response = await axios.get(`https://api.reliefweb.int/v1/jobs/${project.other_party_id}`, {
+        headers: {
+          Accept: 'application/json'
         }
-      )
+      })
       if (response.status === 200) {
         exists++
       } else {
@@ -135,9 +126,7 @@ export async function verifyExists() {
         console.log(`${project.id} has been expired`)
       }
     }
-    console.log(
-      `${exists} of projects still exists on Idealist and ${expired} of them expired`
-    )
+    console.log(`${exists} of projects still exists on Idealist and ${expired} of them expired`)
   }
   process.exit(0)
 }

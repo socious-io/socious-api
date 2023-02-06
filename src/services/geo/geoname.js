@@ -55,12 +55,8 @@ function filterRegion(filter) {
  * @param root0.sort
  * @example
  */
-export async function locationsByCountry(
-  countryCode,
-  { offset = 0, limit = 10, filter, sort }
-) {
-  const { rows } = await app.db
-    .query(sql`SELECT COUNT(*) OVER () as total_count,
+export async function locationsByCountry(countryCode, { offset = 0, limit = 10, filter, sort }) {
+  const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,
@@ -87,14 +83,9 @@ export async function locationsByCountry(
  * @param root0.sort
  * @example
  */
-export async function locationsSearchByCountry(
-  countryCode,
-  search,
-  { offset = 0, limit = 10, filter, sort }
-) {
+export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter, sort }) {
   const searchPat = `%${search}%`
-  const { rows } = await app.db
-    .query(sql`SELECT COUNT(*) OVER () as total_count,
+  const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,

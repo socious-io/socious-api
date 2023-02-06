@@ -62,9 +62,7 @@ const email = async (notifType, userId, message, id, identityName) => {
 }
 
 const getSetting = async (userId, type) => {
-  let setting = (await Notif.settings(userId))?.filter(
-    (s) => s.type === type
-  )[0]
+  let setting = (await Notif.settings(userId))?.filter((s) => s.type === type)[0]
   if (!setting) {
     setting = {
       in_app: true,
@@ -86,19 +84,12 @@ const send = async (userId, message, body, id, identityName) => {
 }
 
 const coordinateNotifs = async (userId, body) => {
-  const consolidateExceptions = [
-    Data.NotificationType.APPLICATION,
-    Data.NotificationType.FOLLOWED
-  ]
+  const consolidateExceptions = [Data.NotificationType.APPLICATION, Data.NotificationType.FOLLOWED]
   const name = body.identity?.meta?.name
   let message = makeMessage(body.type, name)
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
-  const latest = await Notif.latest(
-    userId,
-    body.type,
-    new Date(now.getTime() - consolidateTime)
-  )
+  const latest = await Notif.latest(userId, body.type, new Date(now.getTime() - consolidateTime))
 
   if (latest && !consolidateExceptions.includes(body.type)) {
     let consolidateNumbs = latest.data.consolidate_number + 1

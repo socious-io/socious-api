@@ -14,13 +14,7 @@ export const badges = async (identityId) => {
 
 export const addHistory = async (
   identityId,
-  {
-    mission_id,
-    social_cause,
-    social_cause_category,
-    total_points,
-    submitted_work_id
-  }
+  { mission_id, social_cause, social_cause_category, total_points, submitted_work_id }
 ) => {
   try {
     return app.db.get(sql`
@@ -33,6 +27,10 @@ export const addHistory = async (
   }
 }
 
+/**
+ * @param {string} identityId
+ * @returns {Promise<import('../../../types/associations').IImpactPointHistoryAsso[]>}
+ */
 export const history = async (identityId, { offset = 0, limit = 10 }) => {
   const { rows } = await app.db.query(sql`
   SELECT 
@@ -41,9 +39,13 @@ export const history = async (identityId, { offset = 0, limit = 10 }) => {
     row_to_json(m.*) AS mission,
     row_to_json(p.*) AS project,
     row_to_json(org.*) AS organization
+    row_to_json(cat.*) AS job_category
+    row_to_json(o.*) AS offer
   FROM impact_points_history i
   LEFT JOIN missions m ON m.id=i.mission_id
   LEFT JOIN projects p ON p.id=m.project_id
+  LEFT JOIN job_categories cat ON cat.id=p.job_category_id
+  LEFT JOIN offers o ON o.id=m.offer_id
   LEFT JOIN organizations org ON org.id=p.identity_id
   WHERE i.identity_id=${identityId}
   ORDER BY i.created_at DESC
@@ -52,6 +54,10 @@ export const history = async (identityId, { offset = 0, limit = 10 }) => {
   return rows
 }
 
+/**
+ * @param {string} id
+ * @returns {Promise<import('../../../types/associations').IImpactPointHistoryAsso>}
+ */
 export const get = async (id) => {
   return app.db.get(sql`
   SELECT 

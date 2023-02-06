@@ -100,15 +100,12 @@ export default {
     // We may tagname blocker configs and use it on other groups and routes
     auth: {
       resetTimer: process.env.AUTH_REQUEST_BLOCKER_RESET || 60 * 1000,
-      blockerTimer:
-        process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
+      blockerTimer: process.env.AUTH_REQUEST_BLOCKER_TIMER || 2 * 60 * 60 * 1000,
       retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
     }
   },
   aws: {
-    cdn_url:
-      process.env.AWS_CDN_URL ||
-      'https://soscious.s3.ap-northeast-1.amazonaws.com',
+    cdn_url: process.env.AWS_CDN_URL || 'https://soscious.s3.ap-northeast-1.amazonaws.com',
     bucket: process.env.AWS_BUCKET || 'socious',
     key_id: process.env.AWS_ACCESS_KEY_ID,
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
@@ -130,8 +127,7 @@ export default {
     wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
     wait_break: process.env.WAIT_BREAK || 1000
   },
-  notifAppLink:
-    process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
+  notifAppLink: process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY
 }

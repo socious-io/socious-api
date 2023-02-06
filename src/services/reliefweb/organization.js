@@ -113,10 +113,7 @@ async function getOrganizationFromApi(p) {
     }
     return false
   } catch (err) {
-    console.log(
-      '\x1b[31m%s\x1b[0m',
-      'Error getting organization from ReliefWeb: ' + err.message
-    )
+    console.log('\x1b[31m%s\x1b[0m', 'Error getting organization from ReliefWeb: ' + err.message)
     return false
   }
 }
@@ -252,15 +249,11 @@ async function shortname(org) {
       shortname = shortname.substring(1)
     }
 
-    shortname =
-      shortname.toLowerCase().slice(0, 32) +
-      Math.floor(1000 + Math.random() * 9000)
+    shortname = shortname.toLowerCase().slice(0, 32) + Math.floor(1000 + Math.random() * 9000)
 
     return shortname
   } catch (err) {
-    console.log(
-      `Error parsing shortname for organization ${org.id}: ${err.message}`
-    )
+    console.log(`Error parsing shortname for organization ${org.id}: ${err.message}`)
 
     return false
   }

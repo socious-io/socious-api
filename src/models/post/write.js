@@ -4,10 +4,7 @@ import { EntryError } from '../../utils/errors.js'
 import sanitizeHtml from 'sanitize-html'
 import { get } from './read.js'
 
-export const insert = async (
-  identityId,
-  { content, causes_tags, hashtags, identity_tags, media }
-) => {
+export const insert = async (identityId, { content, causes_tags, hashtags, identity_tags, media }) => {
   content = sanitizeHtml(content)
 
   try {
@@ -23,11 +20,7 @@ export const insert = async (
   }
 }
 
-export const update = async (
-  id,
-  identityId,
-  { content, causes_tags, hashtags, identity_tags, media }
-) => {
+export const update = async (id, identityId, { content, causes_tags, hashtags, identity_tags, media }) => {
   content = sanitizeHtml(content)
 
   try {

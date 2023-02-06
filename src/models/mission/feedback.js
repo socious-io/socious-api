@@ -12,13 +12,7 @@ export const getFeedback = async (id) => {
   `)
 }
 
-export const feedback = async ({
-  content,
-  is_contest,
-  identity_id,
-  project_id,
-  mission_id
-}) => {
+export const feedback = async ({ content, is_contest, identity_id, project_id, mission_id }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO feedbacks (content, is_contest, project_id, mission_id, identity_id)

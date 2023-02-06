@@ -12,9 +12,7 @@ export const filterColumns = {
 export const sortColumns = ['created_at', 'updated_at']
 
 export const getAnswers = async (id) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM answers WHERE applicant_id=${id}`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM answers WHERE applicant_id=${id}`)
   return rows
 }
 
@@ -47,10 +45,7 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
   return rows
 }
 
-export const getByUserId = async (
-  userId,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const getByUserId = async (userId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`
       SELECT 
@@ -73,10 +68,7 @@ export const getByUserId = async (
   return rows
 }
 
-export const getByProjectId = async (
-  projectId,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const getByProjectId = async (projectId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`SELECT
           COUNT(a.*) OVER () as total_count,

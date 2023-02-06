@@ -23,19 +23,13 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
 
   switch (body.type) {
     case Data.SearchType.POSTS:
-      return body.q
-        ? Post.search(body.q, identityId, options)
-        : Post.all(identityId, options)
+      return body.q ? Post.search(body.q, identityId, options) : Post.all(identityId, options)
 
     case Data.SearchType.USERS:
-      return body.q
-        ? User.search(body.q, identityId, options)
-        : User.getUsers(identityId, options)
+      return body.q ? User.search(body.q, identityId, options) : User.getUsers(identityId, options)
 
     case Data.SearchType.RELATED_USERS:
-      return body.q
-        ? User.searchRelateds(body.q, identityId, options)
-        : User.getRelateds(identityId, options)
+      return body.q ? User.searchRelateds(body.q, identityId, options) : User.getRelateds(identityId, options)
 
     case Data.SearchType.PROJECTS:
       return body.q ? Project.search(body.q, options) : Project.all(options)

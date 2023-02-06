@@ -23,12 +23,7 @@ const experienceRatio = (level) => {
   }
 }
 
-export const calculate = ({
-  category,
-  total_hours,
-  payment_type,
-  experience_level
-}) => {
+export const calculate = ({ category, total_hours, payment_type, experience_level }) => {
   const hourlyWage = category.hourly_wage_dollars
 
   let totalPoints = hourlyWage * total_hours
@@ -77,9 +72,7 @@ export const worker = async ({ mission }) => {
   } else {
     // Hourly basis jobs
     const calculatedWorks = await impactPointsCalculatedWorksIds(mission.id)
-    const works = mission.submitted_works?.filter(
-      (w) => !calculatedWorks.includes(w.id)
-    )
+    const works = mission.submitted_works?.filter((w) => !calculatedWorks.includes(w.id))
 
     if (!works || works.length < 1) {
       logger.error(
@@ -93,9 +86,7 @@ export const worker = async ({ mission }) => {
   }
 
   if (totalHours < 1) {
-    logger.error(
-      `Faild canculate impact score for ${mission.id}, total hours is under 1 hour`
-    )
+    logger.error(`Faild canculate impact score for ${mission.id}, total hours is under 1 hour`)
     return false
   }
 

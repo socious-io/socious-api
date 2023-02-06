@@ -2,10 +2,7 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const addQuestion = async (
-  projectId,
-  { question, required, options }
-) => {
+export const addQuestion = async (projectId, { question, required, options }) => {
   try {
     const { rows } = await app.db.query(sql`INSERT INTO questions 
     (project_id, question, required, options)
@@ -45,8 +42,6 @@ export const removeQuestion = async (id) => {
 }
 
 export const getQuestions = async (projectId) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM questions WHERE project_id=${projectId}`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM questions WHERE project_id=${projectId}`)
   return rows
 }

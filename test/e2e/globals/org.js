@@ -3,10 +3,7 @@ export const create = async (request, data) => {
     const body = JSON.parse(JSON.stringify(data.orgs[i]))
     delete body.invalid
 
-    const response = await request
-      .post('/orgs')
-      .set('Authorization', data.users[0].access_token)
-      .send(body)
+    const response = await request.post('/orgs').set('Authorization', data.users[0].access_token).send(body)
 
     if (data.orgs[i].invalid) {
       expect(response.status).toBe(400)
@@ -28,9 +25,7 @@ export const create = async (request, data) => {
 }
 
 export const getAll = async (request, data) => {
-  const response = await request
-    .get('/orgs')
-    .set('Authorization', data.users[0].access_token)
+  const response = await request.get('/orgs').set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({

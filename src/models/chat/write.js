@@ -7,19 +7,12 @@ import { find, chatPermission } from './read.js'
 const MemberTypes = Data.ChatMemberType
 const Types = Data.ChatType
 
-export const create = async (
-  identity,
-  { type, participants, description, name }
-) => {
+export const create = async (identity, { type, participants, description, name }) => {
   if (type !== Types.CHAT) throw new NotImplementedError()
 
   participants = participants.map((id) => id.toLowerCase())
 
-  await Promise.all(
-    participants
-      .filter((p) => p !== identity.id)
-      .map((p) => chatPermission(identity, p))
-  )
+  await Promise.all(participants.filter((p) => p !== identity.id).map((p) => chatPermission(identity, p)))
 
   if (!participants.includes(identity.id)) participants.push(identity.id)
   participants.sort()
@@ -39,9 +32,7 @@ export const create = async (
         participants
           // current Identity will add automaticly as ADMIN
           .filter((p) => p !== identity.id)
-          .map((p) =>
-            addParticipant(chat.id, p, identity.id, MemberTypes.MEMBER, client)
-          )
+          .map((p) => addParticipant(chat.id, p, identity.id, MemberTypes.MEMBER, client))
       )
       await client.query('COMMIT')
       return chat
@@ -76,13 +67,7 @@ export const remove = async (id) => {
   }
 }
 
-export const addParticipant = async (
-  chatId,
-  participantId,
-  joinedById,
-  type = MemberTypes.MEMBER,
-  client
-) => {
+export const addParticipant = async (chatId, participantId, joinedById, type = MemberTypes.MEMBER, client) => {
   try {
     const db = client || app.db
     const { rows } = await db.query(sql`
@@ -133,12 +118,7 @@ export const removeParticipant = async (chatId, participantId) => {
   }
 }
 
-export const newMessage = async (
-  chatId,
-  identityId,
-  { text, media },
-  replyId = null
-) => {
+export const newMessage = async (chatId, identityId, { text, media }, replyId = null) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO messages (identity_id, chat_id, text, reply_id, media)

@@ -44,5 +44,4 @@ export const throwHandler = async (ctx, next) => {
   }
 }
 
-export default (app) =>
-  compose([throwHandler, cors, koaBody(), session(Config.session, app)])
+export default (app) => compose([throwHandler, cors, koaBody(), session(Config.session, app)])

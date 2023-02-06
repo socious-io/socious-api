@@ -1,11 +1,7 @@
 import config from '../../config.js'
 import { configureHttp } from './http-agent/configure-http.js'
 import { getIds, getAllProjects } from './controller.js'
-import {
-  sleep,
-  removeProcessedProjectIds,
-  checkUnprocessedIds
-} from './helpers.js'
+import { sleep, removeProcessedProjectIds, checkUnprocessedIds } from './helpers.js'
 
 // Start the Idealist functionality...
 /**

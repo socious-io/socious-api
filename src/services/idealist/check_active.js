@@ -64,16 +64,12 @@ export async function verifyExists() {
         await getProject(project.other_party_title, project.other_party_id)
         exists++
       } catch {
-        await expireProjects(project.other_party_title, [
-          project.other_party_id
-        ])
+        await expireProjects(project.other_party_title, [project.other_party_id])
         expired++
         console.log(`${project.id} has been expired`)
       }
     }
-    console.log(
-      `${exists} of projects still exists on Idealist and ${expired} of them expired`
-    )
+    console.log(`${exists} of projects still exists on Idealist and ${expired} of them expired`)
   }
   process.exit(0)
 }
@@ -172,9 +168,7 @@ async function getListings(projectTypes) {
     }
     process.stdout.write('\n')
 
-    console.log(
-      `Found ${countUnpublished} unpublished ${projectTypes} from Idealist`
-    )
+    console.log(`Found ${countUnpublished} unpublished ${projectTypes} from Idealist`)
 
     return unpublishedProjects
   } catch (err) {

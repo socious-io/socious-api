@@ -17,9 +17,7 @@ export const authorize = async (identityId, { code }) => {
 
   const oauth = await upsert(identityId, {
     provider: PROVIDER,
-    status: account.details_submitted
-      ? Data.UserStatusType.ACTIVE
-      : Data.UserStatusType.INACTIVE,
+    status: account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
     mui: response.stripe_user_id,
     access_token: response.access_token,
     refresh_token: response.refresh_token
@@ -52,9 +50,7 @@ export const refresh = async (identityId) => {
 export const profile = async (identityId) => {
   const oauth = await get(identityId, PROVIDER)
   const account = await stripe.accounts.retrieve(oauth.matrix_unique_id)
-  const status = account.details_submitted
-    ? Data.UserStatusType.ACTIVE
-    : Data.UserStatusType.INACTIVE
+  const status = account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE
 
   if (oauth.status !== status) await updateStatus(oauth.id, status)
 

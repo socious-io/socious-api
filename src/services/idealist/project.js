@@ -15,17 +15,14 @@ import project from '../../models/project/index.js'
  * @example
  */
 export const getProject = async function (projectTypes, id) {
-  const proj = await axios.get(
-    `https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`,
-    {
-      auth: {
-        username: process.env.IDEALIST_TOKEN, // '743e1f3940484d7680130c748ed22758',
-        password: ''
-      },
+  const proj = await axios.get(`https://www.idealist.org/api/v1/listings/${projectTypes}/${id}`, {
+    auth: {
+      username: process.env.IDEALIST_TOKEN, // '743e1f3940484d7680130c748ed22758',
+      password: ''
+    },
 
-      timeout: 0
-    }
-  )
+    timeout: 0
+  })
 
   if (proj.status !== 200) throw Error('fetching project')
 
@@ -83,8 +80,7 @@ async function saveProject(pro, type, orgId) {
     const paymentType = await getPaymentType(pro)
     const remotePreference = await getRemotePreference(pro)
 
-    const paymentScheme =
-      pro.salaryPeriod && pro.salaryPeriod == 'HOUR' ? 'HOURLY' : 'FIXED'
+    const paymentScheme = pro.salaryPeriod && pro.salaryPeriod == 'HOUR' ? 'HOURLY' : 'FIXED'
     const experienceLevel = await getExperienceLevel(pro)
 
     const body = {
@@ -135,9 +131,7 @@ async function saveProject(pro, type, orgId) {
  */
 async function getProjectFromDb(p) {
   try {
-    const pr = await app.db.get(
-      sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`
-    )
+    const pr = await app.db.get(sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`)
 
     return pr.id
   } catch (err) {

@@ -9,10 +9,7 @@ export const filterColumns = {
 
 export const sortColumns = ['created_at', 'updated_at', 'connected_at']
 
-export const all = async (
-  identityId,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`SELECT 
     COUNT(c.*) OVER () as total_count, c.*, row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester

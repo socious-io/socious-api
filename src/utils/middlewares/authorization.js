@@ -11,9 +11,7 @@ export const currentIdentity = async (ctx) => {
 
   if (identityId) await validate.UUID.validateAsync(identityId)
 
-  const identity = identityId
-    ? await Identity.get(identityId)
-    : await Identity.get(ctx.user.id)
+  const identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)
 
   if (identityId) await Identity.permissioned(identity, ctx.user.id)
 
@@ -23,9 +21,7 @@ export const currentIdentity = async (ctx) => {
 export const currentUser = async (ctx) => {
   const { authorization } = ctx.request.header
 
-  const token = authorization
-    ? authorization?.replace('Bearer ', '')
-    : ctx.session.token
+  const token = authorization ? authorization?.replace('Bearer ', '') : ctx.session.token
 
   if (!token) throw new UnauthorizedError('No authentication')
   let id

@@ -35,23 +35,17 @@ const get = async (id) => {
 }
 
 const all = async (userId) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM devices WHERE user_id=${userId}`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM devices WHERE user_id=${userId}`)
   return rows
 }
 
 const any = async (userIds) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM devices WHERE user_id=ANY(${userIds})`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM devices WHERE user_id=ANY(${userIds})`)
   return rows
 }
 
 const remove = async (userId, token) => {
-  return app.db.query(
-    sql`DELETE FROM devices WHERE user_id=${userId} AND token=${token}`
-  )
+  return app.db.query(sql`DELETE FROM devices WHERE user_id=${userId} AND token=${token}`)
 }
 
 const cleanup = async (tokens) => {

@@ -9,12 +9,7 @@ const HEADERS = {
   Authorization: `key=${config.fcm.key}`
 }
 
-export const simplePush = async ({
-  tokens,
-  notification,
-  data = {},
-  options = {}
-}) => {
+export const simplePush = async ({ tokens, notification, data = {}, options = {} }) => {
   if (tokens.length < 1) return
 
   const body = {

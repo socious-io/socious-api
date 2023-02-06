@@ -15,9 +15,7 @@ export const sortColumns = ['created_at', 'updated_at', 'impact_points']
  * @returns {Promise<import('../../../types/types').IUsersEntity>}
  */
 export const get = async (id) => {
-  return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`
-  )
+  return app.db.get(sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`)
 }
 
 /**
@@ -45,17 +43,13 @@ export const getByEmail = async (email) => {
  * @returns {Promise<import('../../../types/types').IUsersEntity>}
  */
 export const getByPhone = async (phone) => {
-  return app.db.get(
-    sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE phone=${phone}`
-  )
+  return app.db.get(sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE phone=${phone}`)
 }
 /**
  * @param {import('../../../types/types').IUsersEntity} user
  */
 export const currentProfile = async (user) => {
-  const { rows } = await app.db.query(
-    sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`
-  )
+  const { rows } = await app.db.query(sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`)
   delete user.password
 
   for (const row of rows) {
@@ -228,11 +222,7 @@ export const getProfileByUsernameLimited = async (username) => {
   )
 }
 
-export const search = async (
-  q,
-  currentIdentity,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
       u.id
@@ -244,11 +234,7 @@ export const search = async (
     ${sorting(sort, sortColumns)}
   `)
 
-  const users = await getAllProfile(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-    currentIdentity
-  )
+  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort, currentIdentity)
 
   return users.map((r) => {
     return {
@@ -258,11 +244,7 @@ export const search = async (
   })
 }
 
-export const searchRelateds = async (
-  q,
-  currentIdentity,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     WITH connected AS (
       SELECT * FROM connections WHERE
@@ -282,10 +264,7 @@ export const searchRelateds = async (
     ${sorting(sort, sortColumns)}
   `)
 
-  const users = await getAllProfile(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort
-  )
+  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort)
 
   return users.map((r) => {
     return {
@@ -295,10 +274,7 @@ export const searchRelateds = async (
   })
 }
 
-export const getRelateds = async (
-  currentIdentity,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const getRelateds = async (currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     WITH fl AS (
       SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
@@ -315,10 +291,7 @@ export const getRelateds = async (
     ${sorting(sort, sortColumns)}
   `)
 
-  const users = await getAllProfile(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort
-  )
+  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort)
 
   return users.map((r) => {
     return {
@@ -328,10 +301,7 @@ export const getRelateds = async (
   })
 }
 
-export const getUsers = async (
-  identityId,
-  { offset = 0, limit = 10, filter, sort }
-) => {
+export const getUsers = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
       u.id
@@ -340,11 +310,7 @@ export const getUsers = async (
     ${sorting(sort, sortColumns)}
   `)
 
-  const users = await getAllProfile(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort,
-    identityId
-  )
+  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort, identityId)
 
   return users.map((r) => {
     return {

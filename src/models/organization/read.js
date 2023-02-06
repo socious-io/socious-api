@@ -69,9 +69,7 @@ export const getByShortname = async (shortname) => {
 
 export const shortNameExists = async (shortname) => {
   try {
-    await app.db.get(
-      sql`SELECT * FROM organizations WHERE shortname=${shortname.toLowerCase()}`
-    )
+    await app.db.get(sql`SELECT * FROM organizations WHERE shortname=${shortname.toLowerCase()}`)
     return true
   } catch {
     return false
@@ -89,10 +87,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
     ${sorting(sort, sortColumns)}
     `)
 
-  const orgs = await getAll(
-    rows.map((r) => r.id).slice(offset, offset + limit),
-    sort
-  )
+  const orgs = await getAll(rows.map((r) => r.id).slice(offset, offset + limit), sort)
 
   return orgs.map((r) => {
     return {

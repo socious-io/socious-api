@@ -38,8 +38,8 @@ export const history = async (identityId, { offset = 0, limit = 10 }) => {
     i.*,
     row_to_json(m.*) AS mission,
     row_to_json(p.*) AS project,
-    row_to_json(org.*) AS organization
-    row_to_json(cat.*) AS job_category
+    row_to_json(org.*) AS organization,
+    row_to_json(cat.*) AS job_category,
     row_to_json(o.*) AS offer
   FROM impact_points_history i
   LEFT JOIN missions m ON m.id=i.mission_id

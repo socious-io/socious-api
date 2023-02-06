@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
-import { PermissionError } from '../../utils/errors.js'
+import { PermissionError, NotImplementedError } from '../../utils/errors.js'
 import Org from '../organization/index.js'
 import Data from '@socious/data'
 
@@ -47,7 +47,15 @@ const getAll = async (userId, identityId) => {
 
 // TODO: process commission flow
 const commissionFee = (identity) => {
-  return identity.type === Data.IdentityType.USER ? 0.1 : 0.03
+  switch (identity.type) {
+    case Data.IdentityType.USER:
+      return 0.1
+    case Data.IdentityType.ORG:
+      if (identity.meta.verified_impact) return 0.02
+      return 0.03
+    default:
+      throw new NotImplementedError()
+  }
 }
 
 const permissioned = async (identity, userId) => {

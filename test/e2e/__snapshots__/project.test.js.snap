@@ -40,6 +40,7 @@ exports[` 2`] = `
   "status": "ACTIVE",
   "type": "COOP",
   "updated_at": Any<String>,
+  "verified_impact": false,
   "wallet_address": null,
   "website": "http://test.com",
 }
@@ -79,6 +80,7 @@ exports[` 3`] = `
   "status": "ACTIVE",
   "type": "SOCIAL",
   "updated_at": Any<String>,
+  "verified_impact": false,
   "wallet_address": null,
   "website": "http://test.com",
 }

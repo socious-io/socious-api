@@ -307,6 +307,7 @@ export interface IOrgMembersEntity {
 }
 export interface IOrganizationsEntity {
   address?: string | null
+  verified_impact: boolean
   bio?: string | null
   city?: string | null
   country?: string | null

@@ -129,9 +129,11 @@ const makeIssue = async (impactPoint, user) => {
       break
     case Data.ProjectType.FULL_TIME:
       jobType = 2
+      break
     default:
       jobType = 0
   }
+
   return {
     credentialId: Config.services.proofspace.credentialId,
     schemaId: Config.services.proofspace.schemaId,

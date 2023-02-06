@@ -11,6 +11,7 @@ import middlewares from './utils/middlewares/site.js'
 import { koaLogger } from './utils/logging.js'
 import Config from './config.js'
 
+/** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })
 
 app.keys = [Config.secret]
@@ -41,7 +42,7 @@ socket(app)
 
 app.http = http.createServer(app.callback())
 
-app.listen = app.listen = (...args) => {
+app.listen = (...args) => {
   app.http.listen.call(app.http, ...args)
   return app.http
 }

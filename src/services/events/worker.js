@@ -90,7 +90,6 @@ const coordinateNotifs = async (userId, body) => {
     Data.NotificationType.APPLICATION,
     Data.NotificationType.FOLLOWED
   ]
-
   const name = body.identity?.meta?.name
   let message = makeMessage(body.type, name)
   const consolidateTime = 30 * 60 * 1000
@@ -131,11 +130,13 @@ const _push = async (eventType, userId, body) => {
       await coordinateNotifs(userId, body)
       break
     case Types.CHAT:
-      if (!emitEvent(eventType, userId, body.id) && !body.muted) {
+      body.type = Data.NotificationType.CHAT
+      _push(Types.NOTIFICATION, userId, body)
+      /* if (!emitEvent(eventType, userId, body.id) && !body.muted) {
         body.type = Notif.Types.CHAT
         body.refId = body.id
         _push(Types.NOTIFICATION, userId, body)
-      }
+      } */
       break
     default:
       throw new Error('Unhandled notification')

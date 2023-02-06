@@ -98,33 +98,43 @@ export const SyncWorker = async ({ impact_points_id }) => {
   }
 
   let user
-  
+
   try {
     user = await User.get(r.identity_id)
   } catch (err) {
-    logger.error(`sync proofspace fetching user ${r.identity_id} : ${err.message}`)
+    logger.error(
+      `sync proofspace fetching user ${r.identity_id} : ${err.message}`
+    )
     return
   }
 
-  const issue = [{
-    credentialId: Config.services.proofspace.credentialId,
-    schemaId: Config.services.proofspace.schemaId,
-    fields: [
-      {
-        name: 'Organisation',
-        value: r.organization.name || r.organization.shortname
-      },
-      { name: 'Type of Mission', value: r.social_cause_category },
-      { name: 'Start Date', value: `${Math.round(
-        new Date(r.mission.created_at).getTime() / 1000
-      )}` },
-      { name: 'End Date', value: `${Math.round(r.created_at.getTime() / 1000)}` },
-      { name: 'Impact Points Earned', value: `${r.total_points}` },
-      { name: 'Cumulative Impact Points', value: `${user.impact_points}` }
-    ],
-    utcIssuedAt: r.created_at.getTime(),
-    revoked: false
-  }]
+  const issue = [
+    {
+      credentialId: Config.services.proofspace.credentialId,
+      schemaId: Config.services.proofspace.schemaId,
+      fields: [
+        {
+          name: 'Organisation',
+          value: r.organization.name || r.organization.shortname
+        },
+        { name: 'Type of Mission', value: r.social_cause_category },
+        {
+          name: 'Start Date',
+          value: `${Math.round(
+            new Date(r.mission.created_at).getTime() / 1000
+          )}`
+        },
+        {
+          name: 'End Date',
+          value: `${Math.round(r.created_at.getTime() / 1000)}`
+        },
+        { name: 'Impact Points Earned', value: `${r.total_points}` },
+        { name: 'Cumulative Impact Points', value: `${user.impact_points}` }
+      ],
+      utcIssuedAt: r.created_at.getTime(),
+      revoked: false
+    }
+  ]
 
   const body = {
     serviceDid: Config.services.proofspace.serviceId,

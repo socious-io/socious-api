@@ -10,30 +10,48 @@ export const filterColumns = {
 
 export const sortColumns = ['created_at', 'updated_at', 'impact_points']
 
+/**
+ * @param {string} id
+ * @returns {Promise<import('../../../types/types').IUsersEntity>}
+ */
 export const get = async (id) => {
   return app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE id=${id}`
   )
 }
 
+/**
+ * @param {string} username
+ * @returns {Promise<import('../../../types/types').IUsersEntity>}
+ */
 export const getByUsername = async (username) => {
   return app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE username=${username.toLowerCase()}`
   )
 }
 
+/**
+ * @param {string} email
+ * @returns {Promise<import('../../../types/types').IUsersEntity>}
+ */
 export const getByEmail = async (email) => {
   return app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE email=${email.toLowerCase()}`
   )
 }
 
+/**
+ * @param {string} phone
+ * @returns {Promise<import('../../../types/types').IUsersEntity>}
+ */
 export const getByPhone = async (phone) => {
   return app.db.get(
     sql`SELECT *, array_to_json(social_causes) AS social_causes FROM users WHERE phone=${phone}`
   )
 }
-
+/**
+ * @param {import('../../../types/types').IUsersEntity} user
+ */
 export const currentProfile = async (user) => {
   const { rows } = await app.db.query(
     sql`SELECT * FROM media WHERE id=ANY(${[user.avatar, user.cover_image]})`

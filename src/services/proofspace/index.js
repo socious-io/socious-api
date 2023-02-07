@@ -140,7 +140,7 @@ const makeIssue = (impactPoint, user) => {
     schemaId: Config.services.proofspace.schemaId,
     fields: [
       {
-        name: 'Organisation',
+        name: 'Organization',
         value: impactPoint.organization.name || impactPoint.organization.shortname
       },
       { name: 'Type of Mission', value: impactPoint.social_cause_category },
@@ -156,7 +156,7 @@ const makeIssue = (impactPoint, user) => {
       { name: 'Cumulative Impact Points', value: `${user.impact_points}` },
       { name: 'Job Title', value: `${impactPoint.project?.title}` },
       { name: 'Job Description', value: `${impactPoint.project?.description}` },
-      { name: 'Job Category', value: `${impactPoint.job_category}` },
+      { name: 'Job Category', value: `${impactPoint.job_category.name}` },
       { name: 'Skills', value: `${impactPoint.project.skills.join(',')}` },
       { name: 'Job Type', value: `${jobType}` },
       { name: 'Total Hours', value: `${impactPoint.offer.total_hours}` },

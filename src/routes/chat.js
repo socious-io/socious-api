@@ -125,8 +125,8 @@ router.post('/:id/messages', loginRequired, checkIdParams, chatPermission, async
   const participants = await Chat.miniParticipants(ctx.params.id)
 
   participants
-    .filter((p) => p.identity_id != ctx.identity)
-    .map((p) =>
+    .filter((p) => p.identity_id !== ctx.identity.id)
+    .map((p) => {
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
         refId: ctx.body.id,
@@ -134,7 +134,7 @@ router.post('/:id/messages', loginRequired, checkIdParams, chatPermission, async
         identity: ctx.identity,
         muted: p.muted_until ? p.muted_until.getTime() > new Date().getTime() : false
       })
-    )
+    })
 })
 
 router.post('/:id/messages/:message_id', loginRequired, checkIdParams, chatPermission, async (ctx) => {
@@ -145,7 +145,7 @@ router.post('/:id/messages/:message_id', loginRequired, checkIdParams, chatPermi
   const participants = await Chat.miniParticipants(ctx.params.id)
 
   participants
-    .filter((p) => p.identity_id != ctx.identity)
+    .filter((p) => p.identity_id != ctx.identity.id)
     .map((p) =>
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,

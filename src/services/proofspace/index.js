@@ -122,7 +122,7 @@ const addUserConnectDid = async (userId, connectId) => {
  * @param {import('../../../types/associations').IImpactPointHistoryAsso} impactPoint
  * @param {import('../../../types/types').IUsersEntity} user
  */
-const makeIssue = async (impactPoint, user) => {
+const makeIssue = (impactPoint, user) => {
   let jobType = 0
   switch (impactPoint.project?.project_type) {
     case Data.ProjectType.PART_TIME:

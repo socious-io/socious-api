@@ -66,7 +66,8 @@ export default {
     proofspace: {
       credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,
       schemaId: process.env.PROOFSPACE_SCHEMA_ID,
-      serviceId: process.env.PROOFSPACE_SERVICE_ID
+      serviceId: process.env.PROOFSPACE_SERVICE_ID,
+      webhookKey: process.env.PROOFSPACE_WEBHOOK_KEY
     }
   },
   database: {

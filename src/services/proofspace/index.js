@@ -35,7 +35,7 @@ export const Claim = async (body, headers) => {
   if (!userId) throw new BadRequestError('Socious User ID not found')
 
   const user = await addUserConnectDid(userId)
-  
+
   if (!user) throw new BadRequestError('Socious User ID not found')
 
   const records = await ImpactPoints.history(user.id, { offset: 0, limit: 100 })

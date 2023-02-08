@@ -143,7 +143,7 @@ const makeIssue = (impactPoint, user) => {
         name: 'Organization',
         value: impactPoint.organization.name || impactPoint.organization.shortname
       },
-      { name: 'Type of Mission', value: impactPoint.social_cause_category },
+      { name: 'Social Cause Related to the Job', value: impactPoint.social_cause_category },
       {
         name: 'Start Date',
         value: `${Math.round(new Date(impactPoint.mission.created_at).getTime() / 1000)}`
@@ -152,7 +152,7 @@ const makeIssue = (impactPoint, user) => {
         name: 'End Date',
         value: `${Math.round(impactPoint.created_at.getTime() / 1000)}`
       },
-      { name: 'Impact Points Earned', value: `${impactPoint.total_points}` },
+      { name: 'Impact Points', value: `${impactPoint.total_points}` },
       { name: 'Cumulative Impact Points', value: `${user.impact_points}` },
       { name: 'Job Title', value: `${impactPoint.project?.title}` },
       { name: 'Job Description', value: `${impactPoint.project?.description}` },
@@ -193,7 +193,11 @@ const makeIssue = (impactPoint, user) => {
       {
         name: 'Review by the Organization',
         value: `1`
-      }
+      },
+      {
+        name: 'Feedback by the Organization',
+        value: ``
+      },
     ],
     utcIssuedAt: impactPoint.created_at.getTime(),
     revoked: false

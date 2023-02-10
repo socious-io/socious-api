@@ -192,12 +192,12 @@ const makeIssue = (impactPoint, user) => {
       },
       {
         name: 'Review by the Organization',
-        value: `1`
+        value: `0`
       },
       {
         name: 'Feedback by the Organization',
         value: ``
-      },
+      }
     ],
     utcIssuedAt: impactPoint.created_at.getTime(),
     revoked: false

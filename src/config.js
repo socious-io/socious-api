@@ -116,6 +116,13 @@ export default {
   fcm: {
     key: process.env.FCM_KEY
   },
+  blockchain: {
+    escrow: {
+      address: process.env.BLOCKCHAIN_ESCROW_ADDRESS
+    },
+    explorer: process.env.BLOCKCHAIN_EXPLORER,
+    tokens: process.env.BLOCKCHAIN_TOKENS?.split(',')
+  },
   cors: {
     origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',')
   },

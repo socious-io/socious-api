@@ -606,10 +606,12 @@ export enum IPaymentType {
   'PAID' = 'PAID'
 }
 export enum IPaymentSourceType {
-  'CARD' = 'CARD'
+  'CARD' = 'CARD',
+  'CRYPTO_WALLET' = 'CRYPTO_WALLET'
 }
 export enum IPaymentServiceType {
-  'STRIPE' = 'STRIPE'
+  'STRIPE' = 'STRIPE',
+  'CRYOTO' = 'CRYPTO'
 }
 export enum IPaymentSchemeType {
   'HOURLY' = 'HOURLY',

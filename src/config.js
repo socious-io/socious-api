@@ -124,7 +124,7 @@ export default {
     tokens: process.env.BLOCKCHAIN_TOKENS?.split(',')
   },
   cors: {
-    origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',')
+    origins: process.env.ALLOWED_ORIGINS?.split(',')
   },
   payments: {
     stripe: {

@@ -10,8 +10,12 @@ import { BadRequestError } from '../utils/errors.js'
 
 export const router = new Router()
 
+router.get('/', loginRequired, paginate, async (ctx) => {
+  ctx.body = await Payment.all(ctx.identity.id, ctx.paginate)
+})
+
 router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await Payment.get(ctx.params.id)
+  ctx.body = await Payment.get(ctx.params.id, ctx.identity.id)
 })
 
 router.post('/donate', loginRequired, async (ctx) => {
@@ -28,6 +32,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     amount: ctx.offer.total_assignment,
     description: ctx.offer.project.name,
     meta: {
+      ...ctx.request.body.meta,
       project_name: ctx.offer.project.name,
       project_id: ctx.offer.project.id,
       offer_id: ctx.offer.id

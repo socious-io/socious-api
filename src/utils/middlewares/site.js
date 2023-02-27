@@ -6,7 +6,7 @@ import Config from '../../config.js'
 import logger from '../logging.js'
 
 export const cors = new Cors({
-  origin: Config.cors.origins.length
+  origin: Config.cors.origins?.length
     ? (ctx) => {
         const origin = ctx.header.origin || ctx.origin
         if (origin) {
@@ -17,7 +17,11 @@ export const cors = new Cors({
         }
         return 'https://socious.io'
       }
-    : undefined,
+    : (ctx) => {
+        const origin = ctx.header.origin || ctx.origin
+        if (Config.env === 'development') return origin
+        return undefined
+      },
   credentials: true
 })
 

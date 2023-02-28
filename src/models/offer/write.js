@@ -16,7 +16,8 @@ export const send = async (
     due_date,
     assignment_total,
     weekly_limit,
-    total_hours
+    total_hours,
+    payment_mode
   }
 ) => {
   try {
@@ -31,7 +32,8 @@ export const send = async (
       due_date,
       assignment_total,
       weekly_limit,
-      total_hours
+      total_hours,
+      payment_mode
     ) VALUES (
       ${projectId},
       ${applicant_id},
@@ -42,7 +44,8 @@ export const send = async (
       ${due_date},
       ${assignment_total},
       ${weekly_limit},
-      ${total_hours}
+      ${total_hours},
+      ${payment_mode}
     ) RETURNING id
   `)
 

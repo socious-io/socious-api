@@ -93,6 +93,7 @@
   ],
   "offers": [
     {
+      "payment_mode": "FIAT",
       "offer_rate": 9000,
       "offer_message": "Test",
       "due_date": "2022-12-30T06:14:04Z",

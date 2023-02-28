@@ -60,6 +60,10 @@ export const updateProfile = async (
   }
 }
 
+export const updateWalletAddress = async (id, walletAddress) => {
+  await app.db.query(sql`UPDATE users SET wallet_address=${walletAddress} WHERE id=${id}`)
+}
+
 export const updatePassword = async (id, newPassword) => {
   await app.db.query(sql`UPDATE users SET password=${newPassword}, password_expired=false WHERE id=${id}`)
 }

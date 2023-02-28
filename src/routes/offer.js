@@ -33,6 +33,9 @@ router.post('/:id/withdrawn', loginRequired, checkIdParams, recipient, async (ct
 })
 
 router.post('/:id/approve', loginRequired, checkIdParams, recipient, async (ctx) => {
+  if (ctx.offer.payment_mode == Data.PaymentMode.CRYPTO && !ctx.user.wallet_address)
+    throw new PermissionError('wallet address need to be complete before approve offer')
+
   ctx.body = Offer.approve(ctx.params.id)
   if (ctx.offer.applicant_id) await Applicant.approve(ctx.offer.applicant_id)
 

@@ -17,9 +17,8 @@ const partyName = 'PROOFSPACE'
 
 export const Claim = async (body, headers) => {
   const signature = headers['x-body-signature']
-  if (!signature) {
-    throw new PermissionError('X-Body-Signature header is absent')
-  }
+  if (!signature) throw new PermissionError('X-Body-Signature header is absent')
+
   const publicKey = await fs.readFile(Config.services.proofspace.webhookKey)
 
   const buff = Buffer.from(JSON.stringify(body))
@@ -33,6 +32,8 @@ export const Claim = async (body, headers) => {
   for (const f of fields) if (f.name === 'Socious User ID') userId = f.value
 
   if (!userId) throw new BadRequestError('Socious User ID not found')
+
+  if ((await User.get(userId)).proofspace_connect_id) throw new BadRequestError('User already claimed the points')
 
   const user = await addUserConnectDid(userId)
 

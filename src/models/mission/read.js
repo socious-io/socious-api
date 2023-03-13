@@ -61,6 +61,7 @@ export const getByOffer = async (offerId) => {
     row_to_json(i2.*) AS assigner,
     row_to_json(es.*) AS escrow,
     row_to_json(org.*) AS organization,
+    row_to_json(o.*) AS offer,
     (SELECT
       jsonb_agg(
         json_build_object(
@@ -80,6 +81,7 @@ export const getByOffer = async (offerId) => {
   JOIN projects p ON p.id=m.project_id
   JOIN identities i1 ON i1.id=m.assignee_id
   JOIN identities i2 ON i2.id=m.assigner_id
+  LEFT JOIN offers o ON o.id=m.offer_id
   LEFT JOIN job_categories j ON j.id=p.job_category_id
   LEFT JOIN organizations org ON org.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id
@@ -99,6 +101,7 @@ export const getAll = async ({ offset = 0, limit = 10, filter, sort }) => {
       row_to_json(i2.*) AS assigner,
       row_to_json(es.*) AS escrow,
       row_to_json(org.*) AS organization,
+      row_to_json(o.*) AS offer,
       (SELECT
         jsonb_agg(
           json_build_object(
@@ -118,6 +121,7 @@ export const getAll = async ({ offset = 0, limit = 10, filter, sort }) => {
     JOIN projects p ON p.id=m.project_id
     JOIN identities i1 ON i1.id=m.assignee_id
     JOIN identities i2 ON i2.id=m.assigner_id
+    LEFT JOIN offers o ON o.id=m.offer_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
     LEFT JOIN organizations org ON org.id=m.assigner_id
     LEFT JOIN escrows es ON es.mission_id=m.id

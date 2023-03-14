@@ -32,7 +32,12 @@ export const confirmTx = async (src, dest, amount, txHash) => {
 
   if (!tx) return false
 
-  if (tx.to !== dest || tx.tokenDecimal !== `${amount}`) return false
+  // TODO verify amount
+  const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100
+
+  if (amount >= txAmount) return false
+
+  if (tx.to.toString().toUpperCase() !== dest.toUpperCase()) return false
 
   if (parseInt(tx.confirmations) < 10) {
     await delay(500)

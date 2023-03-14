@@ -318,7 +318,7 @@ export const hire = async (request, data) => {
 
       // TODO: test with send and verify with STRIPE it self
       // Due Stripe sanctions and IR filtering for now we test on blow level of payments directly
-      const paymentId = await createTrx({
+      const payment = await createTrx({
         identity_id: data.orgs[0].id,
         amount: offer.assignment_total,
         currency: data.projects.objs[i].payment_currency,
@@ -329,10 +329,10 @@ export const hire = async (request, data) => {
         }
       })
 
-      await completeTrx(paymentId)
+      await completeTrx(payment.id)
 
       await Payment.escrow({
-        trx_id: paymentId,
+        trx_id: payment.id,
         currency: data.projects.objs[i].payment_currency,
         project_id: offer.project_id,
         offer_id: offer.id,

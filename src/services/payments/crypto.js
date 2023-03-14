@@ -53,7 +53,7 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
   if (!confirmed) throw new ValidationError('transaction is not valid')
 
   const trx = await create({
-    identityId,
+    identity_id: identityId,
     amount,
     currency,
     service: Data.PaymentService.STRIPE,

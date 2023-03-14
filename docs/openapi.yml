@@ -487,6 +487,31 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/{project_id}/offers:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - project
+      summary: get offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
   /projects/{project_id}/applicants:
     parameters:
       - name: project_id
@@ -3180,6 +3205,11 @@ paths:
         schema:
           type: string
         required: true
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+        example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
     post:
       tags:
         - payments

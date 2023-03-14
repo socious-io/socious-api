@@ -485,6 +485,15 @@ export interface IReportsEntity {
   id: string
 }
 
+export interface IChargeBody {
+  currency: 'USD'
+  service: 'STRIPE' | 'CRYPTO'
+  amount: string
+  meta: any
+  source: string
+  description?: string
+}
+
 export enum IUserStatusType {
   'ACTIVE' = 'ACTIVE',
   'INACTIVE' = 'INACTIVE',

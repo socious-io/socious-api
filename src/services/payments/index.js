@@ -6,6 +6,10 @@ import * as Escrow from './escrow.js'
 import * as Stripe from './stripe.js'
 import * as Crypto from './crypto.js'
 
+/**
+ * @param {string} identityId
+ * @param {import('../../../types/types').IChargeBody} body
+ */
 const charge = async (identityId, body) => {
   if (!body.currency) body.currency = Data.PaymentCurrency.USD
 

@@ -29,7 +29,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   card = await updateCardBrand(card.id, token.card.brand)
 
   const trx = await create({
-    identityId,
+    identity_id: identityId,
     amount,
     currency,
     service: Data.PaymentService.STRIPE,

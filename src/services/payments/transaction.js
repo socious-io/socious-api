@@ -10,7 +10,7 @@ export const create = async ({ identity_id, amount, currency, service, meta, sou
   VALUES (${identity_id}, ${amount}, ${currency}, ${service}, ${meta}, ${source})
   RETURNING *
   `)
-    return rows[0].id
+    return rows[0]
   } catch (err) {
     throw new EntryError(err)
   }
@@ -39,7 +39,7 @@ export const setCompleteTrx = async (id, transaction) => {
       WHERE id=${id}
       RETURNING *
     `)
-    return rows[0].id
+    return rows[0]
   } catch (err) {
     throw new EntryError(err)
   }

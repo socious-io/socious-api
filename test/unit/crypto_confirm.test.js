@@ -1,4 +1,3 @@
-import Data from '@socious/data'
 import { app } from '../../src/index.js'
 import { confirmTx } from '../../src/services/payments/crypto.js'
 

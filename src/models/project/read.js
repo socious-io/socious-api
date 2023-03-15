@@ -29,7 +29,7 @@ export const get = async (id, userId = undefined) => {
     EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
-    JOIN job_categories j ON j.id=p.job_category_id
+    LEFT JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=${id}
   `)
 }
@@ -44,7 +44,7 @@ export const getAll = async (ids, sort) => {
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
-    JOIN job_categories j ON j.id=p.job_category_id
+    LEFT JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=ANY(${ids})
   ${sorting(sort, sortColumns, 'p')}
   `)
@@ -60,7 +60,7 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
-      JOIN job_categories j ON j.id=p.job_category_id
+      LEFT JOIN job_categories j ON j.id=p.job_category_id
       ${filtering(filter, filterColumns, false, 'p')}
       ${sorting(sort, sortColumns, 'p')}
       LIMIT ${limit} OFFSET ${offset}`)

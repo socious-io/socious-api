@@ -84,9 +84,13 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
       p.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const projects = await getAll(rows.map((r) => r.id).slice(offset, offset + limit), sort)
+  const projects = await getAll(
+    rows.map((r) => r.id),
+    sort
+  )
 
   return projects.map((r) => {
     return {

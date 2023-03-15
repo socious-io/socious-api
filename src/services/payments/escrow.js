@@ -6,7 +6,7 @@ export const escrow = async ({ trx_id, project_id, offer_id, currency, amount })
   try {
     const rows = await app.db.query(sql`
     INSERT INTO escrows (project_id, payment_id, offer_id, amount, currency)
-      VALUES(${project_id}, ${trx_id}, ${offer_id},${amount}, ${currency})
+      VALUES(${project_id}, ${trx_id}, ${offer_id}, ${amount}, ${currency})
     RETURNING *
   `)
 

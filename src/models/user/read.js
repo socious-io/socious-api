@@ -232,9 +232,14 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort, currentIdentity)
+  const users = await getAllProfile(
+    rows.map((r) => r.id),
+    sort,
+    currentIdentity
+  )
 
   return users.map((r) => {
     return {
@@ -262,9 +267,13 @@ export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 1
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort)
+  const users = await getAllProfile(
+    rows.map((r) => r.id),
+    sort
+  )
 
   return users.map((r) => {
     return {

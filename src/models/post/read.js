@@ -97,9 +97,15 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
     WHERE
       p.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}`)
+    ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
+    `)
 
-  const posts = await getAll(rows.map((r) => r.id).slice(offset, offset + limit), currentIdentity, sort)
+  const posts = await getAll(
+    rows.map((r) => r.id),
+    currentIdentity,
+    sort
+  )
 
   return posts.map((r) => {
     return {

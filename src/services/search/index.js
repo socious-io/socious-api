@@ -19,6 +19,7 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
 
   const options = { ...paginate, filter: body.filter, sort: body.sort }
 
+  console.log(body)
   if (shouldSave) await addHistory(body, identityId)
 
   switch (body.type) {

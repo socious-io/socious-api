@@ -92,6 +92,7 @@ export const getAll = async (ids, currentIdentity, sort) => {
 export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
+    COUNT(*) OVER () as total_count,
       p.id
     FROM posts p
     WHERE
@@ -109,7 +110,7 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
 
   return posts.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })

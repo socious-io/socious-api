@@ -79,6 +79,7 @@ export const shortNameExists = async (shortname) => {
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
+      COUNT(*) OVER () as total_count,
       org.id
     FROM organizations org
     WHERE
@@ -95,7 +96,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
 
   return orgs.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })

@@ -225,6 +225,7 @@ export const getProfileByUsernameLimited = async (username) => {
 export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
+      COUNT(*) OVER () as total_count,
       u.id
     FROM users u
     WHERE
@@ -243,7 +244,7 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
 
   return users.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })
@@ -257,6 +258,7 @@ export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 1
         c.status <> 'BLOCKED'
     )
     SELECT
+      COUNT(*) OVER () as total_count,
       u.id
     FROM users u
     WHERE
@@ -277,7 +279,7 @@ export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 1
 
   return users.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })
@@ -289,6 +291,7 @@ export const getRelateds = async (currentIdentity, { offset = 0, limit = 10, fil
       SELECT * FROM follows WHERE follower_identity_id=${currentIdentity} OR following_identity_id=${currentIdentity}
     )
     SELECT
+      COUNT(*) OVER () as total_count,
       u.id
     FROM users u
     WHERE
@@ -298,13 +301,17 @@ export const getRelateds = async (currentIdentity, { offset = 0, limit = 10, fil
       )
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort)
+  const users = await getAllProfile(
+    rows.map((r) => r.id),
+    sort
+  )
 
   return users.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })
@@ -313,17 +320,23 @@ export const getRelateds = async (currentIdentity, { offset = 0, limit = 10, fil
 export const getUsers = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
     SELECT
+      COUNT(*) OVER () as total_count,
       u.id
     FROM users u
       ${filtering(filter, filterColumns, false)}
     ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const users = await getAllProfile(rows.map((r) => r.id).slice(offset, offset + limit), sort, identityId)
+  const users = await getAllProfile(
+    rows.map((r) => r.id),
+    sort,
+    identityId
+  )
 
   return users.map((r) => {
     return {
-      total_count: rows.length,
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
       ...r
     }
   })

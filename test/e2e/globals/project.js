@@ -232,6 +232,7 @@ export const offer = async (request, data) => {
     expect(response.body).toMatchSnapshot({
       id: expect.any(String),
       applicant: expect.any(Object),
+      escrow: expect.any(Object),
       organization: expect.any(Object),
       job_category: expect.any(Object),
       applicant_id: expect.any(String),

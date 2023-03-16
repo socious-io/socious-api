@@ -6,14 +6,18 @@ import { UnauthorizedError } from '../errors.js'
 import { validate } from '@socious/data'
 
 export const currentIdentity = async (ctx) => {
+  let identity
   const currentidentity = ctx.request.header['current-identity']
   const identityId = currentidentity || ctx.session.current_identity
 
   if (identityId) await validate.UUID.validateAsync(identityId)
 
-  const identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)
-
-  if (identityId) await Identity.permissioned(identity, ctx.user.id)
+  try {
+    identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)
+    if (identityId) await Identity.permissioned(identity, ctx.user.id)
+  } catch {
+    identity = await Identity.get(ctx.user.id)
+  }
 
   ctx.identity = identity
 }
@@ -30,13 +34,15 @@ export const currentUser = async (ctx) => {
   } catch {
     throw new UnauthorizedError('Invalid token')
   }
+
   try {
     ctx.user = await User.get(id)
   } catch {
     throw new UnauthorizedError('Unknown user')
   }
+
   // Auto refresh on sessions
-  if (ctx.session.token) ctx.session.token = Auth.signin(id).access_token
+  if (ctx.session.token && !authorization) ctx.session.token = Auth.signin(id).access_token
 }
 
 export const loginRequired = async (ctx, next) => {

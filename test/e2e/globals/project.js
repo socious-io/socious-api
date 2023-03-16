@@ -199,6 +199,7 @@ export const apply = async (request, data) => {
       expect(response.status).toBe(200)
       expect(response.body).toMatchSnapshot({
         id: expect.any(String),
+        project: expect.any(Object),
         project_id: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String),

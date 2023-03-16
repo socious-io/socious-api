@@ -20,10 +20,12 @@ export const get = async (id) => {
   const applicant = await app.db.get(
     sql`SELECT 
       a.*, i.meta as user,
-      row_to_json(m.*) AS attachment
+      row_to_json(m.*) AS attachment,
+      row_to_json(p.*) AS project
     FROM applicants a
     JOIN identities i ON i.id=a.user_id
     LEFT JOIN media m ON m.id=a.attachment
+    JOIN projects p ON p.id=a.project_id
     WHERE a.id=${id}`
   )
   applicant.answers = await getAnswers(id)
@@ -34,9 +36,11 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`SELECT COUNT(a.*) OVER () as total_count,
       a.*, i.meta as user,
-      row_to_json(m.*) AS attachment
+      row_to_json(m.*) AS attachment,
+      row_to_json(p.*) AS project
       FROM applicants a
       JOIN identities i ON i.id=a.user_id
+      JOIN projects p ON p.id=a.project_id
       LEFT JOIN media m ON m.id=a.attachment
       ${filtering(filter, filterColumns, false, 'a')}
       ${sorting(sort, sortColumns)}

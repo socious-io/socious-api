@@ -47,7 +47,6 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     currency: ctx.offer.project.currency,
     project_id: ctx.offer.project.id,
     offer_id: ctx.offer.id,
-    identity_id: ctx.identity.id,
     amount
   })
 })

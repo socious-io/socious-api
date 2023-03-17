@@ -39,15 +39,12 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     }
   })
 
-  // put escrow amount with calculate commission fee
-  const amount = ctx.body.amount - ctx.body.amount * Identity.commissionFee(ctx.identity)
-
   await Payment.escrow({
     trx_id: ctx.body.id,
     currency: ctx.offer.project.currency,
     project_id: ctx.offer.project.id,
     offer_id: ctx.offer.id,
-    amount
+    amount: ctx.offer.amount
   })
 })
 

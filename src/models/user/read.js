@@ -65,7 +65,7 @@ export const getProfile = async (id, currentIdentity) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     city, country, geoname_id, mission, bio, impact_points,
-    skills, followers, followings, u.created_at,
+    skills, followers, followings, u.created_at, wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -107,7 +107,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     city, geoname_id, country, mission, bio, impact_points,
-    skills, followers, followings, u.created_at,
+    skills, followers, followings, u.created_at, wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -166,7 +166,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     city, country, geoname_id, mission, bio, impact_points,
-    skills, followers, followings, u.created_at,
+    skills, followers, followings, u.created_at, , wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,

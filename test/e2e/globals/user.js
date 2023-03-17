@@ -291,3 +291,18 @@ export const profileByUsername = async (request, data) => {
     })
   }
 }
+
+export const updateUserWallet = async (request, data) => {
+  const wallet = '0x18Adf002AE3a67089E67B5765DaB67Be01C7b5ee'
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue
+    }
+    const response = await request.post(`/user/update/wallet`).set('Authorization', data.users[i].access_token).send({
+      wallet_address: wallet
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.body.wallet_address).toBe(wallet)
+  }
+}

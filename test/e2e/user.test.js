@@ -12,7 +12,8 @@ import {
   updateLanguage,
   profileByUsername,
   updateProfile,
-  verifyUser
+  verifyUser,
+  updateUserWallet
 } from './globals/user.js'
 
 let server, request
@@ -32,6 +33,7 @@ test('update language', async () => updateLanguage(request, data))
 test('update experience', async () => updateExperience(request, data))
 test('profile by username', async () => profileByUsername(request, data))
 test('update profile', async () => updateProfile(request, data))
+test('update wallet', async () => updateUserWallet(request, data))
 
 test('delete user', async () => {
   const response = await request

@@ -47,8 +47,8 @@ router.get('/profile', loginRequired, async (ctx) => {
   ctx.body = await User.getProfile(ctx.user.id)
 })
 
-router.post('/update/wallet_address', loginRequired, async (ctx) => {
-  User.updateWalletAddress(ctx.user.id, ctx.request.body.wallet_address)
+router.post('/update/wallet', loginRequired, async (ctx) => {
+  await User.updateWalletAddress(ctx.user.id, ctx.request.body.wallet_address)
   ctx.body = await User.getProfile(ctx.user.id)
 })
 

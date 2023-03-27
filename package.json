@@ -76,7 +76,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.9.0",
+    "pg": "^8.10.0",
     "sanitize-html": "^2.10.0",
     "socket.io": "^4.6.1",
     "sql-template-tag": "^5.0.3",

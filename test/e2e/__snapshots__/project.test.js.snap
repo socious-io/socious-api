@@ -744,6 +744,7 @@ exports[`offer 1`] = `
   "applicant_id": Any<String>,
   "assignment_total": 30000,
   "created_at": Any<String>,
+  "crypto_currency_address": null,
   "due_date": Any<String>,
   "escrow": Any<Object>,
   "id": Any<String>,

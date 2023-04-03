@@ -11,6 +11,7 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
+import { BadRequestError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -48,7 +49,9 @@ router.get('/profile', loginRequired, async (ctx) => {
 })
 
 router.post('/update/wallet', loginRequired, async (ctx) => {
-  await User.updateWalletAddress(ctx.user.id, ctx.request.body.wallet_address)
+  const wallet = ctx.request.body.wallet_address
+  if (!wallet) throw new BadRequestError('wallet address is required')
+  await User.updateWalletAddress(ctx.user.id, wallet)
   ctx.body = await User.getProfile(ctx.user.id)
 })
 

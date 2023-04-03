@@ -9,14 +9,15 @@ export const getCard = async (id, identityId) => {
 }
 
 export const getCards = async (identityId, { limit = 10, offset = 0 }) => {
-  return app.db.query(sql`
+  const { rows } = await app.db.query(sql`
     SELECT 
       COUNT(*) OVER () as total_count, * 
     FROM cards 
-    WHERE identity_id=${identityId}    
-    LIMIT ${limit} OFFSET ${offset}
-    ORDER BY created_at DESC
+    WHERE identity_id=${identityId}
+    ORDER BY created_at DESC    
+    LIMIT ${limit} OFFSET ${offset}    
   `)
+  return rows
 }
 
 export const responseCard = (card) => {

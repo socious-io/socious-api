@@ -20,10 +20,12 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   let card = getCard(source, identityId)
 
   const token = await stripe.token.create({
-    number: card.number,
-    exp_month: card.exp_month,
-    exp_year: card.exp_year,
-    cvc: card.cvc
+    card: {
+      number: card.number,
+      exp_month: card.exp_month,
+      exp_year: card.exp_year,
+      cvc: card.cvc
+    }
   })
 
   card = await updateCardBrand(card.id, token.card.brand)

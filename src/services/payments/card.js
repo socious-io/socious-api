@@ -5,7 +5,7 @@ import { EntryError } from '../../utils/errors.js'
 export const sortColumns = ['created_at', 'updated_at']
 
 export const getCard = async (id, identityId) => {
-  return app.db.query(sql`SELECT * FROM cards WHERE id=${id} AND identity_id=${identityId}`)
+  return app.db.get(sql`SELECT * FROM cards WHERE id=${id} AND identity_id=${identityId}`)
 }
 
 export const getCards = async (identityId, { limit = 10, offset = 0 }) => {

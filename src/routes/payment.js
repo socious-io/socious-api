@@ -60,7 +60,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
     currency: ctx.offer.project.currency,
-    amount: ctx.offer.total_assignment,
+    amount: ctx.offer.assignment_total,
     description: ctx.offer.project.name,
     meta: {
       ...ctx.request.body.meta,

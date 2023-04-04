@@ -17,7 +17,7 @@ const stripeAmount = (amount, currency) => {
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, description }) => {
-  let card = getCard(source, identityId)
+  let card = await getCard(source, identityId)
 
   console.log('Stripe token card: ', card)
 

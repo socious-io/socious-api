@@ -19,9 +19,11 @@ const stripeAmount = (amount, currency) => {
 export const charge = async (identityId, { amount, currency, meta, source, description }) => {
   let card = getCard(source, identityId)
 
+  console.log('Stripe token card: ', card)
+
   const token = await stripe.tokens.create({
     card: {
-      number: card.number,
+      number: card.numbers,
       exp_month: card.exp_month,
       exp_year: card.exp_year,
       cvc: card.cvc

@@ -10,10 +10,11 @@ const stripeAmount = (amount, currency) => {
   switch (currency) {
     case Data.PaymentCurrency.USD:
       amount *= 100
-      break
+      return amount
+    default:
+      amount *= 100
+      return amount
   }
-
-  return amount
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, description }) => {
@@ -40,6 +41,13 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     meta,
     source: card.id
   })
+
+  console.log('Stripe Charge params: ', JSON.stringify({
+    amount: stripeAmount(amount, currency),
+    currency,
+    source: token.id,
+    description
+  }))
 
   const charge = await stripe.charges.create({
     amount: stripeAmount(amount, currency),

@@ -44,7 +44,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   const charge = await stripe.charges.create({
     amount: stripeAmount(amount, currency),
     currency,
-    source: token,
+    source: token.id,
     description
   })
 

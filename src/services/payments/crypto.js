@@ -14,7 +14,7 @@ import { delay } from '../../utils/tools.js'
  * @returns {Promise<boolean>}
  */
 export const confirmTx = async (src, dest, amount, txHash, token) => {
-  const network = config.crypto.networks.filter((n) => n.tokens.indexOf(token) !== -1)[0]
+  const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(token) !== -1)[0]
 
   if (!network) return false
 
@@ -32,7 +32,7 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
     }
   }
 
-  const response = await axios.post(config.blockchain.explorer, data, options)
+  const response = await axios.post(network.explorer, data, options)
 
   const tx = response.data.result?.filter((r) => r.hash === txHash)[0]
 

@@ -54,7 +54,9 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
-  const confirmed = await confirmTx(source, config.blockchain.escrow.address, amount, txHash, meta.token)
+  const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(meta.token) !== -1)[0]
+
+  const confirmed = await confirmTx(source, network.escrow.address, amount, txHash, meta.token)
 
   if (!confirmed) throw new ValidationError('transaction is not valid')
 

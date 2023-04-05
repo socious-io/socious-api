@@ -116,12 +116,25 @@ export default {
   fcm: {
     key: process.env.FCM_KEY
   },
-  blockchain: {
-    escrow: {
-      address: process.env.BLOCKCHAIN_ESCROW_ADDRESS
-    },
-    explorer: process.env.BLOCKCHAIN_EXPLORER,
-    tokens: process.env.BLOCKCHAIN_TOKENS?.split(',')
+  crypto: {
+    networks: [
+      {
+        escrow: {
+          address: process.env.BLOCKCHAIN_ESCROW_ADDRESS
+        },
+        explorer: process.env.BLOCKCHAIN_EXPLORER,
+        explorer_api_key: process.env.BLOCKCHAIN_EXPLORER_API_KEY,
+        tokens: process.env.BLOCKCHAIN_TOKENS?.split(',')
+      },
+      {
+        escrow: {
+          address: process.env.BLOCKCHAIN_ESCROW_ADDRESS_2
+        },
+        explorer: process.env.BLOCKCHAIN_EXPLORER_2,
+        explorer_api_key: process.env.BLOCKCHAIN_EXPLORER_API_KEY_2,
+        tokens: process.env.BLOCKCHAIN_TOKENS_2?.split(',')
+      }
+    ]
   },
   cors: {
     origins: process.env.ALLOWED_ORIGINS?.split(',')

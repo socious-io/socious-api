@@ -10,14 +10,20 @@ import { delay } from '../../utils/tools.js'
  * @param {string} src
  * @param {string} dest
  * @param {number} amount
+ * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, dest, amount, txHash) => {
+export const confirmTx = async (src, dest, amount, txHash, token) => {
+  const network = config.crypto.networks.filter((n) => n.tokens.indexOf(token) !== -1)[0]
+
+  if (!network) return false
+
   const data = {
     module: 'account',
     action: 'tokentx',
     sort: 'desc',
-    address: src
+    address: src,
+    apikey: network.explorer_api_key
   }
 
   const options = {
@@ -41,14 +47,14 @@ export const confirmTx = async (src, dest, amount, txHash) => {
 
   if (parseInt(tx.confirmations) < 10) {
     await delay(500)
-    return await confirmTx(src, dest, amount, txHash)
+    return await confirmTx(src, dest, amount, txHash, token)
   }
 
   return true
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
-  const confirmed = await confirmTx(source, config.blockchain.escrow.address, amount, txHash)
+  const confirmed = await confirmTx(source, config.blockchain.escrow.address, amount, txHash, meta.token)
 
   if (!confirmed) throw new ValidationError('transaction is not valid')
 
@@ -56,7 +62,7 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
     identity_id: identityId,
     amount,
     currency,
-    service: Data.PaymentService.STRIPE,
+    service: Data.PaymentService.CRYPTO,
     meta,
     source: source
   })

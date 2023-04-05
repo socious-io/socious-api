@@ -73,5 +73,5 @@ export const updateCard = async (id, identityId, { holder_name, numbers, exp_mon
 }
 
 export const removeCard = async (id, identityId) => {
-  return app.db.query(sql`REMOVE FROM cards WHERE id=${id} AND identity_id=${identityId}`)
+  return app.db.query(sql`DELETE FROM cards WHERE id=${id} AND identity_id=${identityId}`)
 }

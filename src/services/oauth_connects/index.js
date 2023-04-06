@@ -2,15 +2,16 @@ import {
   PROVIDER as STRIPE_PROVIDER,
   authorize as stripeAuth,
   refresh as stripeRefresh,
-  profile as stripeProfile
+  profile as stripeProfile,
+  connectLink as stripeConnectLink
 } from './stripe.js'
 import { get } from './tokens.js'
 import { NotImplementedError } from '../../utils/errors.js'
 
-const authorize = async (identityId, provider, body) => {
+const authorize = async (provider, body) => {
   switch (provider) {
     case STRIPE_PROVIDER:
-      return stripeAuth(identityId, provider, body)
+      return stripeAuth(body)
     default:
       throw new NotImplementedError()
   }
@@ -34,9 +35,19 @@ const profile = async (identityId, provider) => {
   }
 }
 
+const link = async (identityId, provider) => {
+  switch (provider) {
+    case STRIPE_PROVIDER:
+      return stripeConnectLink(identityId)
+    default:
+      throw new NotImplementedError()
+  }
+}
+
 export default {
   get,
   authorize,
   refresh,
-  profile
+  profile,
+  link
 }

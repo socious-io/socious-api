@@ -5,6 +5,7 @@ import OAuthConnects from '../services/oauth_connects/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { putContact } from '../services/sendgrid/index.js'
 import Analytics from '../services/analytics/index.js'
+import config from '../config.js'
 
 export const router = new Router()
 
@@ -91,10 +92,21 @@ router.post('/preregister', async (ctx) => {
   ctx.body = await Auth.preregister(ctx.request.body)
 })
 
-router.post('/stripe', loginRequired, async (ctx) => {
-  await Data.OAuthStripeSchema.validateAsync(ctx.request.body)
+router.get('/stripe/connect-link', loginRequired, async (ctx) => {
+  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE)
+  ctx.body = { link }
+})
 
-  ctx.body = await OAuthConnects.authorize(ctx.identity.id, Data.OAuthProviders.STRIPE, ctx.request.body)
+router.post('/stripe', async (ctx) => {
+  try {
+    await Data.OAuthStripeSchema.validateAsync(ctx.request.body)
+    const auth = await OAuthConnects.authorize(Data.OAuthProviders.STRIPE, ctx.request.body)
+    ctx.status = 301
+    ctx.redirect(`${config.payments.stripe.client_connect_link}?account=${auth.account_id}&status=${auth.status}`)
+  } catch {
+    ctx.status = 301
+    ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed`)
+  }
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {

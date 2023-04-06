@@ -306,6 +306,18 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /auth/stripe/connect-link:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - auth
+      summary: stripe connect link
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /auth/stripe:
     post:
       tags:
@@ -336,6 +348,8 @@ paths:
                   status: '{{stripe_onboarding_status}}'
   /auth/stripe/profile:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - auth
       summary: stripe connect profile

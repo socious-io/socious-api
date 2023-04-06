@@ -141,7 +141,8 @@ export default {
   },
   payments: {
     stripe: {
-      secret_key: process.env.STRIPE_SECRET_KEY
+      secret_key: process.env.STRIPE_SECRET_KEY,
+      connect_redirect: process.env.STRIPE_CONNECT_REDIRECT || 'https://dev.socious.io/auth/stripe'
     }
   },
   idealist: {

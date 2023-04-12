@@ -110,7 +110,7 @@ router.get('/stripe', async (ctx) => {
     }
   } catch (err) {
     ctx.status = 301
-    ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed&error=${error.message}`)
+    ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed&error=${err.message}`)
   }
 })
 

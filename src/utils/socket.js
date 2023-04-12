@@ -49,7 +49,5 @@ will purge it when connection closed
       const index = app.users[userId].indexOf(socketId)
       app.users[userId].splice(index, 1)
     })
-
-    socket.emit('test', {data: 'test'})
   })
 }

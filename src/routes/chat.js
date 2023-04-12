@@ -7,6 +7,8 @@ import { paginate } from '../utils/middlewares/requests.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { NotImplementedError } from '../utils/errors.js'
 import { chatPermission, checkIdParams } from '../utils/middlewares/route.js'
+import {app} from '../index.js'
+
 export const router = new Router()
 
 router.get('/summary', loginRequired, paginate, async (ctx) => {
@@ -127,6 +129,8 @@ router.post('/:id/messages', loginRequired, checkIdParams, chatPermission, async
   participants
     .filter((p) => p.identity_id !== ctx.identity.id)
     .map((p) => {
+      app.socket.to(app.users[p.identity_id]).emit('chat', ctx.body)
+
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
         refId: ctx.body.id,

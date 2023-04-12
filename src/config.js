@@ -148,7 +148,7 @@ export default {
     stripe: {
       secret_key: process.env.STRIPE_SECRET_KEY,
       connect_redirect: process.env.STRIPE_CONNECT_REDIRECT || 'https://socious.io/api/v2/auth/stripe',
-      client_connect_link: process.env.STRIPE_CLIENT_CONNECT_LINK || 'https://webapp2.socious.io'
+      client_connect_link: process.env.STRIPE_CLIENT_CONNECT_LINK || 'https://webapp2.socious.io/wallet'
     }
   },
   idealist: {

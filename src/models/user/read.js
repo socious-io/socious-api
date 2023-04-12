@@ -168,7 +168,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     city, country, geoname_id, mission, bio, impact_points,
-    skills, followers, followings, u.created_at, , wallet_address,
+    skills, followers, followings, u.created_at, wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     proofspace_connect_id,
     row_to_json(avatar.*) AS avatar,
@@ -205,6 +205,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     ${sorting(sort, sortColumns)}
     `
   )
+  console.log('-------------_@@@')
   return rows
 }
 
@@ -226,6 +227,7 @@ export const getProfileByUsernameLimited = async (username) => {
 }
 
 export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
+  
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,
@@ -238,7 +240,7 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
     ${sorting(sort, sortColumns)}
     LIMIT ${limit} OFFSET ${offset}
   `)
-
+  
   const users = await getAllProfile(
     rows.map((r) => r.id),
     sort,

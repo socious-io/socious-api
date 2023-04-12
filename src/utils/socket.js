@@ -38,7 +38,7 @@ export default (app) => {
 socket handler will push every auth users connection ids to app.users
 will purge it when connection closed
 */
-  app.socket.on('connect', async (socket) => {
+  app.socket.on('connection', async (socket) => {
     const socketId = socket.id
     const userId = socket.userId
 
@@ -49,5 +49,7 @@ will purge it when connection closed
       const index = app.users[userId].indexOf(socketId)
       app.users[userId].splice(index, 1)
     })
+
+    socket.emit('test', {data: 'test'})
   })
 }

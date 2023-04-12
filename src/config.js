@@ -112,7 +112,12 @@ export default {
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1'
   },
-  socket: {},
+  socket: {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
+  },
   fcm: {
     key: process.env.FCM_KEY
   },
@@ -142,7 +147,8 @@ export default {
   payments: {
     stripe: {
       secret_key: process.env.STRIPE_SECRET_KEY,
-      connect_redirect: process.env.STRIPE_CONNECT_REDIRECT || 'https://dev.socious.io/auth/stripe'
+      connect_redirect: process.env.STRIPE_CONNECT_REDIRECT || 'https://socious.io/api/v2/auth/stripe',
+      client_connect_link: process.env.STRIPE_CLIENT_CONNECT_LINK || 'https://webapp2.socious.io'
     }
   },
   idealist: {

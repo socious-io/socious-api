@@ -38,9 +38,10 @@ app.db.pool.on('error', (err) => {
 app.use(middlewares(app))
 
 blueprint(app)
-socket(app)
 
 app.http = http.createServer(app.callback())
+
+socket(app)
 
 app.listen = (...args) => {
   app.http.listen.call(app.http, ...args)

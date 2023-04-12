@@ -110,5 +110,10 @@ router.post('/stripe', async (ctx) => {
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {
-  ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
+  // Success anyway
+  try {
+    ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
+  } catch {
+    ctx.body = {}
+  }
 })

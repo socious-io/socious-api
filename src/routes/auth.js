@@ -97,15 +97,20 @@ router.get('/stripe/connect-link', loginRequired, async (ctx) => {
   ctx.body = { link }
 })
 
-router.post('/stripe', async (ctx) => {
+router.get('/stripe', async (ctx) => {
+  const { code, error } = ctx.request.query
+
   try {
-    await Data.OAuthStripeSchema.validateAsync(ctx.request.body)
-    const auth = await OAuthConnects.authorize(Data.OAuthProviders.STRIPE, ctx.request.body)
+    if (code && !error) {
+      const auth = await OAuthConnects.authorize(Data.OAuthProviders.STRIPE, { code })
+      ctx.status = 301
+      ctx.redirect(`${config.payments.stripe.client_connect_link}?account=${auth.account_id}&status=${auth.status}`)
+    } else {
+      throw Error(error)
+    }
+  } catch (err) {
     ctx.status = 301
-    ctx.redirect(`${config.payments.stripe.client_connect_link}?account=${auth.account_id}&status=${auth.status}`)
-  } catch {
-    ctx.status = 301
-    ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed`)
+    ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed&error=${error.message}`)
   }
 })
 

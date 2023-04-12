@@ -227,7 +227,6 @@ export const getProfileByUsernameLimited = async (username) => {
 }
 
 export const search = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
-  
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,
@@ -240,7 +239,7 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
     ${sorting(sort, sortColumns)}
     LIMIT ${limit} OFFSET ${offset}
   `)
-  
+
   const users = await getAllProfile(
     rows.map((r) => r.id),
     sort,

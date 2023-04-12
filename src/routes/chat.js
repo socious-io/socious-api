@@ -7,7 +7,7 @@ import { paginate } from '../utils/middlewares/requests.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { NotImplementedError } from '../utils/errors.js'
 import { chatPermission, checkIdParams } from '../utils/middlewares/route.js'
-import {app} from '../index.js'
+import { app } from '../index.js'
 
 export const router = new Router()
 

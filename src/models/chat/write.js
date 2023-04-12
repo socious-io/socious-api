@@ -7,10 +7,10 @@ import { find, chatPermission } from './read.js'
 const MemberTypes = Data.ChatMemberType
 const Types = Data.ChatType
 
-export const create = async (identity, { type, participants, description, name }) => {  
+export const create = async (identity, { type, participants, description, name }) => {
   if (type !== Types.CHAT) throw new NotImplementedError()
 
-  participants = participants.map((id) => id.toLowerCase())  
+  participants = participants.map((id) => id.toLowerCase())
 
   await Promise.all(participants.filter((p) => p !== identity.id).map((p) => chatPermission(identity, p)))
   console.log('*******************', participants)

@@ -168,12 +168,11 @@ export const summary = async (identityId, { offset = 0, limit = 10, sort }, filt
 }
 
 export const chatPermission = async (identity, participantId) => {
-
   // Access to ORGs to add any participants
   if (identity.type === Data.IdentityType.ORG) return true
   try {
     await Connect.related(identity.id, participantId)
   } catch {
-    throw new PermissionError('identities didn\'t connect' )
+    throw new PermissionError("identities didn't connect")
   }
 }

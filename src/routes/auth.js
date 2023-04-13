@@ -98,6 +98,11 @@ router.get('/stripe/connect-link', loginRequired, async (ctx) => {
 })
 
 router.get('/stripe', async (ctx) => {
+  console.log(ctx.request.quey, '-------------------- QUERY')
+  console.log(ctx.request.headers, '------------------ HEADERS')
+  console.log(ctx.request.body, '-------------------- BODY')
+
+
   const { code, error } = ctx.request.query
 
   try {

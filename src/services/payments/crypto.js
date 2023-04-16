@@ -46,7 +46,7 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
   if (!tx) {
     logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
       src, dest, amount, txHash, token
-    })}, RESULT => tx not found`)
+    })}, RESULT => tx not found ${JSON.stringify(response.data)}`)
     return false
   }
 

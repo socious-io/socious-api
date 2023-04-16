@@ -98,8 +98,6 @@ router.get('/stripe/connect-link', loginRequired, async (ctx) => {
 })
 
 router.get('/stripe', async (ctx) => {
-  console.log(ctx.query, '-------------------- QUERY')
-
 
   const { code, error } = ctx.query
 

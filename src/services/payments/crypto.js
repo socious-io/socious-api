@@ -33,7 +33,7 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
   }
 
   const response = await axios.post(network.explorer, data, options)
-
+  console.log(response.data, '-----------------')
   const tx = response.data.result?.filter((r) => r.hash === txHash)[0]
 
   if (!tx) return false

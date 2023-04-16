@@ -17,7 +17,12 @@ import logger  from '../../utils/logging.js'
 export const confirmTx = async (src, dest, amount, txHash, token) => {
   const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(token) !== -1)[0]
 
-  if (!network) return false
+  if (!network) {
+    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
+      src, dest, amount, txHash, token
+    })}, RESULT => Network not found on ${JSON.stringify(config.crypto.networks)}`)
+    return false
+  }
 
   const data = {
     module: 'account',
@@ -38,7 +43,12 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
 
   const tx = response.data.result?.filter((r) => r.hash === txHash)[0]
 
-  if (!tx) return false
+  if (!tx) {
+    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
+      src, dest, amount, txHash, token
+    })}, RESULT => tx not found`)
+    return false
+  }
 
   // TODO verify amount
   const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100

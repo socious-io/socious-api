@@ -27,14 +27,8 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
     apikey: network.explorer_api_key
   }
 
-  const options = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
+  const response = await axios.get(network.explorer, {params: data})
 
-  const response = await axios.post(network.explorer, data, options)
-  
   if (response.data.status === '0') {
     logger.error(`CONFIRM CRYPTO => DATA ${JSON.stringify({
       src, dest, amount, txHash, token

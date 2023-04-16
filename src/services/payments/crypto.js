@@ -4,6 +4,7 @@ import { create, setCompleteTrx } from './transaction.js'
 import config from '../../config.js'
 import { ValidationError } from '../../utils/errors.js'
 import { delay } from '../../utils/tools.js'
+import logger  from '../../utils/logging.js'
 
 /**
  * @param {string} txHash
@@ -33,7 +34,14 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
   }
 
   const response = await axios.post(network.explorer, data, options)
-  console.log(response.data, '-----------------')
+  
+  if (response.data.status === '0') {
+    logger.error(`CONFIRM CRYPTO => DATA ${JSON.stringify({
+      src, dest, amount, txHash, token
+    })}, RESULT => ${JSON.stringify(response.data)} `)
+    return false
+  }
+
   const tx = response.data.result?.filter((r) => r.hash === txHash)[0]
 
   if (!tx) return false

@@ -12,14 +12,18 @@ const accountsTmp = {}
 
 export const connectLink = async (identityId) => {
   const account = await stripe.accounts.create({
-    type: 'express'
+    type: 'express',
+    capabilities: {
+      card_payments: {requested: true},
+      transfers: {requested: true},
+    }
   })
 
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
     refresh_url: Config.payments.stripe.connect_redirect,
     return_url: Config.payments.stripe.connect_redirect,
-    type: 'account_onboarding'
+    type: 'account_onboarding',
   })
 
   accountsTmp[account.id] = identityId

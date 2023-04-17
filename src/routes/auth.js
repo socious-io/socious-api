@@ -6,6 +6,7 @@ import { loginRequired } from '../utils/middlewares/authorization.js'
 import { putContact } from '../services/sendgrid/index.js'
 import Analytics from '../services/analytics/index.js'
 import config from '../config.js'
+import { ValidationError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -93,7 +94,12 @@ router.post('/preregister', async (ctx) => {
 })
 
 router.get('/stripe/connect-link', loginRequired, async (ctx) => {
-  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE)
+
+  if (!ctx.user.country) {
+    throw new ValidationError('user country required for connecting stripe')
+  }
+
+  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, {country: ctx.user.country})
   ctx.body = { link }
 })
 

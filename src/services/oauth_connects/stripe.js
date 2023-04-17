@@ -10,9 +10,10 @@ export const stripe = Stripe(Config.payments.stripe.secret_key)
 // TODO: should be on redis or any stable ramdbs
 const accountsTmp = {}
 
-export const connectLink = async (identityId) => {
+export const connectLink = async (identityId, {country}) => {
   const account = await stripe.accounts.create({
     type: 'express',
+    country,
     capabilities: {
       card_payments: {requested: true},
       transfers: {requested: true},

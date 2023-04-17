@@ -35,10 +35,10 @@ const profile = async (identityId, provider) => {
   }
 }
 
-const link = async (identityId, provider) => {
+const link = async (identityId, provider, meta) => {
   switch (provider) {
     case STRIPE_PROVIDER:
-      return stripeConnectLink(identityId)
+      return stripeConnectLink(identityId, meta)
     default:
       throw new NotImplementedError()
   }

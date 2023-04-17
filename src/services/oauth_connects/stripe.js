@@ -42,8 +42,8 @@ export const authorize = async ({ stripe_account }) => {
     provider: PROVIDER,
     status: account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
     mui: account.id,
-    access_token: null,
-    refresh_token: null,
+    access_token: 'empty',
+    refresh_token: 'empty',
     expire: null,
     meta: {}
   })

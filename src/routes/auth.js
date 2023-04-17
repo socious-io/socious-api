@@ -105,8 +105,6 @@ router.get('/stripe/connect-link', loginRequired, async (ctx) => {
 
 router.get('/stripe', async (ctx) => {
 
-  console.log('STRIP ----> ', ctx.query)
-
   const { stripe_account } = ctx.query
 
   try {

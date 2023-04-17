@@ -14,7 +14,7 @@ import logger  from '../../utils/logging.js'
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, dest, amount, txHash, token) => {
+export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
   const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(token) !== -1)[0]
 
   if (!network) {
@@ -41,7 +41,13 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
     return false
   }
 
-  const tx = response.data.result?.filter((r) => r.hash === txHash)[0]
+  const tx = response.data.result.filter((r) => r.hash === txHash)[0]
+
+  if (!tx && retry < 5) {
+    await delay(500)
+    retry++
+    return await confirmTx(src, dest, amount, txHash, token, retry)
+  }
 
   if (!tx) {
     logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
@@ -57,10 +63,13 @@ export const confirmTx = async (src, dest, amount, txHash, token) => {
 
   if (tx.to.toString().toUpperCase() !== dest.toUpperCase()) return false
 
-  if (parseInt(tx.confirmations) < 10) {
+  if (parseInt(tx.confirmations) < 10 && retry < 5) {
     await delay(500)
-    return await confirmTx(src, dest, amount, txHash, token)
+    retry++
+    return await confirmTx(src, dest, amount, txHash, token, retry)
   }
+
+  if (parseInt(tx.confirmations) < 10) return false
 
   return true
 }

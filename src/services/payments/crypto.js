@@ -52,7 +52,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
   if (!tx) {
     logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
       src, dest, amount, txHash, token
-    })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found`)
+    })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(tx)}`)
     return false
   }
 
@@ -61,7 +61,12 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
 
   if (amount >= txAmount) return false
 
-  if (tx.to.toString().toUpperCase() !== dest.toUpperCase()) return false
+  if (tx.to.toUpperCase() !== dest.toUpperCase()) {
+    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
+      src, dest, amount, txHash, token
+    })}, , PARAMS => ${JSON.stringify(data)}, RESULT => Wrong contract address, TX => ${JSON.stringify(tx)}`)
+    return false
+  }
 
   if (parseInt(tx.confirmations) < 10 && retry < 5) {
     await delay(500)

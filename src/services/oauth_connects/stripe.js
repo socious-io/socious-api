@@ -22,8 +22,8 @@ export const connectLink = async (identityId, {country}) => {
 
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: Config.payments.stripe.connect_redirect,
-    return_url: Config.payments.stripe.connect_redirect,
+    refresh_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
+    return_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
     type: 'account_onboarding',
   })
 

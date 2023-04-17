@@ -43,7 +43,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
 
   const tx = response.data.result.filter((r) => r.hash === txHash)[0]
 
-  if (!tx && retry < 5) {
+  if (!tx && retry < 8) {
     await delay(500)
     retry++
     return await confirmTx(src, dest, amount, txHash, token, retry)
@@ -68,7 +68,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
     return false
   }
 
-  if (parseInt(tx.confirmations) < 10 && retry < 5) {
+  if (parseInt(tx.confirmations) < 10 && retry < 8) {
     await delay(500)
     retry++
     return await confirmTx(src, dest, amount, txHash, token, retry)

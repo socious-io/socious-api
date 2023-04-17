@@ -105,15 +105,17 @@ router.get('/stripe/connect-link', loginRequired, async (ctx) => {
 
 router.get('/stripe', async (ctx) => {
 
-  const { code, error } = ctx.query
+  console.log('STRIP ----> ', ctx.query)
+
+  const { stripe_account } = ctx.query
 
   try {
-    if (code && !error) {
-      const auth = await OAuthConnects.authorize(Data.OAuthProviders.STRIPE, { code })
+    if (stripe_account) {
+      const auth = await OAuthConnects.authorize(Data.OAuthProviders.STRIPE, { stripe_account })
       ctx.status = 301
       ctx.redirect(`${config.payments.stripe.client_connect_link}?account=${auth.account_id}&status=${auth.status}`)
     } else {
-      throw Error(error)
+      throw new ValidationError('stripe account not found')
     }
   } catch (err) {
     ctx.status = 301

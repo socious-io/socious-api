@@ -32,22 +32,18 @@ export const connectLink = async (identityId, {country}) => {
   return accountLink
 }
 
-export const authorize = async ({ code }) => {
-  const response = await stripe.oauth.token({
-    grant_type: 'authorization_code',
-    code
-  })
+export const authorize = async ({ stripe_account }) => {
 
-  const account = await stripe.accounts.retrieve(response.stripe_user_id)
+  const account = await stripe.accounts.retrieve(stripe_account)
 
   const identityId = accountsTmp[account.id]
 
   const oauth = await upsert(identityId, {
     provider: PROVIDER,
     status: account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
-    mui: response.stripe_user_id,
-    access_token: response.access_token,
-    refresh_token: response.refresh_token,
+    mui: account.id,
+    access_token: null,
+    refresh_token: null,
     expire: null,
     meta: {}
   })
@@ -55,7 +51,7 @@ export const authorize = async ({ code }) => {
   delete accountsTmp[account.id]
 
   return {
-    account_id: response.stripe_user_id,
+    account_id: account.id,
     status: oauth.status
   }
 }

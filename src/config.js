@@ -5,6 +5,7 @@ const envFile = process.env.ENV === 'testing' ? 'test.env' : '.env'
 config({ path: envFile })
 
 export default {
+  serverName: process.env.SERVER_NAME || 'localhost',
   env: process.env.ENV || 'development',
   debug: process.env.DEBUG || false,
   port: normalizePort(process.env.PORT),
@@ -14,6 +15,11 @@ export default {
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
+  slack: {
+    enabled: process.env.SLACK_ENABLED || true,
+    token: process.env.SLACK_TOKEN || 'test',
+    logChannel: process.env.SLACK_LOG_CHANNEL || 'test'
+  },
   mail: {
     sendgrid: {
       from: {

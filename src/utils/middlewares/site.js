@@ -44,7 +44,7 @@ export const throwHandler = async (ctx, next) => {
 
     ctx.status = err.status || 500
 
-    if (ctx.status >= 500) logger.error(`${err.message} | ${err.stack}`)
+    if (ctx.status >= 400) logger.error(`${err.message} | ${err.stack}`)
   }
 }
 

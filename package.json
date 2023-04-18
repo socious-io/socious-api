@@ -42,6 +42,7 @@
     "@maxmind/geoip2-node": "^3.5.0",
     "@newrelic/winston-enricher": "^4.0.1",
     "@sendgrid/mail": "^7.7.0",
+    "@slack/web-api": "^6.8.1",
     "@socious/data": "^1.0.52",
     "agentkeepalive": "^4.3.0",
     "analytics-node": "^6.2.0",
@@ -83,6 +84,7 @@
     "stripe": "^11.16.0",
     "supertest-koa-agent": "^0.3.2",
     "winston": "^3.8.2",
+    "winston-transport": "^4.5.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

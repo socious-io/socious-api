@@ -10,13 +10,13 @@ export const stripe = Stripe(Config.payments.stripe.secret_key)
 // TODO: should be on redis or any stable ramdbs
 const accountsTmp = {}
 
-export const connectLink = async (identityId, {country}) => {
+export const connectLink = async (identityId, { country }) => {
   const account = await stripe.accounts.create({
     type: 'express',
     country,
     capabilities: {
-      card_payments: {requested: true},
-      transfers: {requested: true},
+      card_payments: { requested: true },
+      transfers: { requested: true }
     }
   })
 
@@ -24,7 +24,7 @@ export const connectLink = async (identityId, {country}) => {
     account: account.id,
     refresh_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
     return_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
-    type: 'account_onboarding',
+    type: 'account_onboarding'
   })
 
   accountsTmp[account.id] = identityId
@@ -33,7 +33,6 @@ export const connectLink = async (identityId, {country}) => {
 }
 
 export const authorize = async ({ stripe_account }) => {
-
   const account = await stripe.accounts.retrieve(stripe_account)
 
   const identityId = accountsTmp[account.id]

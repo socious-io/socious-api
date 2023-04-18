@@ -4,7 +4,7 @@ import { create, setCompleteTrx } from './transaction.js'
 import config from '../../config.js'
 import { ValidationError } from '../../utils/errors.js'
 import { delay } from '../../utils/tools.js'
-import logger  from '../../utils/logging.js'
+import logger from '../../utils/logging.js'
 
 /**
  * @param {string} txHash
@@ -14,13 +14,19 @@ import logger  from '../../utils/logging.js'
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
+export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => {
   const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(token) !== -1)[0]
 
   if (!network) {
-    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
-      src, dest, amount, txHash, token
-    })}, RESULT => Network not found on ${JSON.stringify(config.crypto.networks)}`)
+    logger.error(
+      `CONFIRM CRYPTODATA ${JSON.stringify({
+        src,
+        dest,
+        amount,
+        txHash,
+        token
+      })}, RESULT => Network not found on ${JSON.stringify(config.crypto.networks)}`
+    )
     return false
   }
 
@@ -32,12 +38,18 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
     apikey: network.explorer_api_key
   }
 
-  const response = await axios.get(network.explorer, {params: data})
+  const response = await axios.get(network.explorer, { params: data })
 
   if (response.data.status === '0') {
-    logger.error(`CONFIRM CRYPTO => DATA ${JSON.stringify({
-      src, dest, amount, txHash, token
-    })}, PARAMS => ${JSON.stringify(data)} , RESULT =>  faild status `)
+    logger.error(
+      `CONFIRM CRYPTO => DATA ${JSON.stringify({
+        src,
+        dest,
+        amount,
+        txHash,
+        token
+      })}, PARAMS => ${JSON.stringify(data)} , RESULT =>  faild status `
+    )
     return false
   }
 
@@ -50,9 +62,15 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
   }
 
   if (!tx) {
-    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
-      src, dest, amount, txHash, token
-    })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(tx)}`)
+    logger.error(
+      `CONFIRM CRYPTODATA ${JSON.stringify({
+        src,
+        dest,
+        amount,
+        txHash,
+        token
+      })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(tx)}`
+    )
     return false
   }
 
@@ -62,9 +80,15 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry=0) => {
   if (amount >= txAmount) return false
 
   if (tx.to.toUpperCase() !== dest.toUpperCase()) {
-    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
-      src, dest, amount, txHash, token
-    })}, , PARAMS => ${JSON.stringify(data)}, RESULT => Wrong contract address, TX => ${JSON.stringify(tx)}`)
+    logger.error(
+      `CONFIRM CRYPTODATA ${JSON.stringify({
+        src,
+        dest,
+        amount,
+        txHash,
+        token
+      })}, , PARAMS => ${JSON.stringify(data)}, RESULT => Wrong contract address, TX => ${JSON.stringify(tx)}`
+    )
     return false
   }
 

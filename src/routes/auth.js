@@ -94,17 +94,13 @@ router.post('/preregister', async (ctx) => {
 })
 
 router.get('/stripe/connect-link', loginRequired, async (ctx) => {
+  if (!ctx.query.country) throw new ValidationError('Country need to be selected')
 
-  if (!ctx.user.country) {
-    throw new ValidationError('user country required for connecting stripe')
-  }
-
-  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, {country: ctx.user.country})
+  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, { country: ctx.query.country })
   ctx.body = { link }
 })
 
 router.get('/stripe', async (ctx) => {
-
   const { stripe_account } = ctx.query
 
   try {

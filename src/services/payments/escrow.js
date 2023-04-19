@@ -38,7 +38,7 @@ export const totalEscrow = async (projectId) => {
 }
 
 export const getEscrow = async (missionId) => {
-  return app.db.get(sql`SELECT * FROM escrows WHERE missionId=${missionId} AND released_at IS NULL`)
+  return app.db.get(sql`SELECT * FROM escrows WHERE mission_id=${missionId} AND released_at IS NULL`)
 }
 
 export const releaseEscrow = async (id, releaseId) => {

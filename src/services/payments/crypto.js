@@ -69,7 +69,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
         amount,
         txHash,
         token
-      })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
     )
     return false
   }
@@ -77,7 +77,16 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   // TODO verify amount
   const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100
 
-  if (amount >= txAmount) return false
+  if (amount >= txAmount) {
+    `CONFIRM CRYPTODATA ${JSON.stringify({
+      src,
+      dest,
+      amount,
+      txHash,
+      token
+    })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${amount} >= ${txAmount}`
+    return false
+  }
 
   if (tx.to.toUpperCase() !== dest.toUpperCase()) {
     logger.error(
@@ -93,12 +102,21 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   }
 
   if (parseInt(tx.confirmations) < 10 && retry < 8) {
-    await delay(500)
+    await delay(5000)
     retry++
     return await confirmTx(src, dest, amount, txHash, token, retry)
   }
 
-  if (parseInt(tx.confirmations) < 10) return false
+  if (parseInt(tx.confirmations) < 10) {
+    `CONFIRM CRYPTODATA ${JSON.stringify({
+      src,
+      dest,
+      amount,
+      txHash,
+      token
+    })}, PARAMS => ${JSON.stringify(data)}, RESULT => confirmation blocks after 5 second ${tx.confirmation} < 10`
+    return false
+  }
 
   return true
 }

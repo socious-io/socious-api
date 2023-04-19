@@ -13,12 +13,10 @@ export const currentIdentity = async (ctx) => {
 
 
   if (identityId) await validate.UUID.validateAsync(identityId)
-  console.log(identityId, '------------------@@@@')
   try {
     identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)
     if (identityId) await Identity.permissioned(identity, ctx.user.id)
   } catch (err) {
-    console.log(err, '------------------@@@@###')
     logger.warn(`selected Identity ${identityId} ::: error => ${err.message} ::: rollback to default`)
     identity = await Identity.get(ctx.user.id)
   }

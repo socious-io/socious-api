@@ -4,21 +4,23 @@ import User from '../../models/user/index.js'
 import Identity from '../../models/identity/index.js'
 import { UnauthorizedError } from '../errors.js'
 import { validate } from '@socious/data'
+import logger from '../../utils/logging.js'
 
 export const currentIdentity = async (ctx) => {
   let identity
   const currentidentity = ctx.request.header['current-identity']
   const identityId = currentidentity || ctx.session.current_identity
 
+
   if (identityId) await validate.UUID.validateAsync(identityId)
 
   try {
     identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)
     if (identityId) await Identity.permissioned(identity, ctx.user.id)
-  } catch {
+  } catch (err) {
+    logger.warn(`selected Identity ${identityId} ::: error => ${err.message} ::: rollback to default`)
     identity = await Identity.get(ctx.user.id)
   }
-
   ctx.identity = identity
 }
 

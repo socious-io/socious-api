@@ -64,8 +64,6 @@ export const koaLogger = async (ctx, next) => {
     logLevel = 'error'
   }
 
-  console.log(ctx.status, '*******@@@', logLevel)
-
   logger.log(logLevel, msg)
 }
 

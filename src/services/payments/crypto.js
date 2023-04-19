@@ -56,7 +56,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   const tx = response.data.result.filter((r) => r.hash === txHash)[0]
 
   if (!tx && retry < 8) {
-    await delay(500)
+    await delay(5000)
     retry++
     return await confirmTx(src, dest, amount, txHash, token, retry)
   }
@@ -69,7 +69,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
         amount,
         txHash,
         token
-      })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(tx)}`
+      })}, , PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
     )
     return false
   }

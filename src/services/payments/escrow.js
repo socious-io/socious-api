@@ -42,11 +42,15 @@ export const getEscrow = async (missionId) => {
 }
 
 export const releaseEscrow = async (id, releaseId) => {
-  const row = await app.db.get(sql`
-    UPDATE escrows SET release_id=${releaseId}, released_at=NOW() WHERE id=${id}
-  `)
-
-  return row.sum
+  try {
+      const rows = app.db.query(sql`
+      UPDATE escrows SET release_id=${releaseId}, released_at=NOW() WHERE id=${id}
+      RETURNING *
+      `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
 }
 
 export const getOpenEscrow = async (offerId, amount) => {

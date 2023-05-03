@@ -26,9 +26,13 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
 
     if (!val) continue
 
+    let pre = prefix
+
+    if (key.split('.').length > 1) pre = ''
+
     const valueKeys = Object.keys(val)
 
-    const name = columns[key].as ?? `${prefix}${key}`
+    const name = columns[key].as ?? `${pre}${key}`
 
     let op = operators[valueKeys[0]]
 

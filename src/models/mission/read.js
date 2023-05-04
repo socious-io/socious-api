@@ -9,7 +9,8 @@ export const filterColumns = {
   assigner_id: String,
   assignee_id: String,
   status: String,
-  'o.payment_mode': String
+  'o.payment_mode': String,
+  'p.payment_type': String
 }
 
 export const sortColumns = ['created_at', 'updated_at']

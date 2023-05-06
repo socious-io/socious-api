@@ -1,6 +1,7 @@
 import Config from '../../config.js'
 import Data from '@socious/data'
 import Stripe from 'stripe'
+import logger from '../../utils/logging.js'
 import { getCard, responseCard, updateCardBrand } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
@@ -72,6 +73,14 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 }
 
 export const payout = async ({ amount, currency, description, destination }) => {
+  
+  logger.info('Stripe payout -> ', JSON.stringify({
+    amount: stripeAmount(amount, currency),
+    currency,
+    description,
+    stripeAccount: destination
+  }))
+
   return stripe.payouts.create(
     {
       amount: stripeAmount(amount, currency),

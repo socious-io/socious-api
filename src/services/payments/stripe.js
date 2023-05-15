@@ -74,12 +74,12 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 
 export const payout = async ({ amount, currency, description, destination }) => {
   
-  logger.info('Stripe payout -> ', JSON.stringify({
+  logger.info(`Stripe payout ->  ${JSON.stringify({
     amount: stripeAmount(amount, currency),
     currency,
     description,
     stripeAccount: destination
-  }))
+  })}`)
 
   return stripe.payouts.create(
     {

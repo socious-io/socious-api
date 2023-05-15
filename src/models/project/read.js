@@ -18,7 +18,7 @@ export const filterColumns = {
   remote_preference: String
 }
 
-export const sortColumns = ['created_at', 'updated_at', 'title', 'payment_range_higher', 'payment_range_lower']
+export const sortColumns = ['updated_at', 'created_at', 'title', 'payment_range_higher', 'payment_range_lower']
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`

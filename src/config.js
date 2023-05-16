@@ -122,7 +122,7 @@ export default {
     cors: {
       origin: function (origin, callback) {
         const allowed = process.env.ALLOWED_ORIGINS?.split(',') || []
-        if (allowed.includes(origin) || !origin || !allowed) {
+        if (allowed.includes(origin) || !origin || allowed.length < 1) {
           callback(null, true)
         } else {
           callback(new Error('Not allowed by CORS'))

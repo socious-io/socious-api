@@ -11,7 +11,6 @@ export const currentIdentity = async (ctx) => {
   const currentidentity = ctx.request.header['current-identity']
   const identityId = currentidentity || ctx.session.current_identity
 
-
   if (identityId) await validate.UUID.validateAsync(identityId)
   try {
     identity = identityId ? await Identity.get(identityId) : await Identity.get(ctx.user.id)

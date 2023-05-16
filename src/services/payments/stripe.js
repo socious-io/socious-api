@@ -22,7 +22,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   let card = await getCard(source, identityId)
 
   currency = Data.PaymentCurrency.USD
-  
+
   console.log('Stripe token card: ', card)
 
   const token = await stripe.tokens.create({
@@ -73,13 +73,14 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 }
 
 export const payout = async ({ amount, currency, description, destination }) => {
-  
-  logger.info(`Stripe payout ->  ${JSON.stringify({
-    amount: stripeAmount(amount, currency),
-    currency,
-    description,
-    stripeAccount: destination
-  })}`)
+  logger.info(
+    `Stripe payout ->  ${JSON.stringify({
+      amount: stripeAmount(amount, currency),
+      currency,
+      description,
+      stripeAccount: destination
+    })}`
+  )
 
   return stripe.payouts.create(
     {

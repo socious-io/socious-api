@@ -69,7 +69,9 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
         amount,
         txHash,
         token
-      })}, PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => tx not found, TX => ${JSON.stringify(
+        response.data.result[0].hash
+      )} != ${txHash}`
     )
     return false
   }
@@ -78,7 +80,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100
 
   if (amount >= txAmount) {
-    `CONFIRM CRYPTODATA ${JSON.stringify({
+    ;`CONFIRM CRYPTODATA ${JSON.stringify({
       src,
       dest,
       amount,
@@ -108,7 +110,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    `CONFIRM CRYPTODATA ${JSON.stringify({
+    ;`CONFIRM CRYPTODATA ${JSON.stringify({
       src,
       dest,
       amount,

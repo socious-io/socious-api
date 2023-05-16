@@ -43,7 +43,7 @@ export const getEscrow = async (missionId) => {
 
 export const releaseEscrow = async (id, releaseId) => {
   try {
-      const rows = app.db.query(sql`
+    const rows = app.db.query(sql`
       UPDATE escrows SET release_id=${releaseId}, released_at=NOW() WHERE id=${id}
       RETURNING *
       `)

@@ -120,7 +120,14 @@ export default {
   },
   socket: {
     cors: {
-      origin: '*',
+      origin: function (origin, callback) {
+        const allowed = process.env.ALLOWED_ORIGINS?.split(',') || []
+        if (allowed.includes(origin) || !origin || !allowed) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
       methods: ['GET', 'POST']
     }
   },

@@ -57,10 +57,14 @@ router.post('/donate', loginRequired, async (ctx) => {
 router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) => {
   await validate.EscrowSchema.validateAsync(ctx.request.body)
 
+  let amount = ctx.offer.assignment_total
+  amount += amount * Identity.commissionFee(ctx.identity)
+
+
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
     currency: ctx.offer.project.currency,
-    amount: ctx.offer.assignment_total,
+    amount,
     description: ctx.offer.project.name,
     meta: {
       ...ctx.request.body.meta,
@@ -75,7 +79,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     currency: ctx.offer.project.currency,
     project_id: ctx.offer.project.id,
     offer_id: ctx.offer.id,
-    amount: ctx.offer.assignment_total
+    amount
   })
 })
 

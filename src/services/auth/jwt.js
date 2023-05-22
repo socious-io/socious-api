@@ -2,7 +2,7 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import Config from '../../config.js'
 import Jwt from 'jsonwebtoken'
-import { UnauthorizedError } from '../../utils/errors.js'
+import { UnauthorizedError, EntryError } from '../../utils/errors.js'
 
 export const getToken = (id, refresh = false) => {
   return Jwt.sign({ id, refresh }, Config.secret, {
@@ -14,12 +14,12 @@ export const verifyToken = async (token, refresh = false) => {
   token = token.replace('Bearer', '')
   if (refresh) {
     const { rows } = await app.db.query(sql`SELECT * FROM tokens_blacklist WHERE token=${token}`)
-    if (rows.length > 0) throw new UnauthorizedError()
+    if (rows.length > 0) throw new UnauthorizedError('Blacklist token')
   }
 
   const verfied = Jwt.verify(token, Config.secret)
 
-  if (verfied.refresh != refresh) throw new UnauthorizedError()
+  if (verfied.refresh != refresh) throw new UnauthorizedError('wrong token usage')
 
   return verfied
 }
@@ -32,7 +32,7 @@ export const expireRefreshToken = async (token) => {
     VALUES (${token}, ${new Date(verified.exp * 1000)})
     RETURNING id
   `)
-  if (rows.length < 1) throw new UnauthorizedError()
+  if (rows.length < 1) throw new EntryError('Could not expire token')
 
   return verified
 }

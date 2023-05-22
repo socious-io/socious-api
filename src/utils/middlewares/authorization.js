@@ -28,17 +28,22 @@ export const currentUser = async (ctx) => {
 
   const token = authorization ? authorization?.replace('Bearer ', '') : ctx.session.token
 
-  if (!token) throw new UnauthorizedError('No authentication')
+  if (!token) {
+    logger.error(`Token not found`)
+    throw new UnauthorizedError('No authentication')
+  }
   let id
   try {
     id = (await Auth.verifyToken(token)).id
-  } catch {
+  } catch (err) {
+    logger.error(`${token} is not valid : ${err.message}`)
     throw new UnauthorizedError('Invalid token')
   }
 
   try {
     ctx.user = await User.get(id)
-  } catch {
+  } catch (err) {
+    logger.error(`${token} for user ${id} unkown user: ${err.message}`)
     throw new UnauthorizedError('Unknown user')
   }
 

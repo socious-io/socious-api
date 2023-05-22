@@ -48,7 +48,7 @@ export const koaLogger = async (ctx, next) => {
 
   const ms = new Date() - start
 
-  let msg = `${ctx.method} | ${ctx.originalUrl} | ${ctx.status} | ${ms}ms`
+  let msg = `${ctx.method} | ${ctx.originalUrl} | ${JSON.stringify(ctx.request.header)} | ${ctx.status} | ${ms}ms`
 
   let logLevel
 

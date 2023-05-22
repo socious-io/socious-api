@@ -1,0 +1,12 @@
+[
+  {
+    "content": "test content",
+    "causes_tags": ["SOCIAL", "HEALTH"],
+    "hashtags": ["TEST"]
+  },
+  {
+    "content": "test content 2",
+    "causes_tags": ["SOCIAL"],
+    "hashtags": ["TEST2"]
+  }
+]

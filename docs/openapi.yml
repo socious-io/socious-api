@@ -1,0 +1,3329 @@
+openapi: 3.0.0
+info:
+  title: Socious-API
+  version: 2.2.6
+servers:
+  - url: https://dev.socious.io/api/v2/
+  - url: https://socious.io/api/v2/
+  - url: http://localhost:8370
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    project-status:
+      type: string
+      title: Project Status
+      enum:
+        - DRAFT
+        - ACTIVE
+        - EXPIRE
+    language-level:
+      type: string
+      title: Language Level
+      enum:
+        - BASIC
+        - CONVERSANT
+        - PROFICIENT
+        - FLUENT
+        - NATIVE
+    filter-operators:
+      type: string
+      title: Filter Operators
+      enum:
+        - eq
+        - ne
+        - lt
+        - lte
+        - gt
+        - gte
+    notification-type:
+      type: string
+      title: Notification Type
+      enum:
+        - FOLLOWED
+        - COMMENT_LIKE
+        - POST_LIKE
+        - CHAT
+        - SHARE_POST
+        - SHARE_PROJECT
+        - COMMENT
+        - APPLICATION
+        - OFFER
+        - REJECT
+        - APPROVED
+        - HIRED
+        - PROJECT_COMPLETE
+        - ASSIGNEE_CANCELED
+        - ASSIGNER_CANCELED
+        - ASSIGNER_CONFIRMED
+        - CONNECT
+        - MEMBERED
+    location_type:
+      type: string
+      title: Location Type
+      description: |
+        Type of location record (city, town, capital, etc)
+        - PPL: a city, town, village, or other agglomeration of buildings where people live and work
+        - PPLA: seat of a first-order administrative division (PPLC takes precedence over PPLA)
+        - PPLA2: seat of a second-order administrative division
+        - PPLA3: seat of a third-order administrative division
+        - PPLA4: seat of a fourth-order administrative division
+        - PPLA5: seat of a fifth-order administrative division
+        - PPLC: capital of a political entity
+        - PPLCH: former (historical) capital of a political entity
+        - PPLF: farm village
+        - PPLG: seat of government of a political entity
+        - PPLL: an area similar to a locality but with a small group of dwellings or other buildings
+        - PPLR: a populated place whose population is largely engaged in religious occupations
+        - PPLS: cities, towns, villages, or other agglomerations of buildings where people live and work
+        - STLMT: Israeli settlement
+      enum:
+        - PPL
+        - PPLA
+        - PPLA2
+        - PPLA3
+        - PPLA4
+        - PPLA5
+        - PPLC
+        - PPLCH
+        - PPLF
+        - PPLG
+        - PPLL
+        - PPLR
+        - PPLS
+        - STLMT
+paths:
+  /site/options:
+    get:
+      tags:
+        - site
+      summary: filtering and sorting options
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: '{{user_login}}'
+                password: '{{user_password}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                first_name: Ehsan
+                last_name: Mahmoudi
+                username: socious2022
+                password: socious2022
+                email: info_2022@socious.io
+      parameters:
+        - name: RefreshToken
+          in: header
+          schema:
+            type: string
+          example: '{{refresh_token}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/preregister:
+    post:
+      tags:
+        - auth
+      summary: preregister
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                username: socious
+                email: info@socious.io
+      responses:
+        '200':
+          description: OK
+          headers:
+            Vary:
+              schema:
+                type: string
+                example: Origin
+            Content-Type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            Content-Length:
+              schema:
+                type: integer
+                example: '30'
+            Date:
+              schema:
+                type: string
+                example: Fri, 19 Aug 2022 17:20:05 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: preregister (all ok)
+                  value:
+                    username: null
+                    email: null
+                example-1:
+                  summary: preregister (email only)
+                  value:
+                    email: null
+                example-2:
+                  summary: preregister (both invalid)
+                  value:
+                    username: '"username" with value "socious team" fails to match the required pattern: /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/'
+                    email: '"email" must be a valid email'
+                example-3:
+                  summary: preregister (mix of invalid and existing)
+                  value:
+                    username: '"username" with value "socious team" fails to match the required pattern: /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/'
+                    email: EXISTS
+  /auth/otp:
+    post:
+      tags:
+        - auth
+      summary: send otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: '{{user_login}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/otp/confirm:
+    get:
+      tags:
+        - auth
+      summary: confirm otp
+      parameters:
+        - name: code
+          in: query
+          schema:
+            type: integer
+          example: '207364'
+        - name: email
+          in: query
+          schema:
+            type: string
+          example: info@socious.io
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/forget-password:
+    post:
+      tags:
+        - auth
+      summary: forget password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: '{{user_login}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/resend-verify-code:
+    post:
+      tags:
+        - auth
+      summary: resend verify code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: '{{user_login}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: refresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                refresh_token: '{{refresh_token}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/stripe/connect-link:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - auth
+      summary: stripe connect link
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/stripe:
+    post:
+      tags:
+        - auth
+      summary: stripe connect
+      description: 'please make sure we created 2 different link with this bottom template link for 2 different envirement testing (dev.socious.io) and production we may have
+        same redirect path with dev.socious.io/app/.. and socious.io/app/...  domain but CLIENT_ID would be different on each env and redirect_url must be register on Stripe console
+        https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&scope=read_write&redirect_uri=https://socious.io/app/{{STRIPE_CLIENT_REDIRECT_PATH}}
+        after client complete login or register Stripe would redirect client to our webapp redirect_url after that client app if it was success connect
+        must provide the code to BE and BE would result account id and user status for paying out
+        this would help to know Stripe oauth -> https://stripe.com/docs/connect/oauth-reference'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                code: '{{oauth_code}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  account_id: '{{stripe_account_id}}'
+                  status: '{{stripe_onboarding_status}}'
+  /auth/stripe/profile:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - auth
+      summary: stripe connect profile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/categories:
+    get:
+      tags:
+        - project
+      summary: get all job categories
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects:
+    get:
+      tags:
+        - project
+      summary: get all
+      parameters:
+        - name: identity
+          in: query
+          schema:
+            type: string
+          description: uuid of organization to filter
+          example: 2bd26aa5-f745-4f12-bca7-17916161ae8b
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/project-status'
+            default: ACTIVE
+          description: statuses to filter for
+          example: ACTIVE
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - project
+      summary: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                description: Data testing
+                experience_level: 1
+                payment_range_higher: '13'
+                payment_range_lower: '12'
+                payment_scheme: FIXED
+                payment_type: VOLUNTEER
+                remote_preference: HYBRID
+                social_causes:
+                  - SOCIAL
+                  - POVERTY
+                status: ACTIVE
+                title: Testing
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/update/{project_id}:
+    post:
+      tags:
+        - project
+      summary: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                causes_tags:
+                  - SOCIAL
+                country: AL
+                created_at: '2022-09-05T17:19:25.501Z'
+                deleted_at: null
+                description: Structure dsdsd
+                experience_level: 1
+                expires_at: null
+                id: af8f8687-3cc9-49db-8231-4636cfb9a3a5
+                identity_id: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+                old_id: null
+                passions:
+                  - SOCIAL
+                payment_currency: null
+                payment_range_higher: '13'
+                payment_range_lower: '12'
+                payment_scheme: HOURLY
+                payment_type: PAID
+                project_length: LESS_THAN_A_DAY
+                project_type: PART_TIME
+                remote_preference: HYBRID
+                skills:
+                  - ANGULARJS
+                  - CSS
+                  - AWS
+                status: ACTIVE
+                title: 'Sdsdsd Demo New '
+                updated_at: '2022-09-05T17:19:25.501Z'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}:
+    get:
+      tags:
+        - project
+      summary: get
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/offers:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - project
+      summary: get offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/{project_id}/applicants:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - project
+      summary: get applicants
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - project
+      summary: apply
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cover_letter: test text
+                cv_link: http://test.com/cv.pdf
+                cv_name: test text
+                share_contact_info: true
+                answers:
+                  - id: 3fcc4216-0d0a-412d-9747-494e4dc8e53f
+                    answer: 'yes'
+                  - id: 7b9df588-50b2-4896-b343-b9f99c9b7ee1
+                    selected_option: 1
+                    answer: 'yes'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/missions:
+    get:
+      tags:
+        - project
+      summary: get missions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/feedbacks:
+    get:
+      tags:
+        - project
+      summary: get feedbacks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/questions:
+    post:
+      tags:
+        - project
+      summary: add question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                question: are you OK ?
+                required: false
+                options:
+                  - 'yes'
+                  - 'no'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/update/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: update question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                question: are you OK ?
+                required: false
+                options:
+                  - 'yes'
+                  - 'no'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/remove/{project_id}/questions/{question_id}:
+    post:
+      tags:
+        - project
+      summary: remove question
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: question_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /projects/{project_id}/offer/{user_id}:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: project offer direct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offer_text: test offer text
+                offer_rate: 500$
+                due_date: '2022-08-12T11:38:03.40'
+                assignment_total: 5
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /applicants/{applicant_id}/offer:
+    parameters:
+      - name: applicant_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: offer to applicatons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offer_text: test offer text
+                offer_rate: 500$
+                due_date: '2022-08-12T11:38:03.40'
+                assignment_total: 5
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /applicants/{applicant_id}:
+    parameters:
+      - name: applicant_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - project
+      summary: get applicant
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats:
+    get:
+      tags:
+        - chat
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - chat
+      summary: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: test
+                description: test
+                type: CHAT
+                participants:
+                  - bec6c278-52ea-45c6-86b8-67a711f40a00
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/summary:
+    get:
+      tags:
+        - chat
+      summary: summary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - chat
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/update/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - chat
+      summary: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: test1
+                description: test
+                type: CHAT
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/find:
+    post:
+      tags:
+        - chat
+      summary: find
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                participants:
+                  - 311fca4c-057d-4752-9e7c-b985ff1c5294
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: CurrentIdentity
+          in: header
+          schema:
+            type: string
+          example: d3c7223f-8ae6-4e16-9cbf-66b128dc5b74
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/{chat_id}/participants:
+    get:
+      tags:
+        - chat
+      summary: participants
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chat_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/{chat_id}/messages:
+    parameters:
+      - name: chat_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - chat
+      summary: messages
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - chat
+      summary: new message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                text: testttt
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/{chat_id}/messages/{message_id}:
+    parameters:
+      - name: chat_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: message_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - chat
+      summary: reply message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                text: testttt reply
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - chat
+      summary: replied messages
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/update/{chat_id}/messages/{message_id}:
+    parameters:
+      - name: chat_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: message_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - chat
+      summary: edit messages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                text: testttt edited
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/remove/{chat_id}/messages/{message_id}:
+    parameters:
+      - name: chat_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: message_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - chat
+      summary: remove messages
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /chats/update/{chat_id}/messages/{message_id}/read:
+    post:
+      tags:
+        - chat
+      summary: read messages
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chat_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: message_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts:
+    post:
+      tags:
+        - post
+      summary: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+                causes_tags:
+                  - SOCIAL
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - post
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - post
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/remove/{post_id}:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: delete
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/update/{post_id}:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content2
+                causes_tags:
+                  - SOCIAL
+                  - HEALTH
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/report:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: report post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/comments/{comment_id}:
+    parameters:
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - post
+      summary: replies
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/comments/{comment_id}/report:
+    parameters:
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: report comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/comments:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - post
+      summary: comments
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - post
+      summary: new comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: |-
+                {
+                    "content": "comment reply",
+                    
+                }
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/comments/{comment_id}/like:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: comment reply
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/comments/{comment_id}/unlike:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: unlike comment
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/comments/remove/{comment_id}:
+    parameters:
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: delete comment
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/like:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/unlike:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: unlike
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/share:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: share
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs:
+    post:
+      tags:
+        - organizations
+      summary: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: test ORG
+                email: info@socious.io
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - organizations
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/{org_id}:
+    parameters:
+      - name: org_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - organizations
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/update/{org_id}:
+    parameters:
+      - name: org_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - organizations
+      summary: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                address: San Crispin
+                bio: Lets beat childhood cancer
+                city: San Pablo City
+                country: AL
+                description: San Pablo City, Laguna, Philippines
+                email: jayson.vergara.ilagan@gmail.com
+                mission: Asasas
+                mobile_country_code: '+81'
+                name: Beat childhood cancer
+                phone: '9171260643'
+                social_causes:
+                  - SOCIAL
+                website: https://asasas.com
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/{org_id}/members:
+    parameters:
+      - name: org_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - organizations
+      summary: members
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/{org_id}/members/{user_id}:
+    parameters:
+      - name: org_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - organizations
+      summary: add member
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/remove/{org_id}/members/{user_id}:
+    parameters:
+      - name: org_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - organizations
+      summary: delete member
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/profile:
+    get:
+      tags:
+        - users
+      summary: profile
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{user_id}/report:
+    parameters:
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: report user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: content2
+                blocked: false
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/recommend:
+    get:
+      tags:
+        - users
+      summary: user recommend
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/update/profile:
+    post:
+      tags:
+        - users
+      summary: update profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                bio: I’m looking right now through the code. typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more re dfsdfgdfg Dfg
+                city: San Pablo City
+                country: PH
+                first_name: Jayson
+                last_name: Ilagan
+                mission: Hdhshsh
+                mobile_country_code: '+63'
+                phone: '5464542'
+                skills:
+                  - ANGULARJS
+                  - JAVASCRIPT
+                  - NODE.JS
+                  - REACT.JS
+                  - REACT_NATIVE
+                social_causes:
+                  - POVERTY
+                  - HEALTH
+                  - CHILD_PROTECTION
+                  - ANIMAL_RIGHTS
+                  - DEMOCRACY
+                username: socious2022
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/update/wallet:
+    post:
+      tags:
+        - users
+      summary: update user wallet address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                wallet_address: '0x18Adf002AE3a67089E67B5765DaB67Be01C7b5ee'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/languages:
+    post:
+      tags:
+        - users
+      summary: add user language
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: FA
+                level: NATIVE
+              properties:
+                level:
+                  $ref: '#/components/schemas/language-level'
+                name:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/languages/update/{language_id}:
+    parameters:
+      - name: language_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: update user language
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: EN
+                level: PROFICIENT
+              properties:
+                level:
+                  $ref: '#/components/schemas/language-level'
+                name:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/languages/remove/{language_id}:
+    parameters:
+      - name: language_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: remove user language
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/experiences:
+    post:
+      tags:
+        - users
+      summary: add user experience
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                org_id: 0bf22f38-0c18-4762-9af8-9f36960af8cd,
+                title: Test,
+                description: Test,
+                start_at: 2021-10-16T13:32:30.211Z,
+                end_at: 2022-10-16T13:32:30.211Z,
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/experiences/update/{experience_id}:
+    parameters:
+      - name: experience_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: update user experience
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                org_id: 0bf22f38-0c18-4762-9af8-9f36960af8cd,
+                title: Test,
+                description: Test,
+                start_at: 2021-10-16T13:32:30.211Z,
+                end_at: 2022-10-16T13:32:30.211Z,
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/experiences/remove/{experience_id}:
+    parameters:
+      - name: experience_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: remove user experience
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/change-password:
+    post:
+      tags:
+        - users
+      summary: change password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                current_password: socious2022
+                password: socious2023
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/change-password-direct:
+    post:
+      tags:
+        - users
+      summary: change password direct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                password: socious2022
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/delete:
+    post:
+      tags:
+        - users
+      summary: delete
+      description: Warning!!! this would delete user without any recovery method
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                reason: test
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{user_id}/profile:
+    parameters:
+      - name: user_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - users
+      summary: other user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/by-username/{username}/profile:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        example: seira-yun8611
+        required: true
+    get:
+      tags:
+        - users
+      summary: other profile by username
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/applicants:
+    get:
+      tags:
+        - users
+      summary: get user applicants
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/offers:
+    get:
+      tags:
+        - users
+      summary: get user offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/missions:
+    get:
+      tags:
+        - users
+      summary: get user missions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/badges:
+    get:
+      tags:
+        - users
+      summary: get user badges
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/impact-points:
+    get:
+      tags:
+        - users
+      summary: get user impact points history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /identities:
+    get:
+      tags:
+        - identity
+      summary: current
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /identities/{identity_id}:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - identity
+      summary: get
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: CurrentIdentity
+          in: header
+          schema:
+            type: string
+          example: 2e67a3e9-7d0f-41fe-8039-38fb6928ab0c
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /identities/set/{identity_id}/session:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - identity
+      summary: set identity session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /devices:
+    post:
+      tags:
+        - device
+      summary: add
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                token: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+                meta:
+                  os: ANDROID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - device
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /devices/update:
+    post:
+      tags:
+        - device
+      summary: update meta data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                token: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+                meta:
+                  os: ANDROID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /devices/remove/{token}:
+    parameters:
+      - name: token
+        in: path
+        schema:
+          type: string
+        required: true
+        example: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+    post:
+      tags:
+        - device
+      summary: remove token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /follows/{identity_id}:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - follows
+      summary: follow
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /follows/{identity_id}/unfollow:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - follows
+      summary: unfollow
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /follows/followings:
+    get:
+      tags:
+        - follows
+      summary: followings
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: c8765d15-030d-4ebc-a493-9265c0911f16
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: test
+        - name: type
+          in: query
+          schema:
+            type: string
+          example: organizations
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /follows/followers:
+    get:
+      tags:
+        - follows
+      summary: followers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: c8765d15-030d-4ebc-a493-9265c0911f16
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: test
+        - name: type
+          in: query
+          schema:
+            type: string
+          example: organizations
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /search:
+    post:
+      tags:
+        - search
+      summary: search
+      description: filtering format would be like mongo objects with ('eq', 'ne', 'gt', 'gte', 'lt', 'lte') for array columns only 'eq' would be available for clarify filters operator stand for (equal, not equal, greater, greater equal, little, little equal) as example we may not use any of them it wiyld be default equal operator. columns for each type would be projects = ['country', 'causes_tags', 'skills', 'payment_type', 'payment_scheme', 'status'] posts = ['causes_tags', 'hashtags'] users,related_users = ['country', 'social_causes', 'skills'] organizations = ['country', 'type', 'social_causes']
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              q: search q
+              type: projects
+              filter:
+                causes_tags:
+                  - SOCIAL
+                status:
+                  ne: ACTIVE
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /search/history:
+    get:
+      tags:
+        - search
+      summary: current user search history
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: c8765d15-030d-4ebc-a493-9265c0911f16
+        - name: limit
+          in: query
+          schema:
+            type: number
+          example: 100
+        - name: page
+          in: query
+          schema:
+            type: number
+          example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /media/upload:
+    post:
+      tags:
+        - media
+      summary: upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /media/{media_id}:
+    parameters:
+      - name: media_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - media
+      summary: get media
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /missions/{mission_id}:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - missions
+      summary: get mission
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /missions/{mission_id}/complete:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: complete job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/confirm:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: confirm job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/confirm/{work_id}:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: work_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: confirm job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/cancel:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: cancel job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/kickout:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: cancel job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/feedback:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: feedback job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              content: test
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/submitworks:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: feedback job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              total_hours: 5
+              start_at: 2021-10-16T13:32:30.211Z
+              end_at: 2021-10-16T13:32:30.211Z
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /missions/{mission_id}/contest:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - missions
+      summary: contest job
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /notifications/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - notifications
+      summary: get
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications:
+    get:
+      tags:
+        - notifications
+      summary: all
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/{notif_id}:
+    parameters:
+      - name: notif_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - notifications
+      summary: read one
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/read/all:
+    post:
+      tags:
+        - notifications
+      summary: read all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/settings:
+    get:
+      tags:
+        - notifications
+      summary: get current user notification settings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - notifications
+      summary: update current user notification settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                settings:
+                  - type: FOLLOWED
+                    in_app: true
+                    email: false
+                    push: true
+                  - type: APPLICATION
+                    email: true
+                    in_app: true
+                    push: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+    get:
+      tags:
+        - offers
+      summary: get offer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /offers/{offer_id}/withrawn:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: withrawn offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/cancel:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+    post:
+      tags:
+        - offers
+      summary: cancel offer from offerer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/approve:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - offers
+      summary: approve offer from recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /offers/{offer_id}/hire:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+    post:
+      tags:
+        - offers
+      summary: offerer hire the recepient
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /geo/ip:
+    get:
+      tags:
+        - geo
+      summary: get location of IP address
+      parameters:
+        - name: ip
+          in: query
+          description: IP address to check. If ommitted, checks request (client) address.
+          schema:
+            type: string
+          required: false
+          examples:
+            talinn:
+              summary: Talinn
+              value: 82.131.12.120
+            tokyo:
+              summary: Tokyo
+              value: 91.234.192.9
+            sao_paulo:
+              summary: São Paulo
+              value: 2.57.171.45
+            new_york:
+              summary: New York
+              value: 157.254.225.113
+            london:
+              summary: London
+              value: 185.192.70.165
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: location id for geoname API
+                    example: 5128581
+                  country:
+                    type: string
+                    description: ISO country code
+                    example: US
+                  region:
+                    type: string
+                    description: ISO 3166-2 or FIPS PUB 10-4 first-level region code
+                    example: NY
+                  city:
+                    type: string
+                    example: New York
+                  eu:
+                    type: boolean
+                    description: true if the location is in the European Union
+                    example: false
+                  timezone:
+                    type: string
+                    description: IANA timezone
+                    example: America/New_York
+                  admin1_code:
+                    type: string
+                    description: first-level division ISO code
+                    example: NY
+                  admin1_id:
+                    type: number
+                    description: first-level division ID for geoname
+                    example: 5128638
+                  admin1_name:
+                    type: string
+                    description: first-level division name
+                    example: New York
+                  admin2_code:
+                    type: string
+                    description: second-level division ISO code where applicable
+                    example:
+                  admin2_id:
+                    type: number
+                    description: second-level division ID for geoname where applicable
+                    example:
+                  admin2_name:
+                    type: string
+                    description: second-level division name where applicable
+                    example:
+  /geo/locations/country/{countryCode}:
+    get:
+      tags:
+        - geo
+      summary: get locations (cities, towns, etc) in country
+      parameters:
+        - name: countryCode
+          in: path
+          description: ISO (2-letter) country code
+          schema:
+            type: string
+            maxLength: 2
+            minLength: 2
+          example: US
+          required: true
+        - name: search
+          in: query
+          required: false
+          description: limit to locations matching this string
+          schema:
+            type: string
+          example: apple
+        - name: limit
+          in: query
+          schema:
+            type: number
+          example: 50
+        - name: page
+          in: query
+          schema:
+            type: number
+          example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: number
+                    example: 1
+                  limit:
+                    type: number
+                    example: 50
+                  total_count:
+                    type: number
+                    example: 18
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        type:
+                          $ref: '#/components/schemas/location_type'
+                        population:
+                          type: number
+                        country_code:
+                          type: string
+                        region_id:
+                          type: string
+                        region_name:
+                          type: string
+                        region_iso:
+                          type: string
+                        subregion_id:
+                          type: string
+                        subregion_name:
+                          type: string
+                        subregion_iso:
+                          type: string
+                        alternate_name:
+                          type: string
+                        alt_language:
+                          type: string
+                        is_historic:
+                          type: boolean
+                        is_colloquial:
+                          type: boolean
+                        is_short_name:
+                          type: boolean
+              example:
+                page: 1
+                limit: 50
+                total_count: 2
+                items:
+                  - id: 5145894
+                    name: Apple Creek
+                    type: PPL
+                    population: 1184
+                    country_code: US
+                    region_id: OH
+                    subregion_id: 169
+                    region_name: Ohio
+                    region_iso: OH
+                    subregion_name: null
+                    subregion_iso: null
+                  - id: 5128581
+                    name: New York City
+                    type: PPL
+                    population: 8804190
+                    country_code: US
+                    alternate_name: The Big Apple
+                    alt_language: en
+                    is_historic: false
+                    is_colloquial: true
+                    is_short_name: false
+                    region_id: NY
+                    subregion_id:
+                    region_name: New York
+                    region_iso: NY
+                    subregion_name: null
+                    subregion_iso: null
+  /connections:
+    get:
+      tags:
+        - connect
+      summary: get connections
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connections/{connect_id}:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - connect
+      summary: get a connect obj
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{identity_id}:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: send connect request to an identity
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            example:
+              text: please connect to me
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{connect_id}/accept:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: accept connect request
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{connect_id}/block:
+    parameters:
+      - name: connect_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: block connect request
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /connections/{identity_id}/block/direct:
+    parameters:
+      - name: identity_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - connect
+      summary: block an identity
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards:
+    get:
+      tags:
+        - payments
+      summary: get identities cards
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - payments
+      summary: add new card
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                holder_name: test text
+                numbers: '4242424242424242'
+                exp_month: 11
+                exp_year: 2023
+                cvc: '314'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards/update/{card_id}:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: update card
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                holder_name: test text
+                numbers: '4242424242424242'
+                exp_month: 11
+                exp_year: 2023
+                cvc: '314'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/cards/remove/{card_id}:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: remove card
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/cards/:card_id:
+    parameters:
+      - name: card_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - payments
+      summary: get a card
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/payment_id:
+    parameters:
+      - name: payment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - payments
+      summary: get a payment details
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/donate:
+    post:
+      tags:
+        - payments
+      summary: donate
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                amount: 2000
+                service: 'STRIPE'
+                source: <card_id>
+                currency: USD
+                description: test desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/offers/{offer_id}:
+    parameters:
+      - name: offer_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+        example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+    post:
+      tags:
+        - payments
+      summary: pay offer escrow
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                amount: 2000
+                service: 'STRIPE'
+                source: <card_id>
+                currency: USD
+                description: test desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /payments/missions/{mission_id}/payout:
+    parameters:
+      - name: mission_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - payments
+      summary: pay offer escrow
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /test-emails/{address}:
+    parameters:
+      - name: address
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - test
+      summary: test email content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /test-emails/{address}/{id}:
+    parameters:
+      - name: address
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - test
+      summary: test email content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}

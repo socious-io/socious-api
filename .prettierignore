@@ -1,0 +1,8 @@
+node_modules
+*.md
+*.yaml
+*.yml
+*.html
+*.css*
+.*
+/apidoc

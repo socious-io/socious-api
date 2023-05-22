@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "fromenv",
+  "fromenv": {
+    "driver": "pg",
+    "user": { "ENV": "PGUSER" },
+    "password": { "ENV": "PGPASSWORD" },
+    "host": { "ENV": "PGHOST" },
+    "port": { "ENV": "PGPORT" },
+    "database": { "ENV": "PGDATABASE" }
+  }
+}

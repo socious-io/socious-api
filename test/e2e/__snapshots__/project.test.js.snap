@@ -1,0 +1,842 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+{
+  "error": ""email" must be a valid email",
+}
+`;
+
+exports[` 2`] = `
+{
+  "address": "address",
+  "bio": "test",
+  "city": "Tokyo",
+  "country": "JP",
+  "cover_image": null,
+  "created_at": Any<String>,
+  "created_by": Any<String>,
+  "culture": "test",
+  "description": "test",
+  "email": "test@socious.io",
+  "followers": 0,
+  "followings": 0,
+  "geoname_id": null,
+  "id": Any<String>,
+  "image": null,
+  "impact_points": 0,
+  "mission": "test",
+  "mobile_country_code": null,
+  "name": "test ORG",
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "phone": "9379911",
+  "search_tsv": Any<String>,
+  "shortname": Any<String>,
+  "social_causes": [
+    "SOCIAL",
+    "HEALTH",
+  ],
+  "status": "ACTIVE",
+  "type": "COOP",
+  "updated_at": Any<String>,
+  "verified_impact": false,
+  "wallet_address": null,
+  "website": "http://test.com",
+}
+`;
+
+exports[` 3`] = `
+{
+  "address": "address",
+  "bio": "test",
+  "city": "Tehran",
+  "country": "IR",
+  "cover_image": null,
+  "created_at": Any<String>,
+  "created_by": Any<String>,
+  "culture": "test",
+  "description": "test",
+  "email": "test@socious.io",
+  "followers": 0,
+  "followings": 0,
+  "geoname_id": null,
+  "id": Any<String>,
+  "image": null,
+  "impact_points": 0,
+  "mission": "test",
+  "mobile_country_code": null,
+  "name": "test ORG",
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "phone": "9899993",
+  "search_tsv": Any<String>,
+  "shortname": Any<String>,
+  "social_causes": [
+    "SOCIAL",
+    "MENTAL",
+  ],
+  "status": "ACTIVE",
+  "type": "SOCIAL",
+  "updated_at": Any<String>,
+  "verified_impact": false,
+  "wallet_address": null,
+  "website": "http://test.com",
+}
+`;
+
+exports[` 4`] = `
+{
+  "error": ""phone" must be a string",
+}
+`;
+
+exports[`add questions 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 2`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 3`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 4`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 5`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add questions 6`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`apply 1`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`apply 2`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`apply 3`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`apply 4`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`confirm 1`] = `
+[
+  {
+    "count": 1,
+    "social_cause_category": "NO_POVERTY",
+    "total_points": 3564,
+  },
+]
+`;
+
+exports[`create 1`] = `
+{
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tokyo",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "JP",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "job_category_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "JPY",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "1_3_MONTHS",
+  "project_type": "FULL_TIME",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 1",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`create 2`] = `
+{
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tehran",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "IR",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "job_category_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "USD",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "LESS_THAN_A_MONTH",
+  "project_type": "ONE_OFF",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 2",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`get 1`] = `
+{
+  "applicants": 0,
+  "applied": false,
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tokyo",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "JP",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "identity_meta": Any<Object>,
+  "identity_type": "organizations",
+  "job_category": Any<Object>,
+  "job_category_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "JPY",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "1_3_MONTHS",
+  "project_type": "FULL_TIME",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 1",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`get 2`] = `
+{
+  "applicants": 0,
+  "applied": false,
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tehran",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "IR",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "identity_meta": Any<Object>,
+  "identity_type": "organizations",
+  "job_category": Any<Object>,
+  "job_category_id": Any<String>,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "USD",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "LESS_THAN_A_MONTH",
+  "project_type": "ONE_OFF",
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 2",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[`get all 1`] = `
+{
+  "items": [
+    {
+      "applicants": 0,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tehran",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "IR",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "USD",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "LESS_THAN_A_MONTH",
+      "project_type": "ONE_OFF",
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 2",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+    {
+      "applicants": 0,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tokyo",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "JP",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "JPY",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "1_3_MONTHS",
+      "project_type": "FULL_TIME",
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 1",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 2,
+}
+`;
+
+exports[`get applicants 1`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`get applicants 2`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`get applicants 3`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`get applicants 4`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`get feedbacks 1`] = `
+{
+  "content": "TEST",
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "identity": Any<Object>,
+  "identity_id": Any<String>,
+  "is_contest": false,
+  "mission_id": Any<String>,
+  "project_id": Any<String>,
+}
+`;
+
+exports[`get filtered 1`] = `
+{
+  "items": [
+    {
+      "applicants": 0,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tokyo",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "JP",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "JPY",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "1_3_MONTHS",
+      "project_type": "FULL_TIME",
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 1",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
+}
+`;
+
+exports[`offer 1`] = `
+{
+  "applicant": Any<Object>,
+  "applicant_id": Any<String>,
+  "assignment_total": 30000,
+  "created_at": Any<String>,
+  "crypto_currency_address": null,
+  "due_date": Any<String>,
+  "escrow": Any<Object>,
+  "id": Any<String>,
+  "job_category": Any<Object>,
+  "offer_message": "Test",
+  "offer_rate": 9000,
+  "offerer": Any<Object>,
+  "offerer_id": Any<String>,
+  "organization": Any<Object>,
+  "payment_mode": "FIAT",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "recipient": Any<Object>,
+  "recipient_id": Any<String>,
+  "status": "PENDING",
+  "total_hours": 180,
+  "updated_at": Any<String>,
+  "weekly_limit": null,
+}
+`;
+
+exports[`reject 1`] = `
+{
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": "TEST",
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "REJECTED",
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`user applicants 1`] = `
+{
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "organization": Any<Object>,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "CLOSED",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`user applicants 2`] = `
+{
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "organization": Any<Object>,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "share_contact_info": true,
+  "status": "CLOSED",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;

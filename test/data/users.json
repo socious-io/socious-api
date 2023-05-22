@@ -1,0 +1,43 @@
+[
+  {
+    "username": "test_username",
+    "first_name": "test_name",
+    "last_name": "last_name",
+    "email": "test@test.io",
+    "goals": "TEST",
+    "phone": "9999999999",
+    "mobile_country_code": "+98",
+    "certificates": ["test"],
+    "educations": ["test"],
+    "bio": "TEST",
+    "mission": "TEST",
+    "password": "test_password"
+  },
+  {
+    "username": "test_username_2",
+    "first_name": "test_name_2",
+    "last_name": "last_name_2",
+    "goals": "TEST",
+    "email": "test2@test.io",
+    "phone": "9999999999",
+    "mobile_country_code": "+98",
+    "certificates": ["test"],
+    "educations": ["test"],
+    "bio": "TEST",
+    "mission": "TEST",
+    "password": "test_password"
+  },
+  {
+    "invalid": true,
+    "username": "test_username_2",
+    "first_name": "test_name_2",
+    "last_name": "last_name_2",
+    "email": "test2test.io",
+    "goals": "TEST",
+    "certificates": ["test"],
+    "educations": ["test"],
+    "bio": "TEST",
+    "mission": "TEST",
+    "password": "test_password"
+  }
+]

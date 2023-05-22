@@ -1,0 +1,9 @@
+Dockerfile
+.github
+.dockerignore
+docker-compose.yaml
+node_modules
+npm-debug.log
+.vscode
+editorconfig
+template.env

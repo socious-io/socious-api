@@ -1,0 +1,288 @@
+name: Docker
+
+on:
+  push:
+    branches: ["main", "production"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # debug:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Dump GH context
+  #       run: echo "${{ toJSON(github) }}"
+  #     - name: Dump job context
+  #       run: echo '${{ toJSON(job) }}'
+
+  build:
+    if:  github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # # Install the cosign tool except on PR
+      # # https://github.com/sigstore/cosign-installer
+      # - name: Install cosign
+      #   if: github.event_name != 'pull_request'
+      #   uses: sigstore/cosign-installer@7e0881f8fe90b25e305bbf0309761e9314607e25
+      #   with:
+      #     cosign-release: "v1.9.0"
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # # Sign the resulting Docker image digest except on PRs.
+      # # This will only write to the public Rekor transparency log when the Docker
+      # # repository is public to avoid leaking data.  If you would like to publish
+      # # transparency data even for private images, pass --force to cosign below.
+      # # https://github.com/sigstore/cosign
+      # - name: Sign the published Docker image
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   env:
+      #     COSIGN_EXPERIMENTAL: "true"
+      #   # This step uses the identity token to provision an ephemeral certificate
+      #   # against the sigstore community Fulcio instance.
+      #   run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
+
+  build-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # # Install the cosign tool except on PR
+      # # https://github.com/sigstore/cosign-installer
+      # - name: Install cosign
+      #   if: github.event_name != 'pull_request'
+      #   uses: sigstore/cosign-installer@7e0881f8fe90b25e305bbf0309761e9314607e25
+      #   with:
+      #     cosign-release: "v1.9.0"
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev
+
+      # Build and push dev Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          target: development
+
+  run-tests:
+    needs: build-dev
+    name: Tests
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    runs-on: ["backend-dev"]
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev
+      
+      - name: Run DB and NATS
+        run: docker-compose up -d
+
+      - name: Pull image
+        run: docker pull ${{ steps.meta.outputs.tags }}
+
+      - name: Lint tests
+        if: always()
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run lint
+
+      - name: Prepare tests
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run pretest
+
+      - name: Create output directory
+        run: rm -rf test-results ; mkdir -m a+rwx test-results
+
+      - name: Run tests
+        run: docker run --env-file /etc/socious-api/test.env -v "$(pwd)/test-results:/usr/src/app/test-results" --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run test:ci
+
+      - name: Cleanup tests
+        if: always()
+        run: docker run --env-file /etc/socious-api/test.env --rm --network sociousapi_default ${{ steps.meta.outputs.tags }} npm run aftertest
+      
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-results
+
+  deploy-dev:
+    needs: [build, run-tests]
+    name: Deploy to Dev
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ["backend-dev"]
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run NATS
+        run: docker-compose up -d
+
+      - name: Run DB migrations
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker rm -fv socious-migrations
+          docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+
+      - name: Docker run
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
+          docker run -d --restart always -p 5061:5061 -h socious-api -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+
+      - name: Docker run workers
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
+          docker run -d --restart always -h socious-workers -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
+
+  deploy-prod:
+    needs: [build]
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/production' && github.event_name == 'push'
+    runs-on: ["backend-prod"]
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run NATS
+        run: docker-compose up -d
+
+      - name: Run DB migrations
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker rm -fv socious-migrations
+          docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+
+      - name: Docker run
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
+          docker run -d --restart always -p 5061:5061 -h socious-api -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
+
+      - name: Docker run workers
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
+          docker run -d --restart always -h socious-workers -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers

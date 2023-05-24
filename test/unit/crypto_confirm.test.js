@@ -15,4 +15,13 @@ test('calculate', async () => {
       '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82'
     )
   ).toBe(true)
+  expect(
+    await confirmTx(
+      '0x18Adf002AE3a67089E67B5765DaB67Be01C7b5ee',
+      '0xF35a012313Be8c7c3c48e86466fe3b8cd809a7b0',
+      8.24,
+      '0x92c693c41adc79bca9140b36c36f91fa5eb1ecbd6768526463fff1d0ee5b8a78',
+      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82'
+    )
+  ).toBe(true)
 })

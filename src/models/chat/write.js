@@ -13,7 +13,6 @@ export const create = async (identity, { type, participants, description, name }
   participants = participants.map((id) => id.toLowerCase())
 
   await Promise.all(participants.filter((p) => p !== identity.id).map((p) => chatPermission(identity, p)))
-  console.log('*******************', participants)
 
   if (!participants.includes(identity.id)) participants.push(identity.id)
   participants.sort()

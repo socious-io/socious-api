@@ -29,7 +29,6 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     )
     return false
   }
-
   const data = {
     module: 'account',
     action: 'tokentx',
@@ -53,7 +52,9 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     return false
   }
 
+
   const tx = response.data.result.filter((r) => r.hash === txHash)[0]
+
 
   if (!tx && retry < 8) {
     await delay(5000)
@@ -79,14 +80,15 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   // TODO verify amount
   const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100
 
-  if (amount >= txAmount) {
-    ;`CONFIRM CRYPTODATA ${JSON.stringify({
+
+  if (amount > txAmount) {
+    logger.error(`CONFIRM CRYPTODATA ${JSON.stringify({
       src,
       dest,
       amount,
       txHash,
       token
-    })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${amount} >= ${txAmount}`
+    })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${amount} >= ${txAmount}`)
     return false
   }
 

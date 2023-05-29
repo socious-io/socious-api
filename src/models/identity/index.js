@@ -45,14 +45,12 @@ const getAll = async (userId, identityId) => {
   return rows
 }
 
-// TODO: process commission flow
-const commissionFee = (identity) => {
+const commissionFee = (identity, impactProject=false) => {
   switch (identity.type) {
     case Data.IdentityType.USER:
-      return 0.1
+      return impactProject ? 0.05 : 0.1
     case Data.IdentityType.ORG:
-      if (identity.meta.verified_impact) return 0.02
-      return 0.03
+      return identity.meta.verified_impact ? 0.02 : 0.03
     default:
       throw new NotImplementedError()
   }

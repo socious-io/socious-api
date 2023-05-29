@@ -7,6 +7,7 @@ import Identity from '../models/identity/index.js'
 import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { BadRequestError } from '../utils/errors.js'
+import Mission from '../models/mission/index.js'
 
 export const router = new Router()
 
@@ -94,10 +95,12 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     throw new BadRequestError('Stripe account unboarding required')
   }
 
-  const escrow = await Payment.getEscrow(ctx.mission.id)
+  const mission = await Mission.get(ctx.mission.id)
+
+  const escrow = mission.escrow
 
   // payout escrow amount with calculate commission fee
-  const amount = escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity)
+  const amount = escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity, mission.assigner.meta.verified_impact)
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {
     amount,

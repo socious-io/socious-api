@@ -2,6 +2,7 @@ import Router from '@koa/router'
 import Data, { validate } from '@socious/data'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import Payment from '../services/payments/index.js'
+import { cryptoUSDRate } from '../services/payments/crypto.js'
 import OAuthConnects from '../services/oauth_connects/index.js'
 import Identity from '../models/identity/index.js'
 import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
@@ -61,7 +62,6 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   let amount = ctx.offer.assignment_total
   amount += amount * Identity.commissionFee(ctx.identity)
 
-
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
     currency: ctx.offer.project.currency,
@@ -100,7 +100,8 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   const escrow = mission.escrow
 
   // payout escrow amount with calculate commission fee
-  const amount = escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity, mission.assigner.meta.verified_impact)
+  const amount =
+    escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity, mission.assigner.meta.verified_impact)
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {
     amount,
@@ -113,5 +114,13 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   ctx.body = {
     message: 'success',
     transaction_id: payout.id
+  }
+})
+
+router.get('/crypto/rate', async (ctx) => {
+  const rate = await cryptoUSDRate(ctx.query.token)
+
+  ctx.body = {
+    rate
   }
 })

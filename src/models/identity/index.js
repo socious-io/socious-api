@@ -45,7 +45,7 @@ const getAll = async (userId, identityId) => {
   return rows
 }
 
-const commissionFee = (identity, impactProject=false) => {
+const commissionFee = (identity, impactProject = false) => {
   switch (identity.type) {
     case Data.IdentityType.USER:
       return impactProject ? 0.05 : 0.1

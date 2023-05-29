@@ -135,6 +135,7 @@ export default {
     key: process.env.FCM_KEY
   },
   crypto: {
+    usd_convertor: JSON.parse(process.env.CRYPTO_USD_CONVERTOR || '{}'),
     networks: [
       {
         escrow: {

@@ -7,7 +7,7 @@ export const filterColumns = {
   status: String
 }
 
-export const sortColumns = ['created_at', 'updated_at', 'connected_at']
+export const sortColumns = ['created_at', 'updated_at', 'connected_at', 'status', 'requested_id', 'requester_id']
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(

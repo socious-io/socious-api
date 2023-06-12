@@ -4,7 +4,9 @@ import { PermissionError } from '../../utils/errors.js'
 import { sorting, filtering } from '../../utils/query.js'
 
 export const filterColumns = {
-  status: String
+  status: String,
+  requested_id: String,
+  requester_id: String
 }
 
 export const sortColumns = ['created_at', 'updated_at', 'connected_at', 'status', 'requested_id', 'requester_id']

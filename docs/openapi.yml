@@ -2984,6 +2984,18 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /connections/related/{identity_id}:
+    get:
+      tags:
+        - connect
+      summary: get related connect
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /connections/{connect_id}:
     parameters:
       - name: connect_id

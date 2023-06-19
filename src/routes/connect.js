@@ -14,6 +14,14 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Connect.all(ctx.identity.id, ctx.paginate)
 })
 
+router.get('/related/:identity_id', loginRequired, async (ctx) => {
+  try {
+    ctx.body = { connect: await Connect.related(ctx.identity.id, ctx.params.identity_id) }
+  } catch {
+    ctx.body = {connect: null }
+  }
+})
+
 router.get('/:id', loginRequired, checkIdParams, connectPermission, async (ctx) => {
   ctx.body = await Connect.get(ctx.params.id)
 })

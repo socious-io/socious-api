@@ -3097,7 +3097,19 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
+  
+  /payments:
+    get:
+      tags:
+        - payments
+      summary: get transactions history
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /payments/cards:
     get:
       tags:

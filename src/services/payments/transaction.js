@@ -64,7 +64,7 @@ export const get = async (id, identityId) => {
 }
 
 export const all = async (identityId, { limit = 10, offset = 0 }) => {
-  return app.db.query(sql`
+  const { rows } = app.db.query(sql`
     SELECT 
       COUNT(*) OVER () as total_count, * 
     FROM payments 
@@ -72,4 +72,5 @@ export const all = async (identityId, { limit = 10, offset = 0 }) => {
     ORDER BY created_at DESC
     LIMIT ${limit} OFFSET ${offset}    
   `)
+  return rows
 }

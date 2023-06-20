@@ -118,3 +118,12 @@ export const worker = async ({ mission }) => {
 
   return true
 }
+
+
+export const calculateLenders = async ({ amount, is_lender }) => {
+  // 10% of lending amount calculate as impact points
+  if (is_lender) return amount * 0.1
+
+  // fetch fee from paid amount and 100 % of fee calculate as impact points
+  return amount * 0.013
+}

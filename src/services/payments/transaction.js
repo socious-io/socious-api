@@ -68,8 +68,8 @@ export const all = async (identityId, { limit = 10, offset = 0 }) => {
     SELECT 
       COUNT(*) OVER () as total_count, * 
     FROM payments 
-    WHERE identity_id=${identityId}    
-    LIMIT ${limit} OFFSET ${offset}
+    WHERE identity_id=${identityId}
     ORDER BY created_at DESC
+    LIMIT ${limit} OFFSET ${offset}    
   `)
 }

@@ -67,6 +67,7 @@ export const getProfile = async (id, currentIdentity) => {
     city, country, geoname_id, mission, bio, impact_points,
     skills, followers, followings, u.created_at, wallet_address,
     proofspace_connect_id,
+    phone, address,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -110,6 +111,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     city, geoname_id, country, mission, bio, impact_points,
     skills, followers, followings, u.created_at, wallet_address,
     proofspace_connect_id,
+    phone, address,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
@@ -171,6 +173,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     skills, followers, followings, u.created_at, wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     proofspace_connect_id,
+    phone, address,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
@@ -205,7 +208,6 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     ${sorting(sort, sortColumns)}
     `
   )
-  console.log('-------------_@@@')
   return rows
 }
 

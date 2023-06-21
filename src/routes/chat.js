@@ -116,7 +116,10 @@ router.post('/remove/:id/participants/:identity_id', loginRequired, checkIdParam
 })
 
 router.get('/:id/messages', loginRequired, paginate, checkIdParams, chatPermission, async (ctx) => {
-  ctx.body = await Chat.messages(ctx.params.id, ctx.paginate)
+  const messages = await Chat.messages(ctx.params.id, ctx.paginate)
+  if (messages.length > 0) await Chat.readMessage(messages[0], ctx.identity.id)
+  
+  ctx.body = messages
 })
 
 router.post('/:id/messages', loginRequired, checkIdParams, chatPermission, async (ctx) => {

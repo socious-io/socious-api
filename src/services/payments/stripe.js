@@ -11,10 +11,10 @@ const stripeAmount = (amount, currency) => {
   switch (currency) {
     case Data.PaymentCurrency.USD:
       amount *= 100
-      return amount
+      return Math.floor(amount)
     default:
       amount *= 100
-      return amount
+      return Math.floor(amount)
   }
 }
 

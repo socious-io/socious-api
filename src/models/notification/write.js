@@ -2,11 +2,11 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async (userId, refId, notifType, data) => {
+export const create = async (userId, refId, notifType, silent, data) => {
   try {
     const { rows } = await app.db.query(sql`
-    INSERT INTO notifications (type, ref_id, user_id, data)
-      VALUES(${notifType}, ${refId}, ${userId}, ${data})
+    INSERT INTO notifications (type, ref_id, user_id, silent, data)
+      VALUES(${notifType}, ${refId}, ${userId}, ${silent}, ${data})
       RETURNING id
   `)
     return rows[0].id

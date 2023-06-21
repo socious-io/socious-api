@@ -5,7 +5,7 @@ import { app } from '../../index.js'
 export const all = async (userId, { offset = 0, limit = 10 }) => {
   const { rows } = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, *
-    FROM notifications WHERE user_id=${userId}
+    FROM notifications WHERE user_id=${userId} and silent=false
     ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}`
   )
   return rows

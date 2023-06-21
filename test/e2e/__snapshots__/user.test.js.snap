@@ -67,6 +67,7 @@ exports[`login 1`] = `
 
 exports[`profile 1`] = `
 {
+  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
@@ -135,6 +136,7 @@ exports[`profile 1`] = `
   ],
   "last_name": "last_name",
   "mission": null,
+  "phone": null,
   "proofspace_connect_id": null,
   "reported": false,
   "skills": null,
@@ -146,6 +148,7 @@ exports[`profile 1`] = `
 
 exports[`profile 2`] = `
 {
+  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
@@ -214,6 +217,7 @@ exports[`profile 2`] = `
   ],
   "last_name": "last_name_2",
   "mission": null,
+  "phone": null,
   "proofspace_connect_id": null,
   "reported": false,
   "skills": null,
@@ -225,6 +229,7 @@ exports[`profile 2`] = `
 
 exports[`profile by username 1`] = `
 {
+  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
@@ -293,6 +298,7 @@ exports[`profile by username 1`] = `
   ],
   "last_name": "last_name",
   "mission": null,
+  "phone": null,
   "proofspace_connect_id": null,
   "reported": false,
   "skills": null,
@@ -304,6 +310,7 @@ exports[`profile by username 1`] = `
 
 exports[`profile by username 2`] = `
 {
+  "address": null,
   "avatar": null,
   "bio": null,
   "city": null,
@@ -372,6 +379,7 @@ exports[`profile by username 2`] = `
   ],
   "last_name": "last_name_2",
   "mission": null,
+  "phone": null,
   "proofspace_connect_id": null,
   "reported": false,
   "skills": null,
@@ -437,6 +445,7 @@ exports[`update language 2`] = `
 
 exports[`update profile 1`] = `
 {
+  "address": null,
   "avatar": null,
   "bio": "TEST",
   "city": null,
@@ -505,6 +514,7 @@ exports[`update profile 1`] = `
   ],
   "last_name": "last_name",
   "mission": "TEST",
+  "phone": "9999999999",
   "proofspace_connect_id": null,
   "reported": false,
   "skills": [],

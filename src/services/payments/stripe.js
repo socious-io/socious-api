@@ -45,10 +45,12 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     source: card.id
   })
 
+  const fixedAmount = Math.floor(stripeAmount(amount, currency) + (stripeAmount(amount, currency) * 0.34) + 50)
+
   console.log(
     'Stripe Charge params: ',
     JSON.stringify({
-      amount: stripeAmount(amount, currency),
+      amount: fixedAmount,
       currency,
       source: token.id,
       description
@@ -56,7 +58,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   )
 
   const charge = await stripe.charges.create({
-    amount: stripeAmount(amount, currency),
+    amount: fixedAmount,
     currency,
     source: token.id,
     description

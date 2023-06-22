@@ -27,6 +27,18 @@ test('start chat', async () => {
 
   expect(response.status).toBe(200)
 
+  const responseMsg = await request
+    .post(`/chats/${response.body.id}/messages`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[1].id)
+    .send({
+      text: 'test',
+    })
+
+  expect(responseMsg.status).toBe(200)
+
+  expect(response.status).toBe(200)
+
   const chatsRes = await request
     .get('/chats')
     .set('Authorization', data.users[0].access_token)
@@ -58,6 +70,21 @@ test('start chat', async () => {
 
   expect(getOneRes.status).toBe(403)
 })
+
+test('chat messages', async () => {
+  const response = await request
+    .get('/chats')
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[1].id)
+
+  const messagesRes = await request
+    .get(`/chats/${response.body.items[0].id}/messages`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[1].id)
+
+  expect(messagesRes.status).toBe(200)
+})
+
 
 const cleanup = async () => {
   await app.db.query('DELETE FROM users')

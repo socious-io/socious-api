@@ -107,7 +107,7 @@ const coordinateNotifs = async (userId, body) => {
   }
     
 
-  const notifId = await Notif.create(userId, body.refId, body.type, setting.in_app, {
+  const notifId = await Notif.create(userId, body.refId, body.type, !setting.in_app, {
     ...body,
     body: message,
     consolidate_number: 0

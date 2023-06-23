@@ -135,6 +135,9 @@ export default {
     key: process.env.FCM_KEY
   },
   crypto: {
+    usd_convertor: {
+      "0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82": {rate: 0.9}
+    },
     networks: [
       {
         escrow: {

@@ -44,7 +44,8 @@ router.post('/update/:id', loginRequired, checkIdParams, orgMember, async (ctx) 
   if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
     throw new ValidationError('Invalid email')
   }
-  ctx.body = await Org.update(ctx.params.id, ctx.request.body)
+  await Org.update(ctx.params.id, ctx.request.body)
+  ctx.body = await Org.get(ctx.params.id)
 })
 
 router.get('/:id/members', loginRequired, checkIdParams, paginate, async (ctx) => {

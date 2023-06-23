@@ -73,9 +73,7 @@ const getSetting = async (userId, type) => {
   return setting
 }
 
-const send = async (userId, message, body, id, identityName) => {
-  const setting = await getSetting(userId, body.type)
-
+const send = async (userId, message, body, id, identityName, setting) => {
   if (setting.in_app) await emitEvent(Types.NOTIFICATION, userId, id)
 
   if (setting.push) await pushNotifications([userId], message, body)
@@ -90,6 +88,8 @@ const coordinateNotifs = async (userId, body) => {
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
   const latest = await Notif.latest(userId, body.type, new Date(now.getTime() - consolidateTime))
+  
+  const setting = await getSetting(userId, body.type)
 
   if (latest && !consolidateExceptions.includes(body.type)) {
     let consolidateNumbs = latest.data.consolidate_number + 1
@@ -103,16 +103,17 @@ const coordinateNotifs = async (userId, body) => {
       consolidate_number: consolidateNumbs
     })
 
-    return send(userId, message, body, latest.id, body.identity?.meta?.name)
+    return send(userId, message, body, latest.id, body.identity?.meta?.name, setting)
   }
+    
 
-  const notifId = await Notif.create(userId, body.refId, body.type, {
+  const notifId = await Notif.create(userId, body.refId, body.type, !setting.in_app, {
     ...body,
     body: message,
     consolidate_number: 0
   })
 
-  return send(userId, message, body, notifId, body.identity?.meta?.name)
+  return send(userId, message, body, notifId, body.identity?.meta?.name, setting)
 }
 
 const _push = async (eventType, userId, body) => {

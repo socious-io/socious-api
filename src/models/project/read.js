@@ -26,6 +26,7 @@ export const get = async (id, userId = undefined) => {
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
+    (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
     EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
@@ -41,7 +42,8 @@ export const getAll = async (ids, sort) => {
     i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
-    (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
+    (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
+    (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
@@ -57,6 +59,7 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
       row_to_json(j.*) AS job_category,
+      (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
       FROM projects p
       JOIN identities i ON i.id=p.identity_id

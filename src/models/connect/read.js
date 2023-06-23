@@ -4,18 +4,26 @@ import { PermissionError } from '../../utils/errors.js'
 import { sorting, filtering } from '../../utils/query.js'
 
 export const filterColumns = {
-  status: String
+  status: String,
+  requested_id: String,
+  requester_id: String
 }
 
-export const sortColumns = ['created_at', 'updated_at', 'connected_at']
+export const sortColumns = ['created_at', 'updated_at', 'connected_at', 'status', 'requested_id', 'requester_id']
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(
     sql`SELECT 
-    COUNT(c.*) OVER () as total_count, c.*, row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester
+    COUNT(c.*) OVER () as total_count, c.*,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    row_to_json(i1.*) AS requested, 
+    row_to_json(i2.*) AS requester
     FROM connections c
     JOIN identities i1 ON i1.id=c.requested_id
-    JOIN identities i2 ON i2.id=c.requester_id    
+    JOIN identities i2 ON i2.id=c.requester_id 
+    LEFT JOIN follows er ON er.follower_identity_id=${identityId} AND (er.following_identity_id=i1.id OR er.following_identity_id=i2.id)
+    LEFT JOIN follows ing ON ing.following_identity_id=${identityId} AND (ing.follower_identity_id=i1.id OR ing.follower_identity_id=i2.id)
     WHERE (requested_id = ${identityId} OR requester_id=${identityId})
     ${filtering(filter, filterColumns, true, 'c')}
     ${sorting(sort, sortColumns, 'c')}
@@ -27,10 +35,11 @@ export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) 
 
 export const get = async (id) => {
   return app.db.get(
-    sql`SELECT c.*, row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester
+    sql`SELECT c.*,
+    row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester
     FROM connections c
     JOIN identities i1 ON i1.id=c.requested_id
-    JOIN identities i2 ON i2.id=c.requester_id    
+    JOIN identities i2 ON i2.id=c.requester_id
     WHERE c.id=${id}
   `
   )

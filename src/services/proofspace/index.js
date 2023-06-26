@@ -41,7 +41,7 @@ export const Claim = async (body, headers) => {
 
   const records = await ImpactPoints.history(user.id, { offset: 0, limit: 100 })
 
-  const issues = records.map((r) => makeIssue(r, user))
+  const issues = records.map((r) => makeIssue(r, user)).reverse()
 
   const response = {
     serviceDid: body.publicServiceDid,

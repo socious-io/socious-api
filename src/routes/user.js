@@ -9,7 +9,7 @@ import ImpactPoints from '../services/impact_points/index.js'
 import Payment from '../services/payments/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
-import { validate } from '@socious/data'
+import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError } from '../utils/errors.js'
@@ -109,7 +109,7 @@ router.get('/missions', loginRequired, paginate, async (ctx) => {
         identity: ctx.identity,
         amount: m.offer.assignment_total,
         paymode: false,
-        service: 'STRIPE' ? m.offer.payment_mode === 'FIAT': 'CRYPTO',
+        service: Data.PaymentService.STRIPE ? m.offer.payment_mode === Data.PaymentMode.FIAT : Data.PaymentService.CRYPTO,
         verified: m.assigner.meta.verified_impact,
       })
     }

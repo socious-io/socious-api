@@ -4,7 +4,6 @@ import { loginRequired } from '../utils/middlewares/authorization.js'
 import Payment from '../services/payments/index.js'
 import { cryptoUSDRate } from '../services/payments/crypto.js'
 import OAuthConnects from '../services/oauth_connects/index.js'
-import Identity from '../models/identity/index.js'
 import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { BadRequestError } from '../utils/errors.js'
@@ -103,7 +102,7 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
 
   const amounts = Payment.amounts({
     identity: ctx.identity, 
-    amount: escrow.amount, 
+    amount: escrow.amount,
     service: ctx.request.body.service, 
     paymode: false,
     verified: mission.assigner.meta.verified_impact

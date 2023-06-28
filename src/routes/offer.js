@@ -16,7 +16,16 @@ import { setEscrowMission } from '../services/payments/escrow.js'
 export const router = new Router()
 
 router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) => {
-  ctx.body = await Offer.get(ctx.offer.id)
+  const offer = await Offer.get(ctx.offer.id)
+  ctx.body = {
+    ...offer,
+    ...Payment.amounts({
+      identity: ctx.identity, 
+      amount: offer.assignment_total, 
+      service: 'STRIPE' ? offer.payment_mode === 'FIAT': 'CRYPTO',
+      paymode: true
+    })
+  }
 })
 
 router.post('/:id/withdrawn', loginRequired, checkIdParams, recipient, async (ctx) => {

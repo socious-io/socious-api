@@ -6,6 +6,7 @@ import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
 import Skill from '../models/skill/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
+import Payment from '../services/payments/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { validate } from '@socious/data'
@@ -99,7 +100,20 @@ router.get('/applicants', loginRequired, checkIdParams, paginate, async (ctx) =>
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.identity.id
 
-  ctx.body = await Mission.getAll(ctx.paginate)
+  const missions = await Mission.getAll(ctx.paginate)
+
+  ctx.body = missions.map(m => {
+    return {
+      ...m,
+      ...Payment.amounts({
+        identity: ctx.identity,
+        amount: m.offer.assignment_total,
+        paymode: false,
+        service: 'STRIPE' ? m.offer.payment_mode === 'FIAT': 'CRYPTO',
+        verified: m.assigner.meta.verified_impact,
+      })
+    }
+  })
 })
 
 router.get('/offers', loginRequired, paginate, async (ctx) => {

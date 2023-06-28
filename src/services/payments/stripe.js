@@ -45,7 +45,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     source: card.id
   })
 
-  const fixedAmount = Math.floor(stripeAmount(amount, currency) + (stripeAmount(amount, currency) * 0.34) + 50)
+  const fixedAmount = stripeAmount(amount, currency)
 
   console.log(
     'Stripe Charge params: ',
@@ -88,8 +88,8 @@ export const payout = async ({ amount, currency, description, destination }) => 
     {
       amount: stripeAmount(amount, currency),
       currency,
-      description
+      description,
+      destination,
     },
-    { stripeAccount: destination }
   )
 }

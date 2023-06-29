@@ -15,7 +15,7 @@ export const create = async (userId, refId, notifType, silent, data) => {
   }
 }
 
-export const update = async (id, userId, refId, notifType, data) => {
+export const update = async (id, userId, refId, notifType, silent, data) => {
   try {
     const { rows } = await app.db.query(sql`
     UPDATE notifications
@@ -23,7 +23,8 @@ export const update = async (id, userId, refId, notifType, data) => {
       type=${notifType}, 
       ref_id=${refId},
       user_id=${userId},
-      data=${data}
+      data=${data},
+      silet=${silent}
     WHERE id=${id}
     RETURNING id
   `)

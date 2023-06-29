@@ -87,7 +87,7 @@ const coordinateNotifs = async (userId, body) => {
   let message = makeMessage(body.type, name)
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
-  const latest = await Notif.latest(userId, body.type, new Date(now.getTime() - consolidateTime))
+  const latest = await Notif.latest(userId, body.type, body.refId, new Date(now.getTime() - consolidateTime))
   
   const setting = await getSetting(userId, body.type)
 
@@ -97,7 +97,7 @@ const coordinateNotifs = async (userId, body) => {
 
     message = makeMessage(body.type, `${consolidateNumbs} people`)
 
-    await Notif.update(latest.id, userId, body.refId, body.type, {
+    await Notif.update(latest.id, userId, body.refId, body.type, !setting.in_app, {
       ...body,
       body: message,
       consolidate_number: consolidateNumbs

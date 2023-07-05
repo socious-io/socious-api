@@ -6,9 +6,10 @@ import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
 import Skill from '../models/skill/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
+import Payment from '../services/payments/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
-import { validate } from '@socious/data'
+import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError } from '../utils/errors.js'
@@ -99,7 +100,20 @@ router.get('/applicants', loginRequired, checkIdParams, paginate, async (ctx) =>
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.identity.id
 
-  ctx.body = await Mission.getAll(ctx.paginate)
+  const missions = await Mission.getAll(ctx.paginate)
+
+  ctx.body = missions.map(m => {
+    return {
+      ...m,
+      ...Payment.amounts({
+        identity: ctx.identity,
+        amount: m.offer.assignment_total,
+        paymode: false,
+        service: Data.PaymentService.STRIPE ? m.offer.payment_mode === Data.PaymentMode.FIAT : Data.PaymentService.CRYPTO,
+        verified: m.assigner.meta.verified_impact,
+      })
+    }
+  })
 })
 
 router.get('/offers', loginRequired, paginate, async (ctx) => {

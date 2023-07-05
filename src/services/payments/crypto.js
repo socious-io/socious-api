@@ -119,7 +119,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    ;`CONFIRM CRYPTODATA ${JSON.stringify({
+    `CONFIRM CRYPTODATA ${JSON.stringify({
       src,
       dest,
       amount,

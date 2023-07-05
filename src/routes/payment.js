@@ -4,7 +4,6 @@ import { loginRequired } from '../utils/middlewares/authorization.js'
 import Payment from '../services/payments/index.js'
 import { cryptoUSDRate } from '../services/payments/crypto.js'
 import OAuthConnects from '../services/oauth_connects/index.js'
-import Identity from '../models/identity/index.js'
 import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { BadRequestError } from '../utils/errors.js'
@@ -59,13 +58,15 @@ router.post('/donate', loginRequired, async (ctx) => {
 router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) => {
   await validate.EscrowSchema.validateAsync(ctx.request.body)
 
-  let amount = ctx.offer.assignment_total
-  amount += amount * Identity.commissionFee(ctx.identity)
+  const amount = ctx.offer.assignment_total
+  
+  const amounts = Payment.amounts({identity: ctx.identity, amount, service: ctx.request.body.service, paymode: true})
+
 
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
     currency: ctx.offer.project.currency,
-    amount,
+    amount: amounts.total,
     description: ctx.offer.project.name,
     meta: {
       ...ctx.request.body.meta,
@@ -99,12 +100,16 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
 
   const escrow = mission.escrow
 
-  // payout escrow amount with calculate commission fee
-  const amount =
-    escrow.amount - escrow.amount * Identity.commissionFee(ctx.identity, mission.assigner.meta.verified_impact)
+  const amounts = Payment.amounts({
+    identity: ctx.identity, 
+    amount: escrow.amount,
+    service: ctx.request.body.service, 
+    paymode: false,
+    verified: mission.assigner.meta.verified_impact
+  })
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {
-    amount,
+    amount: amounts.total,
     currency: escrow.currency,
     destination: profile.stripe_user_id
   })

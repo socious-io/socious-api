@@ -35,16 +35,16 @@ export const Claim = async (body, headers) => {
 
   if ((await User.get(userId)).proofspace_connect_id) throw new BadRequestError('User already claimed the points')
 
-  const user = await addUserConnectDid(userId)
+  const user = await addUserConnectDid(userId, body.subscriberConnectDid)
 
   if (!user) throw new BadRequestError('Socious User ID not found')
 
   const records = await ImpactPoints.history(user.id, { offset: 0, limit: 100 })
 
-  const issues = records.map((r) => makeIssue(r, user))
+  const issues = records.map((r) => makeIssue(r, user)).reverse()
 
   const response = {
-    serviceDid: body.serviceDid,
+    serviceDid: body.publicServiceDid,
     subscriberConnectDid: body.subscriberConnectDid,
     actionEventId: body.actionEventId,
     issuedCredentials: issues,

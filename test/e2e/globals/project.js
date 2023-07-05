@@ -354,7 +354,6 @@ export const hire = async (request, data) => {
 
 export const complete = async (request, data) => {
   const missions = await request.get('/user/missions').set('Authorization', data.users[0].access_token)
-
   for (const mission of missions.body.items) {
     const response = await request
       .post(`/missions/${mission.id}/complete`)

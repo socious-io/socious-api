@@ -148,7 +148,7 @@ jobs:
     needs: build-dev
     name: Tests
     if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
-    runs-on: ["backend-dev"]
+    runs-on: ["backend-dev-new"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
@@ -165,8 +165,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev
       
-      - name: Run DB and NATS
-        run: docker-compose up -d
+      # - name: Run DB and NATS
+      #  run: docker-compose up -d
 
       - name: Pull image
         run: docker pull ${{ steps.meta.outputs.tags }}
@@ -199,7 +199,7 @@ jobs:
     needs: [build, run-tests]
     name: Deploy to Dev
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ["backend-dev"]
+    runs-on: ["backend-dev-new"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -220,8 +220,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run NATS
-        run: docker-compose up -d
+      # - name: Run NATS
+      #  run: docker-compose up -d
 
       - name: Run DB migrations
         run: |
@@ -265,9 +265,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Run NATS
-        run: docker-compose up -d
 
       - name: Run DB migrations
         run: |

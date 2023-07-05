@@ -32,11 +32,12 @@ export const getById = async (id) => {
   `)
 }
 
-export const latest = async (userId, type, fromDate) => {
+export const latest = async (userId, type, refId, fromDate) => {
   const { rows } = await app.db.query(sql`
     SELECT * FROM notifications 
     WHERE user_id=${userId} 
     AND type=${type}
+    AND ref_id=${refId}
     AND (created_at >= ${fromDate} OR updated_at >= ${fromDate})
     ORDER BY updated_at DESC
   `)

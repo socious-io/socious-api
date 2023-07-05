@@ -1,10 +1,30 @@
 import { NotImplementedError } from '../../utils/errors.js'
 import Data from '@socious/data'
+import Identity from '../../models/identity/index.js'
 import { get, all } from './transaction.js'
 import * as Card from './card.js'
 import * as Escrow from './escrow.js'
 import * as Stripe from './stripe.js'
 import * as Crypto from './crypto.js'
+
+const amounts = ({identity, amount, service, paymode=true, verified=true}) => {
+  let total = 0
+  let fee = amount * Identity.commissionFee(identity, verified)
+  if (service === Data.PaymentService.STRIPE && paymode) {
+    fee += (amount * 3.4) + 0.5
+  }
+  if (paymode) {
+    total = amount + fee
+  } else {
+    total = amount - fee
+  }
+  return {
+    amount,
+    fee,
+    total
+  }
+}
+
 
 /**
  * @param {string} identityId
@@ -42,5 +62,6 @@ export default {
   get,
   all,
   charge,
-  payout
+  payout,
+  amounts
 }

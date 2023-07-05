@@ -266,9 +266,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # - name: Run NATS
-      #  run: docker-compose up -d
-
       - name: Run DB migrations
         run: |
           docker pull ${{ steps.meta.outputs.tags }}

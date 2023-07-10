@@ -51,8 +51,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
 
   const response = await axios.get(network.chain.explorer, { params: data })
 
-  console.log(response, '')
-
   if (response.data.status === '0') {
     logger.error(
       `CONFIRM CRYPTO => DATA ${JSON.stringify({
@@ -64,8 +62,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
     )
     return false
   }
-
-  console.log(response.data.result)
 
   const tx = response.data.result.filter((r) => r.hash === txHash)[0]
 
@@ -91,7 +87,9 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   }
 
   
-  const txAmount = parseInt(tx.value.slice(0, tx.value.length - decimals))
+  let txAmount = parseInt(tx.value.slice(0, tx.value.length - 6))
+
+  if (decimals > 6) txAmount /=  Math.pow(10, decimals - 6)
 
   if (amount > txAmount) {
     logger.error(

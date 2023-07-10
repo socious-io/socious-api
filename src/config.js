@@ -112,8 +112,8 @@ export default {
     }
   },
   aws: {
-    cdn_url: process.env.AWS_CDN_URL || 'https://soscious.s3.ap-northeast-1.amazonaws.com',
-    bucket: process.env.AWS_BUCKET || 'socious',
+    cdn_url: process.env.AWS_CDN_URL || 'https://socious-new.s3.ap-northeast-1.amazonaws.com',
+    bucket: process.env.AWS_BUCKET || 'socious-new',
     key_id: process.env.AWS_ACCESS_KEY_ID,
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1'
@@ -138,24 +138,109 @@ export default {
     usd_convertor: {
       "0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82": {rate: 0.9}
     },
-    networks: [
+    env: process.env.CRYPTO_ENV || 'testnet',
+    networks: {
+      testnet: [
       {
-        escrow: {
-          address: process.env.BLOCKCHAIN_ESCROW_ADDRESS
+        chain: {
+          name: 'milkomeda testnet',
+          explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
         },
-        explorer: process.env.BLOCKCHAIN_EXPLORER,
-        explorer_api_key: process.env.BLOCKCHAIN_EXPLORER_API_KEY,
-        tokens: process.env.BLOCKCHAIN_TOKENS?.split(',')
+        escrow: '0x8372c3F32F1f38BcAb65947a36F5b3E867a117Da',
+        tokens: [
+          {
+            name: 'USDC',
+            symbol: 'USDC',
+            address: '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82',
+            decimals: 18
+          },
+        ],
       },
       {
-        escrow: {
-          address: process.env.BLOCKCHAIN_ESCROW_ADDRESS_2
+        chain: {
+          name: 'mumbai',
+          explorer: 'https://mumbai.polygonscan.com/api'
         },
-        explorer: process.env.BLOCKCHAIN_EXPLORER_2,
-        explorer_api_key: process.env.BLOCKCHAIN_EXPLORER_API_KEY_2,
-        tokens: process.env.BLOCKCHAIN_TOKENS_2?.split(',')
-      }
-    ]
+        escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
+        tokens: [
+          {
+            name: 'USDC',
+            symbol: 'USDC',
+            address: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+            decimals: 18
+          },
+        ],
+      },
+      ],
+      mainet: [
+      {
+        chain: {
+          name: 'milkomeda',
+          explorer: 'https://explorer-mainet-cardano-evm.c1.milkomeda.com/api'
+        },
+        escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+        tokens: [
+          {
+            name: 'USD Coin',
+            symbol: 'USDC',
+            address: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
+            decimals: 6
+          },
+          {
+            name: 'Tether',
+            symbol: 'USDT',
+            address: '0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844',
+            decimals: 6
+          },
+          {
+            name: 'Dai',
+            symbol: 'DAI',
+            address: '0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C',
+            decimals: 6
+          },
+          {
+            name: 'Djed',
+            symbol: 'SC',
+            address: '0xbfB54440448e6b702fa2A1d7033cd5fB0d9C5A27',
+            decimals: 6
+          },
+          {
+            name: 'Wrapped ADA',
+            symbol: 'WADA',
+            address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+            decimals: 6
+          },
+        ],
+      },
+      {
+        chain: {
+          name: 'polygon',
+          explorer: 'https://api.polygonscan.com/api'
+        },
+        escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+        tokens: [
+          {
+            name: 'USD Coin',
+            symbol: 'USDC',
+            address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+            decimals: 6
+          },
+          {
+            name: 'Tether',
+            symbol: 'USDT',
+            address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+            decimals: 6
+          },
+          {
+            name: 'Dai',
+            symbol: 'DAI',
+            address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+            decimals: 6
+          },
+        ],
+      },
+      ]
+    }
   },
   cors: {
     origins: process.env.ALLOWED_ORIGINS?.split(',')

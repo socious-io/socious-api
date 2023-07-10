@@ -17,19 +17,24 @@ export const cryptoUSDRate = async (token) => {
 /**
  * @param {string} txHash
  * @param {string} src
- * @param {string} dest
  * @param {number} amount
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => {
-  const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(token) !== -1)[0]
+export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
+  let decimals = 6
+  const network = config.crypto.networks[config.crypto.env].filter((n) => {
+    const t = n.tokens.filter(t => t.address === token)[0]
+    if (t) decimals = t.decimals
+    return t !== undefined
+  })[0]
+  
+
 
   if (!network) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        dest,
         amount,
         txHash,
         token
@@ -41,17 +46,17 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     module: 'account',
     action: 'tokentx',
     sort: 'desc',
-    address: src,
-    apikey: network.explorer_api_key
+    address: src
   }
 
-  const response = await axios.get(network.explorer, { params: data })
+  const response = await axios.get(network.chain.explorer, { params: data })
+
+  console.log(response, '')
 
   if (response.data.status === '0') {
     logger.error(
       `CONFIRM CRYPTO => DATA ${JSON.stringify({
         src,
-        dest,
         amount,
         txHash,
         token
@@ -60,19 +65,21 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     return false
   }
 
+  console.log(response.data.result)
+
   const tx = response.data.result.filter((r) => r.hash === txHash)[0]
 
   if (!tx && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src, dest, amount, txHash, token, retry)
+    return await confirmTx(src,  amount, txHash, token, retry)
   }
 
   if (!tx) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        dest,
+        
         amount,
         txHash,
         token
@@ -83,14 +90,14 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     return false
   }
 
-  // TODO verify amount
-  const txAmount = parseInt(tx.value.slice(0, tx.value.length - 16)) / 100
+  
+  const txAmount = parseInt(tx.value.slice(0, tx.value.length - decimals))
 
   if (amount > txAmount) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        dest,
+        
         amount,
         txHash,
         token
@@ -99,11 +106,11 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
     return false
   }
 
-  if (tx.to.toUpperCase() !== dest.toUpperCase()) {
+  if (tx.to.toUpperCase() !== network.escrow.toUpperCase()) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        dest,
+        
         amount,
         txHash,
         token
@@ -115,13 +122,13 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
   if (parseInt(tx.confirmations) < 10 && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src, dest, amount, txHash, token, retry)
+    return await confirmTx(src,  amount, txHash, token, retry)
   }
 
   if (parseInt(tx.confirmations) < 10) {
     `CONFIRM CRYPTODATA ${JSON.stringify({
       src,
-      dest,
+      
       amount,
       txHash,
       token
@@ -133,9 +140,7 @@ export const confirmTx = async (src, dest, amount, txHash, token, retry = 0) => 
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
-  const network = config.crypto.networks.filter((n) => n.tokens?.indexOf(meta.token) !== -1)[0]
-
-  const confirmed = await confirmTx(source, network.escrow.address, amount, txHash, meta.token)
+  const confirmed = await confirmTx(source, amount, txHash, meta.token)
 
   if (!confirmed) throw new ValidationError('transaction is not valid')
 

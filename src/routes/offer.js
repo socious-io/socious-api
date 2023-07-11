@@ -20,8 +20,8 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
   ctx.body = {
     ...offer,
     ...Payment.amounts({
-      identity: ctx.identity, 
-      amount: offer.assignment_total, 
+      identity: ctx.identity,
+      amount: offer.assignment_total,
       service: Data.PaymentService.STRIPE ? offer.payment_mode === Data.PaymentMode.FIAT : Data.PaymentService.CRYPTO,
       paymode: true
     })

@@ -36,7 +36,7 @@ test('calculate', async () => {
       '0x6990bf996e984cffde6ebcab6ac8723c95069719',
       8,
       '0xce6fd735b590b8dd254eb6eea2c75a047893b9ac9f3d5fd8d123b56a21e843ad',
-      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82',
+      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82'
     )
   ).toBe(false)
 })

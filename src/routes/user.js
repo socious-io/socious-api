@@ -102,15 +102,17 @@ router.get('/missions', loginRequired, paginate, async (ctx) => {
 
   const missions = await Mission.getAll(ctx.paginate)
 
-  ctx.body = missions.map(m => {
+  ctx.body = missions.map((m) => {
     return {
       ...m,
       ...Payment.amounts({
         identity: ctx.identity,
         amount: m.offer.assignment_total,
         paymode: false,
-        service: Data.PaymentService.STRIPE ? m.offer.payment_mode === Data.PaymentMode.FIAT : Data.PaymentService.CRYPTO,
-        verified: m.assigner.meta.verified_impact,
+        service: Data.PaymentService.STRIPE
+          ? m.offer.payment_mode === Data.PaymentMode.FIAT
+          : Data.PaymentService.CRYPTO,
+        verified: m.assigner.meta.verified_impact
       })
     }
   })

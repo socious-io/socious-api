@@ -59,9 +59,8 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   await validate.EscrowSchema.validateAsync(ctx.request.body)
 
   const amount = ctx.offer.assignment_total
-  
-  const amounts = Payment.amounts({identity: ctx.identity, amount, service: ctx.request.body.service, paymode: true})
 
+  const amounts = Payment.amounts({ identity: ctx.identity, amount, service: ctx.request.body.service, paymode: true })
 
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
@@ -100,10 +99,12 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
 
   const escrow = mission.escrow
 
+  if (escrow.released_at) throw new BadRequestError('Escrow already has been released')
+
   const amounts = Payment.amounts({
-    identity: ctx.identity, 
+    identity: ctx.identity,
     amount: escrow.amount,
-    service: Data.PaymentService.STRIPE, 
+    service: Data.PaymentService.STRIPE,
     paymode: false,
     verified: mission.assigner.meta.verified_impact
   })
@@ -111,7 +112,9 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {
     amount: amounts.total,
     currency: escrow.currency,
-    destination: profile.stripe_user_id
+    destination: profile.mui,
+    description: mission.project.description,
+    meta: escrow
   })
 
   await Payment.releaseEscrow(escrow.id, payout.id)

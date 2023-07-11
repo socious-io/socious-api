@@ -136,109 +136,109 @@ export default {
   },
   crypto: {
     usd_convertor: {
-      "0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82": {rate: 0.9}
+      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82': { rate: 0.9 }
     },
     env: process.env.CRYPTO_ENV || 'testnet',
     networks: {
       testnet: [
-      {
-        chain: {
-          name: 'milkomeda testnet',
-          explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
-        },
-        escrow: '0xa1a6fC85718a9e3C1486CC51F70A8CfD843E55D4',
-        tokens: [
-          {
-            name: 'USDC',
-            symbol: 'USDC',
-            address: '0xC12F6Ee5c853393105f29EF0310e61e6B494a70F',
-            decimals: 6
+        {
+          chain: {
+            name: 'milkomeda testnet',
+            explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-        ],
-      },
-      {
-        chain: {
-          name: 'mumbai',
-          explorer: 'https://mumbai.polygonscan.com/api'
+          escrow: '0xa1a6fC85718a9e3C1486CC51F70A8CfD843E55D4',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: '0xC12F6Ee5c853393105f29EF0310e61e6B494a70F',
+              decimals: 6
+            }
+          ]
         },
-        escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
-        tokens: [
-          {
-            name: 'USDC',
-            symbol: 'USDC',
-            address: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
-            decimals: 18
+        {
+          chain: {
+            name: 'mumbai',
+            explorer: 'https://mumbai.polygonscan.com/api'
           },
-        ],
-      },
+          escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+              decimals: 18
+            }
+          ]
+        }
       ],
       mainet: [
-      {
-        chain: {
-          name: 'milkomeda',
-          explorer: 'https://explorer-mainet-cardano-evm.c1.milkomeda.com/api'
+        {
+          chain: {
+            name: 'milkomeda',
+            explorer: 'https://explorer-mainet-cardano-evm.c1.milkomeda.com/api'
+          },
+          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          tokens: [
+            {
+              name: 'USD Coin',
+              symbol: 'USDC',
+              address: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
+              decimals: 6
+            },
+            {
+              name: 'Tether',
+              symbol: 'USDT',
+              address: '0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844',
+              decimals: 6
+            },
+            {
+              name: 'Dai',
+              symbol: 'DAI',
+              address: '0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C',
+              decimals: 6
+            },
+            {
+              name: 'Djed',
+              symbol: 'SC',
+              address: '0xbfB54440448e6b702fa2A1d7033cd5fB0d9C5A27',
+              decimals: 6
+            },
+            {
+              name: 'Wrapped ADA',
+              symbol: 'WADA',
+              address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+              decimals: 6
+            }
+          ]
         },
-        escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
-        tokens: [
-          {
-            name: 'USD Coin',
-            symbol: 'USDC',
-            address: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
-            decimals: 6
+        {
+          chain: {
+            name: 'polygon',
+            explorer: 'https://api.polygonscan.com/api'
           },
-          {
-            name: 'Tether',
-            symbol: 'USDT',
-            address: '0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844',
-            decimals: 6
-          },
-          {
-            name: 'Dai',
-            symbol: 'DAI',
-            address: '0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C',
-            decimals: 6
-          },
-          {
-            name: 'Djed',
-            symbol: 'SC',
-            address: '0xbfB54440448e6b702fa2A1d7033cd5fB0d9C5A27',
-            decimals: 6
-          },
-          {
-            name: 'Wrapped ADA',
-            symbol: 'WADA',
-            address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
-            decimals: 6
-          },
-        ],
-      },
-      {
-        chain: {
-          name: 'polygon',
-          explorer: 'https://api.polygonscan.com/api'
-        },
-        escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
-        tokens: [
-          {
-            name: 'USD Coin',
-            symbol: 'USDC',
-            address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-            decimals: 6
-          },
-          {
-            name: 'Tether',
-            symbol: 'USDT',
-            address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-            decimals: 6
-          },
-          {
-            name: 'Dai',
-            symbol: 'DAI',
-            address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
-            decimals: 6
-          },
-        ],
-      },
+          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          tokens: [
+            {
+              name: 'USD Coin',
+              symbol: 'USDC',
+              address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+              decimals: 6
+            },
+            {
+              name: 'Tether',
+              symbol: 'USDT',
+              address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+              decimals: 6
+            },
+            {
+              name: 'Dai',
+              symbol: 'DAI',
+              address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+              decimals: 6
+            }
+          ]
+        }
       ]
     }
   },

@@ -86,6 +86,7 @@ export const profile = async (identityId) => {
   if (oauth.status !== status) await updateStatus(oauth.id, status)
 
   return {
+    mui: oauth.matrix_unique_id,
     ...account,
     status
   }

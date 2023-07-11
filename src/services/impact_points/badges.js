@@ -1,6 +1,14 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
+import { filtering, sorting } from '../../utils/query.js'
+
+export const filterColumns = {
+  social_cause: String,
+  social_cause_category: String
+}
+
+export const sortColumns = ['created_at', 'total_points']
 
 export const badges = async (identityId) => {
   const { rows } = await app.db.query(sql`
@@ -31,7 +39,7 @@ export const addHistory = async (
  * @param {string} identityId
  * @returns {Promise<import('../../../types/associations').IImpactPointHistoryAsso[]>}
  */
-export const history = async (identityId, { offset = 0, limit = 10 }) => {
+export const history = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
   SELECT 
     COUNT(*) OVER () as total_count,
@@ -48,7 +56,8 @@ export const history = async (identityId, { offset = 0, limit = 10 }) => {
   LEFT JOIN offers o ON o.id=m.offer_id
   LEFT JOIN organizations org ON org.id=p.identity_id
   WHERE i.identity_id=${identityId}
-  ORDER BY i.created_at DESC
+  ${filtering(filter, filterColumns)}
+  ${sorting(sort, sortColumns)}
   LIMIT ${limit} OFFSET ${offset}
     `)
   return rows

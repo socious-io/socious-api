@@ -103,7 +103,7 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   const amounts = Payment.amounts({
     identity: ctx.identity, 
     amount: escrow.amount,
-    service: ctx.request.body.service, 
+    service: Data.PaymentService.STRIPE, 
     paymode: false,
     verified: mission.assigner.meta.verified_impact
   })

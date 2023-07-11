@@ -6,7 +6,8 @@ beforeAll(async () => {
 })
 
 test('calculate', async () => {
-  expect(
+  // new contract deployed need to collect new transaction these are not valid anymore
+  /* expect(
     await confirmTx(
       '0x6990bf996e984cffde6ebcab6ac8723c95069719',
       2,
@@ -29,7 +30,7 @@ test('calculate', async () => {
       '0x12c9276cd4829867c85ebf3f8e815e2734fb6351fa8e86face453230fc41d1a6',
       '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82',
     )
-  ).toBe(true)
+  ).toBe(true) */
   expect(
     await confirmTx(
       '0x6990bf996e984cffde6ebcab6ac8723c95069719',

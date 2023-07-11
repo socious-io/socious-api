@@ -18,7 +18,7 @@ router.get('/related/:identity_id', loginRequired, async (ctx) => {
   try {
     ctx.body = { connect: await Connect.related(ctx.identity.id, ctx.params.identity_id) }
   } catch {
-    ctx.body = {connect: null }
+    ctx.body = { connect: null }
   }
 })
 

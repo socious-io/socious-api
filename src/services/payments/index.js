@@ -7,11 +7,11 @@ import * as Escrow from './escrow.js'
 import * as Stripe from './stripe.js'
 import * as Crypto from './crypto.js'
 
-const amounts = ({identity, amount, service, paymode=true, verified=true}) => {
+const amounts = ({ identity, amount, service, paymode = true, verified = true }) => {
   let total = 0
   let fee = amount * Identity.commissionFee(identity, verified)
   if (service === Data.PaymentService.STRIPE && paymode) {
-    fee += (amount * 3.4) + 0.5
+    fee += amount * 3.4 + 0.5
   }
   if (paymode) {
     total = amount + fee
@@ -24,7 +24,6 @@ const amounts = ({identity, amount, service, paymode=true, verified=true}) => {
     total
   }
 }
-
 
 /**
  * @param {string} identityId

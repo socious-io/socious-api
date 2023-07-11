@@ -88,7 +88,7 @@ const coordinateNotifs = async (userId, body) => {
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
   const latest = await Notif.latest(userId, body.type, body.refId, new Date(now.getTime() - consolidateTime))
-  
+
   const setting = await getSetting(userId, body.type)
 
   if (latest && !consolidateExceptions.includes(body.type)) {
@@ -105,7 +105,6 @@ const coordinateNotifs = async (userId, body) => {
 
     return send(userId, message, body, latest.id, body.identity?.meta?.name, setting)
   }
-    
 
   const notifId = await Notif.create(userId, body.refId, body.type, !setting.in_app, {
     ...body,

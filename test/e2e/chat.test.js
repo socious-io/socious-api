@@ -32,7 +32,7 @@ test('start chat', async () => {
     .set('Authorization', data.users[0].access_token)
     .set('Current-Identity', data.orgs[1].id)
     .send({
-      text: 'test',
+      text: 'test'
     })
 
   expect(responseMsg.status).toBe(200)
@@ -84,7 +84,6 @@ test('chat messages', async () => {
 
   expect(messagesRes.status).toBe(200)
 })
-
 
 const cleanup = async () => {
   await app.db.query('DELETE FROM users')

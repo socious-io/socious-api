@@ -24,12 +24,10 @@ export const cryptoUSDRate = async (token) => {
 export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   let decimals = 6
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
-    const t = n.tokens.filter(t => t.address === token)[0]
+    const t = n.tokens.filter((t) => t.address === token)[0]
     if (t) decimals = t.decimals
     return t !== undefined
   })[0]
-  
-
 
   if (!network) {
     logger.error(
@@ -68,14 +66,14 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   if (!tx && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src,  amount, txHash, token, retry)
+    return await confirmTx(src, amount, txHash, token, retry)
   }
 
   if (!tx) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        
+
         amount,
         txHash,
         token
@@ -86,16 +84,15 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
     return false
   }
 
-  
   let txAmount = parseInt(tx.value.slice(0, tx.value.length - 6))
 
-  if (decimals > 6) txAmount /=  Math.pow(10, decimals - 6)
+  if (decimals > 6) txAmount /= Math.pow(10, decimals - 6)
 
   if (amount > txAmount) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        
+
         amount,
         txHash,
         token
@@ -108,7 +105,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-        
+
         amount,
         txHash,
         token
@@ -120,13 +117,13 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   if (parseInt(tx.confirmations) < 10 && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src,  amount, txHash, token, retry)
+    return await confirmTx(src, amount, txHash, token, retry)
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    `CONFIRM CRYPTODATA ${JSON.stringify({
+    ;`CONFIRM CRYPTODATA ${JSON.stringify({
       src,
-      
+
       amount,
       txHash,
       token

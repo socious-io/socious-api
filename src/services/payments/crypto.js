@@ -21,14 +21,13 @@ export const cryptoUSDRate = async (token) => {
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
+export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
   let decimals = 6
-  const network = config.crypto.networks[config.crypto.env].filter((n) => {
+  const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === token)[0]
     if (t) decimals = t.decimals
     return t !== undefined
   })[0]
-
   if (!network) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
@@ -66,7 +65,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   if (!tx && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src, amount, txHash, token, retry)
+    return await confirmTx(src, amount, txHash, token, retry, env)
   }
 
   if (!tx) {
@@ -117,7 +116,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0) => {
   if (parseInt(tx.confirmations) < 10 && retry < 8) {
     await delay(5000)
     retry++
-    return await confirmTx(src, amount, txHash, token, retry)
+    return await confirmTx(src, amount, txHash, token, retry, env)
   }
 
   if (parseInt(tx.confirmations) < 10) {

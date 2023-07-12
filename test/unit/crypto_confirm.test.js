@@ -36,7 +36,19 @@ test('calculate', async () => {
       '0x6990bf996e984cffde6ebcab6ac8723c95069719',
       8,
       '0xce6fd735b590b8dd254eb6eea2c75a047893b9ac9f3d5fd8d123b56a21e843ad',
-      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82'
+      '0x95cEc3b0a113AEf23eaFA4eD1B48489806bF6C82',
+      0,
+      'testnet'
     )
   ).toBe(false)
+  expect(
+    await confirmTx(
+      '0x6990bf996e984cffde6ebcab6ac8723c95069719',
+      1.03,
+      '0x84c2e79b70376864afb6647bd46ad2c21ebe79e3129205e5d4a3b409d533d46e',
+      '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+      0,
+      'mainet'
+    )
+  ).toBe(true)
 })

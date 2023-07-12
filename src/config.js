@@ -176,7 +176,7 @@ export default {
         {
           chain: {
             name: 'milkomeda',
-            explorer: 'https://explorer-mainet-cardano-evm.c1.milkomeda.com/api'
+            explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com/api'
           },
           escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
           tokens: [
@@ -208,7 +208,7 @@ export default {
               name: 'Wrapped ADA',
               symbol: 'WADA',
               address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
-              decimals: 6
+              decimals: 18
             }
           ]
         },

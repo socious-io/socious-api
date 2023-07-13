@@ -51,4 +51,14 @@ test('calculate', async () => {
       'mainet'
     )
   ).toBe(true)
+  expect(
+    await confirmTx(
+      '0xc4a877840a7ccad2e6763f9b1722a415134f2b22',
+      1.02,
+      '0x861d265ed37caf4953dfeab5a89284172e533db24fe5bba51fbe2976d102b52a',
+      '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+      0,
+      'mainet'
+    )
+  ).toBe(true)
 })

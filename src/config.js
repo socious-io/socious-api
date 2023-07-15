@@ -136,7 +136,7 @@ export default {
   },
   crypto: {
     usd_convertor: {
-      '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9': { rate: 0.3 }
+      '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9': { rate: 0.33 }
     },
     env: process.env.CRYPTO_ENV || 'testnet',
     networks: {

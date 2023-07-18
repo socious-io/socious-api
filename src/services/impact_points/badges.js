@@ -54,7 +54,7 @@ export const history = async (identityId, { offset = 0, limit = 10, filter, sort
   LEFT JOIN projects p ON p.id=m.project_id
   LEFT JOIN job_categories cat ON cat.id=p.job_category_id
   LEFT JOIN offers o ON o.id=m.offer_id
-  LEFT JOIN organizations org ON org.id=p.identity_id
+  LEFT JOIN identities org ON org.id=p.identity_id
   WHERE i.identity_id=${identityId}
   ${filtering(filter, filterColumns)}
   ${sorting(sort, sortColumns)}
@@ -78,7 +78,7 @@ export const get = async (id) => {
   FROM impact_points_history i
   LEFT JOIN missions m ON m.id=i.mission_id
   LEFT JOIN projects p ON p.id=m.project_id
-  LEFT JOIN organizations org ON org.id=p.identity_id
+  LEFT JOIN identities org ON org.id=p.identity_id
   WHERE i.id=${id}
     `)
 }

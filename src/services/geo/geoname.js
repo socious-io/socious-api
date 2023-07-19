@@ -83,7 +83,7 @@ export async function locationsByCountry(countryCode, { offset = 0, limit = 10, 
  * @param root0.sort
  * @example
  */
-export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter, sort }) {
+export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter }) {
   const searchPat = `%${search}%`
   const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
@@ -96,7 +96,12 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     WHERE loc.country_code = ${countryCode} AND loc.feature_class = 'P'
     AND loc.name ILIKE ${searchPat}
     ${filterRegion(filter)}
-    ${sorting(sort || 'name', sortColumns, 'loc')}
+    ORDER BY 
+    CASE 
+        WHEN LEFT(LOWER(name), ${search.length}) = ${search} THEN 0
+        ELSE 1
+    END,
+    LOWER(name) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   if (rows.length && rows[0].total_count >= limit) return rows
@@ -116,7 +121,12 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     WHERE loc.country_code = ${countryCode} AND loc.feature_class = 'P'
     AND (alt.alternate_name ILIKE ${searchPat} AND NOT loc.name ILIKE ${searchPat})
     ${filterRegion(filter)}
-    ${sorting(sort || 'name', sortColumns, 'loc')}
+    ORDER BY 
+    CASE 
+        WHEN LEFT(LOWER(name), ${search.length}) = ${search} THEN 0
+        ELSE 1
+    END,
+    LOWER(name) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   return rows.concat(rowsAlt)

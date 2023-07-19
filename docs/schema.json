@@ -1,0 +1,3348 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Answers": {
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "applicants": {
+                    "$ref": "#/definitions/Applicants"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "question": {
+                    "$ref": "#/definitions/Questions"
+                },
+                "selectedOption": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "answer",
+                "applicants",
+                "createdAt",
+                "id",
+                "projects",
+                "question",
+                "selectedOption",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Applicants": {
+            "properties": {
+                "answers": {
+                    "items": {
+                        "$ref": "#/definitions/Answers"
+                    },
+                    "type": "array"
+                },
+                "attachment": {
+                    "$ref": "#/definitions/Media"
+                },
+                "closedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "coverLetter": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "cvLink": {
+                    "type": "string"
+                },
+                "cvName": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "feedback": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "missions": {
+                    "items": {
+                        "$ref": "#/definitions/Missions"
+                    },
+                    "type": "array"
+                },
+                "offerMessage": {
+                    "type": "string"
+                },
+                "offerRate": {
+                    "type": "number"
+                },
+                "offers": {
+                    "items": {
+                        "$ref": "#/definitions/Offers"
+                    },
+                    "type": "array"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "paymentRate": {
+                    "type": "number"
+                },
+                "paymentType": {
+                    "enum": [
+                        "PAID",
+                        "VOLUNTEER"
+                    ],
+                    "type": "string"
+                },
+                "projectId": {
+                    "type": "string"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "shareContactInfo": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "enum": [
+                        "APPROVED",
+                        "CLOSED",
+                        "HIRED",
+                        "OFFERED",
+                        "PENDING",
+                        "REJECTED",
+                        "WITHDRAWN"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "answers",
+                "attachment",
+                "closedAt",
+                "coverLetter",
+                "createdAt",
+                "cvLink",
+                "cvName",
+                "deletedAt",
+                "feedback",
+                "id",
+                "missions",
+                "offerMessage",
+                "offerRate",
+                "offers",
+                "oldId",
+                "paymentRate",
+                "paymentType",
+                "projectId",
+                "projects",
+                "shareContactInfo",
+                "status",
+                "updatedAt",
+                "userId",
+                "users"
+            ],
+            "type": "object"
+        },
+        "Cards": {
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "cvc": {
+                    "type": "string"
+                },
+                "expMonth": {
+                    "type": "number"
+                },
+                "expYear": {
+                    "type": "number"
+                },
+                "holderName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "numbers": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brand",
+                "createdAt",
+                "cvc",
+                "expMonth",
+                "expYear",
+                "holderName",
+                "id",
+                "identity",
+                "numbers",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Chats": {
+            "properties": {
+                "chatsParticipants": {
+                    "items": {
+                        "$ref": "#/definitions/ChatsParticipants"
+                    },
+                    "type": "array"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/Messages"
+                    },
+                    "type": "array"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "participants": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "enum": [
+                        "CHANNEL",
+                        "CHAT",
+                        "GROUPED"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "chatsParticipants",
+                "createdAt",
+                "createdBy",
+                "deletedAt",
+                "description",
+                "id",
+                "messages",
+                "name",
+                "oldId",
+                "participants",
+                "type",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "ChatsParticipants": {
+            "properties": {
+                "allRead": {
+                    "type": "boolean"
+                },
+                "chat": {
+                    "$ref": "#/definitions/Chats"
+                },
+                "chatId": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "identityId": {
+                    "type": "string"
+                },
+                "joinedBy": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "lastReadAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "lastReadId": {
+                    "type": "string"
+                },
+                "mutedUntil": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "ADMIN",
+                        "MEMBER"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "allRead",
+                "chat",
+                "chatId",
+                "createdAt",
+                "id",
+                "identity",
+                "identityId",
+                "joinedBy",
+                "lastReadAt",
+                "lastReadId",
+                "mutedUntil",
+                "type",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "CollectorJobs": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "fetchCounter": {
+                    "type": "number"
+                },
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "lastModifiedDate": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "service": {
+                    "enum": [
+                        "IDEALIST",
+                        "RELIEFWEB"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "fetchCounter",
+                "hasMore",
+                "id",
+                "jobName",
+                "lastModifiedDate",
+                "service",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Comments": {
+            "properties": {
+                "comments": {
+                    "items": {
+                        "$ref": "#/definitions/Comments"
+                    },
+                    "type": "array"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "likes": {
+                    "type": "number"
+                },
+                "likes2": {
+                    "items": {
+                        "$ref": "#/definitions/Likes"
+                    },
+                    "type": "array"
+                },
+                "posts": {
+                    "$ref": "#/definitions/Posts"
+                },
+                "replied": {
+                    "type": "boolean"
+                },
+                "reports": {
+                    "$ref": "#/definitions/Reports"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "comments",
+                "content",
+                "createdAt",
+                "id",
+                "identity",
+                "likes",
+                "likes2",
+                "posts",
+                "replied",
+                "reports",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Connections": {
+            "properties": {
+                "connectedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "relationId": {
+                    "type": "string"
+                },
+                "requested": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "requester": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "status": {
+                    "enum": [
+                        "BLOCKED",
+                        "CONNECTED",
+                        "PENDING"
+                    ],
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connectedAt",
+                "createdAt",
+                "id",
+                "relationId",
+                "requested",
+                "requester",
+                "status",
+                "text",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "DeletedUsers": {
+            "properties": {
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "registeredAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "deletedAt",
+                "id",
+                "reason",
+                "registeredAt",
+                "userId",
+                "username"
+            ],
+            "type": "object"
+        },
+        "Devices": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "createdAt",
+                "id",
+                "meta",
+                "token",
+                "users"
+            ],
+            "type": "object"
+        },
+        "Emails": {
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "bodyType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "info": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "options": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "service": {
+                    "enum": [
+                        "SENDGRID",
+                        "SMTP",
+                        "TEST"
+                    ],
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "body",
+                "bodyType",
+                "createdAt",
+                "id",
+                "info",
+                "options",
+                "service",
+                "subject",
+                "to"
+            ],
+            "type": "object"
+        },
+        "Escrows": {
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "currency": {
+                    "enum": [
+                        "ARS",
+                        "AUD",
+                        "BDT",
+                        "BRL",
+                        "CAD",
+                        "CHF",
+                        "CLP",
+                        "COP",
+                        "CRC",
+                        "DKK",
+                        "DOP",
+                        "EGP",
+                        "EUR",
+                        "GBP",
+                        "GHS",
+                        "GTQ",
+                        "INR",
+                        "JPY",
+                        "KRW",
+                        "MXN",
+                        "NPR",
+                        "PEN",
+                        "RWF",
+                        "THB",
+                        "USD",
+                        "UYU",
+                        "ZAR"
+                    ],
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "missions": {
+                    "$ref": "#/definitions/Missions"
+                },
+                "offers": {
+                    "$ref": "#/definitions/Offers"
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payments"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "refoundAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "releaseId": {
+                    "type": "string"
+                },
+                "releasedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "amount",
+                "createdAt",
+                "currency",
+                "id",
+                "missions",
+                "offers",
+                "payment",
+                "projects",
+                "refoundAt",
+                "releaseId",
+                "releasedAt"
+            ],
+            "type": "object"
+        },
+        "Experiences": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizations": {
+                    "$ref": "#/definitions/Organizations"
+                },
+                "skills": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "startAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "createdAt",
+                "description",
+                "endAt",
+                "id",
+                "organizations",
+                "skills",
+                "startAt",
+                "title",
+                "users"
+            ],
+            "type": "object"
+        },
+        "Feedbacks": {
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "isContest": {
+                    "type": "boolean"
+                },
+                "missions": {
+                    "$ref": "#/definitions/Missions"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                }
+            },
+            "required": [
+                "content",
+                "createdAt",
+                "id",
+                "identity",
+                "isContest",
+                "missions",
+                "projects"
+            ],
+            "type": "object"
+        },
+        "Follows": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "followerIdentity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "followerIdentityId": {
+                    "type": "string"
+                },
+                "followingIdentity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "followingIdentityId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "followerIdentity",
+                "followerIdentityId",
+                "followingIdentity",
+                "followingIdentityId",
+                "id"
+            ],
+            "type": "object"
+        },
+        "Geonames": {
+            "properties": {
+                "admin1Code": {
+                    "type": "string"
+                },
+                "admin2Code": {
+                    "type": "string"
+                },
+                "asciiname": {
+                    "type": "string"
+                },
+                "cc2": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "featureClass": {
+                    "type": "string"
+                },
+                "featureCode": {
+                    "type": "string"
+                },
+                "fipsCode": {
+                    "type": "string"
+                },
+                "geonamesAlts": {
+                    "items": {
+                        "$ref": "#/definitions/GeonamesAlt"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "number"
+                },
+                "isoCode": {
+                    "type": "string"
+                },
+                "latlong": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "properties": {},
+                            "type": "object"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organizations": {
+                    "items": {
+                        "$ref": "#/definitions/Organizations"
+                    },
+                    "type": "array"
+                },
+                "population": {
+                    "type": "number"
+                },
+                "projects": {
+                    "items": {
+                        "$ref": "#/definitions/Projects"
+                    },
+                    "type": "array"
+                },
+                "timezone": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "users": {
+                    "items": {
+                        "$ref": "#/definitions/Users"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "admin1Code",
+                "admin2Code",
+                "asciiname",
+                "cc2",
+                "countryCode",
+                "createdAt",
+                "featureClass",
+                "featureCode",
+                "fipsCode",
+                "geonamesAlts",
+                "id",
+                "isoCode",
+                "latlong",
+                "name",
+                "organizations",
+                "population",
+                "projects",
+                "timezone",
+                "updatedAt",
+                "users"
+            ],
+            "type": "object"
+        },
+        "GeonamesAlt": {
+            "properties": {
+                "alternateName": {
+                    "type": "string"
+                },
+                "geoname": {
+                    "$ref": "#/definitions/Geonames"
+                },
+                "id": {
+                    "type": "number"
+                },
+                "isColloquial": {
+                    "type": "boolean"
+                },
+                "isHistoric": {
+                    "type": "boolean"
+                },
+                "isPreferredName": {
+                    "type": "boolean"
+                },
+                "isShortName": {
+                    "type": "boolean"
+                },
+                "isoLanguage": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "alternateName",
+                "geoname",
+                "id",
+                "isColloquial",
+                "isHistoric",
+                "isPreferredName",
+                "isShortName",
+                "isoLanguage"
+            ],
+            "type": "object"
+        },
+        "Identities": {
+            "properties": {
+                "cards": {
+                    "items": {
+                        "$ref": "#/definitions/Cards"
+                    },
+                    "type": "array"
+                },
+                "chatsParticipants": {
+                    "items": {
+                        "$ref": "#/definitions/ChatsParticipants"
+                    },
+                    "type": "array"
+                },
+                "chatsParticipants2": {
+                    "items": {
+                        "$ref": "#/definitions/ChatsParticipants"
+                    },
+                    "type": "array"
+                },
+                "comments": {
+                    "items": {
+                        "$ref": "#/definitions/Comments"
+                    },
+                    "type": "array"
+                },
+                "connections": {
+                    "items": {
+                        "$ref": "#/definitions/Connections"
+                    },
+                    "type": "array"
+                },
+                "connections2": {
+                    "items": {
+                        "$ref": "#/definitions/Connections"
+                    },
+                    "type": "array"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "feedbacks": {
+                    "items": {
+                        "$ref": "#/definitions/Feedbacks"
+                    },
+                    "type": "array"
+                },
+                "follows": {
+                    "items": {
+                        "$ref": "#/definitions/Follows"
+                    },
+                    "type": "array"
+                },
+                "follows2": {
+                    "items": {
+                        "$ref": "#/definitions/Follows"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "impactPointsHistories": {
+                    "items": {
+                        "$ref": "#/definitions/ImpactPointsHistory"
+                    },
+                    "type": "array"
+                },
+                "likes": {
+                    "items": {
+                        "$ref": "#/definitions/Likes"
+                    },
+                    "type": "array"
+                },
+                "media": {
+                    "items": {
+                        "$ref": "#/definitions/Media"
+                    },
+                    "type": "array"
+                },
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/Messages"
+                    },
+                    "type": "array"
+                },
+                "meta": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "missions": {
+                    "items": {
+                        "$ref": "#/definitions/Missions"
+                    },
+                    "type": "array"
+                },
+                "missions2": {
+                    "items": {
+                        "$ref": "#/definitions/Missions"
+                    },
+                    "type": "array"
+                },
+                "oauthConnects": {
+                    "items": {
+                        "$ref": "#/definitions/OauthConnects"
+                    },
+                    "type": "array"
+                },
+                "offers": {
+                    "items": {
+                        "$ref": "#/definitions/Offers"
+                    },
+                    "type": "array"
+                },
+                "offers2": {
+                    "items": {
+                        "$ref": "#/definitions/Offers"
+                    },
+                    "type": "array"
+                },
+                "payments": {
+                    "items": {
+                        "$ref": "#/definitions/Payments"
+                    },
+                    "type": "array"
+                },
+                "posts": {
+                    "items": {
+                        "$ref": "#/definitions/Posts"
+                    },
+                    "type": "array"
+                },
+                "projects": {
+                    "items": {
+                        "$ref": "#/definitions/Projects"
+                    },
+                    "type": "array"
+                },
+                "searchHistories": {
+                    "items": {
+                        "$ref": "#/definitions/SearchHistory"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "enum": [
+                        "organizations",
+                        "users"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cards",
+                "chatsParticipants",
+                "chatsParticipants2",
+                "comments",
+                "connections",
+                "connections2",
+                "createdAt",
+                "feedbacks",
+                "follows",
+                "follows2",
+                "id",
+                "impactPointsHistories",
+                "likes",
+                "media",
+                "messages",
+                "meta",
+                "missions",
+                "missions2",
+                "oauthConnects",
+                "offers",
+                "offers2",
+                "payments",
+                "posts",
+                "projects",
+                "searchHistories",
+                "type"
+            ],
+            "type": "object"
+        },
+        "ImpactPointsHistory": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "missions": {
+                    "$ref": "#/definitions/Missions"
+                },
+                "socialCause": {
+                    "enum": [
+                        "ABORTION",
+                        "ANIMAL_RIGHTS",
+                        "ANTI_SEMITISM",
+                        "ARMED_CONFLICT",
+                        "BIODIVERSITY",
+                        "BIODIVERSITY_LIFE_BELOW_WATER",
+                        "BLACK_LIVES_MATTER",
+                        "BULLYING",
+                        "CHILD_PROTECTION",
+                        "CIVIC_ENGAGEMENT",
+                        "CLIMATE_CHANGE",
+                        "COLLABORATION_FOR_IMPACT",
+                        "COMMUNITY_DEVELOPMENT",
+                        "CORRUPTION",
+                        "CRIME_PREVENTION",
+                        "DECENT_WORK",
+                        "DEMOCRACY",
+                        "DEPOPULATION",
+                        "DISABILITY",
+                        "DIVERSITY_INCLUSION",
+                        "DOMESTIC_VIOLENCE",
+                        "EDUCATION",
+                        "EUTHANASIA",
+                        "GENDER_BASED_VIOLENCE",
+                        "GENDER_EQUALITY",
+                        "GOVERNANCE",
+                        "HEALTH",
+                        "HOMELESSNESS",
+                        "HUMAN_RIGHTS",
+                        "HUNGER",
+                        "INDIGENOUS_PEOPLES",
+                        "INEQUALITY",
+                        "INNOVATION",
+                        "ISLAMOPHOBIA",
+                        "JUSTICE",
+                        "LGBTQI",
+                        "MENTAL",
+                        "MIGRANTS",
+                        "MINORITY",
+                        "MULTICULTURALISM",
+                        "NATURAL_DISASTERS",
+                        "NEURODIVERSITY",
+                        "ORPHANS",
+                        "OTHER",
+                        "OVERPOPULATION",
+                        "PEACEBUILDING",
+                        "PEACE_JUSTICE",
+                        "POVERTY",
+                        "REFUGEE",
+                        "RESPONSIBLE_CONSUMPTION",
+                        "RURAL_DEVELOPMENT",
+                        "SECURITY",
+                        "SEXUAL_VIOLENCE",
+                        "SOCIAL",
+                        "SUBSTANCE_ABUSE",
+                        "SUSTAINABILITY",
+                        "SUSTAINABLE_COMMUNITIES",
+                        "SUSTAINABLE_ENERGY",
+                        "VEGANISM",
+                        "WATER_SANITATION"
+                    ],
+                    "type": "string"
+                },
+                "socialCauseCategory": {
+                    "enum": [
+                        "CLEAN_WATER_SANITATION",
+                        "CLIMATE_ACTION",
+                        "ECONOMIC_GROWTH",
+                        "EDUCATION_QUALITY",
+                        "ENERGY",
+                        "GENDER_EQUALITY",
+                        "GOALS_PARTNERSHIPS",
+                        "HEALTH",
+                        "INDUSTRY_INNOVATION_INFRASTRUCTURE",
+                        "LIFE",
+                        "LIFE_BELOW_WATER",
+                        "NO_POVERTY",
+                        "PEACE_JUSTICE",
+                        "REDUCED_INEQUALITIES",
+                        "RESPONSIBLE_CONSUMPTION_PRODUCTION",
+                        "SUSTAINABLE_CITIES_COMMUNITIES",
+                        "ZERO_HUNGER"
+                    ],
+                    "type": "string"
+                },
+                "submittedWork": {
+                    "$ref": "#/definitions/SubmittedWorks"
+                },
+                "totalPoints": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "createdAt",
+                "id",
+                "identity",
+                "missions",
+                "socialCause",
+                "socialCauseCategory",
+                "submittedWork",
+                "totalPoints"
+            ],
+            "type": "object"
+        },
+        "JobCategories": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "hourlyWageDollars": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "projects": {
+                    "items": {
+                        "$ref": "#/definitions/Projects"
+                    },
+                    "type": "array"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "hourlyWageDollars",
+                "id",
+                "name",
+                "projects",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Languages": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "level": {
+                    "enum": [
+                        "BASIC",
+                        "CONVERSANT",
+                        "FLUENT",
+                        "NATIVE",
+                        "PROFICIENT"
+                    ],
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "createdAt",
+                "id",
+                "level",
+                "name",
+                "users"
+            ],
+            "type": "object"
+        },
+        "Likes": {
+            "properties": {
+                "commentId": {
+                    "type": "string"
+                },
+                "comments": {
+                    "$ref": "#/definitions/Comments"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "identityId": {
+                    "type": "string"
+                },
+                "postId": {
+                    "type": "string"
+                },
+                "posts": {
+                    "$ref": "#/definitions/Posts"
+                }
+            },
+            "required": [
+                "commentId",
+                "comments",
+                "createdAt",
+                "id",
+                "identity",
+                "identityId",
+                "postId",
+                "posts"
+            ],
+            "type": "object"
+        },
+        "Media": {
+            "properties": {
+                "applicants": {
+                    "items": {
+                        "$ref": "#/definitions/Applicants"
+                    },
+                    "type": "array"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/Messages"
+                    },
+                    "type": "array"
+                },
+                "organizations": {
+                    "items": {
+                        "$ref": "#/definitions/Organizations"
+                    },
+                    "type": "array"
+                },
+                "organizations2": {
+                    "items": {
+                        "$ref": "#/definitions/Organizations"
+                    },
+                    "type": "array"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "users": {
+                    "items": {
+                        "$ref": "#/definitions/Users"
+                    },
+                    "type": "array"
+                },
+                "users2": {
+                    "items": {
+                        "$ref": "#/definitions/Users"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "applicants",
+                "createdAt",
+                "filename",
+                "id",
+                "identity",
+                "messages",
+                "organizations",
+                "organizations2",
+                "url",
+                "users",
+                "users2"
+            ],
+            "type": "object"
+        },
+        "Messages": {
+            "properties": {
+                "chat": {
+                    "$ref": "#/definitions/Chats"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "media": {
+                    "$ref": "#/definitions/Media"
+                },
+                "replied": {
+                    "type": "boolean"
+                },
+                "replyId": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "chat",
+                "createdAt",
+                "deletedAt",
+                "id",
+                "identity",
+                "media",
+                "replied",
+                "replyId",
+                "text",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Migrations": {
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "runOn": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "runOn"
+            ],
+            "type": "object"
+        },
+        "MigrationsState": {
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "runOn": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "runOn",
+                "value"
+            ],
+            "type": "object"
+        },
+        "Missions": {
+            "properties": {
+                "applicants": {
+                    "$ref": "#/definitions/Applicants"
+                },
+                "assignee": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "assigneeId": {
+                    "type": "string"
+                },
+                "assigner": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "completeAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "escrows": {
+                    "items": {
+                        "$ref": "#/definitions/Escrows"
+                    },
+                    "type": "array"
+                },
+                "feedbacks": {
+                    "items": {
+                        "$ref": "#/definitions/Feedbacks"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "impactPointsHistories": {
+                    "items": {
+                        "$ref": "#/definitions/ImpactPointsHistory"
+                    },
+                    "type": "array"
+                },
+                "offers": {
+                    "$ref": "#/definitions/Offers"
+                },
+                "projectId": {
+                    "type": "string"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "CANCELED",
+                        "COMPLETE",
+                        "CONFIRMED",
+                        "KICKED_OUT"
+                    ],
+                    "type": "string"
+                },
+                "submittedWorks": {
+                    "items": {
+                        "$ref": "#/definitions/SubmittedWorks"
+                    },
+                    "type": "array"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "applicants",
+                "assignee",
+                "assigneeId",
+                "assigner",
+                "completeAt",
+                "createdAt",
+                "escrows",
+                "feedbacks",
+                "id",
+                "impactPointsHistories",
+                "offers",
+                "projectId",
+                "projects",
+                "status",
+                "submittedWorks",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Notifications": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "data": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "readAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "refId": {
+                    "type": "string"
+                },
+                "silent": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "enum": [
+                        "ACCEPT_CONNECT",
+                        "APPLICATION",
+                        "APPROVED",
+                        "ASSIGNEE_CANCELED",
+                        "ASSIGNER_CANCELED",
+                        "ASSIGNER_CONFIRMED",
+                        "CHAT",
+                        "COMMENT",
+                        "COMMENT_LIKE",
+                        "CONNECT",
+                        "EMPLOYEE_CANCELED",
+                        "EMPLOYER_CANCELED",
+                        "EMPLOYER_CONFIRMED",
+                        "FOLLOWED",
+                        "HIRED",
+                        "MEMBERED",
+                        "OFFER",
+                        "POST_LIKE",
+                        "PROJECT_COMPLETE",
+                        "REJECT",
+                        "SHARE_POST",
+                        "SHARE_PROJECT"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                },
+                "viewAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "data",
+                "id",
+                "readAt",
+                "refId",
+                "silent",
+                "type",
+                "updatedAt",
+                "users",
+                "viewAt"
+            ],
+            "type": "object"
+        },
+        "NotificationsSettings": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inApp": {
+                    "type": "boolean"
+                },
+                "push": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "enum": [
+                        "ACCEPT_CONNECT",
+                        "APPLICATION",
+                        "APPROVED",
+                        "ASSIGNEE_CANCELED",
+                        "ASSIGNER_CANCELED",
+                        "ASSIGNER_CONFIRMED",
+                        "CHAT",
+                        "COMMENT",
+                        "COMMENT_LIKE",
+                        "CONNECT",
+                        "EMPLOYEE_CANCELED",
+                        "EMPLOYER_CANCELED",
+                        "EMPLOYER_CONFIRMED",
+                        "FOLLOWED",
+                        "HIRED",
+                        "MEMBERED",
+                        "OFFER",
+                        "POST_LIKE",
+                        "PROJECT_COMPLETE",
+                        "REJECT",
+                        "SHARE_POST",
+                        "SHARE_PROJECT"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "email",
+                "id",
+                "inApp",
+                "push",
+                "type",
+                "updatedAt",
+                "userId"
+            ],
+            "type": "object"
+        },
+        "OauthConnects": {
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "expiredAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "identityId": {
+                    "type": "string"
+                },
+                "matrixUniqueId": {
+                    "type": "string"
+                },
+                "meta": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "provider": {
+                    "const": "STRIPE",
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "SUSPEND"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "accessToken",
+                "createdAt",
+                "expiredAt",
+                "id",
+                "identity",
+                "identityId",
+                "matrixUniqueId",
+                "meta",
+                "provider",
+                "refreshToken",
+                "status",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Offers": {
+            "properties": {
+                "applicants": {
+                    "$ref": "#/definitions/Applicants"
+                },
+                "assignmentTotal": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "cryptoCurrencyAddress": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "escrows": {
+                    "items": {
+                        "$ref": "#/definitions/Escrows"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "missions": {
+                    "items": {
+                        "$ref": "#/definitions/Missions"
+                    },
+                    "type": "array"
+                },
+                "offerMessage": {
+                    "type": "string"
+                },
+                "offerRate": {
+                    "type": "number"
+                },
+                "offerer": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "paymentMode": {
+                    "enum": [
+                        "CRYPTO",
+                        "FIAT"
+                    ],
+                    "type": "string"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "status": {
+                    "enum": [
+                        "APPROVED",
+                        "CANCELED",
+                        "CLOSED",
+                        "HIRED",
+                        "PENDING",
+                        "WITHDRAWN"
+                    ],
+                    "type": "string"
+                },
+                "totalHours": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "weeklyLimit": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "applicants",
+                "assignmentTotal",
+                "createdAt",
+                "cryptoCurrencyAddress",
+                "dueDate",
+                "escrows",
+                "id",
+                "missions",
+                "offerMessage",
+                "offerRate",
+                "offerer",
+                "paymentMode",
+                "projects",
+                "recipient",
+                "status",
+                "totalHours",
+                "updatedAt",
+                "weeklyLimit"
+            ],
+            "type": "object"
+        },
+        "OrgMembers": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizations": {
+                    "$ref": "#/definitions/Organizations"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "createdAt",
+                "id",
+                "organizations",
+                "users"
+            ],
+            "type": "object"
+        },
+        "Organizations": {
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "coverImage": {
+                    "$ref": "#/definitions/Media"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "culture": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "experiences": {
+                    "items": {
+                        "$ref": "#/definitions/Experiences"
+                    },
+                    "type": "array"
+                },
+                "followers": {
+                    "type": "number"
+                },
+                "followings": {
+                    "type": "number"
+                },
+                "geoname": {
+                    "$ref": "#/definitions/Geonames"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "$ref": "#/definitions/Media"
+                },
+                "impactPoints": {
+                    "type": "number"
+                },
+                "mission": {
+                    "type": "string"
+                },
+                "mobileCountryCode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "orgMembers": {
+                    "items": {
+                        "$ref": "#/definitions/OrgMembers"
+                    },
+                    "type": "array"
+                },
+                "otherPartyId": {
+                    "type": "string"
+                },
+                "otherPartyTitle": {
+                    "type": "string"
+                },
+                "otherPartyUrl": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "reports": {
+                    "$ref": "#/definitions/Reports"
+                },
+                "searchTsv": {
+                    "type": "string"
+                },
+                "shortname": {
+                    "type": "string"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "SUSPEND"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "COOP",
+                        "DEPARTMENT",
+                        "IIF",
+                        "INTERGOV",
+                        "NONPROFIT",
+                        "OTHER",
+                        "PUBLIC",
+                        "SOCIAL"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "verifiedImpact": {
+                    "type": "boolean"
+                },
+                "walletAddress": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address",
+                "bio",
+                "city",
+                "country",
+                "coverImage",
+                "createdAt",
+                "createdBy",
+                "culture",
+                "description",
+                "email",
+                "experiences",
+                "followers",
+                "followings",
+                "geoname",
+                "id",
+                "image",
+                "impactPoints",
+                "mission",
+                "mobileCountryCode",
+                "name",
+                "oldId",
+                "orgMembers",
+                "otherPartyId",
+                "otherPartyTitle",
+                "otherPartyUrl",
+                "phone",
+                "reports",
+                "searchTsv",
+                "shortname",
+                "status",
+                "type",
+                "updatedAt",
+                "verifiedImpact",
+                "walletAddress",
+                "website"
+            ],
+            "type": "object"
+        },
+        "Otps": {
+            "properties": {
+                "code": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "expiredAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "purpose": {
+                    "enum": [
+                        "ACTIVATION",
+                        "AUTH",
+                        "FORGET_PASSWORD"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "EMAIL",
+                        "PHONE"
+                    ],
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                },
+                "verifiedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "code",
+                "createdAt",
+                "expiredAt",
+                "id",
+                "purpose",
+                "type",
+                "userId",
+                "users",
+                "verifiedAt"
+            ],
+            "type": "object"
+        },
+        "Payments": {
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "canceledAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "cryptoCurrencyAddress": {
+                    "type": "string"
+                },
+                "currency": {
+                    "enum": [
+                        "ARS",
+                        "AUD",
+                        "BDT",
+                        "BRL",
+                        "CAD",
+                        "CHF",
+                        "CLP",
+                        "COP",
+                        "CRC",
+                        "DKK",
+                        "DOP",
+                        "EGP",
+                        "EUR",
+                        "GBP",
+                        "GHS",
+                        "GTQ",
+                        "INR",
+                        "JPY",
+                        "KRW",
+                        "MXN",
+                        "NPR",
+                        "PEN",
+                        "RWF",
+                        "THB",
+                        "USD",
+                        "UYU",
+                        "ZAR"
+                    ],
+                    "type": "string"
+                },
+                "escrows": {
+                    "items": {
+                        "$ref": "#/definitions/Escrows"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "meta": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "service": {
+                    "enum": [
+                        "CRYPTO",
+                        "STRIPE"
+                    ],
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "sourceType": {
+                    "enum": [
+                        "CARD",
+                        "CRYPTO_WALLET"
+                    ],
+                    "type": "string"
+                },
+                "transactionId": {
+                    "type": "string"
+                },
+                "verifiedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "amount",
+                "canceledAt",
+                "createdAt",
+                "cryptoCurrencyAddress",
+                "currency",
+                "escrows",
+                "id",
+                "identity",
+                "meta",
+                "service",
+                "source",
+                "sourceType",
+                "transactionId",
+                "verifiedAt"
+            ],
+            "type": "object"
+        },
+        "Posts": {
+            "properties": {
+                "comments": {
+                    "items": {
+                        "$ref": "#/definitions/Comments"
+                    },
+                    "type": "array"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "hashtags": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "identityTags": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "likes": {
+                    "type": "number"
+                },
+                "likes2": {
+                    "$ref": "#/definitions/Likes"
+                },
+                "media": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "posts": {
+                    "items": {
+                        "$ref": "#/definitions/Posts"
+                    },
+                    "type": "array"
+                },
+                "reports": {
+                    "$ref": "#/definitions/Reports"
+                },
+                "searchTsv": {
+                    "type": "string"
+                },
+                "shared": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "comments",
+                "content",
+                "createdAt",
+                "deletedAt",
+                "hashtags",
+                "id",
+                "identity",
+                "identityTags",
+                "likes",
+                "likes2",
+                "media",
+                "oldId",
+                "posts",
+                "reports",
+                "searchTsv",
+                "shared",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Projects": {
+            "properties": {
+                "answers": {
+                    "items": {
+                        "$ref": "#/definitions/Answers"
+                    },
+                    "type": "array"
+                },
+                "applicants": {
+                    "$ref": "#/definitions/Applicants"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "commitmentHoursHigher": {
+                    "type": "string"
+                },
+                "commitmentHoursLower": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "escrows": {
+                    "items": {
+                        "$ref": "#/definitions/Escrows"
+                    },
+                    "type": "array"
+                },
+                "experienceLevel": {
+                    "type": "number"
+                },
+                "expiresAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "feedbacks": {
+                    "items": {
+                        "$ref": "#/definitions/Feedbacks"
+                    },
+                    "type": "array"
+                },
+                "geoname": {
+                    "$ref": "#/definitions/Geonames"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "jobCategory": {
+                    "$ref": "#/definitions/JobCategories"
+                },
+                "missions": {
+                    "items": {
+                        "$ref": "#/definitions/Missions"
+                    },
+                    "type": "array"
+                },
+                "offers": {
+                    "items": {
+                        "$ref": "#/definitions/Offers"
+                    },
+                    "type": "array"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "otherPartyId": {
+                    "type": "string"
+                },
+                "otherPartyTitle": {
+                    "type": "string"
+                },
+                "otherPartyUrl": {
+                    "type": "string"
+                },
+                "paymentCurrency": {
+                    "type": "string"
+                },
+                "paymentRangeHigher": {
+                    "type": "string"
+                },
+                "paymentRangeLower": {
+                    "type": "string"
+                },
+                "paymentScheme": {
+                    "enum": [
+                        "FIXED",
+                        "HOURLY"
+                    ],
+                    "type": "string"
+                },
+                "paymentType": {
+                    "enum": [
+                        "PAID",
+                        "VOLUNTEER"
+                    ],
+                    "type": "string"
+                },
+                "projectLength": {
+                    "enum": [
+                        "1_3_MONTHS",
+                        "3_6_MONTHS",
+                        "6_MONTHS_OR_MORE",
+                        "LESS_THAN_A_DAY",
+                        "LESS_THAN_A_MONTH"
+                    ],
+                    "type": "string"
+                },
+                "projectType": {
+                    "enum": [
+                        "FULL_TIME",
+                        "ONE_OFF",
+                        "PART_TIME"
+                    ],
+                    "type": "string"
+                },
+                "questions": {
+                    "items": {
+                        "$ref": "#/definitions/Questions"
+                    },
+                    "type": "array"
+                },
+                "remotePreference": {
+                    "enum": [
+                        "HYBRID",
+                        "ONSITE",
+                        "REMOTE"
+                    ],
+                    "type": "string"
+                },
+                "searchTsv": {
+                    "type": "string"
+                },
+                "skills": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "DRAFT",
+                        "EXPIRE"
+                    ],
+                    "type": "string"
+                },
+                "submittedWorks": {
+                    "items": {
+                        "$ref": "#/definitions/SubmittedWorks"
+                    },
+                    "type": "array"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "weeklyHoursHigher": {
+                    "type": "string"
+                },
+                "weeklyHoursLower": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "answers",
+                "applicants",
+                "city",
+                "commitmentHoursHigher",
+                "commitmentHoursLower",
+                "country",
+                "createdAt",
+                "deletedAt",
+                "description",
+                "escrows",
+                "experienceLevel",
+                "expiresAt",
+                "feedbacks",
+                "geoname",
+                "id",
+                "identity",
+                "jobCategory",
+                "missions",
+                "offers",
+                "oldId",
+                "otherPartyId",
+                "otherPartyTitle",
+                "otherPartyUrl",
+                "paymentCurrency",
+                "paymentRangeHigher",
+                "paymentRangeLower",
+                "paymentScheme",
+                "paymentType",
+                "projectLength",
+                "projectType",
+                "questions",
+                "remotePreference",
+                "searchTsv",
+                "skills",
+                "status",
+                "submittedWorks",
+                "title",
+                "updatedAt",
+                "weeklyHoursHigher",
+                "weeklyHoursLower"
+            ],
+            "type": "object"
+        },
+        "Questions": {
+            "properties": {
+                "answers": {
+                    "items": {
+                        "$ref": "#/definitions/Answers"
+                    },
+                    "type": "array"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "options": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "answers",
+                "createdAt",
+                "id",
+                "oldId",
+                "options",
+                "projects",
+                "question",
+                "required",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Reports": {
+            "properties": {
+                "blocked": {
+                    "type": "boolean"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "commentId": {
+                    "type": "string"
+                },
+                "comments": {
+                    "$ref": "#/definitions/Comments"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identityId": {
+                    "type": "string"
+                },
+                "orgId": {
+                    "type": "string"
+                },
+                "organizations": {
+                    "$ref": "#/definitions/Organizations"
+                },
+                "postId": {
+                    "type": "string"
+                },
+                "posts": {
+                    "$ref": "#/definitions/Posts"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/Users"
+                }
+            },
+            "required": [
+                "blocked",
+                "comment",
+                "commentId",
+                "comments",
+                "createdAt",
+                "id",
+                "identityId",
+                "orgId",
+                "organizations",
+                "postId",
+                "posts",
+                "userId",
+                "users"
+            ],
+            "type": "object"
+        },
+        "SearchHistory": {
+            "properties": {
+                "body": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identity": {
+                    "$ref": "#/definitions/Identities"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "body",
+                "createdAt",
+                "deletedAt",
+                "id",
+                "identity",
+                "updatedAt"
+            ],
+            "type": "object"
+        },
+        "Skills": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "id",
+                "name"
+            ],
+            "type": "object"
+        },
+        "SubmittedWorks": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "endAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "impactPointsHistories": {
+                    "items": {
+                        "$ref": "#/definitions/ImpactPointsHistory"
+                    },
+                    "type": "array"
+                },
+                "missions": {
+                    "$ref": "#/definitions/Missions"
+                },
+                "projects": {
+                    "$ref": "#/definitions/Projects"
+                },
+                "startAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "status": {
+                    "enum": [
+                        "CONFIRMED",
+                        "PENDING"
+                    ],
+                    "type": "string"
+                },
+                "totalHours": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "createdAt",
+                "endAt",
+                "id",
+                "impactPointsHistories",
+                "missions",
+                "projects",
+                "startAt",
+                "status",
+                "totalHours"
+            ],
+            "type": "object"
+        },
+        "TemporaryTable": {
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "commitmentHoursHigher": {
+                    "type": "string"
+                },
+                "commitmentHoursLower": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "experienceLevel": {
+                    "type": "number"
+                },
+                "expiresAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "geonameId": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "identityId": {
+                    "type": "string"
+                },
+                "jobCategoryId": {
+                    "type": "string"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "otherPartyId": {
+                    "type": "string"
+                },
+                "otherPartyTitle": {
+                    "type": "string"
+                },
+                "otherPartyUrl": {
+                    "type": "string"
+                },
+                "paymentCurrency": {
+                    "type": "string"
+                },
+                "paymentRangeHigher": {
+                    "type": "string"
+                },
+                "paymentRangeLower": {
+                    "type": "string"
+                },
+                "paymentScheme": {
+                    "enum": [
+                        "FIXED",
+                        "HOURLY"
+                    ],
+                    "type": "string"
+                },
+                "paymentType": {
+                    "enum": [
+                        "PAID",
+                        "VOLUNTEER"
+                    ],
+                    "type": "string"
+                },
+                "projectLength": {
+                    "enum": [
+                        "1_3_MONTHS",
+                        "3_6_MONTHS",
+                        "6_MONTHS_OR_MORE",
+                        "LESS_THAN_A_DAY",
+                        "LESS_THAN_A_MONTH"
+                    ],
+                    "type": "string"
+                },
+                "projectType": {
+                    "enum": [
+                        "FULL_TIME",
+                        "ONE_OFF",
+                        "PART_TIME"
+                    ],
+                    "type": "string"
+                },
+                "remotePreference": {
+                    "enum": [
+                        "HYBRID",
+                        "ONSITE",
+                        "REMOTE"
+                    ],
+                    "type": "string"
+                },
+                "searchTsv": {
+                    "type": "string"
+                },
+                "skills": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "DRAFT",
+                        "EXPIRE"
+                    ],
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "weeklyHoursHigher": {
+                    "type": "string"
+                },
+                "weeklyHoursLower": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "city",
+                "commitmentHoursHigher",
+                "commitmentHoursLower",
+                "country",
+                "createdAt",
+                "deletedAt",
+                "description",
+                "experienceLevel",
+                "expiresAt",
+                "geonameId",
+                "id",
+                "identityId",
+                "jobCategoryId",
+                "oldId",
+                "otherPartyId",
+                "otherPartyTitle",
+                "otherPartyUrl",
+                "paymentCurrency",
+                "paymentRangeHigher",
+                "paymentRangeLower",
+                "paymentScheme",
+                "paymentType",
+                "projectLength",
+                "projectType",
+                "remotePreference",
+                "searchTsv",
+                "skills",
+                "status",
+                "title",
+                "updatedAt",
+                "weeklyHoursHigher",
+                "weeklyHoursLower"
+            ],
+            "type": "object"
+        },
+        "TokensBlacklist": {
+            "properties": {
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "JWT_ACCESS",
+                        "JWT_REFRESH"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "createdAt",
+                "expiresAt",
+                "id",
+                "token",
+                "type"
+            ],
+            "type": "object"
+        },
+        "Users": {
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "applicants": {
+                    "$ref": "#/definitions/Applicants"
+                },
+                "avatar": {
+                    "$ref": "#/definitions/Media"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "certificates": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "coverImage": {
+                    "$ref": "#/definitions/Media"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "descriptionSearch": {
+                    "type": "string"
+                },
+                "devices": {
+                    "items": {
+                        "$ref": "#/definitions/Devices"
+                    },
+                    "type": "array"
+                },
+                "educations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "emailText": {
+                    "type": "string"
+                },
+                "emailVerifiedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "experiences": {
+                    "items": {
+                        "$ref": "#/definitions/Experiences"
+                    },
+                    "type": "array"
+                },
+                "expiryDate": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "followers": {
+                    "type": "number"
+                },
+                "followings": {
+                    "type": "number"
+                },
+                "geoname": {
+                    "$ref": "#/definitions/Geonames"
+                },
+                "goals": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "impactPoints": {
+                    "type": "number"
+                },
+                "isAdmin": {
+                    "type": "boolean"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "languages": {
+                    "items": {
+                        "$ref": "#/definitions/Languages"
+                    },
+                    "type": "array"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "mission": {
+                    "type": "string"
+                },
+                "mobileCountryCode": {
+                    "type": "string"
+                },
+                "myConversation": {
+                    "type": "string"
+                },
+                "notifications": {
+                    "items": {
+                        "$ref": "#/definitions/Notifications"
+                    },
+                    "type": "array"
+                },
+                "oldId": {
+                    "type": "number"
+                },
+                "orgMembers": {
+                    "items": {
+                        "$ref": "#/definitions/OrgMembers"
+                    },
+                    "type": "array"
+                },
+                "otps": {
+                    "$ref": "#/definitions/Otps"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "passwordExpired": {
+                    "type": "boolean"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "phoneVerifiedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "proofspaceConnectId": {
+                    "type": "string"
+                },
+                "rememberToken": {
+                    "type": "string"
+                },
+                "reports": {
+                    "$ref": "#/definitions/Reports"
+                },
+                "searchTsv": {
+                    "type": "string"
+                },
+                "skills": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "status": {
+                    "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "SUSPEND"
+                    ],
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "viewAs": {
+                    "type": "number"
+                },
+                "walletAddress": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address",
+                "applicants",
+                "avatar",
+                "bio",
+                "certificates",
+                "city",
+                "country",
+                "coverImage",
+                "createdAt",
+                "deletedAt",
+                "descriptionSearch",
+                "devices",
+                "educations",
+                "email",
+                "emailText",
+                "emailVerifiedAt",
+                "experiences",
+                "expiryDate",
+                "firstName",
+                "followers",
+                "followings",
+                "geoname",
+                "goals",
+                "id",
+                "impactPoints",
+                "isAdmin",
+                "language",
+                "languages",
+                "lastName",
+                "mission",
+                "mobileCountryCode",
+                "myConversation",
+                "notifications",
+                "oldId",
+                "orgMembers",
+                "otps",
+                "password",
+                "passwordExpired",
+                "phone",
+                "phoneVerifiedAt",
+                "proofspaceConnectId",
+                "rememberToken",
+                "reports",
+                "searchTsv",
+                "skills",
+                "status",
+                "updatedAt",
+                "username",
+                "viewAs",
+                "walletAddress"
+            ],
+            "type": "object"
+        },
+        "Webhooks": {
+            "properties": {
+                "content": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "createdAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "party": {
+                    "const": "PROOFSPACE",
+                    "type": "string"
+                },
+                "response": {
+                    "additionalProperties": true,
+                    "properties": {},
+                    "type": "object"
+                },
+                "responseAt": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "responseStatusCode": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "content",
+                "createdAt",
+                "id",
+                "party",
+                "response",
+                "responseAt",
+                "responseStatusCode"
+            ],
+            "type": "object"
+        }
+    }
+}
+

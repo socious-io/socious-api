@@ -6,13 +6,2152 @@ servers:
   - url: https://dev.socious.io/api/v2/
   - url: https://socious.io/api/v2/
   - url: http://localhost:8370
-
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
   schemas:
+    Answers:
+      properties:
+        answer:
+          type: string
+        applicants:
+          $ref: '#/components/schemas/Applicants'
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        projects:
+          $ref: '#/components/schemas/Projects'
+        question:
+          $ref: '#/components/schemas/Questions'
+        selectedOption:
+          type: number
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - answer
+        - applicants
+        - createdAt
+        - id
+        - projects
+        - question
+        - selectedOption
+        - updatedAt
+      type: object
+    Applicants:
+      properties:
+        answers:
+          items:
+            $ref: '#/components/schemas/Answers'
+          type: array
+        attachment:
+          $ref: '#/components/schemas/Media'
+        closedAt:
+          format: date-time
+          type: string
+        coverLetter:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        cvLink:
+          type: string
+        cvName:
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        feedback:
+          type: string
+        id:
+          type: string
+        missions:
+          items:
+            $ref: '#/components/schemas/Missions'
+          type: array
+        offerMessage:
+          type: string
+        offerRate:
+          type: number
+        offers:
+          items:
+            $ref: '#/components/schemas/Offers'
+          type: array
+        oldId:
+          type: number
+        paymentRate:
+          type: number
+        paymentType:
+          enum:
+            - PAID
+            - VOLUNTEER
+          type: string
+        projectId:
+          type: string
+        projects:
+          $ref: '#/components/schemas/Projects'
+        shareContactInfo:
+          type: boolean
+        status:
+          enum:
+            - APPROVED
+            - CLOSED
+            - HIRED
+            - OFFERED
+            - PENDING
+            - REJECTED
+            - WITHDRAWN
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - answers
+        - attachment
+        - closedAt
+        - coverLetter
+        - createdAt
+        - cvLink
+        - cvName
+        - deletedAt
+        - feedback
+        - id
+        - missions
+        - offerMessage
+        - offerRate
+        - offers
+        - oldId
+        - paymentRate
+        - paymentType
+        - projectId
+        - projects
+        - shareContactInfo
+        - status
+        - updatedAt
+        - userId
+        - users
+      type: object
+    Cards:
+      properties:
+        brand:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        cvc:
+          type: string
+        expMonth:
+          type: number
+        expYear:
+          type: number
+        holderName:
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        numbers:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - brand
+        - createdAt
+        - cvc
+        - expMonth
+        - expYear
+        - holderName
+        - id
+        - identity
+        - numbers
+        - updatedAt
+      type: object
+    Chats:
+      properties:
+        chatsParticipants:
+          items:
+            $ref: '#/components/schemas/ChatsParticipants'
+          type: array
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        messages:
+          items:
+            $ref: '#/components/schemas/Messages'
+          type: array
+        name:
+          type: string
+        oldId:
+          type: number
+        participants:
+          items:
+            type: string
+          type: array
+        type:
+          enum:
+            - CHANNEL
+            - CHAT
+            - GROUPED
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - chatsParticipants
+        - createdAt
+        - createdBy
+        - deletedAt
+        - description
+        - id
+        - messages
+        - name
+        - oldId
+        - participants
+        - type
+        - updatedAt
+      type: object
+    ChatsParticipants:
+      properties:
+        allRead:
+          type: boolean
+        chat:
+          $ref: '#/components/schemas/Chats'
+        chatId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        identityId:
+          type: string
+        joinedBy:
+          $ref: '#/components/schemas/Identities'
+        lastReadAt:
+          format: date-time
+          type: string
+        lastReadId:
+          type: string
+        mutedUntil:
+          format: date-time
+          type: string
+        type:
+          enum:
+            - ADMIN
+            - MEMBER
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - allRead
+        - chat
+        - chatId
+        - createdAt
+        - id
+        - identity
+        - identityId
+        - joinedBy
+        - lastReadAt
+        - lastReadId
+        - mutedUntil
+        - type
+        - updatedAt
+      type: object
+    CollectorJobs:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        fetchCounter:
+          type: number
+        hasMore:
+          type: boolean
+        id:
+          type: string
+        jobName:
+          type: string
+        lastModifiedDate:
+          format: date-time
+          type: string
+        service:
+          enum:
+            - IDEALIST
+            - RELIEFWEB
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - createdAt
+        - fetchCounter
+        - hasMore
+        - id
+        - jobName
+        - lastModifiedDate
+        - service
+        - updatedAt
+      type: object
+    Comments:
+      properties:
+        comments:
+          items:
+            $ref: '#/components/schemas/Comments'
+          type: array
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        likes:
+          type: number
+        likes2:
+          items:
+            $ref: '#/components/schemas/Likes'
+          type: array
+        posts:
+          $ref: '#/components/schemas/Posts'
+        replied:
+          type: boolean
+        reports:
+          $ref: '#/components/schemas/Reports'
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - comments
+        - content
+        - createdAt
+        - id
+        - identity
+        - likes
+        - likes2
+        - posts
+        - replied
+        - reports
+        - updatedAt
+      type: object
+    Connections:
+      properties:
+        connectedAt:
+          format: date-time
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        relationId:
+          type: string
+        requested:
+          $ref: '#/components/schemas/Identities'
+        requester:
+          $ref: '#/components/schemas/Identities'
+        status:
+          enum:
+            - BLOCKED
+            - CONNECTED
+            - PENDING
+          type: string
+        text:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - connectedAt
+        - createdAt
+        - id
+        - relationId
+        - requested
+        - requester
+        - status
+        - text
+        - updatedAt
+      type: object
+    Devices:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        meta:
+          additionalProperties: true
+          properties: {}
+          type: object
+        token:
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - createdAt
+        - id
+        - meta
+        - token
+        - users
+      type: object
+    Emails:
+      properties:
+        body:
+          type: string
+        bodyType:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        info:
+          additionalProperties: true
+          properties: {}
+          type: object
+        options:
+          additionalProperties: true
+          properties: {}
+          type: object
+        service:
+          enum:
+            - SENDGRID
+            - SMTP
+            - TEST
+          type: string
+        subject:
+          type: string
+        to:
+          type: string
+      required:
+        - body
+        - bodyType
+        - createdAt
+        - id
+        - info
+        - options
+        - service
+        - subject
+        - to
+      type: object
+    Escrows:
+      properties:
+        amount:
+          type: number
+        createdAt:
+          format: date-time
+          type: string
+        currency:
+          enum:
+            - ARS
+            - AUD
+            - BDT
+            - BRL
+            - CAD
+            - CHF
+            - CLP
+            - COP
+            - CRC
+            - DKK
+            - DOP
+            - EGP
+            - EUR
+            - GBP
+            - GHS
+            - GTQ
+            - INR
+            - JPY
+            - KRW
+            - MXN
+            - NPR
+            - PEN
+            - RWF
+            - THB
+            - USD
+            - UYU
+            - ZAR
+          type: string
+        id:
+          type: string
+        missions:
+          $ref: '#/components/schemas/Missions'
+        offers:
+          $ref: '#/components/schemas/Offers'
+        payment:
+          $ref: '#/components/schemas/Payments'
+        projects:
+          $ref: '#/components/schemas/Projects'
+        refoundAt:
+          format: date-time
+          type: string
+        releaseId:
+          type: string
+        releasedAt:
+          format: date-time
+          type: string
+      required:
+        - amount
+        - createdAt
+        - currency
+        - id
+        - missions
+        - offers
+        - payment
+        - projects
+        - refoundAt
+        - releaseId
+        - releasedAt
+      type: object
+    Experiences:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        endAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        organizations:
+          $ref: '#/components/schemas/Organizations'
+        skills:
+          items:
+            type: string
+          type: array
+        startAt:
+          format: date-time
+          type: string
+        title:
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - createdAt
+        - description
+        - endAt
+        - id
+        - organizations
+        - skills
+        - startAt
+        - title
+        - users
+      type: object
+    Feedbacks:
+      properties:
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        isContest:
+          type: boolean
+        missions:
+          $ref: '#/components/schemas/Missions'
+        projects:
+          $ref: '#/components/schemas/Projects'
+      required:
+        - content
+        - createdAt
+        - id
+        - identity
+        - isContest
+        - missions
+        - projects
+      type: object
+    Follows:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        followerIdentity:
+          $ref: '#/components/schemas/Identities'
+        followerIdentityId:
+          type: string
+        followingIdentity:
+          $ref: '#/components/schemas/Identities'
+        followingIdentityId:
+          type: string
+        id:
+          type: string
+      required:
+        - createdAt
+        - followerIdentity
+        - followerIdentityId
+        - followingIdentity
+        - followingIdentityId
+        - id
+      type: object
+    Geonames:
+      properties:
+        admin1Code:
+          type: string
+        admin2Code:
+          type: string
+        asciiname:
+          type: string
+        cc2:
+          items:
+            type: string
+          type: array
+        countryCode:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        featureClass:
+          type: string
+        featureCode:
+          type: string
+        fipsCode:
+          type: string
+        geonamesAlts:
+          items:
+            $ref: '#/components/schemas/GeonamesAlt'
+          type: array
+        id:
+          type: number
+        isoCode:
+          type: string
+        latlong:
+          anyOf:
+            - additionalProperties: true
+              properties: {}
+              type: object
+            - type: string
+        name:
+          type: string
+        organizations:
+          items:
+            $ref: '#/components/schemas/Organizations'
+          type: array
+        population:
+          type: number
+        projects:
+          items:
+            $ref: '#/components/schemas/Projects'
+          type: array
+        timezone:
+          type: string
+        updatedAt:
+          type: string
+        users:
+          items:
+            $ref: '#/components/schemas/Users'
+          type: array
+      required:
+        - admin1Code
+        - admin2Code
+        - asciiname
+        - cc2
+        - countryCode
+        - createdAt
+        - featureClass
+        - featureCode
+        - fipsCode
+        - geonamesAlts
+        - id
+        - isoCode
+        - latlong
+        - name
+        - organizations
+        - population
+        - projects
+        - timezone
+        - updatedAt
+        - users
+      type: object
+    GeonamesAlt:
+      properties:
+        alternateName:
+          type: string
+        geoname:
+          $ref: '#/components/schemas/Geonames'
+        id:
+          type: number
+        isColloquial:
+          type: boolean
+        isHistoric:
+          type: boolean
+        isPreferredName:
+          type: boolean
+        isShortName:
+          type: boolean
+        isoLanguage:
+          type: string
+      required:
+        - alternateName
+        - geoname
+        - id
+        - isColloquial
+        - isHistoric
+        - isPreferredName
+        - isShortName
+        - isoLanguage
+      type: object
+    Identities:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        meta:
+          additionalProperties: true
+          properties: {}
+          type: object
+        type:
+          enum:
+            - organizations
+            - users
+          type: string
+      required:
+        - cards
+        - chatsParticipants
+        - chatsParticipants2
+        - comments
+        - connections
+        - connections2
+        - createdAt
+        - feedbacks
+        - follows
+        - follows2
+        - id
+        - impactPointsHistories
+        - likes
+        - media
+        - messages
+        - meta
+        - missions
+        - missions2
+        - oauthConnects
+        - offers
+        - offers2
+        - payments
+        - posts
+        - projects
+        - searchHistories
+        - type
+      type: object
+    ImpactPointsHistory:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        missions:
+          $ref: '#/components/schemas/Missions'
+        socialCause:
+          enum:
+            - ABORTION
+            - ANIMAL_RIGHTS
+            - ANTI_SEMITISM
+            - ARMED_CONFLICT
+            - BIODIVERSITY
+            - BIODIVERSITY_LIFE_BELOW_WATER
+            - BLACK_LIVES_MATTER
+            - BULLYING
+            - CHILD_PROTECTION
+            - CIVIC_ENGAGEMENT
+            - CLIMATE_CHANGE
+            - COLLABORATION_FOR_IMPACT
+            - COMMUNITY_DEVELOPMENT
+            - CORRUPTION
+            - CRIME_PREVENTION
+            - DECENT_WORK
+            - DEMOCRACY
+            - DEPOPULATION
+            - DISABILITY
+            - DIVERSITY_INCLUSION
+            - DOMESTIC_VIOLENCE
+            - EDUCATION
+            - EUTHANASIA
+            - GENDER_BASED_VIOLENCE
+            - GENDER_EQUALITY
+            - GOVERNANCE
+            - HEALTH
+            - HOMELESSNESS
+            - HUMAN_RIGHTS
+            - HUNGER
+            - INDIGENOUS_PEOPLES
+            - INEQUALITY
+            - INNOVATION
+            - ISLAMOPHOBIA
+            - JUSTICE
+            - LGBTQI
+            - MENTAL
+            - MIGRANTS
+            - MINORITY
+            - MULTICULTURALISM
+            - NATURAL_DISASTERS
+            - NEURODIVERSITY
+            - ORPHANS
+            - OTHER
+            - OVERPOPULATION
+            - PEACEBUILDING
+            - PEACE_JUSTICE
+            - POVERTY
+            - REFUGEE
+            - RESPONSIBLE_CONSUMPTION
+            - RURAL_DEVELOPMENT
+            - SECURITY
+            - SEXUAL_VIOLENCE
+            - SOCIAL
+            - SUBSTANCE_ABUSE
+            - SUSTAINABILITY
+            - SUSTAINABLE_COMMUNITIES
+            - SUSTAINABLE_ENERGY
+            - VEGANISM
+            - WATER_SANITATION
+          type: string
+        socialCauseCategory:
+          enum:
+            - CLEAN_WATER_SANITATION
+            - CLIMATE_ACTION
+            - ECONOMIC_GROWTH
+            - EDUCATION_QUALITY
+            - ENERGY
+            - GENDER_EQUALITY
+            - GOALS_PARTNERSHIPS
+            - HEALTH
+            - INDUSTRY_INNOVATION_INFRASTRUCTURE
+            - LIFE
+            - LIFE_BELOW_WATER
+            - NO_POVERTY
+            - PEACE_JUSTICE
+            - REDUCED_INEQUALITIES
+            - RESPONSIBLE_CONSUMPTION_PRODUCTION
+            - SUSTAINABLE_CITIES_COMMUNITIES
+            - ZERO_HUNGER
+          type: string
+        submittedWork:
+          $ref: '#/components/schemas/SubmittedWorks'
+        totalPoints:
+          type: number
+      required:
+        - createdAt
+        - id
+        - identity
+        - missions
+        - socialCause
+        - socialCauseCategory
+        - submittedWork
+        - totalPoints
+      type: object
+    JobCategories:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        hourlyWageDollars:
+          type: number
+        id:
+          type: string
+        name:
+          type: string
+        projects:
+          items:
+            $ref: '#/components/schemas/Projects'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - createdAt
+        - hourlyWageDollars
+        - id
+        - name
+        - projects
+        - updatedAt
+      type: object
+    Languages:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        level:
+          enum:
+            - BASIC
+            - CONVERSANT
+            - FLUENT
+            - NATIVE
+            - PROFICIENT
+          type: string
+        name:
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - createdAt
+        - id
+        - level
+        - name
+        - users
+      type: object
+    Likes:
+      properties:
+        commentId:
+          type: string
+        comments:
+          $ref: '#/components/schemas/Comments'
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        identityId:
+          type: string
+        postId:
+          type: string
+        posts:
+          $ref: '#/components/schemas/Posts'
+      required:
+        - commentId
+        - comments
+        - createdAt
+        - id
+        - identity
+        - identityId
+        - postId
+        - posts
+      type: object
+    Media:
+      properties:
+        applicants:
+          items:
+            $ref: '#/components/schemas/Applicants'
+          type: array
+        createdAt:
+          format: date-time
+          type: string
+        filename:
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        messages:
+          items:
+            $ref: '#/components/schemas/Messages'
+          type: array
+        organizations:
+          items:
+            $ref: '#/components/schemas/Organizations'
+          type: array
+        organizations2:
+          items:
+            $ref: '#/components/schemas/Organizations'
+          type: array
+        url:
+          type: string
+        users:
+          items:
+            $ref: '#/components/schemas/Users'
+          type: array
+        users2:
+          items:
+            $ref: '#/components/schemas/Users'
+          type: array
+      required:
+        - applicants
+        - createdAt
+        - filename
+        - id
+        - identity
+        - messages
+        - organizations
+        - organizations2
+        - url
+        - users
+        - users2
+      type: object
+    Messages:
+      properties:
+        chat:
+          $ref: '#/components/schemas/Chats'
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        media:
+          $ref: '#/components/schemas/Media'
+        replied:
+          type: boolean
+        replyId:
+          type: string
+        text:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - chat
+        - createdAt
+        - deletedAt
+        - id
+        - identity
+        - media
+        - replied
+        - replyId
+        - text
+        - updatedAt
+      type: object
+    Missions:
+      properties:
+        applicants:
+          $ref: '#/components/schemas/Applicants'
+        assignee:
+          $ref: '#/components/schemas/Identities'
+        assigneeId:
+          type: string
+        assigner:
+          $ref: '#/components/schemas/Identities'
+        completeAt:
+          format: date-time
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        escrows:
+          items:
+            $ref: '#/components/schemas/Escrows'
+          type: array
+        feedbacks:
+          items:
+            $ref: '#/components/schemas/Feedbacks'
+          type: array
+        id:
+          type: string
+        impactPointsHistories:
+          items:
+            $ref: '#/components/schemas/ImpactPointsHistory'
+          type: array
+        offers:
+          $ref: '#/components/schemas/Offers'
+        projectId:
+          type: string
+        projects:
+          $ref: '#/components/schemas/Projects'
+        status:
+          enum:
+            - ACTIVE
+            - CANCELED
+            - COMPLETE
+            - CONFIRMED
+            - KICKED_OUT
+          type: string
+        submittedWorks:
+          items:
+            $ref: '#/components/schemas/SubmittedWorks'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - applicants
+        - assignee
+        - assigneeId
+        - assigner
+        - completeAt
+        - createdAt
+        - escrows
+        - feedbacks
+        - id
+        - impactPointsHistories
+        - offers
+        - projectId
+        - projects
+        - status
+        - submittedWorks
+        - updatedAt
+      type: object
+    Notifications:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        data:
+          additionalProperties: true
+          properties: {}
+          type: object
+        id:
+          type: string
+        readAt:
+          format: date-time
+          type: string
+        refId:
+          type: string
+        silent:
+          type: boolean
+        type:
+          enum:
+            - ACCEPT_CONNECT
+            - APPLICATION
+            - APPROVED
+            - ASSIGNEE_CANCELED
+            - ASSIGNER_CANCELED
+            - ASSIGNER_CONFIRMED
+            - CHAT
+            - COMMENT
+            - COMMENT_LIKE
+            - CONNECT
+            - EMPLOYEE_CANCELED
+            - EMPLOYER_CANCELED
+            - EMPLOYER_CONFIRMED
+            - FOLLOWED
+            - HIRED
+            - MEMBERED
+            - OFFER
+            - POST_LIKE
+            - PROJECT_COMPLETE
+            - REJECT
+            - SHARE_POST
+            - SHARE_PROJECT
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+        viewAt:
+          format: date-time
+          type: string
+      required:
+        - createdAt
+        - data
+        - id
+        - readAt
+        - refId
+        - silent
+        - type
+        - updatedAt
+        - users
+        - viewAt
+      type: object
+    NotificationsSettings:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        email:
+          type: boolean
+        id:
+          type: string
+        inApp:
+          type: boolean
+        push:
+          type: boolean
+        type:
+          enum:
+            - ACCEPT_CONNECT
+            - APPLICATION
+            - APPROVED
+            - ASSIGNEE_CANCELED
+            - ASSIGNER_CANCELED
+            - ASSIGNER_CONFIRMED
+            - CHAT
+            - COMMENT
+            - COMMENT_LIKE
+            - CONNECT
+            - EMPLOYEE_CANCELED
+            - EMPLOYER_CANCELED
+            - EMPLOYER_CONFIRMED
+            - FOLLOWED
+            - HIRED
+            - MEMBERED
+            - OFFER
+            - POST_LIKE
+            - PROJECT_COMPLETE
+            - REJECT
+            - SHARE_POST
+            - SHARE_PROJECT
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          type: string
+      required:
+        - createdAt
+        - email
+        - id
+        - inApp
+        - push
+        - type
+        - updatedAt
+        - userId
+      type: object
+    OauthConnects:
+      properties:
+        accessToken:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        expiredAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        identityId:
+          type: string
+        matrixUniqueId:
+          type: string
+        meta:
+          additionalProperties: true
+          properties: {}
+          type: object
+        provider:
+          const: STRIPE
+          type: string
+        refreshToken:
+          type: string
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - SUSPEND
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - accessToken
+        - createdAt
+        - expiredAt
+        - id
+        - identity
+        - identityId
+        - matrixUniqueId
+        - meta
+        - provider
+        - refreshToken
+        - status
+        - updatedAt
+      type: object
+    Offers:
+      properties:
+        applicants:
+          $ref: '#/components/schemas/Applicants'
+        assignmentTotal:
+          type: number
+        createdAt:
+          format: date-time
+          type: string
+        cryptoCurrencyAddress:
+          type: string
+        dueDate:
+          format: date-time
+          type: string
+        escrows:
+          items:
+            $ref: '#/components/schemas/Escrows'
+          type: array
+        id:
+          type: string
+        missions:
+          items:
+            $ref: '#/components/schemas/Missions'
+          type: array
+        offerMessage:
+          type: string
+        offerRate:
+          type: number
+        offerer:
+          $ref: '#/components/schemas/Identities'
+        paymentMode:
+          enum:
+            - CRYPTO
+            - FIAT
+          type: string
+        projects:
+          $ref: '#/components/schemas/Projects'
+        recipient:
+          $ref: '#/components/schemas/Identities'
+        status:
+          enum:
+            - APPROVED
+            - CANCELED
+            - CLOSED
+            - HIRED
+            - PENDING
+            - WITHDRAWN
+          type: string
+        totalHours:
+          type: number
+        updatedAt:
+          format: date-time
+          type: string
+        weeklyLimit:
+          type: number
+      required:
+        - applicants
+        - assignmentTotal
+        - createdAt
+        - cryptoCurrencyAddress
+        - dueDate
+        - escrows
+        - id
+        - missions
+        - offerMessage
+        - offerRate
+        - offerer
+        - paymentMode
+        - projects
+        - recipient
+        - status
+        - totalHours
+        - updatedAt
+        - weeklyLimit
+      type: object
+    OrgMembers:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        organizations:
+          $ref: '#/components/schemas/Organizations'
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - createdAt
+        - id
+        - organizations
+        - users
+      type: object
+    Organizations:
+      properties:
+        address:
+          type: string
+        bio:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        coverImage:
+          $ref: '#/components/schemas/Media'
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
+          type: string
+        culture:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        experiences:
+          items:
+            $ref: '#/components/schemas/Experiences'
+          type: array
+        followers:
+          type: number
+        followings:
+          type: number
+        geoname:
+          $ref: '#/components/schemas/Geonames'
+        id:
+          type: string
+        image:
+          $ref: '#/components/schemas/Media'
+        impactPoints:
+          type: number
+        mission:
+          type: string
+        mobileCountryCode:
+          type: string
+        name:
+          type: string
+        oldId:
+          type: number
+        orgMembers:
+          items:
+            $ref: '#/components/schemas/OrgMembers'
+          type: array
+        otherPartyId:
+          type: string
+        otherPartyTitle:
+          type: string
+        otherPartyUrl:
+          type: string
+        phone:
+          type: string
+        reports:
+          $ref: '#/components/schemas/Reports'
+        searchTsv:
+          type: string
+        shortname:
+          type: string
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - SUSPEND
+          type: string
+        type:
+          enum:
+            - COOP
+            - DEPARTMENT
+            - IIF
+            - INTERGOV
+            - NONPROFIT
+            - OTHER
+            - PUBLIC
+            - SOCIAL
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        verifiedImpact:
+          type: boolean
+        walletAddress:
+          type: string
+        website:
+          type: string
+      required:
+        - address
+        - bio
+        - city
+        - country
+        - coverImage
+        - createdAt
+        - createdBy
+        - culture
+        - description
+        - email
+        - experiences
+        - followers
+        - followings
+        - geoname
+        - id
+        - image
+        - impactPoints
+        - mission
+        - mobileCountryCode
+        - name
+        - oldId
+        - orgMembers
+        - otherPartyId
+        - otherPartyTitle
+        - otherPartyUrl
+        - phone
+        - reports
+        - searchTsv
+        - shortname
+        - status
+        - type
+        - updatedAt
+        - verifiedImpact
+        - walletAddress
+        - website
+      type: object
+    Payments:
+      properties:
+        amount:
+          type: number
+        canceledAt:
+          format: date-time
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        cryptoCurrencyAddress:
+          type: string
+        currency:
+          enum:
+            - ARS
+            - AUD
+            - BDT
+            - BRL
+            - CAD
+            - CHF
+            - CLP
+            - COP
+            - CRC
+            - DKK
+            - DOP
+            - EGP
+            - EUR
+            - GBP
+            - GHS
+            - GTQ
+            - INR
+            - JPY
+            - KRW
+            - MXN
+            - NPR
+            - PEN
+            - RWF
+            - THB
+            - USD
+            - UYU
+            - ZAR
+          type: string
+        escrows:
+          items:
+            $ref: '#/components/schemas/Escrows'
+          type: array
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        meta:
+          additionalProperties: true
+          properties: {}
+          type: object
+        service:
+          enum:
+            - CRYPTO
+            - STRIPE
+          type: string
+        source:
+          type: string
+        sourceType:
+          enum:
+            - CARD
+            - CRYPTO_WALLET
+          type: string
+        transactionId:
+          type: string
+        verifiedAt:
+          format: date-time
+          type: string
+      required:
+        - amount
+        - canceledAt
+        - createdAt
+        - cryptoCurrencyAddress
+        - currency
+        - escrows
+        - id
+        - identity
+        - meta
+        - service
+        - source
+        - sourceType
+        - transactionId
+        - verifiedAt
+      type: object
+    Posts:
+      properties:
+        comments:
+          items:
+            $ref: '#/components/schemas/Comments'
+          type: array
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        hashtags:
+          items:
+            type: string
+          type: array
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        identityTags:
+          items:
+            type: string
+          type: array
+        likes:
+          type: number
+        likes2:
+          $ref: '#/components/schemas/Likes'
+        media:
+          items:
+            type: string
+          type: array
+        oldId:
+          type: number
+        posts:
+          items:
+            $ref: '#/components/schemas/Posts'
+          type: array
+        reports:
+          $ref: '#/components/schemas/Reports'
+        searchTsv:
+          type: string
+        shared:
+          type: number
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - comments
+        - content
+        - createdAt
+        - deletedAt
+        - hashtags
+        - id
+        - identity
+        - identityTags
+        - likes
+        - likes2
+        - media
+        - oldId
+        - posts
+        - reports
+        - searchTsv
+        - shared
+        - updatedAt
+      type: object
+    Projects:
+      properties:
+        answers:
+          items:
+            $ref: '#/components/schemas/Answers'
+          type: array
+        applicants:
+          $ref: '#/components/schemas/Applicants'
+        city:
+          type: string
+        commitmentHoursHigher:
+          type: string
+        commitmentHoursLower:
+          type: string
+        country:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        escrows:
+          items:
+            $ref: '#/components/schemas/Escrows'
+          type: array
+        experienceLevel:
+          type: number
+        expiresAt:
+          format: date-time
+          type: string
+        feedbacks:
+          items:
+            $ref: '#/components/schemas/Feedbacks'
+          type: array
+        geoname:
+          $ref: '#/components/schemas/Geonames'
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        jobCategory:
+          $ref: '#/components/schemas/JobCategories'
+        missions:
+          items:
+            $ref: '#/components/schemas/Missions'
+          type: array
+        offers:
+          items:
+            $ref: '#/components/schemas/Offers'
+          type: array
+        oldId:
+          type: number
+        otherPartyId:
+          type: string
+        otherPartyTitle:
+          type: string
+        otherPartyUrl:
+          type: string
+        paymentCurrency:
+          type: string
+        paymentRangeHigher:
+          type: string
+        paymentRangeLower:
+          type: string
+        paymentScheme:
+          enum:
+            - FIXED
+            - HOURLY
+          type: string
+        paymentType:
+          enum:
+            - PAID
+            - VOLUNTEER
+          type: string
+        projectLength:
+          enum:
+            - 1_3_MONTHS
+            - 3_6_MONTHS
+            - 6_MONTHS_OR_MORE
+            - LESS_THAN_A_DAY
+            - LESS_THAN_A_MONTH
+          type: string
+        projectType:
+          enum:
+            - FULL_TIME
+            - ONE_OFF
+            - PART_TIME
+          type: string
+        questions:
+          items:
+            $ref: '#/components/schemas/Questions'
+          type: array
+        remotePreference:
+          enum:
+            - HYBRID
+            - ONSITE
+            - REMOTE
+          type: string
+        searchTsv:
+          type: string
+        skills:
+          items:
+            type: string
+          type: array
+        status:
+          enum:
+            - ACTIVE
+            - DRAFT
+            - EXPIRE
+          type: string
+        submittedWorks:
+          items:
+            $ref: '#/components/schemas/SubmittedWorks'
+          type: array
+        title:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        weeklyHoursHigher:
+          type: string
+        weeklyHoursLower:
+          type: string
+      required:
+        - answers
+        - applicants
+        - city
+        - commitmentHoursHigher
+        - commitmentHoursLower
+        - country
+        - createdAt
+        - deletedAt
+        - description
+        - escrows
+        - experienceLevel
+        - expiresAt
+        - feedbacks
+        - geoname
+        - id
+        - identity
+        - jobCategory
+        - missions
+        - offers
+        - oldId
+        - otherPartyId
+        - otherPartyTitle
+        - otherPartyUrl
+        - paymentCurrency
+        - paymentRangeHigher
+        - paymentRangeLower
+        - paymentScheme
+        - paymentType
+        - projectLength
+        - projectType
+        - questions
+        - remotePreference
+        - searchTsv
+        - skills
+        - status
+        - submittedWorks
+        - title
+        - updatedAt
+        - weeklyHoursHigher
+        - weeklyHoursLower
+      type: object
+    Questions:
+      properties:
+        answers:
+          items:
+            $ref: '#/components/schemas/Answers'
+          type: array
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        oldId:
+          type: number
+        options:
+          items:
+            type: string
+          type: array
+        projects:
+          $ref: '#/components/schemas/Projects'
+        question:
+          type: string
+        required:
+          type: boolean
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - answers
+        - createdAt
+        - id
+        - oldId
+        - options
+        - projects
+        - question
+        - required
+        - updatedAt
+      type: object
+    Reports:
+      properties:
+        blocked:
+          type: boolean
+        comment:
+          type: string
+        commentId:
+          type: string
+        comments:
+          $ref: '#/components/schemas/Comments'
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identityId:
+          type: string
+        orgId:
+          type: string
+        organizations:
+          $ref: '#/components/schemas/Organizations'
+        postId:
+          type: string
+        posts:
+          $ref: '#/components/schemas/Posts'
+        userId:
+          type: string
+        users:
+          $ref: '#/components/schemas/Users'
+      required:
+        - blocked
+        - comment
+        - commentId
+        - comments
+        - createdAt
+        - id
+        - identityId
+        - orgId
+        - organizations
+        - postId
+        - posts
+        - userId
+        - users
+      type: object
+    SearchHistory:
+      properties:
+        body:
+          additionalProperties: true
+          properties: {}
+          type: object
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        identity:
+          $ref: '#/components/schemas/Identities'
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - body
+        - createdAt
+        - deletedAt
+        - id
+        - identity
+        - updatedAt
+      type: object
+    Skills:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - createdAt
+        - id
+        - name
+      type: object
+    SubmittedWorks:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        endAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        impactPointsHistories:
+          items:
+            $ref: '#/components/schemas/ImpactPointsHistory'
+          type: array
+        missions:
+          $ref: '#/components/schemas/Missions'
+        projects:
+          $ref: '#/components/schemas/Projects'
+        startAt:
+          format: date-time
+          type: string
+        status:
+          enum:
+            - CONFIRMED
+            - PENDING
+          type: string
+        totalHours:
+          type: number
+      required:
+        - createdAt
+        - endAt
+        - id
+        - impactPointsHistories
+        - missions
+        - projects
+        - startAt
+        - status
+        - totalHours
+      type: object
+    Users:
+      properties:
+        address:
+          type: string
+        applicants:
+          $ref: '#/components/schemas/Applicants'
+        avatar:
+          $ref: '#/components/schemas/Media'
+        bio:
+          type: string
+        certificates:
+          items:
+            type: string
+          type: array
+        city:
+          type: string
+        country:
+          type: string
+        coverImage:
+          $ref: '#/components/schemas/Media'
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        descriptionSearch:
+          type: string
+        devices:
+          items:
+            $ref: '#/components/schemas/Devices'
+          type: array
+        educations:
+          items:
+            type: string
+          type: array
+        email:
+          type: string
+        emailText:
+          type: string
+        emailVerifiedAt:
+          format: date-time
+          type: string
+        experiences:
+          items:
+            $ref: '#/components/schemas/Experiences'
+          type: array
+        expiryDate:
+          format: date-time
+          type: string
+        firstName:
+          type: string
+        followers:
+          type: number
+        followings:
+          type: number
+        geoname:
+          $ref: '#/components/schemas/Geonames'
+        goals:
+          type: string
+        id:
+          type: string
+        impactPoints:
+          type: number
+        isAdmin:
+          type: boolean
+        language:
+          type: string
+        languages:
+          items:
+            $ref: '#/components/schemas/Languages'
+          type: array
+        lastName:
+          type: string
+        mission:
+          type: string
+        mobileCountryCode:
+          type: string
+        myConversation:
+          type: string
+        notifications:
+          items:
+            $ref: '#/components/schemas/Notifications'
+          type: array
+        oldId:
+          type: number
+        orgMembers:
+          items:
+            $ref: '#/components/schemas/OrgMembers'
+          type: array
+        otps:
+          $ref: '#/components/schemas/Otps'
+        password:
+          type: string
+        passwordExpired:
+          type: boolean
+        phone:
+          type: string
+        phoneVerifiedAt:
+          format: date-time
+          type: string
+        proofspaceConnectId:
+          type: string
+        rememberToken:
+          type: string
+        reports:
+          $ref: '#/components/schemas/Reports'
+        searchTsv:
+          type: string
+        skills:
+          items:
+            type: string
+          type: array
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - SUSPEND
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        username:
+          type: string
+        viewAs:
+          type: number
+        walletAddress:
+          type: string
+      required:
+        - address
+        - applicants
+        - avatar
+        - bio
+        - certificates
+        - city
+        - country
+        - coverImage
+        - createdAt
+        - deletedAt
+        - descriptionSearch
+        - devices
+        - educations
+        - email
+        - emailText
+        - emailVerifiedAt
+        - experiences
+        - expiryDate
+        - firstName
+        - followers
+        - followings
+        - geoname
+        - goals
+        - id
+        - impactPoints
+        - isAdmin
+        - language
+        - languages
+        - lastName
+        - mission
+        - mobileCountryCode
+        - myConversation
+        - notifications
+        - oldId
+        - orgMembers
+        - otps
+        - password
+        - passwordExpired
+        - phone
+        - phoneVerifiedAt
+        - proofspaceConnectId
+        - rememberToken
+        - reports
+        - searchTsv
+        - skills
+        - status
+        - updatedAt
+        - username
+        - viewAs
+        - walletAddress
+      type: object
     project-status:
       type: string
       title: Project Status
@@ -64,21 +2203,40 @@ components:
     location_type:
       type: string
       title: Location Type
-      description: |
+      description: >
         Type of location record (city, town, capital, etc)
-        - PPL: a city, town, village, or other agglomeration of buildings where people live and work
-        - PPLA: seat of a first-order administrative division (PPLC takes precedence over PPLA)
+
+        - PPL: a city, town, village, or other agglomeration of buildings where
+        people live and work
+
+        - PPLA: seat of a first-order administrative division (PPLC takes
+        precedence over PPLA)
+
         - PPLA2: seat of a second-order administrative division
+
         - PPLA3: seat of a third-order administrative division
+
         - PPLA4: seat of a fourth-order administrative division
+
         - PPLA5: seat of a fifth-order administrative division
+
         - PPLC: capital of a political entity
+
         - PPLCH: former (historical) capital of a political entity
+
         - PPLF: farm village
+
         - PPLG: seat of government of a political entity
-        - PPLL: an area similar to a locality but with a small group of dwellings or other buildings
-        - PPLR: a populated place whose population is largely engaged in religious occupations
-        - PPLS: cities, towns, villages, or other agglomerations of buildings where people live and work
+
+        - PPLL: an area similar to a locality but with a small group of
+        dwellings or other buildings
+
+        - PPLR: a populated place whose population is largely engaged in
+        religious occupations
+
+        - PPLS: cities, towns, villages, or other agglomerations of buildings
+        where people live and work
+
         - STLMT: Israeli settlement
       enum:
         - PPL
@@ -106,7 +2264,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /auth/login:
     post:
       tags:
@@ -210,12 +2367,18 @@ paths:
                 example-2:
                   summary: preregister (both invalid)
                   value:
-                    username: '"username" with value "socious team" fails to match the required pattern: /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/'
+                    username: >-
+                      "username" with value "socious team" fails to match the
+                      required pattern:
+                      /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
                     email: '"email" must be a valid email'
                 example-3:
                   summary: preregister (mix of invalid and existing)
                   value:
-                    username: '"username" with value "socious team" fails to match the required pattern: /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/'
+                    username: >-
+                      "username" with value "socious team" fails to match the
+                      required pattern:
+                      /^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
                     email: EXISTS
   /auth/otp:
     post:
@@ -323,12 +2486,18 @@ paths:
       tags:
         - auth
       summary: stripe connect
-      description: 'please make sure we created 2 different link with this bottom template link for 2 different envirement testing (dev.socious.io) and production we may have
-        same redirect path with dev.socious.io/app/.. and socious.io/app/...  domain but CLIENT_ID would be different on each env and redirect_url must be register on Stripe console
+      description: >-
+        please make sure we created 2 different link with this bottom template
+        link for 2 different envirement testing (dev.socious.io) and production
+        we may have same redirect path with dev.socious.io/app/.. and
+        socious.io/app/...  domain but CLIENT_ID would be different on each env
+        and redirect_url must be register on Stripe console
         https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&scope=read_write&redirect_uri=https://socious.io/app/{{STRIPE_CLIENT_REDIRECT_PATH}}
-        after client complete login or register Stripe would redirect client to our webapp redirect_url after that client app if it was success connect
-        must provide the code to BE and BE would result account id and user status for paying out
-        this would help to know Stripe oauth -> https://stripe.com/docs/connect/oauth-reference'
+        after client complete login or register Stripe would redirect client to
+        our webapp redirect_url after that client app if it was success connect
+        must provide the code to BE and BE would result account id and user
+        status for paying out this would help to know Stripe oauth ->
+        https://stripe.com/docs/connect/oauth-reference
       requestBody:
         content:
           application/json:
@@ -358,7 +2527,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /projects/categories:
     get:
       tags:
@@ -525,7 +2693,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /projects/{project_id}/applicants:
     parameters:
       - name: project_id
@@ -676,7 +2843,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /projects/remove/{project_id}/questions/{question_id}:
     post:
       tags:
@@ -700,7 +2866,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /projects/{project_id}/offer/{user_id}:
     parameters:
       - name: project_id
@@ -734,7 +2899,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /applicants/{applicant_id}/offer:
     parameters:
       - name: applicant_id
@@ -1653,7 +3817,15 @@ paths:
             schema:
               type: object
               example:
-                bio: I’m looking right now through the code. typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more re dfsdfgdfg Dfg
+                bio: >-
+                  I’m looking right now through the code. typesetting industry.
+                  Lorem Ipsum has been the industry's standard dummy text ever
+                  since the 1500s, when an unknown printer took a galley of type
+                  and scrambled it to make a type specimen book. It has survived
+                  not only five centuries, but also the leap into electronic
+                  typesetting, remaining essentially unchanged. It was
+                  popularised in the 1960s with the release of Letraset sheets
+                  containing Lorem Ipsum passages, and more re dfsdfgdfg Dfg
                 city: San Pablo City
                 country: PH
                 first_name: Jayson
@@ -2113,7 +4285,8 @@ paths:
             schema:
               type: object
               example:
-                token: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+                token: >-
+                  cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
                 meta:
                   os: ANDROID
       security:
@@ -2145,7 +4318,8 @@ paths:
             schema:
               type: object
               example:
-                token: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+                token: >-
+                  cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
                 meta:
                   os: ANDROID
       security:
@@ -2162,7 +4336,8 @@ paths:
         schema:
           type: string
         required: true
-        example: cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
+        example: >-
+          cVuYlI65SsKSH17MYEqFYi:APA91bHMxZef0CcL8oKVCRND1SONhaduVCGYOUGI8V9bwzhBzn8I3djhb0vpTmsB_zpLCcpJv8tLhV_Y6dUGNn1tUrQmuT5-MX3HjLOs7by119CeCtMvZEFleWs0881_jAIlOsZNJ80p
     post:
       tags:
         - device
@@ -2275,7 +4450,16 @@ paths:
       tags:
         - search
       summary: search
-      description: filtering format would be like mongo objects with ('eq', 'ne', 'gt', 'gte', 'lt', 'lte') for array columns only 'eq' would be available for clarify filters operator stand for (equal, not equal, greater, greater equal, little, little equal) as example we may not use any of them it wiyld be default equal operator. columns for each type would be projects = ['country', 'causes_tags', 'skills', 'payment_type', 'payment_scheme', 'status'] posts = ['causes_tags', 'hashtags'] users,related_users = ['country', 'social_causes', 'skills'] organizations = ['country', 'type', 'social_causes']
+      description: >-
+        filtering format would be like mongo objects with ('eq', 'ne', 'gt',
+        'gte', 'lt', 'lte') for array columns only 'eq' would be available for
+        clarify filters operator stand for (equal, not equal, greater, greater
+        equal, little, little equal) as example we may not use any of them it
+        wiyld be default equal operator. columns for each type would be projects
+        = ['country', 'causes_tags', 'skills', 'payment_type', 'payment_scheme',
+        'status'] posts = ['causes_tags', 'hashtags'] users,related_users =
+        ['country', 'social_causes', 'skills'] organizations = ['country',
+        'type', 'social_causes']
       requestBody:
         content:
           application/json:
@@ -2363,7 +4547,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /missions/{mission_id}:
     parameters:
       - name: mission_id
@@ -2382,7 +4565,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /missions/{mission_id}/complete:
     parameters:
       - name: mission_id
@@ -2521,8 +4703,8 @@ paths:
               type: object
             example:
               total_hours: 5
-              start_at: 2021-10-16T13:32:30.211Z
-              end_at: 2021-10-16T13:32:30.211Z
+              start_at: '2021-10-16T13:32:30.211Z'
+              end_at: '2021-10-16T13:32:30.211Z'
       security:
         - bearerAuth: []
       responses:
@@ -2548,7 +4730,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /notifications/{notif_id}:
     parameters:
       - name: notif_id
@@ -2661,7 +4842,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /offers/{offer_id}:
     parameters:
       - name: offer_id
@@ -2703,7 +4883,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /offers/{offer_id}/cancel:
     parameters:
       - name: offer_id
@@ -2727,7 +4906,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /offers/{offer_id}/approve:
     parameters:
       - name: offer_id
@@ -2746,7 +4924,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /offers/{offer_id}/hire:
     parameters:
       - name: offer_id
@@ -2770,7 +4947,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /geo/ip:
     get:
       tags:
@@ -2845,15 +5021,15 @@ paths:
                   admin2_code:
                     type: string
                     description: second-level division ISO code where applicable
-                    example:
+                    example: null
                   admin2_id:
                     type: number
                     description: second-level division ID for geoname where applicable
-                    example:
+                    example: null
                   admin2_name:
                     type: string
                     description: second-level division name where applicable
-                    example:
+                    example: null
   /geo/locations/country/{countryCode}:
     get:
       tags:
@@ -2967,7 +5143,7 @@ paths:
                     is_colloquial: true
                     is_short_name: false
                     region_id: NY
-                    subregion_id:
+                    subregion_id: null
                     region_name: New York
                     region_iso: NY
                     subregion_name: null
@@ -2985,6 +5161,13 @@ paths:
           content:
             application/json: {}
   /connections/related/{identity_id}:
+    parameters:
+      - name: identity_id
+        required: true
+        in: path
+        description: identity id
+        schema:
+          type: string
     get:
       tags:
         - connect
@@ -3014,7 +5197,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /connections/{identity_id}:
     parameters:
       - name: identity_id
@@ -3040,7 +5222,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /connections/{connect_id}/accept:
     parameters:
       - name: connect_id
@@ -3059,7 +5240,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /connections/{connect_id}/block:
     parameters:
       - name: connect_id
@@ -3078,7 +5258,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /connections/{identity_id}/block/direct:
     parameters:
       - name: identity_id
@@ -3097,7 +5276,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  
   /payments:
     get:
       tags:
@@ -3144,7 +5322,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /payments/cards/update/{card_id}:
     parameters:
       - name: card_id
@@ -3192,8 +5369,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
-  /payments/cards/:card_id:
+  /payments/cards/{card_id}:
     parameters:
       - name: card_id
         in: path
@@ -3211,8 +5387,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
-  /payments/payment_id:
+  /payments/{payment_id}:
     parameters:
       - name: payment_id
         in: path
@@ -3230,7 +5405,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /payments/donate:
     post:
       tags:
@@ -3245,7 +5419,7 @@ paths:
               type: object
               example:
                 amount: 2000
-                service: 'STRIPE'
+                service: STRIPE
                 source: <card_id>
                 currency: USD
                 description: test desc
@@ -3254,7 +5428,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /payments/offers/{offer_id}:
     parameters:
       - name: offer_id
@@ -3280,7 +5453,7 @@ paths:
               type: object
               example:
                 amount: 2000
-                service: 'STRIPE'
+                service: STRIPE
                 source: <card_id>
                 currency: USD
                 description: test desc
@@ -3289,7 +5462,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /payments/missions/{mission_id}/payout:
     parameters:
       - name: mission_id
@@ -3308,7 +5480,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /test-emails/{address}:
     parameters:
       - name: address
@@ -3327,7 +5498,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
   /test-emails/{address}/{id}:
     parameters:
       - name: address

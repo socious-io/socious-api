@@ -83,7 +83,7 @@ export async function locationsByCountry(countryCode, { offset = 0, limit = 10, 
  * @param root0.sort
  * @example
  */
-export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter, sort }) {
+export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter }) {
   const searchPat = `%${search}%`
   const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
     loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,

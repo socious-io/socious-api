@@ -418,7 +418,7 @@ export const feedback = async (request, data) => {
 
     for (const mission of missions.body.items) {
       const response = await request
-        .post(`/missions/${mission.id}/contest`)
+        .post(`/missions/${mission.id}/feedback`)
         .set('Authorization', data.users[0].access_token)
         .set('Current-Identity', data.orgs[0].id)
         .send({ content: 'TEST' })

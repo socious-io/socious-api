@@ -102,8 +102,8 @@ router.post('/:id/confirm/:work_id', loginRequired, checkIdParams, assigner, asy
     parentId: ctx.mission.project.id,
     identity: ctx.identity
   })
-
-  ImpactPoints.calculate(ctx.mission)
+  
+  if (ctx.identity.meta.verified_impact) ImpactPoints.calculate(ctx.mission)
 
   Analytics.track({
     userId: ctx.user.id,

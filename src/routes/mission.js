@@ -175,7 +175,7 @@ router.post('/:id/contest', loginRequired, checkIdParams, assigneer, async (ctx)
   ctx.body = await Mission.feedback({
     content: ctx.request.body.content,
     is_contest: true,
-    identity_id: ctx.idetity.id,
+    identity_id: ctx.identity.id,
     project_id: ctx.mission.project_id,
     mission_id: ctx.mission.id
   })

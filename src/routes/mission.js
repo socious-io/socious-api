@@ -103,7 +103,7 @@ router.post('/:id/confirm/:work_id', loginRequired, checkIdParams, assigner, asy
     identity: ctx.identity
   })
 
-  ImpactPoints.calculate(ctx.mission)
+  if (ctx.identity.meta.verified_impact) ImpactPoints.calculate(ctx.mission)
 
   Analytics.track({
     userId: ctx.user.id,
@@ -170,10 +170,12 @@ router.post('/:id/feedback', loginRequired, checkIdParams, assigneer, async (ctx
 })
 
 router.post('/:id/contest', loginRequired, checkIdParams, assigneer, async (ctx) => {
+  if (ctx.identity.meta?.verified_impact) ImpactPoints.notStaticfied(ctx.mission)
+
   ctx.body = await Mission.feedback({
     content: ctx.request.body.content,
     is_contest: true,
-    identity_id: ctx.idetity.id,
+    identity_id: ctx.identity.id,
     project_id: ctx.mission.project_id,
     mission_id: ctx.mission.id
   })

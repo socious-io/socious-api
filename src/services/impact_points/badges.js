@@ -83,9 +83,23 @@ export const get = async (id) => {
     `)
 }
 
+/**
+ * @param {string} missionId
+ * @returns {Promise<import('../../../types/associations').IImpactPointHistoryAsso>}
+ */
+export const getbyMissionId = async (missionId) => {
+  return app.db.get(sql`
+  SELECT * FROM impact_points_history WHERE mission_id=${missionId}
+  `)
+}
+
 export const impactPointsCalculatedWorksIds = async (missionId) => {
   const { rows } = await app.db.query(sql`
     SELECT submitted_work_id FROM impact_points_history WHERE mission_id=${missionId}
   `)
   return rows.map((r) => r.submitted_work_id)
+}
+
+export const updateHistoryPoint = async ({ id, point }) => {
+  return app.db.query(sql`UPDATE impact_point_history SET total_points=${point} WHERE id=${id}`)
 }

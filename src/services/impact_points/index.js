@@ -1,4 +1,4 @@
-import { worker } from './worker.js'
+import { worker, notStaticfied } from './worker.js'
 import * as badges from './badges.js'
 import publish from '../jobs/publish.js'
 
@@ -9,5 +9,6 @@ const calculate = (mission) => {
 export default {
   ...badges,
   calculate,
-  worker
+  worker,
+  notStaticfied
 }

@@ -110,3 +110,7 @@ export const report = async ({ identity_id, user_id, comment, blocked }) => {
     throw new EntryError(err.message)
   }
 }
+
+export const updateImpactPoints = async (user) => {
+  return app.db.query(sql`UPDATE users SET impact_point=${user.impact_point} WHERE id=${user.id}`)
+}

@@ -1,10 +1,11 @@
 import Data from '@socious/data'
+import User from '../../models/user/index.js'
 import Mission from '../../models/mission/index.js'
 import Offer from '../../models/offer/index.js'
 import Project from '../../models/project/index.js'
 import logger from '../../utils/logging.js'
 import ProofSpace from '../proofspace/index.js'
-import { addHistory, impactPointsCalculatedWorksIds } from './badges.js'
+import { addHistory, impactPointsCalculatedWorksIds, getbyMissionId, updateHistoryPoint } from './badges.js'
 
 const RATIO = 0.1
 
@@ -125,4 +126,14 @@ export const calculateLenders = async ({ amount, is_lender }) => {
 
   // fetch fee from paid amount and 100 % of fee calculate as impact points
   return amount * 0.013
+}
+
+export const notStaticfied = async ({ mission }) => {
+  const history = await getbyMissionId(mission.id)
+  const user = await User.get(history.identity_id)
+
+  const ratio = history.total_points * 0.1
+  await updateHistoryPoint({ id: history.id, point: history.total_points - ratio })
+  user.impact_points -= ratio
+  await User.updateImpactPoints(user)
 }

@@ -72,6 +72,7 @@ export const getProfile = async (id, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    mobile_country_code,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -116,6 +117,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    mobile_country_code,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -177,6 +179,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    mobile_country_code,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,

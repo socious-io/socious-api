@@ -160,6 +160,7 @@ export const worker = async ({ eventType, identityId, body }) => {
 
     if (identity.type === Data.IdentityType.ORG) {
       const members = await Org.miniMembers(identityId)
+      body.orgin = identity
       return batchPush(
         eventType,
         members.map((m) => m.user_id),

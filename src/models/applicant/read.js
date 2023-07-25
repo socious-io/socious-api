@@ -1,4 +1,5 @@
 import sql from 'sql-template-tag'
+import User from '../user/index.js'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
 import { filtering, sorting } from '../../utils/query.js'
@@ -28,6 +29,7 @@ export const get = async (id) => {
     JOIN projects p ON p.id=a.project_id
     WHERE a.id=${id}`
   )
+  applicant.user = await User.getProfile(applicant.user_id, applicant.project.identity_id)
   applicant.answers = await getAnswers(id)
   return applicant
 }

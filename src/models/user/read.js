@@ -100,7 +100,7 @@ export const getProfile = async (id, currentIdentity) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
-    WHERE u.id=${id} AND (r.blocked IS NULL OR r.blocked = false)
+    WHERE u.id=${id}
     `
   )
 }

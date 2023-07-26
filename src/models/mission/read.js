@@ -27,6 +27,8 @@ export const get = async (id) => {
     row_to_json(es.*) AS escrow,
     row_to_json(pay.*) AS payment,
     row_to_json(org.*) AS organization,
+    row_to_json(f1.*) AS user_feedback,
+    row_to_json(f2.*) AS org_feedback,
     (SELECT
       jsonb_agg(
         json_build_object(
@@ -50,6 +52,8 @@ export const get = async (id) => {
   LEFT JOIN organizations org ON org.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id
   LEFT JOIN payments pay ON pay.id=es.payment_id
+  LEFT JOIN feedbacks f1 ON f1.mission_id=m.id AND f1.identity_id=i1.id
+  LEFT JOIN feedbacks f2 ON f2.mission_id=m.id AND f2.identity_id=i2.id
   WHERE m.id=${id}
   `)
 }
@@ -67,6 +71,8 @@ export const getByOffer = async (offerId) => {
     row_to_json(pay.*) AS payment,
     row_to_json(org.*) AS organization,
     row_to_json(o.*) AS offer,
+    row_to_json(f1.*) AS user_feedback,
+    row_to_json(f2.*) AS org_feedback,
     (SELECT
       jsonb_agg(
         json_build_object(
@@ -91,6 +97,8 @@ export const getByOffer = async (offerId) => {
   LEFT JOIN organizations org ON org.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id
   LEFT JOIN payments pay ON pay.id=es.payment_id
+  LEFT JOIN feedbacks f1 ON f1.mission_id=m.id AND f1.identity_id=i1.id
+  LEFT JOIN feedbacks f2 ON f2.mission_id=m.id AND f2.identity_id=i2.id
   WHERE m.offer_id=${offerId}
   `)
 }
@@ -109,6 +117,8 @@ export const getAll = async ({ offset = 0, limit = 10, filter, sort }) => {
       row_to_json(pay.*) AS payment,
       row_to_json(org.*) AS organization,
       row_to_json(o.*) AS offer,
+      row_to_json(f1.*) AS user_feedback,
+    row_to_json(f2.*) AS org_feedback,
       (SELECT
         jsonb_agg(
           json_build_object(
@@ -133,6 +143,8 @@ export const getAll = async ({ offset = 0, limit = 10, filter, sort }) => {
     LEFT JOIN organizations org ON org.id=m.assigner_id
     LEFT JOIN escrows es ON es.mission_id=m.id
     LEFT JOIN payments pay ON pay.id=es.payment_id
+    LEFT JOIN feedbacks f1 ON f1.mission_id=m.id AND f1.identity_id=i1.id
+    LEFT JOIN feedbacks f2 ON f2.mission_id=m.id AND f2.identity_id=i2.id
     ${filtering(filter, filterColumns, false, 'm')}
     ${sorting(sort, sortColumns, 'm')}
     LIMIT ${limit} OFFSET ${offset}

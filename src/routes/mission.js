@@ -81,7 +81,7 @@ router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) 
     identity: ctx.identity
   })
 
-  ImpactPoints.calculate(ctx.mission)
+  if (ctx.identity.meta.verified_impact) ImpactPoints.calculate(ctx.mission)
 
   Analytics.track({
     userId: ctx.mission.assignee_id,

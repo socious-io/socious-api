@@ -14,6 +14,7 @@ export const cryptoUSDRate = async (token) => {
   return convertor.rate
 }
 
+
 /**
  * @param {string} txHash
  * @param {string} src
@@ -83,9 +84,11 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     return false
   }
 
-  let txAmount = parseInt(tx.value.slice(0, tx.value.length - 6))
+  const splited = amount.toString().split('.')
+  const realLength = splited[0].length
+  const decimalsLength = splited[1]?.length || 0
 
-  if (decimals > 6) txAmount /= Math.pow(10, decimals - 6)
+  let txAmount = parseInt(tx.value.slice(0, realLength+decimalsLength)) / Math.pow(10, decimalsLength)
 
   if (amount > txAmount) {
     logger.error(

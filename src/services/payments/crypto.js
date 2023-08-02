@@ -14,7 +14,6 @@ export const cryptoUSDRate = async (token) => {
   return convertor.rate
 }
 
-
 /**
  * @param {string} txHash
  * @param {string} src
@@ -23,12 +22,11 @@ export const cryptoUSDRate = async (token) => {
  * @returns {Promise<boolean>}
  */
 export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
-  let decimals = 6
   const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === token)[0]
-    if (t) decimals = t.decimals
     return t !== undefined
   })[0]
+
   if (!network) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
@@ -88,7 +86,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   const realLength = splited[0].length
   const decimalsLength = splited[1]?.length || 0
 
-  let txAmount = parseInt(tx.value.slice(0, realLength+decimalsLength)) / Math.pow(10, decimalsLength)
+  let txAmount = parseInt(tx.value.slice(0, realLength + decimalsLength)) / Math.pow(10, decimalsLength)
 
   if (amount > txAmount) {
     logger.error(
@@ -107,7 +105,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-
         amount,
         txHash,
         token
@@ -123,7 +120,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    ;`CONFIRM CRYPTODATA ${JSON.stringify({
+    `CONFIRM CRYPTODATA ${JSON.stringify({
       src,
 
       amount,

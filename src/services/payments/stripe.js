@@ -89,7 +89,6 @@ export const payout = async ({ amount, currency, description, destination, meta 
     currency,
     description,
     destination,
-    meta,
     transfer_group: 'RELEASE_ESCROW'
   })
 }

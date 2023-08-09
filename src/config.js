@@ -170,6 +170,22 @@ export default {
               decimals: 18
             }
           ]
+        },
+        {
+          chain: {
+            name: 'shasta',
+            explorer: 'https://api.shasta.trongrid.io/v1',
+            tron: true
+          },
+          escrow: 'ChangeMe',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: 'ChangeMe',
+              decimals: 6
+            }
+          ]
         }
       ],
       mainet: [

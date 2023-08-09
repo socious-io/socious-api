@@ -1,5 +1,5 @@
 import { app } from '../../src/index.js'
-import { confirmTx } from '../../src/services/payments/crypto.js'
+import { confirmTronTx, confirmTx } from '../../src/services/payments/crypto.js'
 
 beforeAll(async () => {
   app.listen()
@@ -28,4 +28,14 @@ test('calculate', async () => {
       'mainet'
     )
   ).toBe(true)
+  /* expect(
+    await confirmTronTx(
+      'TB1NFFBYtL6YLsSv3phSmLXiDPriGGnEdZ',
+      1,
+      '5450a103b432ad000fd979a2d5b2aed123cbafe4258110b209907bb972726103',
+      'TE9yud6CgmChFHsCNHTe9ui5q6mfidZzrA',
+      0,
+      'testnet'
+    )
+  ).toBe(true) */
 })

@@ -5,6 +5,7 @@ import Event from '../services/events/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import Analytics from '../services/analytics/index.js'
+import { BadRequestError } from '../utils/errors.js'
 import { validate } from '@socious/data'
 
 import { checkIdParams, assigneer, assignee, assigner } from '../utils/middlewares/route.js'
@@ -65,6 +66,8 @@ router.post('/:id/submitworks', loginRequired, checkIdParams, assignee, async (c
     }
   })
 })
+
+router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) => {})
 
 router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) => {
   await Mission.confirm(ctx.params.id)

@@ -120,7 +120,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    `CONFIRM CRYPTODATA ${JSON.stringify({
+    ;`CONFIRM CRYPTODATA ${JSON.stringify({
       src,
 
       amount,
@@ -150,7 +150,7 @@ export const confirmTronTx = async (src, amount, txHash, token, retry = 0, env =
     )
     return false
   }
-  
+
   const response = await axios.get(`${network.chain.explorer}/accounts/${src}/transactions/trc20?only_confirmed=true`)
 
   if (response.status === 400) {
@@ -180,9 +180,7 @@ export const confirmTronTx = async (src, amount, txHash, token, retry = 0, env =
         amount,
         txHash,
         token
-      })}, RESULT => tx not found, TX => ${JSON.stringify(
-        response.data.result[0].hash
-      )} != ${txHash}`
+      })}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
     )
     return false
   }
@@ -222,7 +220,6 @@ export const confirmTronTx = async (src, amount, txHash, token, retry = 0, env =
 }
 
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
-
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === meta.token)[0]
     return t !== undefined
@@ -231,7 +228,7 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
   if (!network) throw new ValidationError('could not find chain network')
 
   let confirmed = false
-  
+
   if (network.chain.tron) {
     confirmed = await confirmTronTx(source, amount, txHash, meta.token)
   } else {

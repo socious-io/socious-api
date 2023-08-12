@@ -58,6 +58,8 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     })
   )
 
+  if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
+
   const paymentIntent = await stripe.paymentIntents.create({
     amount: 1000,
     currency: 'usd',

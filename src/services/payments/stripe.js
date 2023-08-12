@@ -2,7 +2,7 @@ import Config from '../../config.js'
 import Data from '@socious/data'
 import Stripe from 'stripe'
 import logger from '../../utils/logging.js'
-import { getCard, responseCard, updateCardBrand } from './card.js'
+import { getCard, responseCard } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
 export const stripe = Stripe(Config.payments.stripe.secret_key)
@@ -18,14 +18,15 @@ const stripeAmount = (amount, currency) => {
   }
 }
 
-export const charge = async (identityId, { amount, currency, meta, source, description }) => {
+export const charge = async (identityId, { amount, currency, meta, source, description, transfers }) => {
   let card = await getCard(source, identityId)
 
   currency = Data.PaymentCurrency.USD
 
   console.log('Stripe token card: ', card)
 
-  const token = await stripe.tokens.create({
+  const paymentMethod = await stripe.paymentMethods.create({
+    type: 'card',
     card: {
       number: card.numbers,
       exp_month: card.exp_month,
@@ -34,7 +35,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     }
   })
 
-  card = await updateCardBrand(card.id, token.card.brand)
+  // card = await updateCardBrand(card.id, token.card.brand)
 
   const trx = await create({
     identity_id: identityId,
@@ -52,19 +53,32 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     JSON.stringify({
       amount: fixedAmount,
       currency,
-      source: token.id,
+      source: paymentMethod.id,
       description
     })
   )
 
-  const charge = await stripe.charges.create({
+  if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
+
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: fixedAmount,
-    currency,
-    source: token.id,
-    description
+    currency: 'usd',
+    payment_method_types: ['card'],
+    payment_method: paymentMethod.id,
+    application_fee_amount: fixedAmount - transfers.amount,
+    on_behalf_of: transfers.destination,
+    transfer_data: {
+      destination: transfers.destination
+    }
   })
 
-  await setCompleteTrx(trx.id, charge.id)
+  const confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id)
+
+  if (confirmedPaymentIntent.status !== 'succeeded') {
+    throw Error(`Payment got error with status : ${confirmedPaymentIntent.status}`)
+  }
+
+  await setCompleteTrx(trx.id, paymentIntent.id)
 
   return {
     id: trx.id,
@@ -74,7 +88,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   }
 }
 
-export const payout = async ({ amount, currency, description, destination, meta }) => {
+export const payout = async ({ amount, currency, description, destination }) => {
   logger.info(
     `Stripe payout ->  ${JSON.stringify({
       amount: stripeAmount(amount, currency),
@@ -89,7 +103,6 @@ export const payout = async ({ amount, currency, description, destination, meta 
     currency,
     description,
     destination,
-    meta,
     transfer_group: 'RELEASE_ESCROW'
   })
 }

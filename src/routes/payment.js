@@ -57,16 +57,29 @@ router.post('/donate', loginRequired, async (ctx) => {
 
 router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) => {
   await validate.EscrowSchema.validateAsync(ctx.request.body)
-
+  const service = ctx.request.body.service
   const amount = ctx.offer.assignment_total
 
-  const amounts = Payment.amounts({ identity: ctx.identity, amount, service: ctx.request.body.service, paymode: true })
+  const amounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: true })
+  const transfers = {}
+
+  if (service === Data.PaymentService.STRIPE) {
+    try {
+      const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
+      const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE)
+      transfers.amount = payoutAmounts.total
+      transfers.destination = profile.mui
+    } catch {
+      throw new BadRequestError('Recipient has no connected account')
+    }
+  }
 
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
     currency: ctx.offer.project.currency,
     amount: amounts.total,
     description: ctx.offer.project.name,
+    transfers,
     meta: {
       ...ctx.request.body.meta,
       project_name: ctx.offer.project.name,

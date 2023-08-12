@@ -492,6 +492,7 @@ export interface IChargeBody {
   meta: any
   source: string
   description?: string
+  transfers?: any
 }
 
 export enum IUserStatusType {

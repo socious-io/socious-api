@@ -146,7 +146,7 @@ export default {
             name: 'milkomeda testnet',
             explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xa1a6fC85718a9e3C1486CC51F70A8CfD843E55D4',
+          escrow: '0xe8ac987C84d3D7A087c33Ff8B841301a1A1616Df',
           tokens: [
             {
               name: 'USDC',
@@ -170,6 +170,22 @@ export default {
               decimals: 18
             }
           ]
+        },
+        {
+          chain: {
+            name: 'shasta',
+            explorer: 'https://api.shasta.trongrid.io/v1',
+            tron: true
+          },
+          escrow: 'ChangeMe',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: 'ChangeMe',
+              decimals: 6
+            }
+          ]
         }
       ],
       mainet: [
@@ -178,7 +194,7 @@ export default {
             name: 'milkomeda',
             explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
           tokens: [
             {
               name: 'USD Coin',

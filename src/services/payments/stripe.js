@@ -66,7 +66,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     payment_method_types: ['card'],
     payment_method: paymentMethod.id,
     application_fee_amount: fixedAmount - transfers.amount,
-    transfers: {
+    transfer_data: {
       destination: transfers.destination
     }
   })

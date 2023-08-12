@@ -2,7 +2,7 @@ import Config from '../../config.js'
 import Data from '@socious/data'
 import Stripe from 'stripe'
 import logger from '../../utils/logging.js'
-import { getCard, responseCard, updateCardBrand } from './card.js'
+import { getCard, responseCard } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
 export const stripe = Stripe(Config.payments.stripe.secret_key)

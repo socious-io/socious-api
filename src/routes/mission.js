@@ -66,7 +66,6 @@ router.post('/:id/submitworks', loginRequired, checkIdParams, assignee, async (c
   })
 })
 
-router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) => {})
 
 router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) => {
   await Mission.confirm(ctx.params.id)

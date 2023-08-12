@@ -64,10 +64,14 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   const transfers = {}
 
   if (service === Data.PaymentService.STRIPE) {
-    const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
-    const profile = await OAuthConnects.profile(ctx.offerrecipient_id, Data.OAuthProviders.STRIPE)
-    transfers.amount = payoutAmounts.total
-    transfers.destination = profile.mui
+    try {
+      const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
+      const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE)
+      transfers.amount = payoutAmounts.total
+      transfers.destination = profile.mui
+    } catch {
+      throw new BadRequestError('Recipient has no connected account')
+    }
   }
 
   ctx.body = await Payment.charge(ctx.identity.id, {

@@ -1,4 +1,4 @@
-import { worker, notStaticfied } from './worker.js'
+import { worker, notStaticfied, staticfied } from './worker.js'
 import * as badges from './badges.js'
 import publish from '../jobs/publish.js'
 
@@ -10,5 +10,6 @@ export default {
   ...badges,
   calculate,
   worker,
-  notStaticfied
+  notStaticfied,
+  staticfied
 }

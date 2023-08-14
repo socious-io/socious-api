@@ -66,7 +66,6 @@ router.post('/:id/submitworks', loginRequired, checkIdParams, assignee, async (c
   })
 })
 
-
 router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) => {
   await Mission.confirm(ctx.params.id)
   ctx.body = {
@@ -161,6 +160,8 @@ router.post('/:id/kickout', loginRequired, checkIdParams, assigner, async (ctx) 
 })
 
 router.post('/:id/feedback', loginRequired, checkIdParams, assigneer, async (ctx) => {
+  if (ctx.identity.meta?.verified_impact) ImpactPoints.staticfied(ctx.mission)
+
   ctx.body = await Mission.feedback({
     content: ctx.request.body.content,
     is_contest: false,

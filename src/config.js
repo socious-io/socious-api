@@ -203,6 +203,12 @@ export default {
               decimals: 6
             },
             {
+              name: 'USD Coin',
+              symbol: 'mUSDC',
+              address: '0x063139a927FE02B3a6A5E0d5B48c8BeDFA7de954',
+              decimals: 6
+            },
+            {
               name: 'Tether',
               symbol: 'USDT',
               address: '0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844',

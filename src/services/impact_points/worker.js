@@ -107,9 +107,6 @@ export const worker = async ({ mission }) => {
     }
   }
 
-  if (mission.org_feedback && !mission.org_feedback.is_contest) {
-  }
-
   const socialCause = mission.project.causes_tags[0]
 
   try {

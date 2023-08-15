@@ -101,5 +101,5 @@ export const impactPointsCalculatedWorksIds = async (missionId) => {
 }
 
 export const updateHistoryPoint = async ({ id, point }) => {
-  return app.db.query(sql`UPDATE impact_point_history SET total_points=${point} WHERE id=${id}`)
+  return app.db.query(sql`UPDATE impact_points_history SET total_points=${point} WHERE id=${id}`)
 }

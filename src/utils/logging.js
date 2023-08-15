@@ -2,7 +2,7 @@ import winston from 'winston'
 import { Papertrail } from 'winston-papertrail'
 import newrelicFormatter from '@newrelic/winston-enricher'
 import Config from '../config.js'
-import Transport from 'winston-transport'
+// import Transport from 'winston-transport'
 
 
 const newrelicWinstonFormatter = newrelicFormatter(winston)

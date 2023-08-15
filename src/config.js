@@ -134,6 +134,10 @@ export default {
   fcm: {
     key: process.env.FCM_KEY
   },
+  papertrail: {
+    host: process.env.PAPERTRAIL_HOST,
+    port: process.env.PAPERTRAIL_PORT
+  },
   crypto: {
     usd_convertor: {
       '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9': { rate: 0.33 }

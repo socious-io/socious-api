@@ -1,42 +1,22 @@
 import winston from 'winston'
+import { Papertrail } from 'winston-papertrail'
 import newrelicFormatter from '@newrelic/winston-enricher'
 import Config from '../config.js'
-import { WebClient } from '@slack/web-api'
 import Transport from 'winston-transport'
 
-const slack = new WebClient(Config.slack.token)
 
 const newrelicWinstonFormatter = newrelicFormatter(winston)
 
-class SlackTransport extends Transport {
-  constructor(opts) {
-    super(opts)
-  }
+const ptTransport = new Papertrail({
+  host: Config.papertrail.host,
+  port: Config.papertrail.port
+});
 
-  async log(info, callback) {
-    setImmediate(() => {
-      this.emit('logged', info)
-    })
-
-    if (info.level !== 'info' && Config.slack.enabled) {
-      try {
-        await slack.chat.postMessage({
-          channel: Config.slack.logChannel,
-          text: `${Config.serverName} ::: \n\`\`\`${JSON.stringify(info)}\`\`\``
-        })
-      } catch (err) {
-        console.error('Error sending message to Slack:', err)
-      }
-    }
-
-    callback()
-  }
-}
 
 const logger = winston.createLogger({
   level: 'info',
   format: newrelicWinstonFormatter(),
-  transports: [new winston.transports.Console(), new SlackTransport()]
+  transports: [new winston.transports.Console(), ptTransport]
 })
 
 export const koaLogger = async (ctx, next) => {

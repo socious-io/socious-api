@@ -8,6 +8,7 @@ const newrelicWinstonFormatter = newrelicFormatter(winston)
 
 const transports = [new winston.transports.Console()]
 
+// add papertrail logger when it needs
 if (Config.papertrail.host) {
   transports.push(
     new Papertrail({

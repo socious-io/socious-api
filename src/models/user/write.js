@@ -112,5 +112,5 @@ export const report = async ({ identity_id, user_id, comment, blocked }) => {
 }
 
 export const updateImpactPoints = async (user) => {
-  return app.db.query(sql`UPDATE users SET impact_points=${user.impact_point} WHERE id=${user.id}`)
+  return app.db.query(sql`UPDATE users SET impact_points=${user.impact_points} WHERE id=${user.id}`)
 }

@@ -91,12 +91,21 @@ export const worker = async ({ mission }) => {
     return false
   }
 
-  const totalPoints = calculate({
+  let totalPoints = calculate({
     category,
     total_hours: totalHours,
     payment_type: mission.project.payment_type,
     experience_level: mission.project.experience_level
   })
+
+  if (mission.org_feedback) {
+    const ratio = totalPoints * RATIO
+    if (mission.org_feedback.is_contest) {
+      totalPoints -= ratio
+    } else {
+      totalPoints += ratio
+    }
+  }
 
   const socialCause = mission.project.causes_tags[0]
 
@@ -128,12 +137,22 @@ export const calculateLenders = async ({ amount, is_lender }) => {
   return amount * 0.013
 }
 
-export const notStaticfied = async ({ mission }) => {
+export const notStaticfied = async (mission) => {
   const history = await getbyMissionId(mission.id)
   const user = await User.get(history.identity_id)
 
-  const ratio = history.total_points * 0.1
+  const ratio = history.total_points * RATIO
   await updateHistoryPoint({ id: history.id, point: history.total_points - ratio })
+  user.impact_points -= ratio
+  await User.updateImpactPoints(user)
+}
+
+export const staticfied = async (mission) => {
+  const history = await getbyMissionId(mission.id)
+  const user = await User.get(history.identity_id)
+
+  const ratio = history.total_points * RATIO
+  await updateHistoryPoint({ id: history.id, point: history.total_points + ratio })
   user.impact_points -= ratio
   await User.updateImpactPoints(user)
 }

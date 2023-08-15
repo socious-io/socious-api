@@ -98,11 +98,13 @@ export const payout = async ({ amount, currency, description, destination }) => 
     })}`
   )
 
-  return stripe.transfers.create({
-    amount: stripeAmount(amount, currency),
-    currency,
-    description,
-    destination,
-    transfer_group: 'RELEASE_ESCROW'
-  })
+  return stripe.payouts.create(
+    {
+      amount: stripeAmount(amount, currency),
+      currency
+    },
+    {
+      stripeAccount: destination
+    }
+  )
 }

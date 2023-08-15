@@ -4,19 +4,23 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 import Config from '../config.js'
 // import Transport from 'winston-transport'
 
-
 const newrelicWinstonFormatter = newrelicFormatter(winston)
 
-const ptTransport = new Papertrail({
-  host: Config.papertrail.host,
-  port: Config.papertrail.port
-});
+const transports = [new winston.transports.Console()]
 
+if (Config.papertrail.host) {
+  transports.push(
+    new Papertrail({
+      host: Config.papertrail.host,
+      port: Config.papertrail.port
+    })
+  )
+}
 
 const logger = winston.createLogger({
   level: 'info',
   format: newrelicWinstonFormatter(),
-  transports: [new winston.transports.Console(), ptTransport]
+  transports
 })
 
 export const koaLogger = async (ctx, next) => {

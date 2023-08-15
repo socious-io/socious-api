@@ -137,7 +137,7 @@ export const calculateLenders = async ({ amount, is_lender }) => {
   return amount * 0.013
 }
 
-export const notStaticfied = async ( mission ) => {
+export const notStaticfied = async (mission) => {
   const history = await getbyMissionId(mission.id)
   const user = await User.get(history.identity_id)
 
@@ -147,7 +147,7 @@ export const notStaticfied = async ( mission ) => {
   await User.updateImpactPoints(user)
 }
 
-export const staticfied = async ( mission ) => {
+export const staticfied = async (mission) => {
   const history = await getbyMissionId(mission.id)
   const user = await User.get(history.identity_id)
 

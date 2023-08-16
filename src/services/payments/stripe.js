@@ -88,23 +88,30 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   }
 }
 
-export const payout = async ({ amount, currency, description, destination }) => {
+export const payout = async ({ description, destination }) => {
+
+  const params = {
+  }
+
+  const balance = await stripe.balance.retrieve({stripeAccount: destination});
+
+  for (const available of balance.available) {
+    if (available.amount > 0) {
+      params.amount = available.amount
+      params.currency = available.currency
+      break
+    }
+  }
+
+  if (params.amount < 20) throw new Error('You may still waiting for Stripe pending process')
+
   logger.info(
     `Stripe payout ->  ${JSON.stringify({
-      amount: stripeAmount(amount, currency),
-      currency,
+      params,
       description,
       stripeAccount: destination
     })}`
   )
 
-  return stripe.payouts.create(
-    {
-      amount: stripeAmount(amount, currency),
-      currency
-    },
-    {
-      stripeAccount: destination
-    }
-  )
+  return stripe.payouts.create(params, { stripeAccount: destination })
 }

@@ -96,7 +96,10 @@ router.post('/preregister', async (ctx) => {
 router.get('/stripe/connect-link', loginRequired, async (ctx) => {
   if (!ctx.query.country) throw new ValidationError('Country need to be selected')
 
-  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, { country: ctx.query.country })
+  const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, {
+    country: ctx.query.country,
+    is_jp: ctx.query.is_jp
+  })
   ctx.body = { link }
 })
 
@@ -120,7 +123,9 @@ router.get('/stripe', async (ctx) => {
 router.get('/stripe/profile', loginRequired, async (ctx) => {
   // Success anyway
   try {
-    ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
+    ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE, {
+      is_jp: ctx.query.is_jp
+    })
   } catch {
     ctx.body = {}
   }

@@ -18,14 +18,15 @@ const stripeAmount = (amount, currency) => {
   }
 }
 
-export const charge = async (identityId, { amount, currency, meta, source, description, transfers }) => {
+export const charge = async (identityId, { amount, currency, meta, source, description, transfers, is_jp }) => {
   let card = await getCard(source, identityId)
+  if (!currency) currency = Data.PaymentCurrency.USD
 
-  currency = Data.PaymentCurrency.USD
+  let s = stripe
 
-  console.log('Stripe token card: ', card)
+  if (is_jp) s = Stripe(Config.payments.stripe_jp.secret_key)
 
-  const paymentMethod = await stripe.paymentMethods.create({
+  const paymentMethod = await s.paymentMethods.create({
     type: 'card',
     card: {
       number: card.numbers,
@@ -60,7 +61,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 
   if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
 
-  const paymentIntent = await stripe.paymentIntents.create({
+  const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
     currency: 'usd',
     payment_method_types: ['card'],
@@ -72,7 +73,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     }
   })
 
-  const confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id)
+  const confirmedPaymentIntent = await s.paymentIntents.confirm(paymentIntent.id)
 
   if (confirmedPaymentIntent.status !== 'succeeded') {
     throw Error(`Payment got error with status : ${confirmedPaymentIntent.status}`)
@@ -88,12 +89,14 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   }
 }
 
-export const payout = async ({ description, destination }) => {
+export const payout = async ({ description, destination, is_jp }) => {
+  let s = stripe
 
-  const params = {
-  }
+  if (is_jp) s = Stripe(Config.payments.stripe_jp.secret_key)
 
-  const balance = await stripe.balance.retrieve({stripeAccount: destination});
+  const params = {}
+
+  const balance = await s.balance.retrieve({ stripeAccount: destination })
 
   for (const available of balance.available) {
     if (available.amount > 0) {
@@ -113,5 +116,5 @@ export const payout = async ({ description, destination }) => {
     })}`
   )
 
-  return stripe.payouts.create(params, { stripeAccount: destination })
+  return s.payouts.create(params, { stripeAccount: destination })
 }

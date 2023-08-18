@@ -62,11 +62,12 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   const amounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: true })
   const transfers = {}
-
+  let is_jp = false
   if (service === Data.PaymentService.STRIPE) {
     try {
       const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
       const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE)
+      if (profile.provider === 'STRIPE_JP') is_jp = true
       transfers.amount = payoutAmounts.total
       transfers.destination = profile.mui
     } catch {
@@ -80,6 +81,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     amount: amounts.total,
     description: ctx.offer.project.name,
     transfers,
+    is_jp,
     meta: {
       ...ctx.request.body.meta,
       project_name: ctx.offer.project.name,

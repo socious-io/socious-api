@@ -21,11 +21,11 @@ export const insert = async ({ project_id, assignee_id, assigner_id, offer_id, a
   }
 }
 
-export const submitWork = async ({ missin_id, project_id, total_hours, start_at, end_at }) => {
+export const submitWork = async ({ mission_id, project_id, total_hours, start_at, end_at }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT INTO submitted_works (project_id, mission_id, total_hours, start_at, end_at) 
-    VALUES (${project_id}, ${missin_id}, ${total_hours}, ${start_at}, ${end_at})
+    VALUES (${project_id}, ${mission_id}, ${total_hours}, ${start_at}, ${end_at})
     RETURNING *
     `)
     return get(rows[0].missin_id)

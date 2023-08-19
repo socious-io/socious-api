@@ -40,7 +40,7 @@ export const confirmWork = async (id) => {
       UPDATE submitted_works SET status='CONFIRMED' WHERE id=${id}
       RETURNING *
       `)
-    return get(rows[0].missin_id)
+    return get(rows[0].mission_id)
   } catch (err) {
     throw new EntryError(err.message)
   }

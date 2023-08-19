@@ -28,7 +28,7 @@ export const submitWork = async ({ mission_id, project_id, total_hours, start_at
     VALUES (${project_id}, ${mission_id}, ${total_hours}, ${start_at}, ${end_at})
     RETURNING *
     `)
-    return get(rows[0].missin_id)
+    return get(rows[0].mission_id)
   } catch (err) {
     throw new EntryError(err.message)
   }

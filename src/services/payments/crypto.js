@@ -120,13 +120,15 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   }
 
   if (parseInt(tx.confirmations) < 10) {
-    `CONFIRM CRYPTODATA ${JSON.stringify({
-      src,
+    logger.error(
+      `CONFIRM CRYPTODATA ${JSON.stringify({
+        src,
 
-      amount,
-      txHash,
-      token
-    })}, PARAMS => ${JSON.stringify(data)}, RESULT => confirmation blocks after 5 second ${tx.confirmation} < 10`
+        amount,
+        txHash,
+        token
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => confirmation blocks after 5 second ${tx.confirmation} < 10`
+    )
     return false
   }
 

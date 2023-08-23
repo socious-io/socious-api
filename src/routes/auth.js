@@ -96,9 +96,12 @@ router.post('/preregister', async (ctx) => {
 router.get('/stripe/connect-link', loginRequired, async (ctx) => {
   if (!ctx.query.country) throw new ValidationError('Country need to be selected')
 
+  const { country, is_jp, redirect_url } = ctx.query
+
   const link = await OAuthConnects.link(ctx.identity.id, Data.OAuthProviders.STRIPE, {
-    country: ctx.query.country,
-    is_jp: ctx.query.is_jp === 'true'
+    country,
+    is_jp: is_jp === 'true',
+    redirect_url
   })
   ctx.body = { link }
 })

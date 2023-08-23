@@ -1,6 +1,8 @@
 import sql, { raw } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
+import { get } from './read.js'
+
 
 export const insert = async (
   identityId,
@@ -139,7 +141,7 @@ export const update = async (
         job_category_id=${job_category_id}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`
     )
-    return rows[0]
+    return get(rows[0].id)
   } catch (err) {
     throw new EntryError(err.message)
   }

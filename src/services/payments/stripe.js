@@ -26,14 +26,18 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 
   if (is_jp) s = Stripe(Config.payments.stripe_jp.secret_key)
 
-  const paymentMethod = await s.paymentMethods.create({
-    type: 'card',
+  const token = s.tokens.create({
     card: {
       number: card.numbers,
       exp_month: card.exp_month,
       exp_year: card.exp_year,
       cvc: card.cvc
     }
+  })
+
+  const paymentMethod = await s.paymentMethods.create({
+    type: 'card',
+    card: { token: token.id }
   })
 
   // card = await updateCardBrand(card.id, token.card.brand)

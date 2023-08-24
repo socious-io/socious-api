@@ -62,12 +62,11 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   const amounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: true })
   const transfers = {}
-  let is_jp = false
+  const is_jp = ctx.offer.currency === 'JPY' ? true : false
   if (service === Data.PaymentService.STRIPE) {
     try {
       const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
-      const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE)
-      if (profile.provider === 'STRIPE_JP') is_jp = true
+      const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE, { is_jp })
       transfers.amount = payoutAmounts.total
       transfers.destination = profile.mui
     } catch {
@@ -104,13 +103,15 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     throw new BadRequestError('Mission complete not approved')
   }
 
-  const profile = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE)
+  const mission = await Mission.get(ctx.mission.id)
+
+  const is_jp = mission.offer.currency === 'JPY' ? true : false
+
+  const profile = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE, { is_jp })
 
   if (profile.status !== Data.UserStatusType.ACTIVE) {
     throw new BadRequestError('Stripe account unboarding required')
   }
-
-  const mission = await Mission.get(ctx.mission.id)
 
   const escrow = mission.escrow
 
@@ -130,7 +131,7 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     destination: profile.mui,
     description: mission.project.description,
     meta: escrow,
-    is_jp: profile.provider === 'STRIPE_JP' ? true : false
+    is_jp
   })
 
   await Payment.releaseEscrow(escrow.id, payout.id)
@@ -139,7 +140,6 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     message: 'success',
     transaction_id: payout.id
   }
-  
 })
 
 router.get('/crypto/rate', async (ctx) => {

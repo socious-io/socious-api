@@ -25,6 +25,7 @@ export const get = async (id) => {
     row_to_json(i1.*) AS assignee,
     row_to_json(i2.*) AS assigner,
     row_to_json(es.*) AS escrow,
+    row_to_json(o.*) AS offer,
     row_to_json(pay.*) AS payment,
     row_to_json(org.*) AS organization,
     row_to_json(f1.*) AS user_feedback,
@@ -48,6 +49,7 @@ export const get = async (id) => {
   JOIN projects p ON p.id=m.project_id
   JOIN identities i1 ON i1.id=m.assignee_id
   JOIN identities i2 ON i2.id=m.assigner_id
+  LEFT JOIN offers o ON o.id=m.offer_id
   LEFT JOIN job_categories j ON j.id=p.job_category_id
   LEFT JOIN organizations org ON org.id=m.assigner_id
   LEFT JOIN escrows es ON es.mission_id=m.id

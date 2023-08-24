@@ -3,7 +3,6 @@ import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 import { get } from './read.js'
 
-
 export const insert = async (
   identityId,
   {

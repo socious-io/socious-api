@@ -129,7 +129,8 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     currency: escrow.currency,
     destination: profile.mui,
     description: mission.project.description,
-    meta: escrow
+    meta: escrow,
+    is_jp: profile.provider === 'STRIPE_JP' ? true : false
   })
 
   await Payment.releaseEscrow(escrow.id, payout.id)
@@ -138,6 +139,7 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     message: 'success',
     transaction_id: payout.id
   }
+  
 })
 
 router.get('/crypto/rate', async (ctx) => {

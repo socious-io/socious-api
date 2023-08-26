@@ -29,7 +29,7 @@ export const getCards = async (identityId, { limit = 10, offset = 0, filter }) =
 export const newCard = async (identityId, { holder_name, customer, meta, brand, is_jp }) => {
   try {
     const { rows } = await app.db.query(sql`
-      INSERT INTO cards (identity_id, holder_name, customer, jp_customer, meta, brand, is_jp)
+      INSERT INTO cards (identity_id, holder_name, customer, meta, brand, is_jp)
       VALUES (${identityId}, ${holder_name}, ${customer}, ${meta}, ${brand}, ${is_jp})
       RETURNING *
   `)

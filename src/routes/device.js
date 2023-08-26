@@ -20,6 +20,6 @@ router.post('/update', loginRequired, async (ctx) => {
 })
 
 router.post('/remove/:token', loginRequired, async (ctx) => {
-  await Device.delete(ctx.user.id, ctx.params.token)
+  await Device.remove(ctx.user.id, ctx.params.token)
   ctx.body = { message: 'success' }
 })

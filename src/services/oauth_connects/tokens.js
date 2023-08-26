@@ -30,11 +30,11 @@ export const updateStatus = async (id, status) => {
   `)
 }
 
-export const get = async (identityId, provider) => {
+export const get = async (identityId, providers) => {
   return app.db.get(sql`
   SELECT * FROM oauth_connects 
   WHERE 
     identity_id=${identityId} AND 
-    provider=${provider}
+    provider=ANY(${providers})
   `)
 }

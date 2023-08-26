@@ -1,6 +1,7 @@
 import pg from 'pg'
 import Config from '../src/config.js'
 
+console.log(Config.database, '---------------------')
 const client = new pg.Client({
   ...Config.database,
   database: 'postgres'

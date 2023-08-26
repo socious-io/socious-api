@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import Data from '@socious/data'
 import { upsert, get, updateStatus } from './tokens.js'
 
+export const STRPE_PROVIDERS = ['STRIPE', 'STRIPE_JP']
 export const PROVIDER = 'STRIPE'
 
 export const stripe = Stripe(Config.payments.stripe.secret_key)
@@ -10,8 +11,10 @@ export const stripe = Stripe(Config.payments.stripe.secret_key)
 // TODO: should be on redis or any stable ramdbs
 const accountsTmp = {}
 
-export const connectLink = async (identityId, { country }) => {
-  const account = await stripe.accounts.create({
+export const connectLink = async (identityId, { country, is_jp }) => {
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+
+  const account = await s.accounts.create({
     type: 'express',
     country,
     capabilities: {
@@ -27,31 +30,33 @@ export const connectLink = async (identityId, { country }) => {
     }
   })
 
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await s.accountLinks.create({
     account: account.id,
     refresh_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
     return_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
     type: 'account_onboarding'
   })
 
-  accountsTmp[account.id] = identityId
+  accountsTmp[account.id] = { id: identityId, is_jp }
 
   return accountLink
 }
 
 export const authorize = async ({ stripe_account }) => {
-  const account = await stripe.accounts.retrieve(stripe_account)
+  const { id, is_jp } = accountsTmp[stripe_account]
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+  const provider = is_jp ? STRPE_PROVIDERS[1] : STRPE_PROVIDERS[0]
 
-  const identityId = accountsTmp[account.id]
+  const account = await s.accounts.retrieve(stripe_account)
 
-  const oauth = await upsert(identityId, {
-    provider: PROVIDER,
-    status: account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
+  const oauth = await upsert(id, {
+    provider: provider,
+    status: account.payouts_enabled ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
     mui: account.id,
     access_token: 'empty',
     refresh_token: 'empty',
     expire: null,
-    meta: {}
+    meta: account
   })
 
   delete accountsTmp[account.id]
@@ -63,7 +68,7 @@ export const authorize = async ({ stripe_account }) => {
 }
 
 export const refresh = async (identityId) => {
-  const oauth = await get(identityId, PROVIDER)
+  const oauth = await get(identityId, STRPE_PROVIDERS)
 
   const account = await stripe.accounts.retrieve(oauth.matrix_unique_id)
 
@@ -73,7 +78,7 @@ export const refresh = async (identityId) => {
   })
 
   await upsert(identityId, {
-    provider: PROVIDER,
+    provider: oauth.provider,
     mui: response.stripe_user_id,
     status: account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE,
     access_token: response.access_token,
@@ -85,10 +90,13 @@ export const refresh = async (identityId) => {
   return response.access_token
 }
 
-export const profile = async (identityId) => {
-  const oauth = await get(identityId, PROVIDER)
-  const account = await stripe.accounts.retrieve(oauth.matrix_unique_id)
-  const status = account.details_submitted ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE
+export const profile = async (identityId, { is_jp }) => {
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+
+  const provider = is_jp ? [STRPE_PROVIDERS[1]] : STRPE_PROVIDERS
+  const oauth = await get(identityId, provider)
+  const account = await s.accounts.retrieve(oauth.matrix_unique_id)
+  const status = account.payouts_enabled ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE
 
   if (oauth.status !== status) await updateStatus(oauth.id, status)
 

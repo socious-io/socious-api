@@ -39,6 +39,10 @@ router.post('/update/:id', loginRequired, checkIdParams, projectPermission, asyn
   ctx.body = await Project.update(ctx.params.id, ctx.request.body)
 })
 
+router.post('/update/:id/close', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  ctx.body = await Project.close(ctx.params.id)
+})
+
 router.get('/:id/questions', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = {
     questions: await Project.getQuestions(ctx.params.id)

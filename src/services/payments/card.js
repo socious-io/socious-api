@@ -20,19 +20,11 @@ export const getCards = async (identityId, { limit = 10, offset = 0 }) => {
   return rows
 }
 
-export const responseCard = (card) => {
-  return {
-    ...card,
-    cvc: card.cvc.replace(/[0-9]/, '*'),
-    numbers: card.numbers.substr(card.numbers.length - 4)
-  }
-}
-
-export const newCard = async (identityId, { holder_name, numbers, exp_month, exp_year, cvc, brand }) => {
+export const newCard = async (identityId, { holder_name, customer, jp_customer, meta, brand }) => {
   try {
     const { rows } = await app.db.query(sql`
-      INSERT INTO cards (identity_id, holder_name, numbers, exp_month, exp_year, cvc, brand)
-      VALUES (${identityId}, ${holder_name}, ${numbers}, ${exp_month}, ${exp_year}, ${cvc}, ${brand})
+      INSERT INTO cards (identity_id, holder_name, customer, jp_customer, meta, brand)
+      VALUES (${identityId}, ${holder_name}, ${customer}, ${jp_customer}, ${meta}, ${brand})
       RETURNING *
   `)
     return rows[0]
@@ -53,15 +45,14 @@ export const updateCardBrand = async (id, brand) => {
   }
 }
 
-export const updateCard = async (id, identityId, { holder_name, numbers, exp_month, exp_year, cvc, brand }) => {
+export const updateCard = async (id, identityId, { holder_name, customer, jp_customer, meta, brand }) => {
   try {
     const { rows } = await app.db.query(sql`
       UPDATE cards SET 
         holder_name=${holder_name}, 
-        numbers=${numbers},
-        exp_month=${exp_month},
-        exp_year=${exp_year},
-        cvc=${cvc},
+        customer=${customer},
+        jp_customer=${jp_customer},
+        meta=${meta},
         brand=${brand}
       WHERE id=${id} AND identity_id=${identityId}
       RETURNING *

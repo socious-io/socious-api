@@ -2,7 +2,7 @@ import Config from '../../config.js'
 import Data from '@socious/data'
 import Stripe from 'stripe'
 import logger from '../../utils/logging.js'
-import { getCard, responseCard } from './card.js'
+import { getCard } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
 export const stripe = Stripe(Config.payments.stripe.secret_key)
@@ -18,24 +18,11 @@ const stripeAmount = (amount, currency) => {
   }
 }
 
-export const charge = async (identityId, { amount, currency, meta, source, description, transfers }) => {
+export const charge = async (identityId, { amount, currency, meta, source, description, transfers, is_jp }) => {
   let card = await getCard(source, identityId)
+  if (!currency) currency = Data.PaymentCurrency.USD
 
-  currency = Data.PaymentCurrency.USD
-
-  console.log('Stripe token card: ', card)
-
-  const paymentMethod = await stripe.paymentMethods.create({
-    type: 'card',
-    card: {
-      number: card.numbers,
-      exp_month: card.exp_month,
-      exp_year: card.exp_year,
-      cvc: card.cvc
-    }
-  })
-
-  // card = await updateCardBrand(card.id, token.card.brand)
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const trx = await create({
     identity_id: identityId,
@@ -53,18 +40,17 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     JSON.stringify({
       amount: fixedAmount,
       currency,
-      source: paymentMethod.id,
+      source: card.id,
       description
     })
   )
 
   if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
 
-  const paymentIntent = await stripe.paymentIntents.create({
+  const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
     currency: 'usd',
-    payment_method_types: ['card'],
-    payment_method: paymentMethod.id,
+    customer: is_jp ? card.jp_customer : card.customer,
     application_fee_amount: fixedAmount - transfers.amount,
     on_behalf_of: transfers.destination,
     transfer_data: {
@@ -72,7 +58,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     }
   })
 
-  const confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id)
+  const confirmedPaymentIntent = await s.paymentIntents.confirm(paymentIntent.id)
 
   if (confirmedPaymentIntent.status !== 'succeeded') {
     throw Error(`Payment got error with status : ${confirmedPaymentIntent.status}`)
@@ -83,28 +69,43 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   return {
     id: trx.id,
     amount: trx.amount,
-    currency: trx.currency,
-    card: responseCard(card)
+    currency: trx.currency
   }
 }
 
-export const payout = async ({ amount, currency, description, destination }) => {
+export const payout = async ({ description, destination, is_jp }) => {
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+
+  const params = {}
+
+  const balance = await s.balance.retrieve({ stripeAccount: destination })
+
+  for (const available of balance.available) {
+    if (available.amount > 0) {
+      params.amount = available.amount
+      params.currency = available.currency
+      break
+    }
+  }
+
+  if (params.amount < 20) throw new Error('You may still waiting for Stripe pending process')
+
   logger.info(
     `Stripe payout ->  ${JSON.stringify({
-      amount: stripeAmount(amount, currency),
-      currency,
+      params,
       description,
       stripeAccount: destination
     })}`
   )
 
-  return stripe.payouts.create(
-    {
-      amount: stripeAmount(amount, currency),
-      currency
-    },
-    {
-      stripeAccount: destination
-    }
-  )
+  return s.payouts.create(params, { stripeAccount: destination })
+}
+
+export const addCustomer = async ({ email, token, is_jp }) => {
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+
+  return s.customers.create({
+    email: email,
+    source: token
+  })
 }

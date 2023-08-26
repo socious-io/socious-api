@@ -26,10 +26,10 @@ const refresh = async (identityId, provider) => {
   }
 }
 
-const profile = async (identityId, provider) => {
+const profile = async (identityId, provider, options) => {
   switch (provider) {
     case STRIPE_PROVIDER:
-      return stripeProfile(identityId)
+      return stripeProfile(identityId, options)
     default:
       throw new NotImplementedError()
   }

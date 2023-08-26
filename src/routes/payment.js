@@ -8,14 +8,30 @@ import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { BadRequestError } from '../utils/errors.js'
 import Mission from '../models/mission/index.js'
+import { addCustomer } from '../services/payments/stripe.js'
 
 export const router = new Router()
 
 router.post('/cards', loginRequired, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
-  const card = await Payment.newCard(ctx.identity.id, ctx.request.body)
 
-  ctx.body = Payment.responseCard(card)
+  const customer = await addCustomer({
+    email: ctx.identity.meta.email,
+    token: ctx.request.body.token,
+    is_jp: false
+  })
+
+  const customerJP = await addCustomer({
+    email: ctx.identity.meta.email,
+    token: ctx.request.body.jp_token,
+    is_jp: true
+  })
+
+  ctx.body = await Payment.newCard(ctx.identity.id, {
+    ...ctx.request.body,
+    customer: customer.id,
+    jp_customer: customerJP.id
+  })
 })
 
 router.post('/cards/remove/:id', loginRequired, checkIdParams, async (ctx) => {
@@ -27,19 +43,31 @@ router.post('/cards/remove/:id', loginRequired, checkIdParams, async (ctx) => {
 
 router.post('/cards/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
-  const card = await Payment.updateCard(ctx.params.id, ctx.identity.id, ctx.request.body)
+  const customer = await addCustomer({
+    email: ctx.identity.meta.email,
+    token: ctx.request.body.token,
+    is_jp: false
+  })
 
-  ctx.body = Payment.responseCard(card)
+  const customerJP = await addCustomer({
+    email: ctx.identity.meta.email,
+    token: ctx.request.body.jp_token,
+    is_jp: true
+  })
+
+  ctx.body = await Payment.updateCard(ctx.params.id, ctx.identity.id, {
+    ...ctx.request.body,
+    customer: customer.id,
+    jp_customer: customerJP.id
+  })
 })
 
 router.get('/cards', loginRequired, paginate, async (ctx) => {
-  const cards = await Payment.getCards(ctx.identity.id, ctx.paginate)
-  ctx.body = cards.map((c) => Payment.responseCard(c))
+  ctx.body = await Payment.getCards(ctx.identity.id, ctx.paginate)
 })
 
 router.get('/cards/:id', loginRequired, checkIdParams, async (ctx) => {
-  const card = await Payment.getCard(ctx.params.id, ctx.identity.id)
-  ctx.body = Payment.responseCard(card)
+  ctx.body = await Payment.getCard(ctx.params.id, ctx.identity.id)
 })
 
 router.get('/', loginRequired, paginate, async (ctx) => {

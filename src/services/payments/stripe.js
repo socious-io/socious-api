@@ -2,7 +2,7 @@ import Config from '../../config.js'
 import Data from '@socious/data'
 import Stripe from 'stripe'
 import logger from '../../utils/logging.js'
-import { getCard, responseCard } from './card.js'
+import { getCard } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
 export const stripe = Stripe(Config.payments.stripe.secret_key)
@@ -22,25 +22,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   let card = await getCard(source, identityId)
   if (!currency) currency = Data.PaymentCurrency.USD
 
-  let s = stripe
-
-  if (is_jp) s = Stripe(Config.payments.stripe_jp.secret_key)
-
-  const token = s.tokens.create({
-    card: {
-      number: card.numbers,
-      exp_month: card.exp_month,
-      exp_year: card.exp_year,
-      cvc: card.cvc
-    }
-  })
-
-  const paymentMethod = await s.paymentMethods.create({
-    type: 'card',
-    card: { token: token.id }
-  })
-
-  // card = await updateCardBrand(card.id, token.card.brand)
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const trx = await create({
     identity_id: identityId,
@@ -58,7 +40,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
     JSON.stringify({
       amount: fixedAmount,
       currency,
-      source: paymentMethod.id,
+      source: card.id,
       description
     })
   )
@@ -68,8 +50,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
     currency: 'usd',
-    payment_method_types: ['card'],
-    payment_method: paymentMethod.id,
+    customer: is_jp ? card.jp_customer : card.customer,
     application_fee_amount: fixedAmount - transfers.amount,
     on_behalf_of: transfers.destination,
     transfer_data: {
@@ -88,15 +69,12 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   return {
     id: trx.id,
     amount: trx.amount,
-    currency: trx.currency,
-    card: responseCard(card)
+    currency: trx.currency
   }
 }
 
 export const payout = async ({ description, destination, is_jp }) => {
-  let s = stripe
-
-  if (is_jp) s = Stripe(Config.payments.stripe_jp.secret_key)
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const params = {}
 
@@ -121,4 +99,13 @@ export const payout = async ({ description, destination, is_jp }) => {
   )
 
   return s.payouts.create(params, { stripeAccount: destination })
+}
+
+export const addCustomer = async ({ email, token, is_jp }) => {
+  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+
+  return s.customers.create({
+    email: email,
+    source: token
+  })
 }

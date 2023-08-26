@@ -2651,6 +2651,29 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/update/{project_id}/close:
+    post:
+      tags:
+        - project
+      summary: close project
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects/{project_id}:
     get:
       tags:

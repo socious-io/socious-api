@@ -149,3 +149,9 @@ export const update = async (
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM projects WHERE id=${id}`)
 }
+
+
+export const close = async (id) => {
+  await app.db.query(sql`UPDATE projects SET status='EXPIRE',expires_at=NOW() WHERE id=${id}`)
+  return get(id)
+}

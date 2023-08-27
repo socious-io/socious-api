@@ -48,13 +48,11 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 
   if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
 
-  const customer = await s.customers.retrieve(card.customer);
 
   const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
-    currency: 'usd',
-    customer: customer.id,
-    payment_method: customer.invoice_settings.default_payment_method,
+    currency,
+    customer: card.customer,
     application_fee_amount: fixedAmount - transfers.amount,
     on_behalf_of: transfers.destination,
     transfer_data: {
@@ -108,8 +106,20 @@ export const payout = async ({ description, destination, is_jp }) => {
 export const addCustomer = async ({ email, token, is_jp }) => {
   const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
-  return s.customers.create({
+  const customer = await s.customers.create({
     email: email,
     source: token
   })
+
+  const paymentMethod = await stripe.paymentMethods.create({
+    type: 'card',
+    card: { token: token }
+  });
+
+  await stripe.paymentMethods.attach(
+    paymentMethod.id, 
+    {customer: customer.id}
+  );
+
+  return customer
 }

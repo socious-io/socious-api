@@ -113,7 +113,7 @@ export const addCustomer = async ({ email, token, is_jp }) => {
 
   const paymentMethod = await stripe.paymentMethods.create({
     type: 'card',
-    card: { token: token }
+    card: { token: customer.default_source }
   });
 
   await stripe.paymentMethods.attach(

@@ -51,7 +51,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
   const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
     currency: 'usd',
-    customer: cardcustomer,
+    customer: card.customer,
     application_fee_amount: fixedAmount - transfers.amount,
     on_behalf_of: transfers.destination,
     transfer_data: {

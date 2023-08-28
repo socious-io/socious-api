@@ -19,7 +19,7 @@ export const getCards = async (identityId, { limit = 10, offset = 0, filter }) =
       COUNT(*) OVER () as total_count, * 
     FROM cards 
     WHERE identity_id=${identityId}
-    ${filtering(filter, filterColumns, false)}
+    ${filtering(filter, filterColumns, true)}
     ORDER BY created_at DESC    
     LIMIT ${limit} OFFSET ${offset}    
   `)

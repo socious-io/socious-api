@@ -105,17 +105,18 @@ export const payout = async ({ description, destination, is_jp }) => {
 export const addCustomer = async ({ email, token, is_jp }) => {
   const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
-  const customer = await s.customers.create({
-    email: email,
-    source: token
-  })
-
   const paymentMethod = await s.paymentMethods.create({
     type: 'card',
     card: { token: token }
   })
 
-  await s.paymentMethods.attach(paymentMethod.id, { customer: customer.id })
+  const customer = await s.customers.create({
+    email: email,
+    payment_method: paymentMethod.id
+  })
+
+
+  // await s.paymentMethods.attach(paymentMethod.id, { customer: customer.id })
 
   return customer
 }

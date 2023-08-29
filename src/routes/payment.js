@@ -95,7 +95,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   ctx.body = await Payment.charge(ctx.identity.id, {
     ...ctx.request.body,
-    currency: ctx.offer.project.currency,
+    currency: ctx.offer.currency,
     amount: amounts.total,
     description: ctx.offer.project.name,
     transfers,
@@ -110,7 +110,7 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   await Payment.escrow({
     trx_id: ctx.body.id,
-    currency: ctx.offer.project.currency,
+    currency: ctx.offer.currency,
     project_id: ctx.offer.project.id,
     offer_id: ctx.offer.id,
     amount

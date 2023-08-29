@@ -14,23 +14,18 @@ export const router = new Router()
 
 router.post('/cards', loginRequired, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
+  const is_jp = ctx.query.is_jp === 'true'
 
   const customer = await addCustomer({
     email: ctx.identity.meta.email,
     token: ctx.request.body.token,
-    is_jp: false
-  })
-
-  const customerJP = await addCustomer({
-    email: ctx.identity.meta.email,
-    token: ctx.request.body.jp_token,
-    is_jp: true
+    is_jp
   })
 
   ctx.body = await Payment.newCard(ctx.identity.id, {
     ...ctx.request.body,
     customer: customer.id,
-    jp_customer: customerJP.id
+    is_jp
   })
 })
 
@@ -43,22 +38,18 @@ router.post('/cards/remove/:id', loginRequired, checkIdParams, async (ctx) => {
 
 router.post('/cards/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.CardSchema.validateAsync(ctx.request.body)
+  const is_jp = ctx.query.is_jp === 'true'
+
   const customer = await addCustomer({
     email: ctx.identity.meta.email,
     token: ctx.request.body.token,
-    is_jp: false
-  })
-
-  const customerJP = await addCustomer({
-    email: ctx.identity.meta.email,
-    token: ctx.request.body.jp_token,
-    is_jp: true
+    is_jp
   })
 
   ctx.body = await Payment.updateCard(ctx.params.id, ctx.identity.id, {
     ...ctx.request.body,
     customer: customer.id,
-    jp_customer: customerJP.id
+    is_jp
   })
 })
 

@@ -12,6 +12,8 @@ const stripeAmount = (amount, currency) => {
     case Data.PaymentCurrency.USD:
       amount *= 100
       return Math.floor(amount)
+    case Data.PaymentCurrency.JPY:
+      return Math.floor(amount)
     default:
       amount *= 100
       return Math.floor(amount)

@@ -106,9 +106,7 @@ router.get('/missions', loginRequired, paginate, async (ctx) => {
     return {
       ...m,
       ...Payment.amounts({
-        identity: ctx.identity,
         amount: m.offer.assignment_total,
-        paymode: false,
         service: Data.PaymentService.STRIPE
           ? m.offer.payment_mode === Data.PaymentMode.FIAT
           : Data.PaymentService.CRYPTO,

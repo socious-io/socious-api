@@ -17,13 +17,13 @@ export const router = new Router()
 
 router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) => {
   const offer = await Offer.get(ctx.offer.id)
+
   ctx.body = {
     ...offer,
     ...Payment.amounts({
-      identity: ctx.identity,
       amount: offer.assignment_total,
       service: offer.payment_mode === Data.PaymentMode.FIAT ? Data.PaymentService.STRIPE : Data.PaymentService.CRYPTO,
-      paymode: true
+      verified: offer.offerer.meta.verified_impact
     })
   }
 })

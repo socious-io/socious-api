@@ -50,10 +50,7 @@ export const charge = async (identityId, { amount, currency, meta, source, descr
 
   if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
 
-  const paymentMethods = await s.customers.listPaymentMethods(
-    card.customer,
-    {type: 'card'}
-  );
+  const paymentMethods = await s.customers.listPaymentMethods(card.customer, { type: 'card' })
 
   const paymentIntent = await s.paymentIntents.create({
     amount: fixedAmount,
@@ -122,7 +119,6 @@ export const addCustomer = async ({ email, token, is_jp }) => {
     email: email,
     payment_method: paymentMethod.id
   })
-
 
   // await s.paymentMethods.attach(paymentMethod.id, { customer: customer.id })
 

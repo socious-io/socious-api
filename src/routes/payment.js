@@ -79,14 +79,18 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   const service = ctx.request.body.service
   const amount = ctx.offer.assignment_total
 
-  const amounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: true })
+  const amounts = Payment.amounts({
+    amount,
+    service,
+    verified: ctx.identity.meta.verified_impact
+  })
+
   const transfers = {}
   const is_jp = ctx.offer.currency === 'JPY' ? true : false
   if (service === Data.PaymentService.STRIPE) {
     try {
-      const payoutAmounts = Payment.amounts({ identity: ctx.identity, amount, service, paymode: false })
       const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE, { is_jp })
-      transfers.amount = payoutAmounts.total
+      transfers.amount = amounts.payout
       transfers.destination = profile.mui
     } catch {
       throw new BadRequestError('Recipient has no connected account')
@@ -137,15 +141,13 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   if (escrow.released_at) throw new BadRequestError('Escrow already has been released')
 
   const amounts = Payment.amounts({
-    identity: ctx.identity,
     amount: escrow.amount,
     service: Data.PaymentService.STRIPE,
-    paymode: false,
     verified: mission.assigner.meta.verified_impact
   })
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {
-    amount: amounts.total,
+    amount: amounts.payout,
     currency: escrow.currency,
     destination: profile.mui,
     description: mission.project.description,

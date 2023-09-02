@@ -171,3 +171,12 @@ export const update = async (
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`)
 }
+
+export const hiring = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`UPDATE organizations SET hiring=NOT hiring WHERE id=${id} RETURNING hiring`)
+    return rows[0].hiring
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}

@@ -68,3 +68,9 @@ router.post('/remove/:id/members/:user_id', loginRequired, checkIdParams, orgMem
   await Org.removeMember(ctx.params.id, ctx.params.user_id)
   ctx.body = { message: 'success' }
 })
+
+router.post('/hiring', loginRequired, async (ctx) => {
+  ctx.body = {
+    hiring: await Org.hiring(ctx.identity.id)
+  }
+})

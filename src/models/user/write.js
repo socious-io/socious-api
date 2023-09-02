@@ -114,3 +114,25 @@ export const report = async ({ identity_id, user_id, comment, blocked }) => {
 export const updateImpactPoints = async (user) => {
   return app.db.query(sql`UPDATE users SET impact_points=${user.impact_points} WHERE id=${user.id}`)
 }
+
+export const openToWork = async (id) => {
+  try {
+    const { rows } = await app.db.query(
+      sql`UPDATE users SET open_to_work=NOT open_to_work WHERE id=${id} RETURNING open_to_work`
+    )
+    return rows[0].open_to_work
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const openToVolunteer = async (id) => {
+  try {
+    const { rows } = await app.db.query(
+      sql`UPDATE users SET open_to_volunteer=NOT open_to_volunteer WHERE id=${id} RETURNING open_to_volunteer`
+    )
+    return rows[0].open_to_volunteer
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}

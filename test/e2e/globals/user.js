@@ -306,3 +306,21 @@ export const updateUserWallet = async (request, data) => {
     expect(response.body.wallet_address).toBe(wallet)
   }
 }
+
+export const openToWork = async (request, data) => {
+  const response = await request.post(`/user/open-to-work`).set('Authorization', data.users[0].access_token)
+  expect(response.status).toBe(200)
+  expect(response.body.open_to_work).toBe(true)
+  const response2 = await request.post(`/user/open-to-work`).set('Authorization', data.users[0].access_token)
+  expect(response2.status).toBe(200)
+  expect(response2.body.open_to_work).toBe(false)
+}
+
+export const openToVolunteer = async (request, data) => {
+  const response = await request.post(`/user/open-to-volunteer`).set('Authorization', data.users[0].access_token)
+  expect(response.status).toBe(200)
+  expect(response.body.open_to_volunteer).toBe(true)
+  const response2 = await request.post(`/user/open-to-volunteer`).set('Authorization', data.users[0].access_token)
+  expect(response2.status).toBe(200)
+  expect(response2.body.open_to_volunteer).toBe(false)
+}

@@ -69,3 +69,19 @@ export const getFiltered = async (request, data) => {
     ]
   })
 }
+
+export const hiring = async (request, data) => {
+  const response = await request
+    .post(`/orgs/hiring`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response.status).toBe(200)
+  expect(response.body.hiring).toBe(true)
+
+  const response2 = await request
+    .post(`/orgs/hiring`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response2.status).toBe(200)
+  expect(response2.body.hiring).toBe(false)
+}

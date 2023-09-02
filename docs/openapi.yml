@@ -3646,6 +3646,24 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /orgs/hiring:
+    post:
+      tags:
+        - organizations
+      summary: hiring
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /orgs/{org_id}:
     parameters:
       - name: org_id
@@ -3888,6 +3906,30 @@ paths:
               type: object
               example:
                 wallet_address: '0x18Adf002AE3a67089E67B5765DaB67Be01C7b5ee'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/open-to-work:
+    post:
+      tags:
+        - users
+      summary: update user status open to work
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/open-to-volunteer:
+    post:
+      tags:
+        - users
+      summary: update user status open to volunteer
       security:
         - bearerAuth: []
       responses:

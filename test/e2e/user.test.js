@@ -13,7 +13,9 @@ import {
   profileByUsername,
   updateProfile,
   verifyUser,
-  updateUserWallet
+  updateUserWallet,
+  openToWork,
+  openToVolunteer
 } from './globals/user.js'
 
 let server, request
@@ -34,6 +36,8 @@ test('update experience', async () => updateExperience(request, data))
 test('profile by username', async () => profileByUsername(request, data))
 test('update profile', async () => updateProfile(request, data))
 test('update wallet', async () => updateUserWallet(request, data))
+test('open to work', async () => openToWork(request, data))
+test('open to volunteer', async () => openToVolunteer(request, data))
 
 test('delete user', async () => {
   const response = await request

@@ -97,12 +97,10 @@ router.get('/applicants', loginRequired, checkIdParams, paginate, async (ctx) =>
   ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate)
 })
 
-
 router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.params.id
   ctx.body = await Mission.getAll(ctx.paginate)
 })
-
 
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.identity.id

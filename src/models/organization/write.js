@@ -1,9 +1,8 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
-import { shortNameExists } from './read.js'
 
-const generateShortname = (name, website) => {
+export const generateShortname = (name, website) => {
   const rand = Math.floor(1000 + Math.random() * 9000)
   if (website) {
     return `${website
@@ -42,32 +41,6 @@ export const insert = async (
     cover_image
   }
 ) => {
-  // temp logic
-  if (!shortname) {
-    shortname = generateShortname(name, website)
-    if (await shortNameExists(shortname)) {
-      return insert(identityId, {
-        shortname,
-        name,
-        website,
-        bio,
-        description,
-        email,
-        phone,
-        type,
-        city,
-        geoname_id,
-        address,
-        country,
-        social_causes,
-        mobile_country_code,
-        mission,
-        culture,
-        image,
-        cover_image
-      })
-    }
-  }
   try {
     const { rows } = await app.db.query(
       sql`
@@ -111,33 +84,6 @@ export const update = async (
     cover_image
   }
 ) => {
-  // temp logic
-  if (!shortname) {
-    shortname = generateShortname(name, website)
-    if (await shortNameExists(shortname)) {
-      return update(id, {
-        shortname,
-        name,
-        website,
-        bio,
-        description,
-        email,
-        phone,
-        type,
-        city,
-        geoname_id,
-        address,
-        country,
-        social_causes,
-        mobile_country_code,
-        mission,
-        culture,
-        image,
-        cover_image
-      })
-    }
-  }
-
   try {
     const { rows } = await app.db.query(
       sql`

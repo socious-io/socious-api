@@ -73,6 +73,8 @@ export const getProfile = async (id, currentIdentity) => {
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
     mobile_country_code,
+    open_to_work,
+    open_to_volunteer,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -118,6 +120,8 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
     mobile_country_code,
+    open_to_work,
+    open_to_volunteer,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -156,6 +160,8 @@ export const getProfileLimited = async (id) => {
     SELECT u.id, username, first_name, last_name,
     mission, bio, impact_points, skills,
     followers, followings, u.created_at,
+    open_to_work,
+    open_to_volunteer,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image
@@ -172,6 +178,8 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     city, country, geoname_id, mission, bio, impact_points,
+    open_to_work,
+    open_to_volunteer,
     skills, followers, followings, u.created_at, wallet_address,
     array_to_json(u.social_causes) AS social_causes,
     proofspace_connect_id,
@@ -219,6 +227,8 @@ export const getProfileByUsernameLimited = async (username) => {
     sql`
     SELECT u.id, username, first_name, last_name,
     mission, bio, impact_points, skills,
+    open_to_work,
+    open_to_volunteer,
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,

@@ -129,11 +129,11 @@ router.post('/:id/messages', loginRequired, checkIdParams, chatPermission, async
 
   const participants = await Chat.miniParticipants(ctx.params.id)
 
+  for (const p of participants) app.socket.to(app.users[p.identity_id]).emit('chat', ctx.body)
+
   participants
     .filter((p) => p.identity_id !== ctx.identity.id)
     .map((p) => {
-      app.socket.to(app.users[p.identity_id]).emit('chat', ctx.body)
-
       Event.push(Event.Types.CHAT, p.identity_id, {
         ...ctx.body,
         refId: ctx.body.id,

@@ -97,6 +97,11 @@ router.get('/applicants', loginRequired, checkIdParams, paginate, async (ctx) =>
   ctx.body = await Applicant.getByUserId(ctx.user.id, ctx.paginate)
 })
 
+router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) => {
+  ctx.paginate.filter.assignee_id = ctx.params.id
+  ctx.body = await Mission.getAll(ctx.paginate)
+})
+
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   ctx.paginate.filter.assignee_id = ctx.identity.id
 
@@ -160,4 +165,16 @@ router.get('/badges', loginRequired, async (ctx) => {
 
 router.get('/impact-points', loginRequired, paginate, async (ctx) => {
   ctx.body = await ImpactPoints.history(ctx.identity.id, ctx.paginate)
+})
+
+router.post('/open-to-work', loginRequired, async (ctx) => {
+  ctx.body = {
+    open_to_work: await User.openToWork(ctx.user.id)
+  }
+})
+
+router.post('/open-to-volunteer', loginRequired, async (ctx) => {
+  ctx.body = {
+    open_to_volunteer: await User.openToVolunteer(ctx.user.id)
+  }
 })

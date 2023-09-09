@@ -42,6 +42,6 @@ export const removeQuestion = async (id) => {
 }
 
 export const getQuestions = async (projectId) => {
-  const { rows } = await app.db.query(sql`SELECT * FROM questions WHERE project_id=${projectId}`)
+  const { rows } = await app.db.query(sql`SELECT * FROM questions WHERE project_id=${projectId} ORDER BY created_at`)
   return rows
 }

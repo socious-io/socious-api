@@ -12,6 +12,17 @@ import Event from '../services/events/index.js'
 
 export const router = new Router()
 
+const addShortname = async (request) => {
+  if (request.body.shortname) return request.body.shortname
+
+  let shortname = Org.generateShortname(request.body.name, request.body.website)
+  while (await Org.shortNameExists(shortname)) {
+    shortname = Org.generateShortname()
+  }
+
+  return shortname
+}
+
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
   ctx.body = await Org.get(ctx.params.id)
 })
@@ -25,6 +36,8 @@ router.get('/', loginOptional, paginate, async (ctx) => {
 })
 
 router.post('/', loginRequired, async (ctx) => {
+  ctx.request.body.shortname = await addShortname(ctx.request)
+
   await validate.OrganizationSchema.validateAsync(ctx.request.body)
   if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
     throw new ValidationError('Invalid email')
@@ -40,7 +53,10 @@ router.get('/check', loginRequired, async (ctx) => {
 })
 
 router.post('/update/:id', loginRequired, checkIdParams, orgMember, async (ctx) => {
+  ctx.request.body.shortname = await addShortname(ctx.request)
+
   await validate.OrganizationSchema.validateAsync(ctx.request.body)
+
   if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
     throw new ValidationError('Invalid email')
   }
@@ -67,4 +83,10 @@ router.post('/:id/members/:user_id', loginRequired, checkIdParams, orgMember, as
 router.post('/remove/:id/members/:user_id', loginRequired, checkIdParams, orgMember, async (ctx) => {
   await Org.removeMember(ctx.params.id, ctx.params.user_id)
   ctx.body = { message: 'success' }
+})
+
+router.post('/hiring', loginRequired, async (ctx) => {
+  ctx.body = {
+    hiring: await Org.hiring(ctx.identity.id)
+  }
 })

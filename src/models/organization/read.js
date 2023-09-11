@@ -4,6 +4,7 @@ import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   country: String,
+  city: String,
   type: String,
   social_causes: Array
 }

@@ -5,6 +5,7 @@ import { filtering, textSearch, sorting } from '../../utils/query.js'
 
 export const filterColumns = {
   country: String,
+  city: String,
   causes_tags: Array,
   skills: Array,
   payment_type: String,

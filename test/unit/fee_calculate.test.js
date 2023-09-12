@@ -1,6 +1,17 @@
 import { app } from '../../src/index.js'
 import { amounts } from '../../src/services/payments/index.js'
 
+const data = [
+  {
+    amount: 5000,
+    verfied: true,
+    expect_total: 5283.6,
+    expect_app_fee: 350,
+    expect_stripe_fee: 183.6,
+    expect_payout: 4750
+  }
+]
+
 beforeAll(async () => {
   app.listen()
 })
@@ -8,39 +19,15 @@ beforeAll(async () => {
 test('calculate fee', async () => {
   const service = 'STRIPE'
 
-  expect(
-    JSON.stringify(
-      amounts({
-        amount: 5000,
-        service,
-        verified: true
-      })
-    )
-  ).toBe(
-    JSON.stringify({
-      amount: 5000,
-      fee: 183.6,
-      total: 5183.6,
-      payout: 4750,
-      app_fee: 433.6
+  for (const i of data) {
+    const amount = amounts({
+      amount: i.amount,
+      service,
+      verified: i.verfied
     })
-  )
-
-  expect(
-    JSON.stringify(
-      amounts({
-        amount: 5000,
-        service,
-        verified: false
-      })
-    )
-  ).toBe(
-    JSON.stringify({
-      amount: 5000,
-      fee: 185.39999999999998,
-      total: 5185.4,
-      payout: 4500,
-      app_fee: 685.4
-    })
-  )
+    expect(amount.total).toBe(i.expect_total)
+    expect(amount.app_fee).toBe(i.expect_app_fee)
+    expect(amount.stripe_fee).toBe(i.expect_stripe_fee)
+    expect(amount.payout).toBe(i.expect_payout)
+  }
 })

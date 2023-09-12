@@ -1,4 +1,6 @@
 import winston from 'winston'
+import axios from 'axios'
+import Transport from 'winston-transport'
 import { Papertrail } from 'winston-papertrail'
 import newrelicFormatter from '@newrelic/winston-enricher'
 import Config from '../config.js'
@@ -17,6 +19,35 @@ if (Config.papertrail.host) {
     })
   )
 }
+
+class DiscordTransporter extends Transport {
+  constructor(opts) {
+    super(opts)
+    this.webhookURL = opts.webhookURL
+  }
+
+  log(info, callback) {
+    setImmediate(() => {
+      this.emit('logged', info)
+    })
+
+    if (info.status === 500) {
+      axios
+        .post(this.webhookURL, {
+          content: `Status: ${info.status}, Message: ${info.message}`
+        })
+        .then((response) => {
+          console.log('Message sent successfully')
+        })
+        .catch((error) => {
+          console.error('Error sending message:', error)
+        })
+    }
+
+    callback()
+  }
+}
+if (!Config.debug && Config.discordLogger) transports.push(new DiscordTransporter({ webhookURL: Config.discordLogger }))
 
 const logger = winston.createLogger({
   level: 'info',
@@ -49,7 +80,7 @@ export const koaLogger = async (ctx, next) => {
     logLevel = 'error'
   }
 
-  logger.log(logLevel, msg)
+  logger.log(logLevel, msg, { status: ctx.status })
 }
 
 export default logger

@@ -36,9 +36,6 @@ class DiscordTransporter extends Transport {
         .post(this.webhookURL, {
           content: `Status: ${info.status}, Message: ${info.message}`
         })
-        .then((response) => {
-          console.log('Message sent successfully')
-        })
         .catch((error) => {
           console.error('Error sending message:', error)
         })

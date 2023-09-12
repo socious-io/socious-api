@@ -16,16 +16,18 @@ export const amounts = ({ amount, service, verified = true }) => {
   const orgFeeRate = verified ? IMPACT_ORG_FEE : ORG_FEE
   const userFeeRate = verified ? IMPACT_USER_FEE : USER_FEE
   let fee = amount * orgFeeRate
+  let stripe_fee = 0
 
-  if (service === Data.PaymentService.STRIPE) fee = (fee + amount) * STRIPE_FEE
+  if (service === Data.PaymentService.STRIPE) stripe_fee = (fee + amount) * STRIPE_FEE
 
-  const total = amount + fee
+  const total = amount + fee + stripe_fee
   const payoutFee = amount * userFeeRate
   const payout = amount - payoutFee
 
   return {
     amount,
     fee,
+    stripe_fee,
     total,
     payout,
     app_fee: fee + payoutFee

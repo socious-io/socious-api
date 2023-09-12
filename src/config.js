@@ -282,7 +282,8 @@ export default {
   },
   notifAppLink: process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
   privateKey: process.env.PRIVATE_KEY,
-  publicKey: process.env.PUBLIC_KEY
+  publicKey: process.env.PUBLIC_KEY,
+  discordLogger: process.env.DISCORD_LOGGER
 }
 
 /**

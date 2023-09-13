@@ -23,7 +23,8 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
     ...Payment.amounts({
       amount: offer.assignment_total,
       service: offer.payment_mode === Data.PaymentMode.FIAT ? Data.PaymentService.STRIPE : Data.PaymentService.CRYPTO,
-      verified: offer.offerer.meta.verified_impact
+      verified: offer.offerer.meta.verified_impact,
+      round: offer.currency === Data.PaymentCurrency.JPY ? 1 : 100
     })
   }
 })

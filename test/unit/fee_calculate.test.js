@@ -9,6 +9,15 @@ const data = [
     expect_app_fee: 350,
     expect_stripe_fee: 183.6,
     expect_payout: 4750
+  },
+  {
+    amount: 5000,
+    verfied: true,
+    round: 1,
+    expect_total: 5284,
+    expect_app_fee: 350,
+    expect_stripe_fee: 183.6,
+    expect_payout: 4750
   }
 ]
 
@@ -23,7 +32,8 @@ test('calculate fee', async () => {
     const amount = amounts({
       amount: i.amount,
       service,
-      verified: i.verfied
+      verified: i.verfied,
+      round: i.round
     })
     expect(amount.total).toBe(i.expect_total)
     expect(amount.app_fee).toBe(i.expect_app_fee)

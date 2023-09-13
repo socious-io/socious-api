@@ -12,15 +12,17 @@ const ORG_FEE = 0.03
 const USER_FEE = 0.1
 const STRIPE_FEE = 0.036
 
-export const amounts = ({ amount, service, verified = true }) => {
+export const amounts = ({ amount, service, verified = true, round = 100 }) => {
   const orgFeeRate = verified ? IMPACT_ORG_FEE : ORG_FEE
   const userFeeRate = verified ? IMPACT_USER_FEE : USER_FEE
   let fee = amount * orgFeeRate
   let stripe_fee = 0
 
+  if (!round || round < 1) round = 1
+
   if (service === Data.PaymentService.STRIPE) stripe_fee = (fee + amount) * STRIPE_FEE
 
-  const total = amount + fee + stripe_fee
+  const total = Math.ceil((amount + fee + stripe_fee) * round) / round
   const payoutFee = amount * userFeeRate
   const payout = amount - payoutFee
 

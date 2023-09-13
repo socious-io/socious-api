@@ -79,14 +79,16 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   const service = ctx.request.body.service
   const amount = ctx.offer.assignment_total
 
+  const is_jp = ctx.offer.currency === Data.PaymentCurrency.JPY ? true : false
+
   const amounts = Payment.amounts({
     amount,
     service,
-    verified: ctx.identity.meta.verified_impact
+    verified: ctx.identity.meta.verified_impact,
+    round: is_jp ? 1 : 100
   })
 
   const transfers = {}
-  const is_jp = ctx.offer.currency === 'JPY' ? true : false
   if (service === Data.PaymentService.STRIPE) {
     try {
       const profile = await OAuthConnects.profile(ctx.offer.recipient_id, Data.OAuthProviders.STRIPE, { is_jp })
@@ -128,7 +130,7 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
 
   const mission = await Mission.get(ctx.mission.id)
 
-  const is_jp = mission.offer.currency === 'JPY' ? true : false
+  const is_jp = mission.offer.currency === Data.PaymentCurrency.JPY ? true : false
 
   const profile = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE, { is_jp })
 
@@ -143,7 +145,8 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   const amounts = Payment.amounts({
     amount: escrow.amount,
     service: Data.PaymentService.STRIPE,
-    verified: mission.assigner.meta.verified_impact
+    verified: mission.assigner.meta.verified_impact,
+    round: is_jp ? 1 : 100
   })
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {

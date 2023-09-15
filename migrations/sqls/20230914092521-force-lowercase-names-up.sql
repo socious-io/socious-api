@@ -4,7 +4,7 @@ DECLARE
     exists_shortname VARCHAR;
 BEGIN
     NEW.shortname := LOWER(NEW.shortname);
-    SELECT shortname INTO exists_shortname FROM organizations WHERE shortname=NEW.shortname;
+    SELECT shortname INTO exists_shortname FROM organizations WHERE shortname=NEW.shortname AND id<>NEW.id;
     IF FOUND THEN
       NEW.shortname := NEW.shortname || '2';
     END IF;

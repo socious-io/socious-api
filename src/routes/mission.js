@@ -13,7 +13,7 @@ import logger from '../utils/logging.js'
 export const router = new Router()
 
 router.get('/:id', loginRequired, checkIdParams, assigneer, async (ctx) => {
-  ctx.body = ctx.mission
+  ctx.body = await Mission.get(ctx.mission.id)
 })
 
 router.post('/:id/complete', loginRequired, checkIdParams, assignee, async (ctx) => {

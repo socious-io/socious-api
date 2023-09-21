@@ -98,10 +98,10 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     ${filterRegion(filter)}
     ORDER BY 
     CASE 
-        WHEN LEFT(LOWER(name), ${search.length}) = ${search} THEN 0
+        WHEN LEFT(LOWER(loc.name), ${search.length}) = ${search} THEN 0
         ELSE 1
     END,
-    LOWER(name) ASC
+    LOWER(loc.name) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   if (rows.length && rows[0].total_count >= limit) return rows
@@ -123,10 +123,10 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     ${filterRegion(filter)}
     ORDER BY 
     CASE 
-        WHEN LEFT(LOWER(name), ${search.length}) = ${search} THEN 0
+        WHEN LEFT(LOWER(loc.name), ${search.length}) = ${search} THEN 0
         ELSE 1
     END,
-    LOWER(name) ASC
+    LOWER(loc.name) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   return rows.concat(rowsAlt)

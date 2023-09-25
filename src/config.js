@@ -280,7 +280,7 @@ export default {
     wait_between_project: process.env.WAIT_BETWEEN_PROJECT || '500',
     wait_break: process.env.WAIT_BREAK || 1000
   },
-  notifAppLink: process.env.NOTIF_APP_LINK || 'https://socious.io/app/notifications',
+  notifAppLink: process.env.NOTIF_APP_LINK || 'https://app.socious.io/notifications',
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY,
   discordLogger: process.env.DISCORD_LOGGER

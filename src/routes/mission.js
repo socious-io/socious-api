@@ -8,11 +8,12 @@ import Analytics from '../services/analytics/index.js'
 import { validate } from '@socious/data'
 
 import { checkIdParams, assigneer, assignee, assigner } from '../utils/middlewares/route.js'
+import logger from '../utils/logging.js'
 
 export const router = new Router()
 
 router.get('/:id', loginRequired, checkIdParams, assigneer, async (ctx) => {
-  ctx.body = ctx.mission
+  ctx.body = await Mission.get(ctx.mission.id)
 })
 
 router.post('/:id/complete', loginRequired, checkIdParams, assignee, async (ctx) => {
@@ -160,7 +161,13 @@ router.post('/:id/kickout', loginRequired, checkIdParams, assigner, async (ctx) 
 })
 
 router.post('/:id/feedback', loginRequired, checkIdParams, assigneer, async (ctx) => {
-  if (ctx.identity.meta?.verified_impact) ImpactPoints.staticfied(ctx.mission)
+  if (ctx.identity.meta?.verified_impact) {
+    try {
+      await ImpactPoints.staticfied(ctx.mission)
+    } catch (err) {
+      logger.error(err)
+    }
+  }
 
   ctx.body = await Mission.feedback({
     content: ctx.request.body.content,
@@ -172,7 +179,13 @@ router.post('/:id/feedback', loginRequired, checkIdParams, assigneer, async (ctx
 })
 
 router.post('/:id/contest', loginRequired, checkIdParams, assigneer, async (ctx) => {
-  if (ctx.identity.meta?.verified_impact) ImpactPoints.notStaticfied(ctx.mission)
+  if (ctx.identity.meta?.verified_impact) {
+    try {
+      await ImpactPoints.staticfied(ctx.mission)
+    } catch (err) {
+      await ImpactPoints.notStaticfied(ctx.mission)
+    }
+  }
 
   ctx.body = await Mission.feedback({
     content: ctx.request.body.content,

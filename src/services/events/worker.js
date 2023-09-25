@@ -54,9 +54,7 @@ const email = async (notifType, userId, message, id, identityName) => {
     kwargs: {
       notify_name: user.first_name,
       name: identityName,
-      // link: `${Config.notifAppLink}/${id}`,
-      // TODO: fix it after webapp released
-      link: 'https://app.socious.io'
+      link: `${Config.notifAppLink}`
     }
   })
 }

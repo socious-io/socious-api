@@ -81,11 +81,15 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   const is_jp = ctx.offer.currency === Data.PaymentCurrency.JPY ? true : false
 
+  let round = is_jp ? 1 : 100
+
+  if (service === Data.PaymentService.CRYPTO) round = 100000
+
   const amounts = Payment.amounts({
     amount,
     service,
     verified: ctx.identity.meta.verified_impact,
-    round: is_jp ? 1 : 100
+    round: round
   })
 
   const transfers = {}

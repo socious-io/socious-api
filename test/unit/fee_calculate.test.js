@@ -8,7 +8,8 @@ const data = [
     expect_total: 5283.6,
     expect_app_fee: 350,
     expect_stripe_fee: 183.6,
-    expect_payout: 4750
+    expect_payout: 4750,
+    service: 'STRIPE'
   },
   {
     amount: 5000,
@@ -17,7 +18,18 @@ const data = [
     expect_total: 5284,
     expect_app_fee: 350,
     expect_stripe_fee: 183.6,
-    expect_payout: 4750
+    expect_payout: 4750,
+    service: 'STRIPE'
+  },
+  {
+    amount: 347.2,
+    verfied: true,
+    round: 100000,
+    expect_total: 354.144,
+    expect_app_fee: 24.304,
+    expect_stripe_fee: 0,
+    expect_payout: 329.84,
+    service: 'CRYPTO'
   }
 ]
 
@@ -26,12 +38,11 @@ beforeAll(async () => {
 })
 
 test('calculate fee', async () => {
-  const service = 'STRIPE'
 
   for (const i of data) {
     const amount = amounts({
       amount: i.amount,
-      service,
+      service: i.service,
       verified: i.verfied,
       round: i.round
     })

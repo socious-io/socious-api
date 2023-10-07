@@ -94,7 +94,7 @@ export const refresh = async (identityId) => {
 export const profile = async (identityId, { is_jp }) => {
   const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
-  const provider = is_jp ? [STRPE_PROVIDERS[1]] : STRPE_PROVIDERS
+  const provider = is_jp ? [STRPE_PROVIDERS[1]] : [STRPE_PROVIDERS[0]]
   const oauth = await get(identityId, provider)
   const account = await s.accounts.retrieve(oauth.matrix_unique_id)
   const status = account.payouts_enabled ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE

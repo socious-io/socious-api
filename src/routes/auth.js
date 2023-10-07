@@ -7,6 +7,7 @@ import { putContact } from '../services/sendgrid/index.js'
 import Analytics from '../services/analytics/index.js'
 import config from '../config.js'
 import { ValidationError } from '../utils/errors.js'
+import logger from '../utils/logging.js'
 
 export const router = new Router()
 
@@ -133,7 +134,8 @@ router.get('/stripe/profile', loginRequired, async (ctx) => {
     ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE, {
       is_jp: ctx.query.is_jp === 'true'
     })
-  } catch {
+  } catch(err) {
+    logger.error(`GET STRIPE ACCOUNT ERROR ${err}`)
     ctx.body = {}
   }
 })

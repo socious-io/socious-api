@@ -163,6 +163,10 @@ router.get('/badges', loginRequired, async (ctx) => {
   ctx.body = { badges: await ImpactPoints.badges(ctx.identity.id) }
 })
 
+router.get('/:id/badges', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = { badges: await ImpactPoints.badges(ctx.params.id) }
+})
+
 router.get('/impact-points', loginRequired, paginate, async (ctx) => {
   ctx.body = await ImpactPoints.history(ctx.identity.id, ctx.paginate)
 })

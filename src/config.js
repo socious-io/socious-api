@@ -155,6 +155,27 @@ export default {
         },
         {
           chain: {
+            name: 'bsc testnet',
+            explorer: 'https://api-testnet.bscscan.com/api'
+          },
+          escrow: '0xE0B476D0F9370D162f6d0D4bB5B1CDf4C26509d5',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: '0x082A2027DC16F42d6e69bE8FA13C94C17c910EbE',
+              decimals: 18
+            },
+            {
+              name: 'USDT',
+              symbol: 'USDT',
+              address: '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
+              decimals: 18
+            }
+          ]
+        },
+        {
+          chain: {
             name: 'mumbai',
             explorer: 'https://mumbai.polygonscan.com/api'
           },

@@ -134,7 +134,7 @@ router.get('/stripe/profile', loginRequired, async (ctx) => {
     ctx.body = await OAuthConnects.profile(ctx.identity.id, Data.OAuthProviders.STRIPE, {
       is_jp: ctx.query.is_jp === 'true'
     })
-  } catch(err) {
+  } catch (err) {
     logger.error(`GET STRIPE ACCOUNT ERROR ${err}`)
     ctx.body = {}
   }

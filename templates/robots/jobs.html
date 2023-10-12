@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <title>Socious jobs</title>
+  </head>
+  <body>
+  <ul>
+    <% jobs.forEach(function(job){ %>
+      <a href="/site/jobs/<%= job.id %>">
+        <div itemscope itemtype="https://schema.org/JobPosting">
+          <h1 itemprop="title"><%= job.title %></h1>
+          
+          <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
+            <span itemprop="name"><%= job.identity_meta.name %></span>
+          </div>
+          
+          <span itemprop="employmentType"><%=job.project_type || 'FULL_TIME' %></span>
+          <span itemprop="datePosted">2022-01-25</span>
+          
+          <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
+            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+              <span itemprop="addressLocality"><%= job.city %></span>,
+              <span itemprop="addressCountry"><%= job.country %></span>
+            </div>
+          </div>
+          
+          <div itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">
+            <span itemprop="currency"><%= job.payment_currency %></span> 
+            <span itemprop="value" itemscope itemtype="https://schema.org/QuantitativeValue">
+              <span itemprop="minValue"><%= job.payment_range_lower %></span>
+              <span itemprop="maxValue"><%= job.payment_range_higher %></span>
+              <span itemprop="unitText">YEAR</span>
+            </span>
+          </div>
+        </div>
+      </a>
+    <% }); %>
+  </ul>
+
+  <div id="pagination">
+    <a href="?page=1" itemprop="firstPage">First</a>
+    <a href="?page=<%=paginate.page -1 || 1 %>" itemprop="previousPage">Previous</a>
+    <span itemprop="currentPage"><%= paginate.page %></span>
+    <a href="?page=<%= paginate.page+1 < paginate.total_pages ? paginate.page+1 : paginate.total_pages %>" itemprop="nextPage">Next</a>
+    <a href="?page=<%= paginate.total_pages %>" itemprop="lastPage">Last</a>
+  </div>
+  <br/>
+  <br/>
+  </body>
+</html>

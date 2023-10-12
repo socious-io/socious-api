@@ -10,6 +10,9 @@ import Mission from '../models/mission/index.js'
 import { loginOptional } from '../utils/middlewares/authorization.js'
 import { PermissionError } from '../utils/errors.js'
 import publish from '../services/jobs/publish.js'
+import ejs from 'ejs'
+import { checkIdParams } from '../utils/middlewares/route.js'
+import { paginateCTX } from '../utils/middlewares/requests.js'
 
 export const router = new Router()
 
@@ -54,4 +57,24 @@ router.post('/publish', loginOptional, async (ctx) => {
   ctx.body = {
     message: 'success'
   }
+})
+
+router.get('/jobs', loginOptional, paginateCTX, async (ctx) => {
+  const jobs = await Project.all(ctx.paginate)
+  if (jobs.length > 0) {
+    ctx.paginate.total_count = parseInt(jobs[0].total_count)
+    ctx.paginate.total_pages = ctx.paginate.total_count / ctx.paginate.limit
+  } else {
+    ctx.paginate.total_count = 0
+    ctx.paginate.total_pages = 0
+  }
+  console.log(ctx.paginate)
+  const html = await ejs.renderFile('templates/robots/jobs.html', { jobs, paginate: ctx.paginate })
+  ctx.body = html
+})
+
+router.get('/jobs/:id', loginOptional, checkIdParams, async (ctx) => {
+  const job = await Project.get(ctx.params.id)
+  const html = await ejs.renderFile('templates/robots/job.html', { job })
+  ctx.body = html
 })

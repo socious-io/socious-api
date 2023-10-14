@@ -38,7 +38,6 @@ beforeAll(async () => {
 })
 
 test('calculate fee', async () => {
-
   for (const i of data) {
     const amount = amounts({
       amount: i.amount,

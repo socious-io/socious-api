@@ -43,3 +43,21 @@ export const paginate = async (ctx, next) => {
 
   ctx.body = response
 }
+
+export const paginateCTX = async (ctx, next) => {
+  let page = parseInt(ctx.query.page) || 1
+  if (page < 1) page = 1
+
+  let limit = parseInt(ctx.query.limit) || 10
+  if (limit < 1) limit = 10
+
+  ctx.paginate = {
+    page,
+    limit,
+    offset: (page - 1) * limit,
+    filter: filters(ctx),
+    sort: ctx.query.sort
+  }
+
+  return next()
+}

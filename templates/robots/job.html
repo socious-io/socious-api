@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socious | <%= job.title %></title>
+</head>
+<body>
+  <div itemscope itemtype="https://schema.org/JobPosting">
+    <h1 itemprop="title"><%= job.title %></h1>
+    
+    <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
+      <span itemprop="name"><%= job.identity_meta.name %></span>
+    </div>
+    
+    <span itemprop="employmentType"><%=job.project_type || 'FULL_TIME' %></span>
+    <span itemprop="datePosted">2022-01-25</span>
+    
+    <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
+      <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+        <span itemprop="addressLocality"><%= job.city %></span>,
+        <span itemprop="addressCountry"><%= job.country %></span>
+      </div>
+    </div>
+    
+    <div itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">
+      <span itemprop="currency"><%= job.payment_currency %></span> 
+      <span itemprop="value" itemscope itemtype="https://schema.org/QuantitativeValue">
+        <span itemprop="minValue"><%= job.payment_range_lower %></span>
+        <span itemprop="maxValue"><%= job.payment_range_higher %></span>
+        <span itemprop="unitText">YEAR</span>
+      </span>
+    </div>
+    
+    <div itemprop="description">
+      <%= job.description %>
+    </div>
+    
+  </div>
+  </body>
+  </html>

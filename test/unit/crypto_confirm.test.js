@@ -48,5 +48,4 @@ test('calculate', async () => {
       'mainet'
     )
   ).toBe(true)
-  
 })

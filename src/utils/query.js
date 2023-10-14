@@ -24,7 +24,11 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
       throw new BadRequestError('filter key not allowed')
     }
 
-    if (!val) continue
+    if (val === undefined) continue
+    if (val === null) {
+      conditions.push(raw(`${key} IS NULL`))
+      continue
+    }
 
     let pre = prefix
 

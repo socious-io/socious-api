@@ -6,7 +6,7 @@
   <body>
   <ul>
     <% jobs.forEach(function(job){ %>
-      <a href="/site/jobs/<%= job.id %>">
+      <a href="jobs/<%= job.id %>">
         <div itemscope itemtype="https://schema.org/JobPosting">
           <h1 itemprop="title"><%= job.title %></h1>
           

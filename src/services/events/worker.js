@@ -54,7 +54,7 @@ const email = async (notifType, userId, message, id, identityName) => {
     kwargs: {
       notify_name: user.first_name,
       name: identityName,
-      link: `${Config.notifAppLink}`
+      link: `${Config.notifAppLink}/${id}`
     }
   })
 }

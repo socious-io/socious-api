@@ -22,6 +22,7 @@
     "prettier:check": "prettier --check **/*.js",
     "prettier:fix": "prettier --write .",
     "start": "node serve.js",
+    "sitemap": "node scripts/sitemap.js",
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "cross-env ENV=testing node scripts/createdb.js ; db-migrate --dotenvCustomPath=test.env up --config ./migrations/database.json",

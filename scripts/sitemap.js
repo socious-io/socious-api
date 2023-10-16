@@ -10,7 +10,7 @@ async function main() {
 
   // Listen to the sitemap stream and convert it to a promise
   const sitemapPromise = streamToPromise(sitemap).then((data) => {
-    console.log('Sitemap created!', data.toString());
+    console.log(data.toString());
   });
 
   // Pipe the sitemap stream to write stream

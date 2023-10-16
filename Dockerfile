@@ -71,6 +71,7 @@ COPY --chown=node:node --from=development /usr/src/app/src ./src
 COPY --chown=node:node --from=development /usr/src/app/serve.js .
 COPY --chown=node:node --from=development /usr/src/app/templates ./templates
 COPY --chown=node:node --from=development /usr/src/app/docs ./docs
+COPY --chown=node:node --from=development /usr/src/app/scripts ./scripts
 # The package.json file is needed for the `"type": "module"` statement at least
 COPY --chown=node:node --from=development /usr/src/app/package.json .
 # Also bring in migrations so we can run them on deploy

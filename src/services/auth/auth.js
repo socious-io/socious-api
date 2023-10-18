@@ -81,7 +81,8 @@ export const register = async (body) => {
     to: user.email,
     subject: 'Verify your account',
     template: config.mail.templates.activation,
-    kwargs: { name: user.first_name, code }
+    kwargs: { name: user.first_name, code },
+    category: 'OTP'
   })
 
   return user

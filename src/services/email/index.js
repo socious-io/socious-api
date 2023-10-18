@@ -37,7 +37,7 @@ export const isTestEmail = (address) => {
   return false
 }
 
-const sendTemplateBySendgrid = async ({ to, template, kwargs = {} }) => {
+const sendTemplateBySendgrid = async ({ to, template, kwargs = {}, category }) => {
   const body = {
     personalizations: [
       {
@@ -46,7 +46,8 @@ const sendTemplateBySendgrid = async ({ to, template, kwargs = {} }) => {
       }
     ],
     template_id: template,
-    from: config.mail.sendgrid.from
+    from: category === 'OTP' ? config.mail.sendgrid.otp_from : config.mail.sendgrid.from,
+    categories: [category || 'Notification']
   }
 
   const result = await sendgrid.send(body)
@@ -129,7 +130,7 @@ export const sendHtmlEmail = async ({ to, subject, template, kwargs = {} }) => {
   )
 }
 
-export const sendTemplateEmail = async ({ to, subject, template, kwargs = {} }) => {
+export const sendTemplateEmail = async ({ to, subject, template, kwargs = {}, category }) => {
   const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender
   const date = new Date()
   let result = {}
@@ -143,7 +144,8 @@ export const sendTemplateEmail = async ({ to, subject, template, kwargs = {} }) 
           to,
           from: config.mail.sendgrid.from,
           template,
-          kwargs
+          kwargs,
+          category
         })
     }
   } catch (err) {

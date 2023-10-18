@@ -81,7 +81,8 @@ export const register = async (body) => {
     to: user.email,
     subject: 'Verify your account',
     template: config.mail.templates.activation,
-    kwargs: { name: user.first_name, code }
+    kwargs: { name: user.first_name, code },
+    category: 'OTP'
   })
 
   return user
@@ -107,7 +108,8 @@ export const sendOTP = async (body) => {
       to: user.email,
       subject: 'One time password',
       template: config.mail.templates.otp,
-      kwargs: { name: user.first_name, code }
+      kwargs: { name: user.first_name, code },
+      category: 'OTP'
     })
   }
 }
@@ -173,7 +175,8 @@ export const forgetPassword = async (body) => {
       to: user.email,
       subject: 'Reset Password',
       template: config.mail.templates.forgetPassword,
-      kwargs: { name: user.first_name, code }
+      kwargs: { name: user.first_name, code },
+      category: 'OTP'
     })
   }
 }

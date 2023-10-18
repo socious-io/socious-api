@@ -25,6 +25,10 @@ export default {
       from: {
         email: process.env.MAIL_SENDGRID_FROM || 'team@socious.io',
         name: process.env.MAIL_SENDGRID_NAME || 'Socious Team'
+      },
+      otp_from: {
+        email: process.env.MAIL_SENDGRID_FROM || 'no-replay@socious.io',
+        name: process.env.MAIL_SENDGRID_NAME || 'Socious'
       }
     },
     smtp: {

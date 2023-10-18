@@ -46,7 +46,7 @@ const sendTemplateBySendgrid = async ({ to, template, kwargs = {}, category }) =
       }
     ],
     template_id: template,
-    from: config.mail.sendgrid.from,
+    from: category === 'OTP' ? config.mail.sendgrid.otp_from : config.mail.sendgrid.from,
     categories: [category || 'Notification']
   }
 

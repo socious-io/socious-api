@@ -162,7 +162,7 @@ export default {
             name: 'bsc testnet',
             explorer: 'https://api-testnet.bscscan.com/api'
           },
-          escrow: '0xE0B476D0F9370D162f6d0D4bB5B1CDf4C26509d5',
+          escrow: '0x09a7Bc249FC47d9faf74A8865a80811E4Fac7e89',
           tokens: [
             {
               name: 'USDC',

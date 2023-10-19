@@ -57,7 +57,7 @@ function filterRegion(filter) {
  */
 export async function locationsByCountry(countryCode, { offset = 0, limit = 10, filter, sort }) {
   const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
-    loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
+    loc.id as id, loc.asciiname as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,
     adm2.name as subregion_name, adm2.iso_code as subregion_iso
@@ -86,7 +86,7 @@ export async function locationsByCountry(countryCode, { offset = 0, limit = 10, 
 export async function locationsSearchByCountry(countryCode, search, { offset = 0, limit = 10, filter }) {
   const searchPat = `%${search}%`
   const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count,
-    loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
+    loc.id as id, loc.asciiname as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
     adm.name as region_name, adm.iso_code as region_iso,
     adm2.name as subregion_name, adm2.iso_code as subregion_iso
@@ -94,21 +94,21 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     LEFT JOIN geonames adm ON adm.feature_code = 'ADM1' AND adm.admin1_code = loc.admin1_code AND adm.country_code = loc.country_code
     LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code
     WHERE loc.country_code = ${countryCode} AND loc.feature_class = 'P'
-    AND loc.name ILIKE ${searchPat}
+    AND loc.asciiname ILIKE ${searchPat}
     ${filterRegion(filter)}
     ORDER BY 
     CASE 
-        WHEN LEFT(LOWER(loc.name), ${search.length}) = ${search} THEN 0
+        WHEN LEFT(LOWER(loc.asciiname), ${search.length}) = ${search} THEN 0
         ELSE 1
     END,
-    LOWER(loc.name) ASC
+    LOWER(loc.asciiname) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   if (rows.length && rows[0].total_count >= limit) return rows
 
   const { rows: rowsAlt } = await app.db.query(sql`SELECT
     COUNT(*) OVER () as total_count,
-    loc.id as id, loc.name as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
+    loc.id as id, loc.asciiname as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
     alt.alternate_name, alt.iso_language as alt_language,
     alt.is_historic, alt.is_colloquial, alt.is_short_name,
     loc.admin1_code as region_id, loc.admin2_code as subregion_id,
@@ -119,14 +119,14 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code
     LEFT JOIN geonames_alt alt ON alt.geoname_id = loc.id
     WHERE loc.country_code = ${countryCode} AND loc.feature_class = 'P'
-    AND (alt.alternate_name ILIKE ${searchPat} AND NOT loc.name ILIKE ${searchPat})
+    AND (alt.alternate_name ILIKE ${searchPat} AND NOT loc.asciiname ILIKE ${searchPat})
     ${filterRegion(filter)}
     ORDER BY 
     CASE 
-        WHEN LEFT(LOWER(loc.name), ${search.length}) = ${search} THEN 0
+        WHEN LEFT(LOWER(loc.asciiname), ${search.length}) = ${search} THEN 0
         ELSE 1
     END,
-    LOWER(loc.name) ASC
+    LOWER(loc.asciiname) ASC
     LIMIT ${limit} OFFSET ${offset}
   `)
   return rows.concat(rowsAlt)

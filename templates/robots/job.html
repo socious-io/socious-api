@@ -6,7 +6,9 @@
 <body>
   <div itemscope itemtype="https://schema.org/JobPosting">
     <h1 itemprop="title"><%= job.title %></h1>
-    
+    <div itemprop="description">
+      <%= job.description %>
+    </div>
     <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
       <span itemprop="name"><%= job.identity_meta.name %></span>
     </div>
@@ -28,10 +30,6 @@
         <span itemprop="maxValue"><%= job.payment_range_higher %></span>
         <span itemprop="unitText">YEAR</span>
       </span>
-    </div>
-    
-    <div itemprop="description">
-      <%= job.description %>
     </div>
     
   </div>

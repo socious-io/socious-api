@@ -9,7 +9,7 @@
       <a href="jobs/<%= job.id %>">
         <div itemscope itemtype="https://schema.org/JobPosting">
           <h1 itemprop="title"><%= job.title %></h1>
-          
+          <link itemprop="url" href="https://socious.io/jobs/<%= job.id %>" />
           <div itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
             <span itemprop="name"><%= job.identity_meta.name %></span>
           </div>

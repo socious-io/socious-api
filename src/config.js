@@ -147,7 +147,7 @@ export default {
             name: 'milkomeda testnet',
             explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xe8ac987C84d3D7A087c33Ff8B841301a1A1616Df',
+          escrow: '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
           tokens: [
             {
               name: 'USDC',
@@ -162,7 +162,7 @@ export default {
             name: 'bsc testnet',
             explorer: 'https://api-testnet.bscscan.com/api'
           },
-          escrow: '0x09a7Bc249FC47d9faf74A8865a80811E4Fac7e89',
+          escrow: '0xE6b7fdf37b4D297d7E4BcB055Df06AF5DDbf82Ce',
           tokens: [
             {
               name: 'USDC',
@@ -183,7 +183,7 @@ export default {
             name: 'mumbai',
             explorer: 'https://mumbai.polygonscan.com/api'
           },
-          escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
+          escrow: '0x6141408AdB801e6C657Db14b9b1410B3a4a07935',
           tokens: [
             {
               name: 'USDC',

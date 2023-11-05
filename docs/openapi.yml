@@ -2537,6 +2537,22 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/{project_id}/similars:
+    get:
+      summary: AI similar to provided project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+              type: string
+      tags:
+        - project      
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects:
     get:
       tags:
@@ -4170,6 +4186,31 @@ paths:
       tags:
         - users
       summary: other profile by username
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{username}/recommend:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        example: seira-yun8611
+        required: true
+    get:
+      tags:
+        - users
+      summary: AI users job recommends
       security:
         - bearerAuth: []
       parameters:

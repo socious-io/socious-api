@@ -72,6 +72,9 @@ export default {
       }
     }
   },
+  ai: {
+    job_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL
+  },
   services: {
     proofspace: {
       credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,

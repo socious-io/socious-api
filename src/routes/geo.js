@@ -1,6 +1,6 @@
 import Router from '@koa/router'
 import { geoip } from '../services/geo/geoip.js'
-import { locationsByCountry, locationsSearchByCountry } from '../services/geo/geoname.js'
+import { locationsByCountry, locationsSearchByCountry, locationsSearch } from '../services/geo/geoname.js'
 import { paginate } from '../utils/middlewares/requests.js'
 
 export const router = new Router()
@@ -18,4 +18,8 @@ router.get('/locations/country/:countryCode', paginate, async (ctx) => {
   } else {
     ctx.body = await locationsByCountry(countryCode, ctx.paginate)
   }
+})
+
+router.get('/locations', paginate, async (ctx) => {
+  ctx.body = await locationsSearch(ctx.query.search, ctx.paginate)
 })

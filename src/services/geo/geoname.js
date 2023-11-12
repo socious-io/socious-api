@@ -142,8 +142,8 @@ export const getAll = async (ids, sort) => {
     adm.name as region_name, adm.iso_code as region_iso,
     adm2.name as subregion_name, adm2.iso_code as subregion_iso
     FROM geonames loc
-    LEFT JOIN geonames adm ON adm.feature_code = 'ADM1' AND adm.admin1_code = loc.admin1_code AND adm.country_code = loc.country_code
-    LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code
+    LEFT JOIN geonames adm ON adm.feature_code = 'ADM1' AND adm.admin1_code = loc.admin1_code AND adm.country_code = loc.country_code AND adm.id <> loc.id
+    LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code AND adm2.id <> loc.id
     LEFT JOIN geonames_alt alt ON alt.geoname_id = loc.id and alt.iso_language = 'en'
     WHERE loc.id=ANY(${ids}) AND loc.feature_class = 'P'
     ${sorting(sort, sortColumns, 'loc')}

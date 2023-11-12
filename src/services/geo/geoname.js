@@ -144,8 +144,8 @@ export const getAll = async (ids, sort) => {
     FROM geonames loc
     LEFT JOIN geonames adm ON adm.feature_code = 'ADM1' AND adm.admin1_code = loc.admin1_code AND adm.country_code = loc.country_code
     LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code
-    LEFT JOIN geonames_alt alt ON alt.geoname_id = loc.id
-    WHERE loc.id=ANY(${ids})
+    LEFT JOIN geonames_alt alt ON alt.geoname_id = loc.id and alt.iso_language = 'en'
+    WHERE loc.id=ANY(${ids}) AND loc.feature_class = 'P'
     ${sorting(sort, sortColumns, 'loc')}
   `)
   return rows

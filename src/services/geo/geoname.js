@@ -166,7 +166,7 @@ export async function locationsSearch(q, { offset = 0, limit = 10, filter, sort 
   `)
 
   const locs = await getAll(
-    rows.map((r) => r.id),
+    [...new Set(rows.map((r) => r.id))],
     sort
   )
 

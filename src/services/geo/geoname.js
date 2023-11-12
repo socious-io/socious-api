@@ -159,6 +159,7 @@ export async function locationsSearch(q, { offset = 0, limit = 10, filter, sort 
     FROM geonames loc
     WHERE
       loc.search_tsv @@ to_tsquery(${textSearch(q)})
+      AND loc.feature_class = 'P'
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
     LIMIT ${limit} OFFSET ${offset}

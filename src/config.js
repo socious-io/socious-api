@@ -163,7 +163,7 @@ export default {
         {
           chain: {
             name: 'bsc testnet',
-            explorer: 'https://api-testnet.bscscan.com/api'
+            explorer: 'https://api.bscscan.com/api'
           },
           escrow: '0xE6b7fdf37b4D297d7E4BcB055Df06AF5DDbf82Ce',
           tokens: [
@@ -283,6 +283,27 @@ export default {
               symbol: 'DAI',
               address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
               decimals: 6
+            }
+          ]
+        },
+        {
+          chain: {
+            name: 'bsc',
+            explorer: ''
+          },
+          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          tokens: [
+            {
+              name: 'USD Coin',
+              symbol: 'USDC',
+              address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+              decimals: 18
+            },
+            {
+              name: 'Tether',
+              symbol: 'USDT',
+              address: '0x55d398326f99059fF775485246999027B3197955',
+              decimals: 18
             }
           ]
         }

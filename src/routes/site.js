@@ -61,8 +61,11 @@ router.post('/publish', loginOptional, async (ctx) => {
 
 router.get('/jobs', loginOptional, paginateCTX, async (ctx) => {
   const ignoreAgent = ctx.query.ignore_agent === 'true'
-  const userAgent = ctx.request.header['user-agent'] || '';
-  const isCrawler = /Googlebot|Bingbot|Yahoo! Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|Exabot|facebookexternalhit|Facebot|ia_archiver/i.test(userAgent);
+  const userAgent = ctx.request.header['user-agent'] || ''
+  const isCrawler =
+    /Googlebot|Bingbot|Yahoo! Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|Exabot|facebookexternalhit|Facebot|ia_archiver/i.test(
+      userAgent
+    )
   if (!isCrawler && !ignoreAgent) {
     ctx.redirect('https://app.socious.io/jobs')
     return
@@ -83,8 +86,11 @@ router.get('/jobs', loginOptional, paginateCTX, async (ctx) => {
 
 router.get('/jobs/:id', loginOptional, checkIdParams, async (ctx) => {
   const ignoreAgent = ctx.query.ignore_agent === 'true'
-  const userAgent = ctx.request.header['user-agent'] || '';
-  const isCrawler = /Googlebot|Bingbot|Yahoo! Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|Exabot|facebookexternalhit|Facebot|ia_archiver/i.test(userAgent);
+  const userAgent = ctx.request.header['user-agent'] || ''
+  const isCrawler =
+    /Googlebot|Bingbot|Yahoo! Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|Exabot|facebookexternalhit|Facebot|ia_archiver/i.test(
+      userAgent
+    )
   if (!isCrawler && !ignoreAgent) {
     ctx.redirect('https://app.socious.io/jobs')
     return

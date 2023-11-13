@@ -5,7 +5,7 @@ info:
 servers:
   - url: https://dev.socious.io/api/v2/
   - url: https://socious.io/api/v2/
-  - url: http://localhost:8370
+  - url: http://localhost:5065
 components:
   securitySchemes:
     bearerAuth:
@@ -2537,6 +2537,22 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/{project_id}/similars:
+    get:
+      summary: AI similar to provided project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+              type: string
+      tags:
+        - project      
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects:
     get:
       tags:
@@ -4183,6 +4199,31 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /user/{username}/recommend:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        example: seira-yun8611
+        required: true
+    get:
+      tags:
+        - users
+      summary: AI users job recommends
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /user/applicants:
     get:
       tags:
@@ -5115,6 +5156,115 @@ paths:
             minLength: 2
           example: US
           required: true
+        - name: search
+          in: query
+          required: false
+          description: limit to locations matching this string
+          schema:
+            type: string
+          example: apple
+        - name: limit
+          in: query
+          schema:
+            type: number
+          example: 50
+        - name: page
+          in: query
+          schema:
+            type: number
+          example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: number
+                    example: 1
+                  limit:
+                    type: number
+                    example: 50
+                  total_count:
+                    type: number
+                    example: 18
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        type:
+                          $ref: '#/components/schemas/location_type'
+                        population:
+                          type: number
+                        country_code:
+                          type: string
+                        region_id:
+                          type: string
+                        region_name:
+                          type: string
+                        region_iso:
+                          type: string
+                        subregion_id:
+                          type: string
+                        subregion_name:
+                          type: string
+                        subregion_iso:
+                          type: string
+                        alternate_name:
+                          type: string
+                        alt_language:
+                          type: string
+                        is_historic:
+                          type: boolean
+                        is_colloquial:
+                          type: boolean
+                        is_short_name:
+                          type: boolean
+              example:
+                page: 1
+                limit: 50
+                total_count: 2
+                items:
+                  - id: 5145894
+                    name: Apple Creek
+                    type: PPL
+                    population: 1184
+                    country_code: US
+                    region_id: OH
+                    subregion_id: 169
+                    region_name: Ohio
+                    region_iso: OH
+                    subregion_name: null
+                    subregion_iso: null
+                  - id: 5128581
+                    name: New York City
+                    type: PPL
+                    population: 8804190
+                    country_code: US
+                    alternate_name: The Big Apple
+                    alt_language: en
+                    is_historic: false
+                    is_colloquial: true
+                    is_short_name: false
+                    region_id: NY
+                    subregion_id: null
+                    region_name: New York
+                    region_iso: NY
+                    subregion_name: null
+                    subregion_iso: null
+  /geo/locations:
+    get:
+      tags:
+        - geo
+      summary: get locations (cities, towns, etc) text search
+      parameters:
         - name: search
           in: query
           required: false

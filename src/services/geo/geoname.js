@@ -1,6 +1,6 @@
 import sql, { join } from 'sql-template-tag'
 import { app } from '../../index.js'
-import { filtering, sorting } from '../../utils/query.js'
+import { filtering, sorting, textSearch } from '../../utils/query.js'
 
 export const filterColumns = {
   region_name: {
@@ -130,4 +130,50 @@ export async function locationsSearchByCountry(countryCode, search, { offset = 0
     LIMIT ${limit} OFFSET ${offset}
   `)
   return rows.concat(rowsAlt)
+}
+
+export const getAll = async (ids, sort) => {
+  const { rows } = await app.db.query(sql`SELECT
+    COUNT(*) OVER () as total_count,
+    loc.id as id, loc.asciiname as name, loc.feature_code as type, loc.population as population, loc.country_code as country_code,
+    alt.alternate_name, alt.iso_language as alt_language,
+    alt.is_historic, alt.is_colloquial, alt.is_short_name,
+    loc.admin1_code as region_id, loc.admin2_code as subregion_id,
+    adm.name as region_name, adm.iso_code as region_iso,
+    adm2.name as subregion_name, adm2.iso_code as subregion_iso
+    FROM geonames loc
+    LEFT JOIN geonames adm ON adm.feature_code = 'ADM1' AND adm.admin1_code = loc.admin1_code AND adm.country_code = loc.country_code AND adm.id <> loc.id
+    LEFT JOIN geonames adm2 ON adm2.feature_code = 'ADM2' AND adm2.admin2_code = loc.admin2_code AND adm2.country_code = loc.country_code AND adm2.id <> loc.id
+    LEFT JOIN geonames_alt alt ON alt.geoname_id = loc.id and alt.iso_language = 'en'
+    WHERE loc.id=ANY(${ids}) AND loc.feature_class = 'P'
+    ${sorting(sort, sortColumns, 'loc')}
+  `)
+  return rows
+}
+
+export async function locationsSearch(q, { offset = 0, limit = 10, filter, sort }) {
+  const { rows } = await app.db.query(sql`
+    SELECT
+      COUNT(*) OVER () as total_count,
+      loc.id
+    FROM geonames loc
+    WHERE
+      loc.search_tsv @@ to_tsquery(${textSearch(q)})
+      AND loc.feature_class = 'P'
+      ${filtering(filter, filterColumns)}
+    ${sorting(sort, sortColumns)}
+    LIMIT ${limit} OFFSET ${offset}
+  `)
+
+  const locs = await getAll(
+    [...new Set(rows.map((r) => r.id))],
+    sort
+  )
+
+  return locs.map((r) => {
+    return {
+      total_count: rows.length > 0 ? rows[0].total_count : 0,
+      ...r
+    }
+  })
 }

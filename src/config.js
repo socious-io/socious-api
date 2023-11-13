@@ -72,6 +72,9 @@ export default {
       }
     }
   },
+  ai: {
+    job_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL
+  },
   services: {
     proofspace: {
       credentialId: process.env.PROOFSPACE_CREDENTIAL_ID,
@@ -147,7 +150,7 @@ export default {
             name: 'milkomeda testnet',
             explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xe8ac987C84d3D7A087c33Ff8B841301a1A1616Df',
+          escrow: '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
           tokens: [
             {
               name: 'USDC',
@@ -160,9 +163,9 @@ export default {
         {
           chain: {
             name: 'bsc testnet',
-            explorer: 'https://api-testnet.bscscan.com/api'
+            explorer: 'https://api.bscscan.com/api'
           },
-          escrow: '0x09a7Bc249FC47d9faf74A8865a80811E4Fac7e89',
+          escrow: '0xE6b7fdf37b4D297d7E4BcB055Df06AF5DDbf82Ce',
           tokens: [
             {
               name: 'USDC',
@@ -183,7 +186,7 @@ export default {
             name: 'mumbai',
             explorer: 'https://mumbai.polygonscan.com/api'
           },
-          escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
+          escrow: '0x6141408AdB801e6C657Db14b9b1410B3a4a07935',
           tokens: [
             {
               name: 'USDC',
@@ -280,6 +283,27 @@ export default {
               symbol: 'DAI',
               address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
               decimals: 6
+            }
+          ]
+        },
+        {
+          chain: {
+            name: 'bsc',
+            explorer: ''
+          },
+          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          tokens: [
+            {
+              name: 'USD Coin',
+              symbol: 'USDC',
+              address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+              decimals: 18
+            },
+            {
+              name: 'Tether',
+              symbol: 'USDT',
+              address: '0x55d398326f99059fF775485246999027B3197955',
+              decimals: 18
             }
           ]
         }

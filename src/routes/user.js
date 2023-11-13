@@ -13,6 +13,7 @@ import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError } from '../utils/errors.js'
+import { recommendByUser } from '../services/recommender/index.js'
 
 export const router = new Router()
 
@@ -157,6 +158,10 @@ router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx)
 
 router.get('/recommend', loginRequired, async (ctx) => {
   ctx.body = await User.recommend(ctx.user.id)
+})
+
+router.get('/:username/recommend', loginOptional, async (ctx) => {
+  ctx.body = await recommendByUser(ctx.params.username)
 })
 
 router.get('/badges', loginRequired, async (ctx) => {

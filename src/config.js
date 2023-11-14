@@ -163,7 +163,7 @@ export default {
         {
           chain: {
             name: 'bsc testnet',
-            explorer: 'https://api.bscscan.com/api'
+            explorer: 'https://api-testnet.bscscan.com/api'
           },
           escrow: '0xE6b7fdf37b4D297d7E4BcB055Df06AF5DDbf82Ce',
           tokens: [
@@ -289,7 +289,7 @@ export default {
         {
           chain: {
             name: 'bsc',
-            explorer: ''
+            explorer: 'https://api.bscscan.com/api'
           },
           escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
           tokens: [

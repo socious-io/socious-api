@@ -73,7 +73,9 @@ export default {
     }
   },
   ai: {
-    job_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL
+    jobs_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL,
+    orgs_recommender_url: process.env.AI_ORGS_RECOMMENDER_URL,
+    talents_recommender_url: process.env.AI_TALENTS_RECOMMENDER_URL
   },
   services: {
     proofspace: {

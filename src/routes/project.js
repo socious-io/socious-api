@@ -11,7 +11,7 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
 import { PermissionError } from '../utils/errors.js'
 import Analytics from '../services/analytics/index.js'
-import { recommendByProject } from '../services/recommender/index.js'
+import { recommendProjectByProject } from '../services/recommender/index.js'
 export const router = new Router()
 
 router.get('/categories', async (ctx) => {
@@ -137,5 +137,5 @@ router.get('/:id/feedbacks', loginRequired, checkIdParams, paginate, async (ctx)
 })
 
 router.get('/:id/similars', loginOptional, checkIdParams, async (ctx) => {
-  ctx.body = await recommendByProject(ctx.params.id)
+  ctx.body = await recommendProjectByProject(ctx.params.id)
 })

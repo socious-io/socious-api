@@ -20,6 +20,7 @@ export default {
     token: process.env.SLACK_TOKEN || 'test',
     logChannel: process.env.SLACK_LOG_CHANNEL || 'test'
   },
+
   mail: {
     sendgrid: {
       from: {
@@ -334,7 +335,13 @@ export default {
   notifAppLink: process.env.NOTIF_APP_LINK || 'https://app.socious.io/notifications',
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY,
-  discordLogger: process.env.DISCORD_LOGGER
+  discordLogger: process.env.DISCORD_LOGGER,
+  oauth: {
+    google: {
+      id: process.env.OAUTH_GOOGLE_CLIENT_ID,
+      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
+    }
+  }
 }
 
 /**

@@ -8,6 +8,7 @@ import Analytics from '../services/analytics/index.js'
 import config from '../config.js'
 import { ValidationError } from '../utils/errors.js'
 import logger from '../utils/logging.js'
+import { googleLogin } from '../services/oauth_connects/google.js'
 
 export const router = new Router()
 
@@ -126,6 +127,11 @@ router.get('/stripe', async (ctx) => {
     ctx.status = 301
     ctx.redirect(`${config.payments.stripe.client_connect_link}?status=failed&error=${err.message}`)
   }
+})
+
+router.get('/google', async (ctx) => {
+  const { code } = ctx.query
+  ctx.body = await googleLogin(code, ctx.headers.referer)
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {

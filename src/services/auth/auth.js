@@ -17,7 +17,7 @@ import config from '../../config.js'
 import { isTestEmail } from '../email/index.js'
 import Analytics from '../analytics/index.js'
 
-const generateUsername = (email) => {
+export const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000)
   return `${email
     .replace(/@.*$/, '')

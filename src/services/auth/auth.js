@@ -1,4 +1,5 @@
 import User from '../../models/user/index.js'
+import Org from '../../models/organization/index.js'
 import * as bcrypt from 'bcrypt'
 import { signin } from './jwt.js'
 import { AuthorizationError, NotMatchedError, PermissionError, ValidationError } from '../../utils/errors.js'
@@ -228,6 +229,15 @@ export const preregister = async (body) => {
       res.email = 'EXISTS'
     } catch {
       res.email = null
+    }
+  }
+
+  if (body.shortname && !res.shortname) {
+    try {
+      await Org.getByShortname(body.shortname)
+      res.shortname = 'EXISTS'
+    } catch {
+      res.shortname = null
     }
   }
 

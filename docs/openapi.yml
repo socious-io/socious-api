@@ -3698,6 +3698,42 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /orgs/{shortname}/recommend/orgs:
+    parameters:
+      - name: shortname
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - organizations
+      summary: ai recommend orgs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /orgs/{shortname}/recommend/users:
+    parameters:
+      - name: shortname
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - organizations
+      summary: ai recommend users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /orgs/update/{org_id}:
     parameters:
       - name: org_id
@@ -4199,7 +4235,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /user/{username}/recommend:
+  /user/{username}/recommend/jobs:
     parameters:
       - name: username
         in: path
@@ -4211,6 +4247,57 @@ paths:
       tags:
         - users
       summary: AI users job recommends
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{username}/recommend/users:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        example: seira-yun8611
+        required: true
+    get:
+      tags:
+        - users
+      summary: AI users recommends
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Current-Identity
+          in: header
+          schema:
+            type: string
+          example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /user/{username}/recommend/orgs:
+    parameters:
+      - name: username
+        in: path
+        schema:
+          type: string
+        example: seira-yun8611
+        required: true
+    get:
+      tags:
+        - users
+      summary: AI orgs recommends
       security:
         - bearerAuth: []
       parameters:

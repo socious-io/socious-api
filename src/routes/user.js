@@ -13,7 +13,7 @@ import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError } from '../utils/errors.js'
-import { recommendByUser } from '../services/recommender/index.js'
+import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 
 export const router = new Router()
 
@@ -156,14 +156,6 @@ router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx)
   ctx.body = await User.removeExperience(ctx.params.id, ctx.user)
 })
 
-router.get('/recommend', loginRequired, async (ctx) => {
-  ctx.body = await User.recommend(ctx.user.id)
-})
-
-router.get('/:username/recommend', loginOptional, async (ctx) => {
-  ctx.body = await recommendByUser(ctx.params.username)
-})
-
 router.get('/badges', loginRequired, async (ctx) => {
   ctx.body = { badges: await ImpactPoints.badges(ctx.identity.id) }
 })
@@ -186,4 +178,16 @@ router.post('/open-to-volunteer', loginRequired, async (ctx) => {
   ctx.body = {
     open_to_volunteer: await User.openToVolunteer(ctx.user.id)
   }
+})
+
+router.get('/:username/recommend/jobs', loginOptional, async (ctx) => {
+  ctx.body = await recommendProjectByUser(ctx.params.username)
+})
+
+router.get('/:username/recommend/users', loginOptional, async (ctx) => {
+  ctx.body = await recommendUserByUser(ctx.params.username)
+})
+
+router.get('/:username/recommend/orgs', loginOptional, async (ctx) => {
+  ctx.body = await recommendOrgByUser(ctx.params.username)
 })

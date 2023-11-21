@@ -18,7 +18,8 @@ export const registerSchem = Joi.object({
 
 export const preregisterSchem = Joi.object({
   username: Joi.string().regex(validate.usernamePattern),
-  email: Joi.string().email()
+  email: Joi.string().email(),
+  shortname: Joi.string().regex(validate.usernamePattern)
 })
 
 export const newOTPSchem = Joi.alternatives().try(

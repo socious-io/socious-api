@@ -1,4 +1,5 @@
 import User from '../../models/user/index.js'
+import Org from '../../models/organization/index.js'
 import * as bcrypt from 'bcrypt'
 import { signin } from './jwt.js'
 import { AuthorizationError, NotMatchedError, PermissionError, ValidationError } from '../../utils/errors.js'
@@ -17,7 +18,7 @@ import config from '../../config.js'
 import { isTestEmail } from '../email/index.js'
 import Analytics from '../analytics/index.js'
 
-const generateUsername = (email) => {
+export const generateUsername = (email) => {
   const rand = Math.floor(1000 + Math.random() * 9000)
   return `${email
     .replace(/@.*$/, '')
@@ -228,6 +229,15 @@ export const preregister = async (body) => {
       res.email = 'EXISTS'
     } catch {
       res.email = null
+    }
+  }
+
+  if (body.shortname && !res.shortname) {
+    try {
+      await Org.getByShortname(body.shortname)
+      res.shortname = 'EXISTS'
+    } catch {
+      res.shortname = null
     }
   }
 

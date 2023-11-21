@@ -38,7 +38,8 @@ export const insert = async (
     mission,
     culture,
     image,
-    cover_image
+    cover_image,
+    size
   }
 ) => {
   try {
@@ -48,11 +49,11 @@ export const insert = async (
         shortname, name, bio, description, email, phone,
         type, city, geoname_id, address, country, website,
         social_causes, mobile_country_code, created_by, image, cover_image,
-        mission, culture)
+        mission, culture, size)
         VALUES (${shortname.toLowerCase()}, ${name}, ${bio}, ${description}, ${email},
           ${phone}, ${type} ,${city}, ${geoname_id}, ${address}, ${country},
           ${website}, ${social_causes}, ${mobile_country_code},
-          ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture})
+          ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture}, ${size})
         RETURNING *, array_to_json(social_causes) AS social_causes`
     )
     return rows[0]
@@ -81,7 +82,8 @@ export const update = async (
     mission,
     culture,
     image,
-    cover_image
+    cover_image,
+    size
   }
 ) => {
   try {
@@ -105,7 +107,8 @@ export const update = async (
         image=${image},
         cover_image=${cover_image},
         mission=${mission},
-        culture=${culture}
+        culture=${culture},
+        size=${size}
       WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`
     )
     return rows[0]

@@ -9,6 +9,7 @@ import config from '../config.js'
 import { isTestEmail } from '../services/email/index.js'
 import Notif from '../models/notification/index.js'
 import Event from '../services/events/index.js'
+import { recommendOrgByOrg, recommendUserByOrg } from '../services/recommender/index.js'
 
 export const router = new Router()
 
@@ -89,4 +90,12 @@ router.post('/hiring', loginRequired, async (ctx) => {
   ctx.body = {
     hiring: await Org.hiring(ctx.identity.id)
   }
+})
+
+router.get('/:shortname/recommend/users', loginOptional, async (ctx) => {
+  ctx.body = await recommendUserByOrg(ctx.params.shortname)
+})
+
+router.get('/:shortname/recommend/orgs', loginOptional, async (ctx) => {
+  ctx.body = await recommendOrgByOrg(ctx.params.shortname)
 })

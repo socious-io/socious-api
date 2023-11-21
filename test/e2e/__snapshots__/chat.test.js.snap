@@ -34,6 +34,7 @@ exports[` 2`] = `
   "phone": "9379911",
   "search_tsv": Any<String>,
   "shortname": Any<String>,
+  "size": null,
   "social_causes": [
     "SOCIAL",
     "HEALTH",
@@ -75,6 +76,7 @@ exports[` 3`] = `
   "phone": "9899993",
   "search_tsv": Any<String>,
   "shortname": Any<String>,
+  "size": null,
   "social_causes": [
     "SOCIAL",
     "MENTAL",

@@ -20,6 +20,7 @@ export default {
     token: process.env.SLACK_TOKEN || 'test',
     logChannel: process.env.SLACK_LOG_CHANNEL || 'test'
   },
+
   mail: {
     sendgrid: {
       from: {
@@ -73,7 +74,9 @@ export default {
     }
   },
   ai: {
-    job_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL
+    jobs_recommender_url: process.env.AI_JOBS_RECOMMENDER_URL,
+    orgs_recommender_url: process.env.AI_ORGS_RECOMMENDER_URL,
+    talents_recommender_url: process.env.AI_TALENTS_RECOMMENDER_URL
   },
   services: {
     proofspace: {
@@ -219,7 +222,7 @@ export default {
             name: 'milkomeda',
             explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xF2B4BCc3F1687288a8c0c06Ee720350CA09dfb23',
+          escrow: '0xA9D4e4351ca77e5a47673f13DD4d0745dE175B38',
           tokens: [
             {
               name: 'USD Coin',
@@ -332,7 +335,13 @@ export default {
   notifAppLink: process.env.NOTIF_APP_LINK || 'https://app.socious.io/notifications',
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY,
-  discordLogger: process.env.DISCORD_LOGGER
+  discordLogger: process.env.DISCORD_LOGGER,
+  oauth: {
+    google: {
+      id: process.env.OAUTH_GOOGLE_CLIENT_ID,
+      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
+    }
+  }
 }
 
 /**

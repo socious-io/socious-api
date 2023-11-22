@@ -3662,6 +3662,23 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /orgs/d/industries:
+    get:
+      parameters:
+        - name: q
+          in: query
+          description: search by name
+          schema:
+            type: string
+          required: false
+      tags:
+        - organizations
+      summary: industeries
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /orgs/hiring:
     post:
       tags:

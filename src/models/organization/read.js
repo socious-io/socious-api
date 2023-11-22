@@ -1,4 +1,4 @@
-import sql from 'sql-template-tag'
+import sql, { raw, join } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { filtering, textSearch, sorting } from '../../utils/query.js'
 
@@ -75,6 +75,17 @@ export const shortNameExists = async (shortname) => {
   } catch {
     return false
   }
+}
+
+export const industries = async ({ offset = 0, limit = 10, q }) => {
+  let query = raw(`SELECT COUNT(*) OVER () as total_count, name from industries`)
+  if (q) {
+    const searchPat = `%${q}%`
+    query = join([query, sql`WHERE name ILIKE ${searchPat}`], ' ')
+  }
+  query = join([query, raw(`ORDER BY name LIMIT ${limit} OFFSET ${offset}`)], ' ')
+  const { rows } = await app.db.query(query)
+  return rows
 }
 
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {

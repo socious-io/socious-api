@@ -1,5 +1,5 @@
 import { app } from '../../src/index.js'
-import { confirmTx } from '../../src/services/payments/crypto.js'
+// import { confirmTx } from '../../src/services/payments/crypto.js'
 
 beforeAll(async () => {
   app.listen()

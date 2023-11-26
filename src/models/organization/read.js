@@ -17,7 +17,43 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
     org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
-    row_to_json(m_cover.*) AS cover_image
+    row_to_json(m_cover.*) AS cover_image,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='BENEFIT'
+    ) AS benefits,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
+    ) AS recommendations
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -33,7 +69,43 @@ export const get = async (id) => {
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
-    row_to_json(m_cover.*) AS cover_image
+    row_to_json(m_cover.*) AS cover_image,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='BENEFIT'
+    ) AS benefits,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
+    ) AS recommendations
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -46,7 +118,43 @@ export const getAll = async (ids, sort) => {
       org.*,
       array_to_json(org.social_causes) AS social_causes,
       row_to_json(m_image.*) AS image,
-      row_to_json(m_cover.*) AS cover_image
+      row_to_json(m_cover.*) AS cover_image,
+      (SELECT
+        jsonb_agg(json_build_object(
+            'id', adds.id,
+            'type', adds.type,
+            'title', adds.title,
+            'image', row_to_json(img.*),
+            'sub_image', row_to_json(sub_img.*),
+            'description', adds.description,
+            'meta', adds.meta,
+            'url', adds.meta,
+            'enabled', adds.enabled,
+            'created_at', adds.created_at
+          ))
+          FROM additionals adds
+          LEFT JOIN media img ON img.id=adds.image
+          LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+          WHERE adds.identity_id=org.id and type='BENEFIT'
+      ) AS benefits,
+      (SELECT
+        jsonb_agg(json_build_object(
+            'id', adds.id,
+            'type', adds.type,
+            'title', adds.title,
+            'image', row_to_json(img.*),
+            'sub_image', row_to_json(sub_img.*),
+            'description', adds.description,
+            'meta', adds.meta,
+            'url', adds.meta,
+            'enabled', adds.enabled,
+            'created_at', adds.created_at
+          ))
+          FROM additionals adds
+          LEFT JOIN media img ON img.id=adds.image
+          LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+          WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
+      ) AS recommendations
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -61,7 +169,43 @@ export const getByShortname = async (shortname) => {
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
-    row_to_json(m_cover.*) AS cover_image
+    row_to_json(m_cover.*) AS cover_image,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='BENEFIT'
+    ) AS benefits,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
+    ) AS recommendations
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image

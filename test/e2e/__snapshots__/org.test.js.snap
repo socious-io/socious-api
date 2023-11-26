@@ -103,6 +103,7 @@ exports[`get all 1`] = `
   "items": [
     {
       "address": "address",
+      "benefits": null,
       "bio": "test",
       "city": "Tehran",
       "country": "IR",
@@ -127,6 +128,7 @@ exports[`get all 1`] = `
       "other_party_title": null,
       "other_party_url": null,
       "phone": "9899993",
+      "recommendations": null,
       "search_tsv": Any<String>,
       "shortname": Any<String>,
       "size": null,
@@ -143,6 +145,7 @@ exports[`get all 1`] = `
     },
     {
       "address": "address",
+      "benefits": null,
       "bio": "test",
       "city": "Tokyo",
       "country": "JP",
@@ -167,6 +170,7 @@ exports[`get all 1`] = `
       "other_party_title": null,
       "other_party_url": null,
       "phone": "9379911",
+      "recommendations": null,
       "search_tsv": Any<String>,
       "shortname": Any<String>,
       "size": null,
@@ -193,6 +197,7 @@ exports[`get filtered 1`] = `
   "items": [
     {
       "address": "address",
+      "benefits": null,
       "bio": "test",
       "city": "Tokyo",
       "country": "JP",
@@ -217,6 +222,7 @@ exports[`get filtered 1`] = `
       "other_party_title": null,
       "other_party_url": null,
       "phone": "9379911",
+      "recommendations": null,
       "search_tsv": Any<String>,
       "shortname": Any<String>,
       "size": null,

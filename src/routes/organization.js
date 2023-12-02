@@ -99,3 +99,7 @@ router.get('/:shortname/recommend/users', loginOptional, async (ctx) => {
 router.get('/:shortname/recommend/orgs', loginOptional, async (ctx) => {
   ctx.body = await recommendOrgByOrg(ctx.params.shortname)
 })
+
+router.get('/d/industries', loginOptional, paginate, async (ctx) => {
+  ctx.body = await Org.industries({ ...ctx.paginate, q: ctx.query.q })
+})

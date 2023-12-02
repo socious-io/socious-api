@@ -78,6 +78,78 @@ export const getProfile = async (id, currentIdentity) => {
     open_to_volunteer,
     (SELECT
       jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='EDUCATION'
+    ) AS educations,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='PORTFOLIO'
+    ) AS portfolios,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='CERTIFICATE'
+    ) AS certificates,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='RECOMMENDATIONS'
+    ) AS recommendations,
+    (SELECT
+      jsonb_agg(json_build_object(
           'id', l.id,
           'name', l.name,
           'level', l.level
@@ -123,6 +195,78 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='EDUCATION'
+    ) AS educations,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='PORTFOLIO'
+    ) AS portfolios,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='CERTIFICATE'
+    ) AS certificates,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='RECOMMENDATIONS'
+    ) AS recommendations,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,
@@ -189,6 +333,78 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
     mobile_country_code,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='EDUCATION'
+    ) AS educations,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='PORTFOLIO'
+    ) AS portfolios,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='CERTIFICATE'
+    ) AS certificates,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', adds.id,
+          'type', adds.type,
+          'title', adds.title,
+          'image', row_to_json(img.*),
+          'sub_image', row_to_json(sub_img.*),
+          'description', adds.description,
+          'meta', adds.meta,
+          'url', adds.meta,
+          'enabled', adds.enabled,
+          'created_at', adds.created_at
+        ))
+        FROM additionals adds
+        LEFT JOIN media img ON img.id=adds.image
+        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
+        WHERE adds.identity_id=u.id and type='RECOMMENDATIONS'
+    ) AS recommendations,
     (SELECT
       jsonb_agg(json_build_object(
           'id', l.id,

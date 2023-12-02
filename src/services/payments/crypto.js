@@ -23,7 +23,7 @@ export const cryptoUSDRate = async (token) => {
  */
 export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
   const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
-    const t = n.tokens.filter((t) => t.address === token)[0]
+    const t = n.tokens.filter((t) => t.address.toUpperCase() === token.toUpperCase())[0]
     return t !== undefined
   })[0]
 

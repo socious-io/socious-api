@@ -37,13 +37,12 @@ test('calculate', async () => {
       'testnet'
     )
   ).toBe(true) */
-
   expect(
     await confirmTx(
-      '0xc4a877840a7ccad2e6763f9b1722a415134f2b22',
-      354.144,
-      '0x02062bd833a55e6b0b5b5030bf899e04f84bed168de5e9edcfae086319bd9a63',
-      '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+      '0xED25A0E271F5A79101fACAe0A9d0652DCa266325',
+      10.3,
+      '0xfe0f84ec2f22569d2f741bf2f2de33fdb8e8b51603f1ad9a8de2d70c8b4624ee',
+      '0xae83571000af4499798d1e3b0fa0070eb3a3e3f9',
       0,
       'mainet'
     )

@@ -87,7 +87,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   const decimalsLength = splited[1]?.length || 0
 
   let txAmount = parseInt(tx.value.slice(0, realLength + decimalsLength)) / Math.pow(10, decimalsLength)
-  amount = Math.round(amount * 100) / 100;
+  amount = Math.round(amount * 100) / 100
   if (amount > txAmount) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({

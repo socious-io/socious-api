@@ -137,7 +137,8 @@ router.post('/languages/update/:id', loginRequired, checkIdParams, async (ctx) =
 })
 
 router.post('/languages/remove/:id', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await User.removeLanguage(ctx.params.id, ctx.user)
+  await User.removeLanguage(ctx.params.id, ctx.user)
+  ctx.body = { message: 'success' }
 })
 
 router.post('/experiences', loginRequired, async (ctx) => {

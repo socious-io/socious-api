@@ -31,7 +31,7 @@ export const editLanguage = async (id, user, { name, level }) => {
 }
 
 export const removeLanguage = async (id, user) => {
-  await app.db.query(sql`DELETE FROM languages WHERE id=${id}, user_id=${user.id}`)
+  await app.db.query(sql`DELETE FROM languages WHERE id=${id} AND user_id=${user.id}`)
 }
 
 export const addExperience = async (user, { org_id, title, description, skills, start_at, end_at }) => {

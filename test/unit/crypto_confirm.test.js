@@ -51,8 +51,8 @@ test('calculate', async () => {
   expect(
     await confirmTx(
       '0xED25A0E271F5A79101fACAe0A9d0652DCa266325',
-      10.3,
-      '0xdf1929cd52bbc73345a7ef22c0aeb355ad9d3dcadfc45131b9ea2f03dc593f1d',
+      11.54,
+      '0xa7a37054b5592934d28ee9a730ced5c5fb6247100400668a8e2094a0f63d18dd',
       '0xae83571000af4499798d1e3b0fa0070eb3a3e3f9',
       0,
       'mainet'

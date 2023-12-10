@@ -165,10 +165,15 @@ export const getProfile = async (id, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*)
+          'org', row_to_json(org.*),
+          'job_category', row_to_json(j.*),
+          'country', e.country,
+          'city', e.city,
+          'employment_type', e.employment_type
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN job_categories j ON j.id=e.job_category_id
         WHERE user_id=u.id
     ) AS experiences
     FROM users u 
@@ -284,10 +289,15 @@ export const getProfileByUsername = async (username, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*)
+          'org', row_to_json(org.*),
+          'job_category', row_to_json(j.*),
+          'country', e.country,
+          'city', e.city,
+          'employment_type', e.employment_type
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN job_categories j ON j.id=e.job_category_id
         WHERE user_id=u.id
     ) AS experiences
     FROM users u 
@@ -422,7 +432,12 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*)
+          'org', row_to_json(org.*),
+          'job_category', row_to_json(j.*),
+          'country', e.country,
+          'city', e.city,
+          'employment_type', e.employment_type,
+          LEFT JOIN job_categories j ON j.id=e.job_category_id
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id

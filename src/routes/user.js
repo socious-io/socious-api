@@ -152,7 +152,6 @@ router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx)
 })
 
 router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx) => {
-  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
   ctx.body = await User.removeExperience(ctx.params.id, ctx.user)
 })
 

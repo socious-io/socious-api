@@ -102,5 +102,5 @@ export const editExperience = async (
 }
 
 export const removeExperience = async (id, user) => {
-  await app.db.query(sql`DELETE FROM experiences WHERE id=${id}, user_id=${user.id}`)
+  await app.db.query(sql`DELETE FROM experiences WHERE id=${id} AND user_id=${user.id}`)
 }

@@ -436,10 +436,10 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
-          'employment_type', e.employment_type,
-          LEFT JOIN job_categories j ON j.id=e.job_category_id
+          'employment_type', e.employment_type
         ))
         FROM experiences e
+        LEFT JOIN job_categories j ON j.id=e.job_category_id
         JOIN organizations org ON org.id=e.org_id
         WHERE user_id=u.id
     ) AS experiences

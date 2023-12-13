@@ -81,6 +81,7 @@ export const profile = async (request, data) => {
       experiences: [
         {
           id: expect.any(String),
+          job_category: expect.any(Object),
           org: {
             id: expect.any(String),
             created_at: expect.any(String),
@@ -134,6 +135,7 @@ export const updateProfile = async (request, data) => {
       experiences: [
         {
           id: expect.any(String),
+          job_category: expect.any(Object),
           org: {
             id: expect.any(String),
             created_at: expect.any(String),
@@ -206,16 +208,25 @@ export const addExperience = async (request, data) => {
     data.orgs[i].id = response.body.id
   }
 
+  const categoriesRes = await request.get('/projects/categories')
+
   for (const i in data.users) {
     if (data.users[i].invalid) {
       continue
     }
-    const response = await request.post('/user/experiences').set('Authorization', data.users[i].access_token).send({
-      org_id: data.orgs[0].id,
-      title: 'Test',
-      description: 'Test',
-      start_at: '2022-10-16T13:32:30.211Z'
-    })
+    const response = await request
+      .post('/user/experiences')
+      .set('Authorization', data.users[i].access_token)
+      .send({
+        org_id: data.orgs[0].id,
+        title: 'Test',
+        description: 'Test',
+        start_at: '2022-10-16T13:32:30.211Z',
+        country: 'IR',
+        city: 'Tehran',
+        employment_type: 'FULL_TIME',
+        job_category_id: categoriesRes.body.categories.filter((c) => c.name === 'Other')[0].id
+      })
 
     expect(response.status).toBe(200)
     expect(response.body).toMatchSnapshot({
@@ -223,7 +234,8 @@ export const addExperience = async (request, data) => {
       created_at: expect.any(String),
       user_id: expect.any(String),
       org_id: expect.any(String),
-      start_at: expect.any(String)
+      start_at: expect.any(String),
+      job_category_id: expect.any(String)
     })
 
     data.users[i].experience = response.body.id
@@ -231,6 +243,7 @@ export const addExperience = async (request, data) => {
 }
 
 export const updateExperience = async (request, data) => {
+  const categoriesRes = await request.get('/projects/categories')
   for (const i in data.users) {
     if (data.users[i].invalid) {
       continue
@@ -242,7 +255,11 @@ export const updateExperience = async (request, data) => {
         org_id: data.orgs[0].id,
         title: 'Test',
         description: 'Test',
-        start_at: '2022-10-16T13:32:30.211Z'
+        start_at: '2022-10-16T13:32:30.211Z',
+        country: 'IR',
+        city: 'Tehran',
+        employment_type: 'FULL_TIME',
+        job_category_id: categoriesRes.body.categories.filter((c) => c.name === 'Other')[0].id
       })
 
     expect(response.status).toBe(200)
@@ -251,7 +268,8 @@ export const updateExperience = async (request, data) => {
       created_at: expect.any(String),
       user_id: expect.any(String),
       org_id: expect.any(String),
-      start_at: expect.any(String)
+      start_at: expect.any(String),
+      job_category_id: expect.any(String)
     })
   }
 }
@@ -278,6 +296,7 @@ export const profileByUsername = async (request, data) => {
         {
           id: expect.any(String),
           start_at: expect.any(String),
+          job_category: expect.any(Object),
           org: {
             id: expect.any(String),
             created_at: expect.any(String),

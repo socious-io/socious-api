@@ -44,7 +44,7 @@ router.post('/', loginRequired, async (ctx) => {
     throw new ValidationError('Invalid email')
   }
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)
-  await Org.addMember(ctx.body.id, ctx.user.id)
+  if (ctx.query.auto_member !== 'false') await Org.addMember(ctx.body.id, ctx.user.id)
 })
 
 router.get('/check', loginRequired, async (ctx) => {

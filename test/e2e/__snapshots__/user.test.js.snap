@@ -2,10 +2,14 @@
 
 exports[`add experience 1`] = `
 {
+  "city": "Tehran",
+  "country": "IR",
   "created_at": Any<String>,
   "description": "Test",
+  "employment_type": "FULL_TIME",
   "end_at": null,
   "id": Any<String>,
+  "job_category_id": Any<String>,
   "org_id": Any<String>,
   "skills": null,
   "start_at": Any<String>,
@@ -16,10 +20,14 @@ exports[`add experience 1`] = `
 
 exports[`add experience 2`] = `
 {
+  "city": "Tehran",
+  "country": "IR",
   "created_at": Any<String>,
   "description": "Test",
+  "employment_type": "FULL_TIME",
   "end_at": null,
   "id": Any<String>,
+  "job_category_id": Any<String>,
   "org_id": Any<String>,
   "skills": null,
   "start_at": Any<String>,
@@ -78,9 +86,13 @@ exports[`profile 1`] = `
   "educations": null,
   "experiences": [
     {
+      "city": "Tehran",
+      "country": "IR",
       "description": "Test",
+      "employment_type": "FULL_TIME",
       "end_at": null,
       "id": Any<String>,
+      "job_category": Any<Object>,
       "org": {
         "address": "address",
         "bio": "test",
@@ -169,9 +181,13 @@ exports[`profile 2`] = `
   "educations": null,
   "experiences": [
     {
+      "city": "Tehran",
+      "country": "IR",
       "description": "Test",
+      "employment_type": "FULL_TIME",
       "end_at": null,
       "id": Any<String>,
+      "job_category": Any<Object>,
       "org": {
         "address": "address",
         "bio": "test",
@@ -260,9 +276,13 @@ exports[`profile by username 1`] = `
   "educations": null,
   "experiences": [
     {
+      "city": "Tehran",
+      "country": "IR",
       "description": "Test",
+      "employment_type": "FULL_TIME",
       "end_at": null,
       "id": Any<String>,
+      "job_category": Any<Object>,
       "org": {
         "address": "address",
         "bio": "test",
@@ -351,9 +371,13 @@ exports[`profile by username 2`] = `
   "educations": null,
   "experiences": [
     {
+      "city": "Tehran",
+      "country": "IR",
       "description": "Test",
+      "employment_type": "FULL_TIME",
       "end_at": null,
       "id": Any<String>,
+      "job_category": Any<Object>,
       "org": {
         "address": "address",
         "bio": "test",
@@ -437,10 +461,14 @@ exports[`register 1`] = `
 
 exports[`update experience 1`] = `
 {
+  "city": "Tehran",
+  "country": "IR",
   "created_at": Any<String>,
   "description": "Test",
+  "employment_type": "FULL_TIME",
   "end_at": null,
   "id": Any<String>,
+  "job_category_id": Any<String>,
   "org_id": Any<String>,
   "skills": null,
   "start_at": Any<String>,
@@ -451,10 +479,14 @@ exports[`update experience 1`] = `
 
 exports[`update experience 2`] = `
 {
+  "city": "Tehran",
+  "country": "IR",
   "created_at": Any<String>,
   "description": "Test",
+  "employment_type": "FULL_TIME",
   "end_at": null,
   "id": Any<String>,
+  "job_category_id": Any<String>,
   "org_id": Any<String>,
   "skills": null,
   "start_at": Any<String>,
@@ -496,9 +528,13 @@ exports[`update profile 1`] = `
   "educations": null,
   "experiences": [
     {
+      "city": "Tehran",
+      "country": "IR",
       "description": "Test",
+      "employment_type": "FULL_TIME",
       "end_at": null,
       "id": Any<String>,
+      "job_category": Any<Object>,
       "org": {
         "address": "address",
         "bio": "test",

@@ -179,14 +179,14 @@ router.post('/open-to-volunteer', loginRequired, async (ctx) => {
   }
 })
 
-router.get('/:username/recommend/jobs', loginOptional, async (ctx) => {
+router.get('/:username/recommend/jobs', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendProjectByUser(ctx.params.username)
 })
 
-router.get('/:username/recommend/users', loginOptional, async (ctx) => {
+router.get('/:username/recommend/users', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendUserByUser(ctx.params.username)
 })
 
-router.get('/:username/recommend/orgs', loginOptional, async (ctx) => {
+router.get('/:username/recommend/orgs', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendOrgByUser(ctx.params.username)
 })

@@ -136,6 +136,6 @@ router.get('/:id/feedbacks', loginRequired, checkIdParams, paginate, async (ctx)
   ctx.body = await Mission.feedbacks(ctx.params.id, ctx.paginate)
 })
 
-router.get('/:id/similars', loginOptional, checkIdParams, async (ctx) => {
+router.get('/:id/similars', loginOptional, checkIdParams, paginate, async (ctx) => {
   ctx.body = await recommendProjectByProject(ctx.params.id)
 })

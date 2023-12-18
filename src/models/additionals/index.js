@@ -44,7 +44,7 @@ const remove = async (id) => {
 }
 
 const get = async (id) => {
-  return app.db.query(sql`SELECT * FROM additionals WHERE id=${id}`)
+  return app.db.get(sql`SELECT * FROM additionals WHERE id=${id}`)
 }
 
 export default {

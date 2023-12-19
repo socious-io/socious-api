@@ -1,8 +1,8 @@
 [
   {
     "username": "test_username",
-    "first_name": "test_name",
-    "last_name": "last_name",
+    "first_name": "testname",
+    "last_name": "lastname",
     "email": "test@test.io",
     "goals": "TEST",
     "phone": "9999999999",
@@ -15,8 +15,8 @@
   },
   {
     "username": "test_username_2",
-    "first_name": "test_name_2",
-    "last_name": "last_name_2",
+    "first_name": "testname",
+    "last_name": "lastname",
     "goals": "TEST",
     "email": "test2@test.io",
     "phone": "9999999999",
@@ -30,8 +30,8 @@
   {
     "invalid": true,
     "username": "test_username_2",
-    "first_name": "test_name_2",
-    "last_name": "last_name_2",
+    "first_name": "testname",
+    "last_name": "lastname",
     "email": "test2test.io",
     "goals": "TEST",
     "certificates": ["test"],

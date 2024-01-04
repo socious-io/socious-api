@@ -35,8 +35,9 @@ export const paginate = async (ctx, next) => {
   */
   const response = { page, limit, total_count: 0, items: [] }
 
-  for (const i in ctx.body) {
-    if (i == 0) response.total_count = parseInt(ctx.body[i].total_count)
+  for (let i = 0; i < ctx.body.length; i++) {
+    if (i == 0) response.total_count = parseInt(ctx.body[i].total_count) || ctx.body.length
+    if (i + 1 > limit) break
     delete ctx.body[i].total_count
     response.items.push(ctx.body[i])
   }

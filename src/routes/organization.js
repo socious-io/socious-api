@@ -92,11 +92,11 @@ router.post('/hiring', loginRequired, async (ctx) => {
   }
 })
 
-router.get('/:shortname/recommend/users', loginOptional, async (ctx) => {
+router.get('/:shortname/recommend/users', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendUserByOrg(ctx.params.shortname)
 })
 
-router.get('/:shortname/recommend/orgs', loginOptional, async (ctx) => {
+router.get('/:shortname/recommend/orgs', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendOrgByOrg(ctx.params.shortname)
 })
 

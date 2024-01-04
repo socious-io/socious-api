@@ -165,7 +165,18 @@ export const getProfile = async (id, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*),
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
@@ -173,6 +184,7 @@ export const getProfile = async (id, currentIdentity) => {
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         WHERE user_id=u.id
     ) AS experiences
@@ -289,7 +301,18 @@ export const getProfileByUsername = async (username, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*),
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
@@ -297,6 +320,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         WHERE user_id=u.id
     ) AS experiences
@@ -432,7 +456,18 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
           'skills', e.skills,
           'start_at', e.start_at,
           'end_at', e.end_at,
-          'org', row_to_json(org.*),
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
@@ -441,6 +476,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
         FROM experiences e
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
         WHERE user_id=u.id
     ) AS experiences
     FROM users u 

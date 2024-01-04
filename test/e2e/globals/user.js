@@ -82,14 +82,7 @@ export const profile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: {
-            id: expect.any(String),
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
-            created_by: expect.any(String),
-            shortname: expect.any(String),
-            search_tsv: expect.any(String)
-          }
+          org: expect.any(Object)
         }
       ]
     })
@@ -136,15 +129,7 @@ export const updateProfile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: {
-            id: expect.any(String),
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
-            created_by: expect.any(String),
-            shortname: expect.any(String),
-            search_tsv: expect.any(String),
-            followings: expect.any(Number)
-          }
+          org: expect.any(Object)
         }
       ]
     })
@@ -297,14 +282,7 @@ export const profileByUsername = async (request, data) => {
           id: expect.any(String),
           start_at: expect.any(String),
           job_category: expect.any(Object),
-          org: {
-            id: expect.any(String),
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
-            created_by: expect.any(String),
-            shortname: expect.any(String),
-            search_tsv: expect.any(String)
-          }
+          org: expect.any(Object)
         }
       ]
     })

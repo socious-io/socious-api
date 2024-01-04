@@ -5,6 +5,7 @@ import config from '../../config.js'
 import { ValidationError } from '../../utils/errors.js'
 import { delay } from '../../utils/tools.js'
 import logger from '../../utils/logging.js'
+import { parseUnits } from 'ethers'
 
 export const cryptoUSDRate = async (token) => {
   const convertor = config.crypto.usd_convertor[token]
@@ -21,9 +22,11 @@ export const cryptoUSDRate = async (token) => {
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
+export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {  
+  let decimals = 18
   const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address.toUpperCase() === token.toUpperCase())[0]
+    if (t) decimals = t.decimals
     return t !== undefined
   })[0]
 
@@ -38,6 +41,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     )
     return false
   }
+
   const data = {
     module: 'account',
     action: 'tokentx',
@@ -81,13 +85,9 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     )
     return false
   }
-
-  const splited = amount.toString().split('.')
-  const realLength = splited[0].length
-  const decimalsLength = splited[1]?.length || 0
-
-  let txAmount = parseInt(tx.value.slice(0, realLength + decimalsLength)) / Math.pow(10, decimalsLength)
-  if (Math.trunc(amount) != Math.trunc(txAmount)) {
+  
+  const expectedAmount = parseUnits(`${amount}`, decimals).toString()
+  if (tx.value != expectedAmount) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
@@ -95,7 +95,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
         amount,
         txHash,
         token
-      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${amount} >= ${txAmount}`
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${amount} >= ${expectedAmount}`
     )
     return false
   }
@@ -134,91 +134,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   return true
 }
 
-export const confirmTronTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
-  const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
-    const t = n.tokens.filter((t) => t.address === token)[0]
-    return t !== undefined
-  })[0]
-
-  if (!network) {
-    logger.error(
-      `CONFIRM CRYPTODATA ${JSON.stringify({
-        src,
-        amount,
-        txHash,
-        token
-      })}, RESULT => Network not found on ${JSON.stringify(config.crypto.networks)}`
-    )
-    return false
-  }
-
-  const response = await axios.get(`${network.chain.explorer}/accounts/${src}/transactions/trc20?only_confirmed=true`)
-
-  if (response.status === 400) {
-    logger.error(
-      `CONFIRM CRYPTO => DATA ${JSON.stringify({
-        src,
-        amount,
-        txHash,
-        token
-      })} , RESULT =>  faild to get address transactions `
-    )
-    return false
-  }
-  const tx = response.data.data.filter((r) => r.transaction_id === txHash)[0]
-
-  if (!tx && retry < 8) {
-    await delay(5000)
-    retry++
-    return await confirmTronTx(src, amount, txHash, token, retry, env)
-  }
-
-  if (!tx) {
-    logger.error(
-      `CONFIRM CRYPTODATA ${JSON.stringify({
-        src,
-
-        amount,
-        txHash,
-        token
-      })}, RESULT => tx not found, TX => ${JSON.stringify(response.data.result[0].hash)} != ${txHash}`
-    )
-    return false
-  }
-
-  const splited = amount.toString().split('.')
-  const realLength = splited[0].length
-  const decimalsLength = splited[1]?.length || 0
-
-  let txAmount = parseInt(tx.value.slice(0, realLength + decimalsLength)) / Math.pow(10, decimalsLength)
-
-  if (amount > txAmount) {
-    logger.error(
-      `CONFIRM CRYPTODATA ${JSON.stringify({
-        src,
-
-        amount,
-        txHash,
-        token
-      })}, RESULT => amount not match to offer ${amount} >= ${txAmount}`
-    )
-    return false
-  }
-
-  if (tx.to.toUpperCase() !== network.escrow.toUpperCase()) {
-    logger.error(
-      `CONFIRM CRYPTODATA ${JSON.stringify({
-        src,
-        amount,
-        txHash,
-        token
-      })}, RESULT => Wrong contract address, TX => ${JSON.stringify(tx)}`
-    )
-    return false
-  }
-
-  return true
-}
 
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
@@ -228,13 +143,8 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
 
   if (!network) throw new ValidationError('could not find chain network')
 
-  let confirmed = false
 
-  if (network.chain.tron) {
-    confirmed = await confirmTronTx(source, amount, txHash, meta.token)
-  } else {
-    confirmed = await confirmTx(source, amount, txHash, meta.token)
-  }
+  const confirmed = await confirmTx(source, amount, txHash, meta.token)
 
   if (!confirmed) throw new ValidationError('transaction is not valid')
 

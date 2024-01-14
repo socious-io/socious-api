@@ -6,7 +6,6 @@ beforeAll(async () => {
 })
 
 test('calculate', async () => {
-
   expect(
     await confirmTx(
       '0x6990bf996E984cffde6EbCAb6AC8723c95069719',
@@ -17,5 +16,4 @@ test('calculate', async () => {
       'mainet'
     )
   ).toBe(true)
-
 })

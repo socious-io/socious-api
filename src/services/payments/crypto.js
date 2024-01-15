@@ -22,7 +22,7 @@ export const cryptoUSDRate = async (token) => {
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {  
+export const confirmTx = async (src, amount, txHash, token, retry = 0, env = undefined) => {
   let decimals = 18
   const network = config.crypto.networks[env || config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address.toUpperCase() === token.toUpperCase())[0]
@@ -85,7 +85,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     )
     return false
   }
-  
+
   const expectedAmount = parseUnits(`${amount}`, decimals).toString()
   if (tx.value != expectedAmount) {
     logger.error(
@@ -134,7 +134,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   return true
 }
 
-
 export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === meta.token)[0]
@@ -142,7 +141,6 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
   })[0]
 
   if (!network) throw new ValidationError('could not find chain network')
-
 
   const confirmed = await confirmTx(source, amount, txHash, meta.token)
 

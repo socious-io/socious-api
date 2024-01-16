@@ -31,6 +31,9 @@ export async function googleLogin(code, ref) {
   } catch {
     const username = generateUsername(userInfo.email)
     const user = await User.insert(userInfo.given_name, userInfo.family_name, username, userInfo.email)
-    return signin(user.id)
+    return {
+      ...signin(user.id),
+      registered: true
+    }
   }
 }

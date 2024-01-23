@@ -104,9 +104,7 @@ router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) 
 })
 
 router.get('/missions', loginRequired, paginate, async (ctx) => {
-  ctx.paginate.filter.assignee_id = ctx.identity.id
-
-  const missions = await Mission.getAll(ctx.paginate)
+  const missions = await Mission.getAllOwned(ctx.identity.id, ctx.paginate)
 
   ctx.body = missions.map((m) => {
     return {

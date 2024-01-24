@@ -87,6 +87,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
     FROM projects p
     WHERE
       p.search_tsv @@ to_tsquery(${textSearch(q)})
+      AND status='ACTIVE'
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}
     LIMIT ${limit} OFFSET ${offset}

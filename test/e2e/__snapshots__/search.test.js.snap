@@ -127,6 +127,7 @@ exports[` 5`] = `
   "payment_type": "VOLUNTEER",
   "project_length": "1_3_MONTHS",
   "project_type": "FULL_TIME",
+  "promoted": false,
   "remote_preference": "HYBRID",
   "search_tsv": Any<String>,
   "skills": [
@@ -170,6 +171,7 @@ exports[` 6`] = `
   "payment_type": "VOLUNTEER",
   "project_length": "LESS_THAN_A_MONTH",
   "project_type": "ONE_OFF",
+  "promoted": false,
   "remote_preference": "HYBRID",
   "search_tsv": Any<String>,
   "skills": [
@@ -220,6 +222,7 @@ exports[`projects with filter 1`] = `
       "payment_type": "VOLUNTEER",
       "project_length": "LESS_THAN_A_MONTH",
       "project_type": "ONE_OFF",
+      "promoted": false,
       "remote_preference": "HYBRID",
       "search_tsv": "'2':2 'data':3 'test':1,4",
       "skills": [
@@ -275,6 +278,7 @@ exports[`search projects 1`] = `
       "payment_type": "VOLUNTEER",
       "project_length": "LESS_THAN_A_MONTH",
       "project_type": "ONE_OFF",
+      "promoted": false,
       "remote_preference": "HYBRID",
       "search_tsv": "'2':2 'data':3 'test':1,4",
       "skills": [
@@ -320,6 +324,7 @@ exports[`search projects 1`] = `
       "payment_type": "VOLUNTEER",
       "project_length": "1_3_MONTHS",
       "project_type": "FULL_TIME",
+      "promoted": false,
       "remote_preference": "HYBRID",
       "search_tsv": "'1':2 'data':3 'test':1,4",
       "skills": [

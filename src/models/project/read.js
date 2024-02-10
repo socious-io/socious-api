@@ -16,10 +16,11 @@ export const filterColumns = {
   project_type: String,
   project_length: String,
   other_party_title: String,
-  remote_preference: String
+  remote_preference: String,
+  promoted: Boolean
 }
 
-export const sortColumns = ['updated_at', 'created_at', 'title', 'payment_range_higher', 'payment_range_lower']
+export const sortColumns = ['promoted', 'updated_at', 'created_at', 'title', 'payment_range_higher', 'payment_range_lower']
 
 export const get = async (id, userId = undefined) => {
   return app.db.get(sql`

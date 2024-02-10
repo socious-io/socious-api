@@ -75,7 +75,10 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
 
 export const sorting = (sort, columns, prefix = '') => {
   if (prefix) prefix += '.'
-  if (!sort) return raw(`ORDER BY ${prefix}${columns[0]} DESC`)
+  if (!sort) {
+    const sortings = columns.map((c) => `${prefix}${c} DESC`).join(',')
+    return raw(`ORDER BY ${sortings}`)
+  }
 
   const dir = sort.startsWith('-') ? 'DESC' : 'ASC'
 

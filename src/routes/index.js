@@ -28,6 +28,7 @@ import { router as testEmails } from './test-emails.js'
 import { router as connect } from './connect.js'
 import { router as geo } from './geo.js'
 import { router as additionals } from './additionals.js'
+import { router as credentials } from './credentials.js'
 
 export default (app) => {
   const blueprint = new Router()
@@ -63,6 +64,7 @@ export default (app) => {
   blueprint.use('/connections', connect.routes(), connect.allowedMethods())
   blueprint.use('/geo', geo.routes(), geo.allowedMethods())
   blueprint.use('/additionals', additionals.routes(), additionals.allowedMethods())
+  blueprint.use('/credentials', credentials.routes(), credentials.allowedMethods())
 
   if (Config.mail.allowTest) {
     blueprint.use('/test-emails', testEmails.routes(), testEmails.allowedMethods())

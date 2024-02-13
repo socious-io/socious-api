@@ -1,5 +1,6 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
+import { filtering, sorting } from '../../utils/query.js'
 import { EntryError } from '../../utils/errors.js'
 
 export const addLanguage = async (user, { name, level }) => {
@@ -103,4 +104,104 @@ export const editExperience = async (
 
 export const removeExperience = async (id, user) => {
   await app.db.query(sql`DELETE FROM experiences WHERE id=${id} AND user_id=${user.id}`)
+}
+
+export const getExperience = async (id) => {
+  return app.db.get(sql`SELECT * FROM experiences WHERE id=${id}`)
+}
+
+export const getRequestExperienceCredentials = async (id) => {
+  return app.db.get(sql`
+  SELECT 
+    c.*,
+    row_to_json(e.*) AS experience,
+    row_to_json(u.*) AS user,
+    row_to_json(o.*) AS org
+    FROM experience_credentials c
+    JOIN experiences e ON e.id=c.experience_id
+    JOIN users u ON u.id=c.user_id
+    JOIN organizations o ON o.id=c.org_id
+    WHERE c.id=${id}
+  `)
+}
+
+export const getRequestExperienceCredentialsbyConnection = async (connectId) => {
+  return app.db.get(sql`
+    SELECT 
+    c.*,
+    row_to_json(e.*) AS experience,
+    row_to_json(u.*) AS user,
+    row_to_json(o.*) AS org
+    FROM experience_credentials c
+    JOIN experiences e ON e.id=c.experience_id
+    JOIN users u ON u.id=c.user_id
+    JOIN organizations o ON o.id=c.org_id
+    WHERE c.connection_id=${connectId}
+  `)
+}
+
+export const experienceCredentialsFilters = {
+  status: String
+}
+
+export const requestExperienceCredentials = async (id, userId, orgId) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      INSERT INTO experience_credentials (
+        user_id,
+        org_id,
+        experience_id,
+      ) VALUES (
+        ${userId},
+        ${orgId},
+        ${id}
+      )
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const requestedExperienceCredentials = async (identityId, { limit = 10, offset = 0, filter }) => {
+  const { rows } = await app.db.query(sql`
+    SELECT
+      COUNT(c.*) OVER () as total_count,
+      c.*,
+      row_to_json(e.*) AS experience,
+      row_to_json(u.*) AS user,
+    row_to_json(o.*) AS org
+    FROM experience_credentials c
+    JOIN experiences e ON e.id=c.experience_id
+    JOIN users u ON u.id=c.user_id
+    JOIN organizations o ON o.id=c.org_id
+      WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
+    ${filtering(filter, experienceCredentialsFilters, true, 'c')}
+    ORDER BY created_at DESC
+    LIMIT ${limit} OFFSET ${offset}
+  `)
+  return rows
+}
+
+export const requestedExperienceCredentialsUpdate = async ({
+  id,
+  status,
+  connection_id = null,
+  connection_url = null
+}) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE experience_credentials SET
+        status=${status},
+        connection_id=${connection_id}
+        connection_url=${connection_url}
+        updated_at=Now()
+      WHERE id=${id}
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
 }

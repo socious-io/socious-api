@@ -341,6 +341,11 @@ export default {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,
       secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
     }
+  },
+  wallet: {
+    agent: 'http://54.85.201.2:8000',
+    connect_address: 'https://wallet.socious.io/connect',
+    callback: process.env.WALLET_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback'
   }
 }
 

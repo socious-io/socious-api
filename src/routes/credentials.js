@@ -1,7 +1,7 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Org from '../models/organization/index.js'
-import { PermissionError } from '../utils/errors.js'
+import { BadRequestError, PermissionError } from '../utils/errors.js'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
@@ -48,7 +48,11 @@ router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) 
 })
 
 router.post('/experiences/connect/callback/:id', async (ctx) => {
+  if (ctx.query.reject) throw new BadRequestError()
+
   const e = await User.getRequestExperienceCredentialsbyConnection(ctx.params.id)
+
+  if (e.status !== 'APPROVED') throw new PermissionError()
 
   const claims = {
     recipient_name: `${e.user.first_name} ${e.user.last_name}`,
@@ -64,6 +68,13 @@ router.post('/experiences/connect/callback/:id', async (ctx) => {
     connectionId: e.connection_id,
     issuingDID: e.org.did,
     claims
+  })
+
+  await User.requestedExperienceCredentialsUpdate({
+    id: ctx.params.id,
+    status: 'SENT',
+    connection_id: e.connection_id,
+    connection_url: e.connection_url
   })
 
   ctx.body = { message: 'success' }

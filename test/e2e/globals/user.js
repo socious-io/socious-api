@@ -261,7 +261,6 @@ export const updateExperience = async (request, data) => {
 }
 
 export const requestExperienceCredentials = async (request, data) => {
-  const categoriesRes = await request.get('/projects/categories')
   for (const i in data.users) {
     if (data.users[i].invalid) {
       continue

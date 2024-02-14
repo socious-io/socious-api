@@ -22,7 +22,7 @@ router.post('/experiences/:id', loginRequired, checkIdParams, async (ctx) => {
 router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx) => {
   const experience = await User.getRequestExperienceCredentials(ctx.params.id)
   if (experience.org_id !== ctx.identity.id || experience.status !== 'PENDING') throw new PermissionError()
-  
+
   const org = await Org.get(ctx.identity.id)
 
   if (!org.did) {

@@ -148,17 +148,19 @@ export const experienceCredentialsFilters = {
   status: String
 }
 
-export const requestExperienceCredentials = async (id, userId, orgId) => {
+export const requestExperienceCredentials = async (id, userId, orgId, message) => {
   try {
     const { rows } = await app.db.query(sql`
       INSERT INTO experience_credentials (
         user_id,
         org_id,
         experience_id,
+        message
       ) VALUES (
         ${userId},
         ${orgId},
-        ${id}
+        ${id},
+        ${message}
       )
       RETURNING *
     `)

@@ -58,7 +58,7 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
   const claims = {
     recipient_name: `${e.user.first_name} ${e.user.last_name}`,
     job_title: e.experience.title,
-    job_category: e.experience.job_category_id,
+    job_category: e.job_category.name,
     employment_type: e.experience.employment_type,
     company_name: e.org.name,
     start_date: e.experience.start_at,

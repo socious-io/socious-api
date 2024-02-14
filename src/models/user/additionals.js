@@ -116,11 +116,13 @@ export const getRequestExperienceCredentials = async (id) => {
     c.*,
     row_to_json(e.*) AS experience,
     row_to_json(u.*) AS user,
-    row_to_json(o.*) AS org
-    FROM experience_credentials c
+    row_to_json(o.*) AS org,
+    row_to_json(j.*) AS job_category
+  FROM experience_credentials c
     JOIN experiences e ON e.id=c.experience_id
     JOIN users u ON u.id=c.user_id
     JOIN organizations o ON o.id=c.org_id
+    LEFT JOIN job_categories j ON j.id=e.job_category_id
     WHERE c.id=${id}
   `)
 }
@@ -131,11 +133,13 @@ export const getRequestExperienceCredentialsbyConnection = async (connectId) => 
     c.*,
     row_to_json(e.*) AS experience,
     row_to_json(u.*) AS user,
-    row_to_json(o.*) AS org
+    row_to_json(o.*) AS org,
+    row_to_json(j.*) AS job_category
     FROM experience_credentials c
     JOIN experiences e ON e.id=c.experience_id
     JOIN users u ON u.id=c.user_id
     JOIN organizations o ON o.id=c.org_id
+    LEFT JOIN job_categories j ON j.id=e.job_category_id
     WHERE c.connection_id=${connectId}
   `)
 }

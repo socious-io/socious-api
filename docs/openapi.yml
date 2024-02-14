@@ -5964,7 +5964,7 @@ paths:
             application/json: {}
   /credentials/experiences/{experience_id}:
     parameters:
-      - name: request_id
+      - name: experience_id
         in: path
         schema:
           type: string

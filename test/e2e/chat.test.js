@@ -69,6 +69,18 @@ test('start chat', async () => {
   const getOneRes = await request.get(`/chats/${response.body.id}`).set('Authorization', data.users[1].access_token)
 
   expect(getOneRes.status).toBe(403)
+
+  const existsChat = await request
+    .post('/chats')
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[1].id)
+    .send({
+      name: 'test',
+      type: 'CHAT',
+      participants: [data.orgs[0].id]
+    })
+
+  expect(existsChat.status).toBe(200)
 })
 
 test('chat messages', async () => {
@@ -83,6 +95,13 @@ test('chat messages', async () => {
     .set('Current-Identity', data.orgs[1].id)
 
   expect(messagesRes.status).toBe(200)
+
+  const countRes = await request
+    .get('/chats/unreads/counts')
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[1].id)
+
+  expect(countRes.body.count).toBe(0)
 })
 
 const cleanup = async () => {

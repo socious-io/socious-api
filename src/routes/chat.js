@@ -24,6 +24,10 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Chat.all(ctx.identity.id, ctx.paginate)
 })
 
+router.get('/unreads/counts', loginRequired, async (ctx) => {
+  ctx.body = await Chat.unreadCount(ctx.identity.id)
+})
+
 router.post('/find', loginRequired, async (ctx) => {
   await validate.FindChatSchema.validateAsync(ctx.request.body)
   ctx.body = { items: await Chat.find(ctx.identity.id, ctx.request.body) }

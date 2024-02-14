@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
-import { filtering, sorting } from '../../utils/query.js'
+import { filtering } from '../../utils/query.js'
 import { EntryError } from '../../utils/errors.js'
 
 export const addLanguage = async (user, { name, level }) => {

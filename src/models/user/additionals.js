@@ -200,8 +200,8 @@ export const requestedExperienceCredentialsUpdate = async ({
     const { rows } = await app.db.query(sql`
       UPDATE experience_credentials SET
         status=${status},
-        connection_id=${connection_id}
-        connection_url=${connection_url}
+        connection_id=${connection_id},
+        connection_url=${connection_url},
         updated_at=Now()
       WHERE id=${id}
       RETURNING *

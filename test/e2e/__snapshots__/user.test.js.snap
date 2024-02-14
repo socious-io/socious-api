@@ -303,6 +303,36 @@ exports[`register 1`] = `
 }
 `;
 
+exports[`request experience credentials 1`] = `
+{
+  "connection_id": null,
+  "connection_url": null,
+  "created_at": Any<String>,
+  "experience_id": Any<String>,
+  "id": Any<String>,
+  "message": "approve please",
+  "org_id": Any<String>,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`request experience credentials 2`] = `
+{
+  "connection_id": null,
+  "connection_url": null,
+  "created_at": Any<String>,
+  "experience_id": Any<String>,
+  "id": Any<String>,
+  "message": "approve please",
+  "org_id": Any<String>,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
 exports[`update experience 1`] = `
 {
   "city": "Tehran",

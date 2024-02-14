@@ -16,7 +16,12 @@ router.get('/experiences', loginRequired, paginate, async (ctx) => {
 router.post('/experiences/:id', loginRequired, checkIdParams, async (ctx) => {
   const experience = await User.getExperience(ctx.params.id)
   if (experience.user_id !== ctx.user.id) throw new PermissionError()
-  ctx.body = await User.requestExperienceCredentials(experience.id, ctx.user.id, experience.org_id)
+  ctx.body = await User.requestExperienceCredentials(
+    experience.id,
+    ctx.user.id,
+    experience.org_id,
+    ctx.request.body.message
+  )
 })
 
 router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx) => {

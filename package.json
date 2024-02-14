@@ -26,7 +26,7 @@
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "cross-env ENV=testing node scripts/createdb.js ; db-migrate --dotenvCustomPath=test.env up --config ./migrations/database.json",
-    "test": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit; npm run aftertest",
+    "test": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit ${TEST:-}; npm run aftertest",
     "test:unit": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --testPathPattern=test/unit --forceExit",
     "aftertest": "cross-env ENV=testing NEW_RELIC_ENABLED=false node scripts/dropdb.js",
     "test:watch": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit --watch",
@@ -93,6 +93,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "@types/jest": "^29.5.12",
     "@types/koa": "^2.13.6",
     "@types/pg": "^8.6.6",
     "@typescript-eslint/eslint-plugin": "^5.56.0",

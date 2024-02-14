@@ -27,7 +27,7 @@ export const createDID = async () => {
 
 export const createConnectURL = async () => {
   const res = await axios.post(`${config.wallet.agent}/prism-agent/connections`, {"label": "Socious Claim Connection"})
-  const id = res.data.id
+  const id = res.data.connectionId
   let url = res.data.invitation.invitationUrl
   url = url.replace('https://my.domain.com/path', config.wallet.connect_address)
   url += `&callback=${config.wallet.callback}/${id}`

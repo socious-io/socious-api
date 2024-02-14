@@ -5,7 +5,7 @@ import { BadRequestError, PermissionError } from '../utils/errors.js'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
-import { createConnecURL, createDID, sendCredentials } from '../services/wallet/index.js'
+import { createConnectURL, createDID, sendCredentials } from '../services/wallet/index.js'
 
 export const router = new Router()
 
@@ -41,7 +41,7 @@ router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx
 router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) => {
   const experience = await User.getRequestExperienceCredentials(ctx.params.id)
   if (experience.user_id !== ctx.user.id) throw new PermissionError()
-  const connect = await createConnecURL()
+  const connect = await createConnectURL()
 
   await User.requestedExperienceCredentialsUpdate({
     id: ctx.params.id,

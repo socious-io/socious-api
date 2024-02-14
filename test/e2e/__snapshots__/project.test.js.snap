@@ -777,6 +777,7 @@ exports[`offer 1`] = `
   "escrow": Any<Object>,
   "id": Any<String>,
   "job_category": Any<Object>,
+  "mission": null,
   "offer_message": "Test",
   "offer_rate": 9000,
   "offerer": Any<Object>,

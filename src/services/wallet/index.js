@@ -35,49 +35,14 @@ export const createConnectURL = async () => {
 }
 
 export const sendCredentials = async ({ connectionId, issuingDID, claims }) => {
-  const res = await axios.post(`${config.wallet.agent}/prism-agent/issue-credentials/credential-offers`, {
+  const payload = {
     claims,
     connectionId,
     issuingDID,
     schemaId: null,
     automaticIssuance: true
-  })
-  axiosResponseToCurl(res)
+  }
+  console.log(JSON.stringify(payload))
+  const res = await axios.post(`${config.wallet.agent}/prism-agent/issue-credentials/credential-offers`, payload)
   return res.data
-}
-
-
-function axiosResponseToCurl(axiosResponse) {
-  // Access the config from the response, which contains the request details
-  const axiosConfig = axiosResponse.config;
-  
-  // Initialize the cURL command
-  let curlCmd = `curl '${axiosConfig.url}'`;
-
-  // Add method if not GET
-  if (axiosConfig.method && axiosConfig.method.toUpperCase() !== 'GET') {
-    curlCmd += ` -X ${axiosConfig.method.toUpperCase()}`;
-  }
-
-  // Add headers if any
-  if (axiosConfig.headers) {
-    Object.keys(axiosConfig.headers).forEach(function(header) {
-      // Skip headers that are automatically added by the browser or Axios
-      if (!['Host', 'Content-Length', 'Connection'].includes(header)) {
-        curlCmd += ` -H '${header}: ${axiosConfig.headers[header]}'`;
-      }
-    });
-  }
-
-  // Add data if any (for POST, PUT requests)
-  if (axiosConfig.data && (axiosConfig.method.toUpperCase() === 'POST' || axiosConfig.method.toUpperCase() === 'PUT')) {
-    // If data is an object, stringify it
-    const data = typeof axiosConfig.data === 'object' ? JSON.stringify(axiosConfig.data) : axiosConfig.data;
-    curlCmd += ` --data-raw '${data}'`;
-  }
-
-  // Print the cURL command
-  console.log(' ---------------------')
-  console.log(curlCmd);
-  console.log(' ---------------------')
 }

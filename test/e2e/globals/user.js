@@ -83,7 +83,8 @@ export const profile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })
@@ -130,7 +131,8 @@ export const updateProfile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })
@@ -330,7 +332,8 @@ export const profileByUsername = async (request, data) => {
           id: expect.any(String),
           start_at: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })

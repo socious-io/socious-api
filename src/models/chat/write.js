@@ -22,7 +22,8 @@ export const create = async (identity, { type, participants, description, name }
     const { rows } = await app.db.query(sql`
     SELECT COUNT(*) OVER () as total_count, row_to_json(m.*) as last_message
     FROM messages m WHERE chat_id=${existing[0].id} LIMIT 1`)
-    return { ...existing[0], message_count: rows[0].total_count, last_message: rows[0].last_message }
+
+    return { ...existing[0], message_count: rows[0]?.total_count || 0, last_message: rows[0]?.last_message }
   }
   return app.db.with(async (client) => {
     await client.query('BEGIN')

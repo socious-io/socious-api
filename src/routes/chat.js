@@ -13,6 +13,7 @@ export const router = new Router()
 
 router.get('/summary', loginRequired, paginate, async (ctx) => {
   const { filter } = ctx.query
+  if (ctx.paginate.limit > 200) ctx.paginate.limit
   ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate, filter)
 })
 

@@ -38,6 +38,13 @@ router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx
   ctx.body = await User.requestedExperienceCredentialsUpdate({ id: ctx.params.id, status: 'APPROVED' })
 })
 
+router.post('/experiences/:id/reject', loginRequired, checkIdParams, async (ctx) => {
+  const experience = await User.getRequestExperienceCredentials(ctx.params.id)
+  if (experience.org_id !== ctx.identity.id || experience.status !== 'PENDING') throw new PermissionError()
+
+  ctx.body = await User.requestedExperienceCredentialsUpdate({ id: ctx.params.id, status: 'REJECTED' })
+})
+
 router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) => {
   const experience = await User.getRequestExperienceCredentials(ctx.params.id)
   if (experience.user_id !== ctx.user.id) throw new PermissionError()
@@ -77,7 +84,7 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
   })
 
   await User.requestedExperienceCredentialsUpdate({
-    id: ctx.params.id,
+    id: e.id,
     status: 'SENT',
     connection_id: e.connection_id,
     connection_url: e.connection_url

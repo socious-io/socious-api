@@ -110,6 +110,10 @@ export const getExperience = async (id) => {
   return app.db.get(sql`SELECT * FROM experiences WHERE id=${id}`)
 }
 
+export const getExperiences = async (userId) => {
+  return app.db.get(sql`SELECT * FROM experiences WHERE user_id=${userId}`)
+}
+
 export const getRequestExperienceCredentials = async (id) => {
   return app.db.get(sql`
   SELECT 

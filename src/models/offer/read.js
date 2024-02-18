@@ -46,7 +46,8 @@ export const getAll = async (identityId, { limit = 10, offset = 0, filter, sort 
       row_to_json(recipient.*) AS recipient,
       row_to_json(org.*) AS organization,
       row_to_json(a.*) AS applicant,
-      row_to_json(e.*) AS escrow
+      row_to_json(e.*) AS escrow,
+      row_to_json(m.*) AS mission
     FROM offers o
     JOIN projects p ON p.id=o.project_id
     JOIN identities offerer ON offerer.id=o.offerer_id

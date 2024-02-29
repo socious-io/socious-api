@@ -5,6 +5,8 @@ const data = [
   {
     amount: 5000,
     verfied: true,
+    org_referred: null,
+    user_referred: null,
     expect_total: 5283.6,
     expect_app_fee: 350,
     expect_stripe_fee: 183.6,
@@ -14,6 +16,8 @@ const data = [
   {
     amount: 5000,
     verfied: true,
+    org_referred: null,
+    user_referred: null,
     round: 1,
     expect_total: 5284,
     expect_app_fee: 350,
@@ -24,6 +28,8 @@ const data = [
   {
     amount: 347.2,
     verfied: true,
+    org_referred: null,
+    user_referred: null,
     round: 100000,
     expect_total: 354.144,
     expect_app_fee: 24.304,
@@ -34,13 +40,51 @@ const data = [
   {
     amount: 0.01,
     verfied: true,
+    org_referred: null,
+    user_referred: null,
     round: 100000,
     expect_total: 0.01021,
     expect_app_fee: 0.0007,
     expect_stripe_fee: 0,
     expect_payout: 0.0095,
     service: 'CRYPTO'
-  }
+  },
+  {
+    amount: 1000,
+    verfied: true,
+    org_referred: '0x1111111111111111111111111111111111111111',
+    user_referred: '0x1111111111111111111111111111111111111111',
+    round: 100000,
+    expect_total: 1010,
+    expect_app_fee: 35,
+    expect_stripe_fee: 0,
+    expect_payout: 975,
+    service: 'CRYPTO'
+  },
+  {
+    amount: 1000,
+    verfied: true,
+    org_referred: '0x1111111111111111111111111111111111111111',
+    user_referred: null,
+    round: 100000,
+    expect_total: 1010,
+    expect_app_fee: 60,
+    expect_stripe_fee: 0,
+    expect_payout: 950,
+    service: 'CRYPTO'
+  },
+  {
+    amount: 1000,
+    verfied: true,
+    org_referred: null,
+    user_referred: '0x1111111111111111111111111111111111111111',
+    round: 100000,
+    expect_total: 1020,
+    expect_app_fee: 45,
+    expect_stripe_fee: 0,
+    expect_payout: 975,
+    service: 'CRYPTO'
+  },
 ]
 
 beforeAll(async () => {
@@ -53,6 +97,8 @@ test('calculate fee', async () => {
       amount: i.amount,
       service: i.service,
       verified: i.verfied,
+      org_referred: i.org_referred,
+      user_referred: i.user_referred,
       round: i.round
     })
     expect(amount.total).toBe(i.expect_total)

@@ -4,6 +4,7 @@ import Applicant from '../models/applicant/index.js'
 import Auth from '../services/auth/index.js'
 import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
+import Referring from '../models/referring/index.js'
 import Skill from '../models/skill/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
 import Payment from '../services/payments/index.js'
@@ -106,7 +107,10 @@ router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) 
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   const missions = await Mission.getAllOwned(ctx.identity.id, ctx.paginate)
 
-  ctx.body = missions.map((m) => {
+  ctx.body = await Promise.all(missions.map(async (m) => {
+    const orgReferrer = await Referring.get(m.offer.offerer_id)
+    const contributorReferrer = await Referring.get(m.offer.applicant_id)
+
     return {
       ...m,
       ...Payment.amounts({
@@ -114,10 +118,12 @@ router.get('/missions', loginRequired, paginate, async (ctx) => {
         service: Data.PaymentService.STRIPE
           ? m.offer.payment_mode === Data.PaymentMode.FIAT
           : Data.PaymentService.CRYPTO,
+        org_referred: orgReferrer?.wallet_address,
+        user_referred: contributorReferrer?.wallet_address,
         verified: m.assigner.meta.verified_impact
       })
     }
-  })
+  }))
 })
 
 router.get('/offers', loginRequired, paginate, async (ctx) => {

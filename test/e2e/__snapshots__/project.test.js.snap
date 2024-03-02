@@ -206,6 +206,7 @@ exports[`apply 1`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -232,6 +233,7 @@ exports[`apply 2`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -258,6 +260,7 @@ exports[`apply 3`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -284,6 +287,7 @@ exports[`apply 4`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -610,6 +614,7 @@ exports[`get applicants 1`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -636,6 +641,7 @@ exports[`get applicants 2`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -662,6 +668,7 @@ exports[`get applicants 3`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -688,6 +695,7 @@ exports[`get applicants 4`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "PENDING",
   "updated_at": Any<String>,
@@ -782,6 +790,7 @@ exports[`offer 1`] = `
   "offer_rate": 9000,
   "offerer": Any<Object>,
   "offerer_id": Any<String>,
+  "org_feedback": null,
   "organization": Any<Object>,
   "payment_mode": "FIAT",
   "project": Any<Object>,
@@ -791,6 +800,7 @@ exports[`offer 1`] = `
   "status": "PENDING",
   "total_hours": 180,
   "updated_at": Any<String>,
+  "user_feedback": null,
   "weekly_limit": null,
 }
 `;
@@ -820,6 +830,7 @@ exports[`reject 1`] = `
 
 exports[`user applicants 1`] = `
 {
+  "answers": Any<Array>,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -836,6 +847,7 @@ exports[`user applicants 1`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "CLOSED",
   "updated_at": Any<String>,
@@ -846,6 +858,7 @@ exports[`user applicants 1`] = `
 
 exports[`user applicants 2`] = `
 {
+  "answers": Any<Array>,
   "attachment": null,
   "closed_at": null,
   "cover_letter": "test cover 2",
@@ -862,6 +875,7 @@ exports[`user applicants 2`] = `
   "payment_type": "PAID",
   "project": Any<Object>,
   "project_id": Any<String>,
+  "questions": Any<Array>,
   "share_contact_info": true,
   "status": "CLOSED",
   "updated_at": Any<String>,

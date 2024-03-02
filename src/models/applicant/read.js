@@ -40,7 +40,7 @@ export const get = async (id) => {
       (SELECT
         jsonb_agg(
           json_build_object(
-            'id', ans.id, 
+            'id', q.id, 
             'question', q.question, 
             'required', q.required,
             'options', q.options,

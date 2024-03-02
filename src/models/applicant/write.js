@@ -80,7 +80,7 @@ export const withdrawn = async (id) => {
     RETURNING *
   `)
   } catch {
-    throw PermissionError('not allow')
+    throw new PermissionError()
   }
 }
 

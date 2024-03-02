@@ -92,6 +92,7 @@ export const getApplicant = async (request, data) => {
         updated_at: expect.any(String),
         user: expect.any(Object),
         user_id: expect.any(String),
+        questiions: expect.any(Array),
         // TODO: need to verify answers
         answers: expect.any(Array)
       })

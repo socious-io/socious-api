@@ -21,7 +21,9 @@ export const get = async (id) => {
       row_to_json(org.*) AS organization,
       row_to_json(a.*) AS applicant,
       row_to_json(e.*) AS escrow,
-      row_to_json(m.*) AS mission
+      row_to_json(m.*) AS mission,
+      row_to_json(f1.*) AS user_feedback,
+      row_to_json(f2.*) AS org_feedback
     FROM offers o
     JOIN projects p ON p.id=o.project_id
     JOIN identities offerer ON offerer.id=o.offerer_id
@@ -31,6 +33,8 @@ export const get = async (id) => {
     LEFT JOIN applicants a ON a.id=o.applicant_id
     LEFT JOIN escrows e ON e.offer_id=o.id
     LEFT JOIN missions m ON m.offer_id=o.id
+    LEFT JOIN feedbacks f1 ON f1.mission_id=m.id AND f1.identity_id=recipient.id
+    LEFT JOIN feedbacks f2 ON f2.mission_id=m.id AND f2.identity_id=offerer.id
     WHERE o.id=${id}
   `)
 }
@@ -47,7 +51,9 @@ export const getAll = async (identityId, { limit = 10, offset = 0, filter, sort 
       row_to_json(org.*) AS organization,
       row_to_json(a.*) AS applicant,
       row_to_json(e.*) AS escrow,
-      row_to_json(m.*) AS mission
+      row_to_json(m.*) AS mission,
+      row_to_json(f1.*) AS user_feedback,
+      row_to_json(f2.*) AS org_feedback
     FROM offers o
     JOIN projects p ON p.id=o.project_id
     JOIN identities offerer ON offerer.id=o.offerer_id
@@ -57,6 +63,8 @@ export const getAll = async (identityId, { limit = 10, offset = 0, filter, sort 
     LEFT JOIN applicants a ON a.id=o.applicant_id
     LEFT JOIN escrows e ON e.offer_id=o.id
     LEFT JOIN missions m ON m.offer_id=o.id
+    LEFT JOIN feedbacks f1 ON f1.mission_id=m.id AND f1.identity_id=recipient.id
+    LEFT JOIN feedbacks f2 ON f2.mission_id=m.id AND f2.identity_id=offerer.id
     WHERE (o.recipient_id = ${identityId} OR o.offerer_id = ${identityId})
     ${filtering(filter, filterColumns, true, 'o')}
     ${sorting(sort, sortColumns)}

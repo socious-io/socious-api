@@ -22,7 +22,35 @@ export const get = async (id) => {
     sql`SELECT 
       a.*, i.meta as user,
       row_to_json(m.*) AS attachment,
-      row_to_json(p.*) AS project
+      row_to_json(p.*) AS project,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', ans.id, 
+            'question_id', ans.question_id, 
+            'answer', ans.answer,
+            'selected_option', ans.selected_option,
+            'created_at', ans.created_at,
+            'updated_at', ans.updated_at
+          )
+        )
+        FROM answers ans
+        WHERE ans.applicant_id=a.id
+      ) AS answers,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', ans.id, 
+            'question', q.question, 
+            'required', q.required,
+            'options', q.options,
+            'created_at', q.created_at,
+            'updated_at', q.updated_at
+          )
+        )
+        FROM questions q
+        WHERE q.project_id=a.project_id
+      ) AS questions
     FROM applicants a
     JOIN identities i ON i.id=a.user_id
     LEFT JOIN media m ON m.id=a.attachment
@@ -39,7 +67,35 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
     sql`SELECT COUNT(a.*) OVER () as total_count,
       a.*, i.meta as user,
       row_to_json(m.*) AS attachment,
-      row_to_json(p.*) AS project
+      row_to_json(p.*) AS project,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', ans.id, 
+            'question_id', ans.question_id, 
+            'answer', ans.answer,
+            'selected_option', ans.selected_option,
+            'created_at', ans.created_at,
+            'updated_at', ans.updated_at
+          )
+        )
+        FROM answers ans
+        WHERE ans.applicant_id=a.id
+      ) AS answers,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', q.id, 
+            'question', q.question, 
+            'required', q.required,
+            'options', q.options,
+            'created_at', q.created_at,
+            'updated_at', q.updated_at
+          )
+        )
+        FROM questions q
+        WHERE q.project_id=a.project_id
+      ) AS questions
       FROM applicants a
       JOIN identities i ON i.id=a.user_id
       JOIN projects p ON p.id=a.project_id
@@ -59,7 +115,35 @@ export const getByUserId = async (userId, { offset = 0, limit = 10, filter, sort
         a.*, i.meta as user,
         row_to_json(m.*) AS attachment,
         row_to_json(p.*) AS project,
-        row_to_json(pi.*) AS organization
+        row_to_json(pi.*) AS organization,
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'id', ans.id, 
+              'question_id', ans.question_id, 
+              'answer', ans.answer,
+              'selected_option', ans.selected_option,
+              'created_at', ans.created_at,
+              'updated_at', ans.updated_at
+            )
+          )
+          FROM answers ans
+          WHERE ans.applicant_id=a.id
+        ) AS answers,
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'id', q.id, 
+              'question', q.question, 
+              'required', q.required,
+              'options', q.options,
+              'created_at', q.created_at,
+              'updated_at', q.updated_at
+            )
+          )
+          FROM questions q
+          WHERE q.project_id=a.project_id
+        ) AS questions
       FROM applicants a
       JOIN identities i ON i.id=a.user_id
       JOIN projects p ON p.id=a.project_id
@@ -79,7 +163,35 @@ export const getByProjectId = async (projectId, { offset = 0, limit = 10, filter
     sql`SELECT
           COUNT(a.*) OVER () as total_count,
           a.*, i.meta as user,
-          row_to_json(m.*) AS attachment
+          row_to_json(m.*) AS attachment,
+          (SELECT
+            jsonb_agg(
+              json_build_object(
+                'id', ans.id, 
+                'question_id', ans.question_id, 
+                'answer', ans.answer,
+                'selected_option', ans.selected_option,
+                'created_at', ans.created_at,
+                'updated_at', ans.updated_at
+              )
+            )
+            FROM answers ans
+            WHERE ans.applicant_id=a.id
+          ) AS answers,
+          (SELECT
+            jsonb_agg(
+              json_build_object(
+                'id', q.id, 
+                'question', q.question, 
+                'required', q.required,
+                'options', q.options,
+                'created_at', q.created_at,
+                'updated_at', q.updated_at
+              )
+            )
+            FROM questions q
+            WHERE q.project_id=a.project_id
+          ) AS questions
         FROM applicants a
         JOIN identities i ON i.id=a.user_id
         LEFT JOIN media m ON m.id=a.attachment

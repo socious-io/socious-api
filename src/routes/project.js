@@ -77,9 +77,7 @@ router.get('/:id/applicants', loginRequired, paginate, checkIdParams, async (ctx
 
 router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {
   await validate.ApplicantSchema.validateAsync(ctx.request.body)
-
   ctx.body = await Applicant.apply(ctx.params.id, ctx.user.id, ctx.request.body)
-
   const project = await Project.get(ctx.body.project_id)
 
   Event.push(Event.Types.NOTIFICATION, project.identity_id, {

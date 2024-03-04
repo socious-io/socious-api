@@ -120,6 +120,20 @@ export const update = async (
   }
 }
 
+export const updateDID = async (id, did) => {
+  try {
+    const { rows } = await app.db.query(
+      sql`
+      UPDATE organizations SET
+        did=${did}
+      WHERE id=${id} RETURNING *`
+    )
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`)
 }

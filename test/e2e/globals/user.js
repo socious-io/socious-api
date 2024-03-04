@@ -1,5 +1,6 @@
 import sql from 'sql-template-tag'
 import { app } from '../../../src/index.js'
+import Org from '../../../src/models/organization'
 
 export const register = async (request, data) => {
   for (const i in data.users) {
@@ -82,7 +83,8 @@ export const profile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })
@@ -129,7 +131,8 @@ export const updateProfile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })
@@ -259,6 +262,53 @@ export const updateExperience = async (request, data) => {
   }
 }
 
+export const requestExperienceCredentials = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue
+    }
+
+    const response = await request
+      .post(`/credentials/experiences/${data.users[i].experience}`)
+      .set('Authorization', data.users[i].access_token)
+      .send({
+        message: 'approve please'
+      })
+
+    expect(response.status).toBe(200)
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+      user_id: expect.any(String),
+      org_id: expect.any(String),
+      experience_id: expect.any(String)
+    })
+  }
+}
+
+export const approveRequestedExperienceCredentials = async (request, data) => {
+  const response = await request
+    .get(`/credentials/experiences/`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+    .send({
+      message: 'approve please'
+    })
+
+  expect(response.status).toBe(200)
+  expect(response.body.items.length).toBe(2)
+
+  await Org.updateDID(data.orgs[0].id, 'testDID')
+
+  const approveRes = await request
+    .post(`/credentials/experiences/${response.body.items[0].id}/approve`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+
+  expect(approveRes.status).toBe(200)
+}
+
 export const profileByUsername = async (request, data) => {
   for (const i in data.users) {
     if (data.users[i].invalid) {
@@ -282,7 +332,8 @@ export const profileByUsername = async (request, data) => {
           id: expect.any(String),
           start_at: expect.any(String),
           job_category: expect.any(Object),
-          org: expect.any(Object)
+          org: expect.any(Object),
+          credential: expect.any(Object)
         }
       ]
     })

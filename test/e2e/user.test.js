@@ -15,7 +15,9 @@ import {
   verifyUser,
   updateUserWallet,
   openToWork,
-  openToVolunteer
+  openToVolunteer,
+  requestExperienceCredentials,
+  approveRequestedExperienceCredentials
 } from './globals/user.js'
 
 let server, request
@@ -33,6 +35,8 @@ test('add experience', async () => addExperience(request, data))
 test('profile', async () => profile(request, data))
 test('update language', async () => updateLanguage(request, data))
 test('update experience', async () => updateExperience(request, data))
+test('request experience credentials', async () => requestExperienceCredentials(request, data))
+test('approve request experience credentials', async () => approveRequestedExperienceCredentials(request, data))
 test('profile by username', async () => profileByUsername(request, data))
 test('update profile', async () => updateProfile(request, data))
 test('update wallet', async () => updateUserWallet(request, data))

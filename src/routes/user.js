@@ -144,6 +144,10 @@ router.post('/experiences', loginRequired, async (ctx) => {
   ctx.body = await User.addExperience(ctx.user, ctx.request.body)
 })
 
+router.get('/experiences', loginRequired, async (ctx) => {
+  ctx.body = await User.getExperiences(ctx.user.id)
+})
+
 router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
   ctx.body = await User.editExperience(ctx.params.id, ctx.user, ctx.request.body)

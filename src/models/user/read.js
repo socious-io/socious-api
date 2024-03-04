@@ -180,13 +180,25 @@ export const getProfile = async (id, currentIdentity) => {
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
-          'employment_type', e.employment_type
+          'employment_type', e.employment_type,
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+          ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
         LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN job_categories j ON j.id=e.job_category_id
-        WHERE user_id=u.id
+        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
+        WHERE e.user_id=u.id
     ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
@@ -316,13 +328,25 @@ export const getProfileByUsername = async (username, currentIdentity) => {
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
-          'employment_type', e.employment_type
+          'employment_type', e.employment_type,
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+          ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
         ))
         FROM experiences e
         JOIN organizations org ON org.id=e.org_id
         LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN job_categories j ON j.id=e.job_category_id
-        WHERE user_id=u.id
+        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
+        WHERE e.user_id=u.id
     ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
@@ -471,13 +495,25 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
           'job_category', row_to_json(j.*),
           'country', e.country,
           'city', e.city,
-          'employment_type', e.employment_type
+          'employment_type', e.employment_type,
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+           ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
         ))
         FROM experiences e
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         JOIN organizations org ON org.id=e.org_id
         LEFT JOIN media org_media ON org_media.id=org.image
-        WHERE user_id=u.id
+        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
+        WHERE e.user_id=u.id
     ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar

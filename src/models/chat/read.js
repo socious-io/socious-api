@@ -42,7 +42,7 @@ export const find = async (identityId, { participants }) => {
 
   const { rows } = await app.db.query(
     sql`
-    SELECT COUNT(*) OVER () as total_count, chats.*
+    SELECT *
     FROM chats
     WHERE participants=${participants}
     ORDER BY updated_at DESC`
@@ -175,4 +175,14 @@ export const chatPermission = async (identity, participantId) => {
   } catch {
     throw new PermissionError("identities didn't connect")
   }
+}
+
+export const unreadCount = async (identityId) => {
+  const row = await app.db.get(sql`
+    SELECT COUNT(m.*) FROM chats c 
+    JOIN messages m ON m.chat_id=c.id 
+    JOIN chats_participants p ON p.chat_id=c.id 
+    WHERE p.identity_id=${identityId} AND m.created_at > p.last_read_at AND m.id != p.last_read_id
+  `)
+  return { count: parseInt(row.count) }
 }

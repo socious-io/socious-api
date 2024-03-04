@@ -13,6 +13,7 @@ export const router = new Router()
 
 router.get('/summary', loginRequired, paginate, async (ctx) => {
   const { filter } = ctx.query
+  if (ctx.paginate.limit > 200) ctx.paginate.limit
   ctx.body = await Chat.summary(ctx.identity.id, ctx.paginate, filter)
 })
 
@@ -22,6 +23,10 @@ router.get('/:id', loginRequired, checkIdParams, chatPermission, async (ctx) => 
 
 router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Chat.all(ctx.identity.id, ctx.paginate)
+})
+
+router.get('/unreads/counts', loginRequired, async (ctx) => {
+  ctx.body = await Chat.unreadCount(ctx.identity.id)
 })
 
 router.post('/find', loginRequired, async (ctx) => {

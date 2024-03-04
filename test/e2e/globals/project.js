@@ -92,6 +92,7 @@ export const getApplicant = async (request, data) => {
         updated_at: expect.any(String),
         user: expect.any(Object),
         user_id: expect.any(String),
+        questions: expect.any(Array),
         // TODO: need to verify answers
         answers: expect.any(Array)
       })
@@ -196,7 +197,6 @@ export const apply = async (request, data) => {
         .post(`/projects/${data.projects.objs[i].id}/applicants`)
         .set('Authorization', user.access_token)
         .send(body)
-
       expect(response.status).toBe(200)
       expect(response.body).toMatchSnapshot({
         id: expect.any(String),
@@ -207,6 +207,7 @@ export const apply = async (request, data) => {
         user: expect.any(Object),
         user_id: expect.any(String),
         // TODO: need to verify answers
+        questions: expect.any(Array),
         answers: expect.any(Array)
       })
       if (!data.projects.objs[i].applications) {
@@ -452,7 +453,9 @@ export const userApplicants = async (request, data) => {
         updated_at: expect.any(String),
         organization: expect.any(Object),
         project: expect.any(Object),
-        user: expect.any(Object)
+        user: expect.any(Object),
+        answers: expect.any(Array),
+        questions: expect.any(Array)
       })
     }
   }

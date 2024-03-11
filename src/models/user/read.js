@@ -73,6 +73,10 @@ export const getProfile = async (id, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
+    (c.id) AS connection_id,
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
@@ -203,7 +207,12 @@ export const getProfile = async (id, currentIdentity) => {
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=u.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=u.id
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    LEFT JOIN connections c ON 
+      (c.requested_id=u.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=u.id)
     WHERE u.id=${id}
     `
   )
@@ -221,6 +230,10 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
+    (c.id) AS connection_id,
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
@@ -352,6 +365,11 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=u.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=u.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=u.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=u.id)
     WHERE u.username=${username.toLowerCase()} AND (r.blocked IS NULL OR r.blocked = false)
     `
   )
@@ -390,6 +408,10 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
     COALESCE(r.id IS NOT NULL, false) AS reported,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
+    (c.id) AS connection_id,
     mobile_country_code,
     (SELECT
       jsonb_agg(json_build_object(
@@ -519,6 +541,11 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
     LEFT JOIN reports r ON r.user_id=u.id AND r.identity_id=${currentIdentity}
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=u.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=u.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=u.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=u.id)
     WHERE u.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
     ${sorting(sort, sortColumns)}
     `

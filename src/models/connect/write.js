@@ -42,6 +42,14 @@ export const accept = async (id) => {
   }
 }
 
+export const disconnect = async (id) => {
+  try {
+    await app.db.query(sql`DELETE FROM connections WHERE id=${id}`)
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
 export const block = async (id) => {
   try {
     const { rows } = await app.db.query(sql`

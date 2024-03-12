@@ -17,7 +17,9 @@ export const filterColumns = {
   project_length: String,
   other_party_title: String,
   remote_preference: String,
-  promoted: Boolean
+  promoted: Boolean,
+  experience_level: Number,
+  job_category_id: String
 }
 
 export const sortColumns = [

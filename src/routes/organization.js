@@ -25,15 +25,15 @@ const addShortname = async (request) => {
 }
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
-  ctx.body = await Org.get(ctx.params.id)
+  ctx.body = await Org.get(ctx.params.id, ctx.identity.id)
 })
 
 router.get('/by-shortname/:shortname', loginOptional, async (ctx) => {
-  ctx.body = await Org.getByShortname(ctx.params.shortname)
+  ctx.body = await Org.getByShortname(ctx.params.shortname, ctx.identity.id)
 })
 
 router.get('/', loginOptional, paginate, async (ctx) => {
-  ctx.body = await Org.all(ctx.paginate)
+  ctx.body = await Org.all({ ...ctx.paginate, currentIdentity: ctx.identity.id })
 })
 
 router.post('/', loginRequired, async (ctx) => {

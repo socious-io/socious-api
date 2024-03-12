@@ -11,13 +11,17 @@ export const filterColumns = {
 
 export const sortColumns = ['created_at', 'updated_at']
 
-export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
+export const all = async ({ offset = 0, limit = 10, filter, sort, currentIdentity }) => {
   const { rows } = await app.db.query(
     sql`SELECT COUNT(*) OVER () as total_count, 
     org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
     row_to_json(m_cover.*) AS cover_image,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
+    (c.id) AS connection_id,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -57,6 +61,11 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=org.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=org.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
     ${filtering(filter, filterColumns, false, 'org')}
     ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}`
@@ -64,12 +73,16 @@ export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
   return rows
 }
 
-export const get = async (id) => {
+export const get = async (id, currentIdentity) => {
   return app.db.get(sql`
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
     row_to_json(m_cover.*) AS cover_image,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
+    (c.id) AS connection_id,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -109,16 +122,24 @@ export const get = async (id) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=org.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=org.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
     WHERE org.id=${id}`)
 }
 
-export const getAll = async (ids, sort) => {
+export const getAll = async (ids, sort, currentIdentity) => {
   const { rows } = await app.db.query(sql`
     SELECT 
       org.*,
       array_to_json(org.social_causes) AS social_causes,
       row_to_json(m_image.*) AS image,
       row_to_json(m_cover.*) AS cover_image,
+      (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+      (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+      (c.status) AS connection_status,
       (SELECT
         jsonb_agg(json_build_object(
             'id', adds.id,
@@ -158,18 +179,26 @@ export const getAll = async (ids, sort) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=org.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=org.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
     WHERE org.id=ANY(${ids})
     ${sorting(sort, sortColumns, 'org')}
     `)
   return rows
 }
 
-export const getByShortname = async (shortname) => {
+export const getByShortname = async (shortname, currentIdentity) => {
   return app.db.get(sql`
     SELECT org.*,
     array_to_json(org.social_causes) AS social_causes,
     row_to_json(m_image.*) AS image,
     row_to_json(m_cover.*) AS cover_image,
+    (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
+    (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
+    (c.status) AS connection_status,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -209,6 +238,11 @@ export const getByShortname = async (shortname) => {
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
+    LEFT JOIN follows er ON er.follower_identity_id=${currentIdentity} AND er.following_identity_id=org.id
+    LEFT JOIN follows ing ON ing.following_identity_id=${currentIdentity} AND ing.follower_identity_id=org.id
+    LEFT JOIN connections c ON 
+      (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
+      (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
     WHERE org.shortname=${shortname.toLowerCase()}`)
 }
 

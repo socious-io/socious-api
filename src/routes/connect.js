@@ -56,6 +56,11 @@ router.post('/:id/accept', loginRequired, checkIdParams, connectRequested, async
   })
 })
 
+router.post('/:id/disconnect', loginRequired, checkIdParams, connectPermission, async (ctx) => {
+  await Connect.disconnect(ctx.params.id)
+  ctx.body = { message: 'success' }
+})
+
 router.post('/:id/block', loginRequired, checkIdParams, connectPermission, async (ctx) => {
   ctx.body = await Connect.block(ctx.params.id)
   await Follow.unfollow(ctx.connection.requested_id, ctx.connection.requester_id)

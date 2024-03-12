@@ -792,6 +792,7 @@ exports[`offer 1`] = `
   "offerer_id": Any<String>,
   "org_feedback": null,
   "organization": Any<Object>,
+  "payment": null,
   "payment_mode": "FIAT",
   "project": Any<Object>,
   "project_id": Any<String>,

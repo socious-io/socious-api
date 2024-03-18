@@ -111,3 +111,20 @@ export const related = async (identityId1, identityId2) => {
     throw new PermissionError()
   }
 }
+
+export const relatedWithBlocked = async (identityId1, identityId2) => {
+  try {
+    return app.db.get(
+      sql`SELECT c.*, row_to_json(i1.*) AS requested, row_to_json(i2.*) AS requester
+      FROM connections c
+      JOIN identities i1 ON i1.id=c.requested_id
+      JOIN identities i2 ON i2.id=c.requester_id    
+      WHERE 
+        (requester_id = ${identityId1} AND requested_id = ${identityId2}) OR
+        (requester_id = ${identityId2} AND requested_id = ${identityId1})
+    `
+    )
+  } catch {
+    throw new PermissionError()
+  }
+}

@@ -22,6 +22,14 @@ router.get('/related/:identity_id', loginRequired, async (ctx) => {
   }
 })
 
+router.get('/related-with-blocked/:identity_id', loginRequired, async (ctx) => {
+  try {
+    ctx.body = { connect: await Connect.relatedWithBlocked(ctx.identity.id, ctx.params.identity_id) }
+  } catch {
+    ctx.body = { connect: null }
+  }
+})
+
 router.get('/:id', loginRequired, checkIdParams, connectPermission, async (ctx) => {
   ctx.body = await Connect.get(ctx.params.id)
 })

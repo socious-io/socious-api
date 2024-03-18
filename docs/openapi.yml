@@ -5593,7 +5593,26 @@ paths:
     get:
       tags:
         - connect
-      summary: get related connect
+      summary: get related connect if status is not BLOCKED
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /connections/related-with-blocked/{identity_id}:
+    parameters:
+      - name: identity_id
+        required: true
+        in: path
+        description: identity id
+        schema:
+          type: string
+    get:
+      tags:
+        - connect
+      summary: get related connect even if status is BLOCKED
       security:
         - bearerAuth: []
       responses:

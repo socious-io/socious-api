@@ -547,7 +547,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
       (c.requested_id=u.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=u.id)
     WHERE u.id=ANY(${ids}) AND (r.blocked IS NULL OR r.blocked = false)
-    ${sorting(sort, sortColumns)}
+    ${sorting(sort, sortColumns, 'u')}
     `
   )
   return rows

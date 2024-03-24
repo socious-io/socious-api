@@ -582,6 +582,7 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
     WHERE
       (
        (c.requester_id = u.id OR c.requested_id = u.id ) AND
+       (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} ) AND
        c.status <> 'BLOCKED'
       ) AND
       u.id <> ${currentIdentity} AND
@@ -615,6 +616,7 @@ export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 1
     WHERE
       (
        (c.requester_id = u.id OR c.requested_id = u.id ) AND
+       (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} ) AND
        c.status <> 'BLOCKED'
       ) AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})

@@ -4,7 +4,7 @@ import Org from '../models/organization/index.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, orgMember } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
-import { ValidationError } from '../utils/errors.js'
+import { BadRequestError, ValidationError } from '../utils/errors.js'
 import config from '../config.js'
 import { isTestEmail } from '../services/email/index.js'
 import Notif from '../models/notification/index.js'
@@ -82,6 +82,8 @@ router.post('/:id/members/:user_id', loginRequired, checkIdParams, orgMember, as
 })
 
 router.post('/remove/:id/members/:user_id', loginRequired, checkIdParams, orgMember, async (ctx) => {
+  const members = await Org.miniMembers(ctx.params.id)
+  if (members.length < 2) throw new BadRequestError('last member not allow to be removed')
   await Org.removeMember(ctx.params.id, ctx.params.user_id)
   ctx.body = { message: 'success' }
 })

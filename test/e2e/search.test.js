@@ -72,6 +72,22 @@ test('projects with filter', async () => {
   })
 })
 
+test('search users', async () => {
+  const response = await request.post('/search').set('Authorization', data.users[0].access_token).send({
+    q: ' ',
+    type: 'related_users'
+  })
+  expect(response.status).toBe(200)
+})
+
+test('search related users', async () => {
+  const response = await request.post('/search').set('Authorization', data.users[0].access_token).send({
+    q: ' ',
+    type: 'users'
+  })
+  expect(response.status).toBe(200)
+})
+
 const cleanup = async () => {
   await app.db.query('DELETE FROM users')
   await app.db.query('DELETE FROM organizations')

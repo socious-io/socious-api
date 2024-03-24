@@ -87,7 +87,6 @@ export const sorting = (sort, columns, prefix = '') => {
 }
 
 export const textSearch = (q) => {
-  const queryList = q.match(/\w+/g)
-
+  const queryList = q.match(/\w+/g) || []
   return queryList.map((i) => `${i}:*`).join('&')
 }

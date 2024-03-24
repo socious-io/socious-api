@@ -578,7 +578,12 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
       COUNT(*) OVER () as total_count,
       u.id
     FROM users u
+    LEFT JOIN connections c
     WHERE
+      (
+       (c.requester_id = u.id OR c.requested_id = u.id ) AND
+       c.status <> 'BLOCKED'
+      ) AND
       u.id <> ${currentIdentity} AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
@@ -602,19 +607,15 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
 
 export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
-    WITH connected AS (
-      SELECT * FROM connections WHERE
-        (requester_id = ${currentIdentity} OR  requested_id = ${currentIdentity}) AND
-        c.status <> 'BLOCKED'
-    )
     SELECT
       COUNT(*) OVER () as total_count,
       u.id
     FROM users u
+    LEFT JOIN connections c
     WHERE
       (
-        u.id IN (SELECT requester_id FROM connected) OR 
-        u.id IN (SELECT requested_id FROM connected)
+       (c.requester_id = u.id OR c.requested_id = u.id ) AND
+       c.status <> 'BLOCKED'
       ) AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}

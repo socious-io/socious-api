@@ -16,6 +16,7 @@ const addHistory = async (body, identityId) => {
 
 const find = async (body, { identityId, shouldSave }, paginate) => {
   await Data.SearchSchema.validateAsync(body)
+  body.q = body.q?.trim()
 
   const options = { ...paginate, filter: body.filter, sort: body.sort }
 

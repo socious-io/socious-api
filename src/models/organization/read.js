@@ -140,6 +140,7 @@ export const getAll = async (ids, sort, currentIdentity) => {
       (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
       (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
       (c.status) AS connection_status,
+      (c.id) AS connection_id,
       (SELECT
         jsonb_agg(json_build_object(
             'id', adds.id,
@@ -199,6 +200,7 @@ export const getByShortname = async (shortname, currentIdentity) => {
     (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
     (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
     (c.status) AS connection_status,
+    (c.id) AS connection_id,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,

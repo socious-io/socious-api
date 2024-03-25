@@ -578,17 +578,15 @@ export const search = async (q, currentIdentity, { offset = 0, limit = 10, filte
       COUNT(*) OVER () as total_count,
       u.id
     FROM users u
-    LEFT JOIN connections c
+    LEFT JOIN connections c ON 
+      (c.requester_id = u.id OR c.requested_id = u.id ) AND 
+      (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} )
     WHERE
-      (
-       (c.requester_id = u.id OR c.requested_id = u.id ) AND
-       (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} ) AND
-       c.status <> 'BLOCKED'
-      ) AND
+      c.status <> 'BLOCKED' AND
       u.id <> ${currentIdentity} AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}
+    ${sorting(sort, sortColumns, 'u')}
     LIMIT ${limit} OFFSET ${offset}
   `)
 
@@ -612,16 +610,14 @@ export const searchRelateds = async (q, currentIdentity, { offset = 0, limit = 1
       COUNT(*) OVER () as total_count,
       u.id
     FROM users u
-    LEFT JOIN connections c
+    LEFT JOIN connections c ON 
+      (c.requester_id = u.id OR c.requested_id = u.id ) AND 
+      (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} )
     WHERE
-      (
-       (c.requester_id = u.id OR c.requested_id = u.id ) AND
-       (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} ) AND
-       c.status <> 'BLOCKED'
-      ) AND
+      c.status <> 'BLOCKED' AND
       u.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}
+    ${sorting(sort, sortColumns, 'u')}
     LIMIT ${limit} OFFSET ${offset}
   `)
 

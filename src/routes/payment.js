@@ -146,11 +146,14 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
 
   if (escrow.released_at) throw new BadRequestError('Escrow already has been released')
 
+  let round = is_jp ? 1 : 100
+  if (mission.offer.payment_mode === Data.PaymentService.CRYPTO) round = 100000
+
   const amounts = Payment.amounts({
     amount: escrow.amount,
     service: Data.PaymentService.STRIPE,
     verified: mission.assigner.meta.verified_impact,
-    round: is_jp ? 1 : 100
+    round
   })
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {

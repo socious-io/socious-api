@@ -17,6 +17,8 @@ export const router = new Router()
 
 router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) => {
   const offer = await Offer.get(ctx.offer.id)
+  let round = offer.currency === Data.PaymentCurrency.JPY ? 1 : 100
+  if (offer.payment_mode === Data.PaymentService.CRYPTO) round = 100000
 
   ctx.body = {
     ...offer,
@@ -24,7 +26,7 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
       amount: offer.assignment_total,
       service: offer.payment_mode === Data.PaymentMode.FIAT ? Data.PaymentService.STRIPE : Data.PaymentService.CRYPTO,
       verified: offer.offerer.meta.verified_impact,
-      round: offer.currency === Data.PaymentCurrency.JPY ? 1 : 100
+      round
     })
   }
 })

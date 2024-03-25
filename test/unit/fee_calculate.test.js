@@ -30,6 +30,16 @@ const data = [
     expect_stripe_fee: 0,
     expect_payout: 329.84,
     service: 'CRYPTO'
+  },
+  {
+    amount: 0.01,
+    verfied: true,
+    round: 100000,
+    expect_total: 0.01021,
+    expect_app_fee: 0.0007,
+    expect_stripe_fee: 0,
+    expect_payout: 0.0095,
+    service: 'CRYPTO'
   }
 ]
 

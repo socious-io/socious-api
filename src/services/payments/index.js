@@ -11,10 +11,15 @@ const IMPACT_USER_FEE = 0.05
 const ORG_FEE = 0.03
 const USER_FEE = 0.1
 const STRIPE_FEE = 0.036
+const REFERRED_ORG_FEE_DISCOUNT = 0.5
+const REFERRED_USER_FEE_DISCOUNT = 0.5
 
-export const amounts = ({ amount, service, verified = true, round = 100 }) => {
-  const orgFeeRate = verified ? IMPACT_ORG_FEE : ORG_FEE
-  const userFeeRate = verified ? IMPACT_USER_FEE : USER_FEE
+export const amounts = ({ amount, service, verified = true, org_referred, user_referred, round = 100 }) => {
+  var orgFeeRate = verified ? IMPACT_ORG_FEE : ORG_FEE
+  var userFeeRate = verified ? IMPACT_USER_FEE : USER_FEE
+  if (org_referred) orgFeeRate *= REFERRED_ORG_FEE_DISCOUNT
+  if (user_referred) userFeeRate *= REFERRED_USER_FEE_DISCOUNT
+
   let fee = amount * orgFeeRate
   let stripe_fee = 0
 

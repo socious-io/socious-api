@@ -372,3 +372,18 @@ export const openToVolunteer = async (request, data) => {
   expect(response2.status).toBe(200)
   expect(response2.body.open_to_volunteer).toBe(false)
 }
+
+export const registerReferredBy = async (request, data) => {
+  const referrerProfileNotVerified = await request.get('/user/profile').set('Authorization', data.users[0].access_token)
+  expect(referrerProfileNotVerified.status).toBe(200)
+
+  const response = await request.post('/auth/register').send({
+    username: 'test_username_referred',
+    first_name: data.users[0].first_name,
+    last_name: data.users[0].last_name,
+    email: 'test_referred@referred.com',
+    password: data.users[0].password,
+    referred_by: referrerProfileNotVerified.body.id
+  })
+  expect(response.status).toBe(400)
+}

@@ -237,6 +237,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
+    identity_verified,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,

@@ -4,6 +4,7 @@ import Applicant from '../models/applicant/index.js'
 import Offer from '../models/offer/index.js'
 import Mission from '../models/mission/index.js'
 import Notif from '../models/notification/index.js'
+import Referring from '../models/referring/index.js'
 import Event from '../services/events/index.js'
 import Payment from '../services/payments/index.js'
 import Data from '@socious/data'
@@ -20,14 +21,21 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
   let round = offer.currency === Data.PaymentCurrency.JPY ? 1 : 100
   if (offer.payment_mode === Data.PaymentService.CRYPTO) round = 100000
 
+  const orgReferrer = await Referring.get(offer.offerer_id)
+  const contributorReferrer = await Referring.get(offer.applicant_id)
+
   ctx.body = {
     ...offer,
     ...Payment.amounts({
       amount: offer.assignment_total,
       service: offer.payment_mode === Data.PaymentMode.FIAT ? Data.PaymentService.STRIPE : Data.PaymentService.CRYPTO,
       verified: offer.offerer.meta.verified_impact,
+      org_referred: orgReferrer?.wallet_address,
+      user_referred: contributorReferrer?.wallet_address,
       round
-    })
+    }),
+    org_referrer_wallet: orgReferrer?.wallet_address,
+    contributor_referrer_wallet: contributorReferrer?.wallet_address
   }
 })
 

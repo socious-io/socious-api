@@ -479,6 +479,7 @@ export interface IUsersEntity {
   username: string
   view_as?: number | null
   wallet_address?: string | null
+  identity_verified: boolean
 }
 
 export interface IReportsEntity {

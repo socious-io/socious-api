@@ -1,8 +1,15 @@
 import User from '../../models/user/index.js'
 import Org from '../../models/organization/index.js'
+import Referring from '../../models/referring/index.js'
 import * as bcrypt from 'bcrypt'
 import { signin } from './jwt.js'
-import { AuthorizationError, NotMatchedError, PermissionError, ValidationError } from '../../utils/errors.js'
+import {
+  AuthorizationError,
+  BadRequestError,
+  NotMatchedError,
+  PermissionError,
+  ValidationError
+} from '../../utils/errors.js'
 import {
   authSchem,
   registerSchem,
@@ -74,7 +81,16 @@ export const register = async (body) => {
     }
   }
 
+  const referredById = body.referred_by
+  if (referredById) {
+    const referrer = await User.get(referredById)
+
+    if (!referrer.identity_verified)
+      throw new BadRequestError('Referrer identity is not verified')
+  }
+  
   const user = await User.insert(body.first_name, body.last_name, body.username, body.email, body.password)
+  if (referredById) await Referring.insert(user.id, referredById)
 
   // sending OTP to verify user email after registeration
   const code = await createOTP(user.id, OTPType.EMAIL, OTPPurposeType.ACTIVATION)

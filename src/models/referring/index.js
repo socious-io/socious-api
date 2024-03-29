@@ -27,7 +27,7 @@ const get = async (referredIdentityId) => {
         users.identity_verified
     `)
   } catch {
-    return null;
+    return null
   }
 }
 

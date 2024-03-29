@@ -85,10 +85,9 @@ export const register = async (body) => {
   if (referredById) {
     const referrer = await User.get(referredById)
 
-    if (!referrer.identity_verified)
-      throw new BadRequestError('Referrer identity is not verified')
+    if (!referrer.identity_verified) throw new BadRequestError('Referrer identity is not verified')
   }
-  
+
   const user = await User.insert(body.first_name, body.last_name, body.username, body.email, body.password)
   if (referredById) await Referring.insert(user.id, referredById)
 

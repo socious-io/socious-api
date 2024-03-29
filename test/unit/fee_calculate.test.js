@@ -84,7 +84,7 @@ const data = [
     expect_stripe_fee: 0,
     expect_payout: 975,
     service: 'CRYPTO'
-  },
+  }
 ]
 
 beforeAll(async () => {

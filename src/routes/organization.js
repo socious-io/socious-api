@@ -50,8 +50,7 @@ router.post('/', loginRequired, async (ctx) => {
   if (referredById) {
     const user = await User.get(referredById)
 
-    if (!user.identity_verified)
-      throw new BadRequestError('Referrer identity is not verified')
+    if (!user.identity_verified) throw new BadRequestError('Referrer identity is not verified')
   }
 
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)

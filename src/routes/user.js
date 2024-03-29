@@ -107,23 +107,25 @@ router.get('/:id/missions', loginRequired, checkIdParams, paginate, async (ctx) 
 router.get('/missions', loginRequired, paginate, async (ctx) => {
   const missions = await Mission.getAllOwned(ctx.identity.id, ctx.paginate)
 
-  ctx.body = await Promise.all(missions.map(async (m) => {
-    const orgReferrer = await Referring.get(m.offer.offerer_id)
-    const contributorReferrer = await Referring.get(m.offer.applicant_id)
+  ctx.body = await Promise.all(
+    missions.map(async (m) => {
+      const orgReferrer = await Referring.get(m.offer.offerer_id)
+      const contributorReferrer = await Referring.get(m.offer.applicant_id)
 
-    return {
-      ...m,
-      ...Payment.amounts({
-        amount: m.offer.assignment_total,
-        service: Data.PaymentService.STRIPE
-          ? m.offer.payment_mode === Data.PaymentMode.FIAT
-          : Data.PaymentService.CRYPTO,
-        org_referred: orgReferrer?.wallet_address,
-        user_referred: contributorReferrer?.wallet_address,
-        verified: m.assigner.meta.verified_impact
-      })
-    }
-  }))
+      return {
+        ...m,
+        ...Payment.amounts({
+          amount: m.offer.assignment_total,
+          service: Data.PaymentService.STRIPE
+            ? m.offer.payment_mode === Data.PaymentMode.FIAT
+            : Data.PaymentService.CRYPTO,
+          org_referred: orgReferrer?.wallet_address,
+          user_referred: contributorReferrer?.wallet_address,
+          verified: m.assigner.meta.verified_impact
+        })
+      }
+    })
+  )
 })
 
 router.get('/offers', loginRequired, paginate, async (ctx) => {

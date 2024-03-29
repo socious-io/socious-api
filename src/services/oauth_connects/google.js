@@ -34,8 +34,7 @@ export async function googleLogin(code, referredById, ref) {
     if (referredById) {
       const user = await User.get(referredById)
 
-      if (!user.identity_verified)
-        throw new BadRequestError('Referrer identity is not verified')
+      if (!user.identity_verified) throw new BadRequestError('Referrer identity is not verified')
     }
 
     const username = generateUsername(userInfo.email)

@@ -16,6 +16,7 @@ import {
   updateUserWallet,
   openToWork,
   openToVolunteer,
+  registerReferredBy,
   requestExperienceCredentials,
   approveRequestedExperienceCredentials
 } from './globals/user.js'
@@ -42,6 +43,7 @@ test('update profile', async () => updateProfile(request, data))
 test('update wallet', async () => updateUserWallet(request, data))
 test('open to work', async () => openToWork(request, data))
 test('open to volunteer', async () => openToVolunteer(request, data))
+test('register referred by another user', async () => registerReferredBy(request, data))
 
 test('delete user', async () => {
   const response = await request

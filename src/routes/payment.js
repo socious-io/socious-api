@@ -8,6 +8,7 @@ import { checkIdParams, offerer, assignee } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { BadRequestError } from '../utils/errors.js'
 import Mission from '../models/mission/index.js'
+import Referring from '../models/referring/index.js'
 import { addCustomer } from '../services/payments/stripe.js'
 
 export const router = new Router()
@@ -85,10 +86,15 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
 
   if (service === Data.PaymentService.CRYPTO) round = 100000
 
+  const orgReferrer = await Referring.get(ctx.offer.offerer_id)
+  const contributorReferrer = await Referring.get(ctx.offer.applicant_id)
+
   const amounts = Payment.amounts({
     amount,
     service,
     verified: ctx.identity.meta.verified_impact,
+    org_referred: orgReferrer?.wallet_address,
+    user_referred: contributorReferrer?.wallet_address,
     round: round
   })
 
@@ -149,10 +155,15 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
   let round = is_jp ? 1 : 100
   if (mission.offer.payment_mode === Data.PaymentService.CRYPTO) round = 100000
 
+  const orgReferrer = await Referring.get(mission.offer.offerer_id)
+  const contributorReferrer = await Referring.get(mission.offer.applicant_id)
+
   const amounts = Payment.amounts({
     amount: escrow.amount,
     service: Data.PaymentService.STRIPE,
     verified: mission.assigner.meta.verified_impact,
+    org_referred: orgReferrer?.wallet_address,
+    user_referred: contributorReferrer?.wallet_address,
     round
   })
 

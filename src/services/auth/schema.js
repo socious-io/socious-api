@@ -13,7 +13,8 @@ export const registerSchem = Joi.object({
   last_name: Joi.string(),
   username: Joi.string().regex(validate.usernamePattern),
   email: Joi.string().email().required(),
-  password: Joi.string().min(8)
+  password: Joi.string().min(8),
+  referred_by: Joi.string()
 })
 
 export const preregisterSchem = Joi.object({

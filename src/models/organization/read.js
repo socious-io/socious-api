@@ -66,7 +66,8 @@ export const all = async ({ offset = 0, limit = 10, filter, sort, currentIdentit
     LEFT JOIN connections c ON 
       (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
-    ${filtering(filter, filterColumns, false, 'org')}
+    WHERE (c.status <> 'BLOCKED' OR c.status IS NULL)
+    ${filtering(filter, filterColumns, true, 'org')}
     ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -127,7 +128,7 @@ export const get = async (id, currentIdentity) => {
     LEFT JOIN connections c ON 
       (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
-    WHERE org.id=${id}`)
+    WHERE (c.status <> 'BLOCKED' OR c.status IS NULL) AND org.id=${id}`)
 }
 
 export const getAll = async (ids, sort, currentIdentity) => {
@@ -268,13 +269,17 @@ export const industries = async ({ offset = 0, limit = 10, q }) => {
   return rows
 }
 
-export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
+export const search = async (q, { offset = 0, limit = 10, filter, sort, currentIdentity }) => {
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,
       org.id
     FROM organizations org
+    LEFT JOIN connections c ON 
+      (c.requester_id = u.id OR c.requested_id = u.id ) AND 
+      (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} )
     WHERE
+      (c.status <> 'BLOCKED' OR c.status IS NULL) AND
       org.search_tsv @@ to_tsquery(${textSearch(q)})
       ${filtering(filter, filterColumns)}
     ${sorting(sort, sortColumns)}

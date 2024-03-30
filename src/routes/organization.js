@@ -1,6 +1,8 @@
 import Router from '@koa/router'
 import { validate } from '@socious/data'
 import Org from '../models/organization/index.js'
+import User from '../models/user/index.js'
+import Referring from '../models/referring/index.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, orgMember } from '../utils/middlewares/route.js'
 import { paginate } from '../utils/middlewares/requests.js'
@@ -43,8 +45,17 @@ router.post('/', loginRequired, async (ctx) => {
   if (!config.mail.allowTest && isTestEmail(ctx.request.body.email)) {
     throw new ValidationError('Invalid email')
   }
+
+  const referredById = ctx.request.body?.referredBy
+  if (referredById) {
+    const user = await User.get(referredById)
+
+    if (!user.identity_verified) throw new BadRequestError('Referrer identity is not verified')
+  }
+
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)
   if (ctx.query.auto_member !== 'false') await Org.addMember(ctx.body.id, ctx.user.id)
+  if (referredById) await Referring.insert(ctx.body.id, referredById)
 })
 
 router.get('/check', loginRequired, async (ctx) => {

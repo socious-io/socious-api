@@ -130,8 +130,8 @@ router.get('/stripe', async (ctx) => {
 })
 
 router.get('/google', async (ctx) => {
-  const { code } = ctx.query
-  ctx.body = await googleLogin(code, ctx.headers.referer)
+  const { code, referrer_id } = ctx.query
+  ctx.body = await googleLogin(code, referrer_id, ctx.headers.referer)
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {

@@ -281,8 +281,8 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort, currentI
     WHERE
       (c.status <> 'BLOCKED' OR c.status IS NULL) AND
       org.search_tsv @@ to_tsquery(${textSearch(q)})
-      ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}
+      ${filtering(filter, filterColumns, true, 'org')}
+    ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}
     `)
 

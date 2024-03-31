@@ -276,7 +276,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort, currentI
       org.id
     FROM organizations org
     LEFT JOIN connections c ON 
-      (c.requester_id = u.id OR c.requested_id = u.id ) AND 
+      (c.requester_id = org.id OR c.requested_id = org.id ) AND 
       (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} )
     WHERE
       (c.status <> 'BLOCKED' OR c.status IS NULL) AND

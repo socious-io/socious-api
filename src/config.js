@@ -153,7 +153,7 @@ export default {
             name: 'milkomeda testnet',
             explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
+          escrow: '0x30cB9dCac6B2bc7f8289d262BCaAb28f86bc64ED',
           tokens: [
             {
               name: 'USDC',

@@ -19,9 +19,9 @@ test('calculate', async () => {
 
   expect(
     await confirmTx(
-      '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
+      '0x30cB9dCac6B2bc7f8289d262BCaAb28f86bc64ED',
       0.01021,
-      '0xa742ccf421dc6cfdecc94b6748e9c3a84d731b6fb53d1fac9c4dcca15d93c6a7',
+      '0x93de8307c192ee6c0b5495eac895cd508e04e08b6e806f9d570270d1007ef621',
       '0xC12F6Ee5c853393105f29EF0310e61e6B494a70F',
       0,
       'testnet'

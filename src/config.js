@@ -343,9 +343,13 @@ export default {
     }
   },
   wallet: {
-    agent: 'http://54.85.201.2:8000',
+    agent: 'https://agent.socious.io',
+    agent_api_key: process.env.PRISM_AGENT_API_KEY,
     connect_address: 'https://wallet.socious.io/connect',
-    callback: process.env.WALLET_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback'
+    experience_vc_callback:
+      process.env.WALLET_EXPERIENCE_VC_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback',
+    verification_callback:
+      process.env.WALLET_VERIFICATION_CALLBACK || 'https://socious.io/api/v2/credentials/verifications/connect/callback'
   }
 }
 

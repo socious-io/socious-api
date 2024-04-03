@@ -1,27 +1,21 @@
 export const delay = (t, val) => new Promise((resolve) => setTimeout(resolve, t, val))
 
-export const decodeJWT = (token) => {
-  const parts = token.split('.') // Split the token into its parts
+export function decodeJWT(token) {
+  // Split the token into its parts
+  const parts = token.split('.');
   if (parts.length !== 3) {
-    throw new Error('Invalid JWT: The token must have three parts')
+    throw new Error('Invalid JWT: The token must have three parts');
   }
 
-  const [header, payload] = parts.map((part) => {
-    // Convert Base64Url to Base64
-    const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
-    // Decode Base64 to UTF-8 string
-    const jsonPayload = decodeURIComponent(
-      window
-        .atob(base64)
-        .split('')
-        .map((c) => {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        })
-        .join('')
-    )
+  // Decode header and payload
+  const [header, payload] = parts.slice(0, 2).map(part => {
+    // Convert base64url to base64
+    const base64 = part.replace(/-/g, '+').replace(/_/g, '/');
+    // Decode base64 to a string
+    const jsonPayload = Buffer.from(base64, 'base64').toString();
     // Parse the JSON string
-    return JSON.parse(jsonPayload)
-  })
+    return JSON.parse(jsonPayload);
+  });
 
-  return { header, payload }
+  return { header, payload };
 }

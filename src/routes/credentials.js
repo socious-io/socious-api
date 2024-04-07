@@ -1,6 +1,8 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Credential from '../models/credentials/index.js'
+import Notif from '../models/notification/index.js'
+import Event from '../services/events/index.js'
 import Org from '../models/organization/index.js'
 import { BadRequestError, PermissionError } from '../utils/errors.js'
 import { checkIdParams } from '../utils/middlewares/route.js'
@@ -47,6 +49,13 @@ router.post('/experiences/:id', loginRequired, checkIdParams, async (ctx) => {
     experience.org_id,
     ctx.request.body?.message
   )
+
+  Event.push(Event.Types.NOTIFICATION, experience.org_id, {
+    type: Notif.Types.EXPERIENCE_VERIFY_REQUEST,
+    refId: experience.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
 })
 
 router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx) => {
@@ -61,6 +70,13 @@ router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx
   }
 
   ctx.body = await Credential.requestedExperienceUpdate({ id: ctx.params.id, status: 'APPROVED' })
+
+  Event.push(Event.Types.NOTIFICATION, experience.user_id, {
+    type: Notif.Types.EXPERIENCE_VERIFY_APPROVED,
+    refId: experience.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
 })
 
 router.post('/experiences/:id/reject', loginRequired, checkIdParams, async (ctx) => {
@@ -68,6 +84,13 @@ router.post('/experiences/:id/reject', loginRequired, checkIdParams, async (ctx)
   if (experience.org_id !== ctx.identity.id || experience.status !== 'PENDING') throw new PermissionError()
 
   ctx.body = await Credential.requestedExperienceUpdate({ id: ctx.params.id, status: 'REJECTED' })
+
+  Event.push(Event.Types.NOTIFICATION, experience.user_id, {
+    type: Notif.Types.EXPERIENCE_VERIFY_REJECTED,
+    refId: experience.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
 })
 
 router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) => {

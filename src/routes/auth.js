@@ -8,7 +8,10 @@ import Analytics from '../services/analytics/index.js'
 import config from '../config.js'
 import { ValidationError } from '../utils/errors.js'
 import logger from '../utils/logging.js'
+import Event from '../services/events/index.js'
+import Notif from '../models/notification/index.js'
 import { googleLogin } from '../services/oauth_connects/google.js'
+import Identity from '../models/identity/index.js'
 
 export const router = new Router()
 
@@ -131,7 +134,22 @@ router.get('/stripe', async (ctx) => {
 
 router.get('/google', async (ctx) => {
   const { code, referrer_id } = ctx.query
-  ctx.body = await googleLogin(code, referrer_id, ctx.headers.referer)
+  const login = await googleLogin(code, referrer_id, ctx.headers.referer)
+
+  if (login.registered && referrer_id) {
+    const identity = await Identity.get(login.user)
+    Event.push(Event.Types.NOTIFICATION, referrer_id, {
+      type: Notif.Types.REFERRAL_JOINED,
+      refId: login.user.id,
+      parentId: identity.id,
+      identity: identity
+    })
+  }
+
+  ctx.body = {
+    ...login.signin,
+    registered: login.registered
+  }
 })
 
 router.get('/stripe/profile', loginRequired, async (ctx) => {

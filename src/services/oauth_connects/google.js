@@ -29,7 +29,10 @@ export async function googleLogin(code, referredById, ref) {
 
   try {
     const user = await User.getByEmail(userInfo.email)
-    return signin(user.id)
+    return {
+      signin: signin(user.id),
+      user
+    }
   } catch {
     if (referredById) {
       const user = await User.get(referredById)
@@ -42,7 +45,8 @@ export async function googleLogin(code, referredById, ref) {
     if (referredById) await Referring.insert(user.id, referredById)
 
     return {
-      ...signin(user.id),
+      user,
+      signin: signin(user.id),
       registered: true
     }
   }

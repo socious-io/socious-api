@@ -47,7 +47,8 @@ router.post('/experiences/:id', loginRequired, checkIdParams, async (ctx) => {
     experience.id,
     ctx.user.id,
     experience.org_id,
-    ctx.request.body?.message
+    ctx.request.body?.message,
+    ctx.request.body?.exact_info
   )
 
   Event.push(Event.Types.NOTIFICATION, experience.org_id, {

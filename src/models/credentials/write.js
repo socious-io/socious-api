@@ -62,19 +62,21 @@ export const setVerificationRejected = async (id) => {
   }
 }
 
-export const requestExperience = async (id, userId, orgId, message) => {
+export const requestExperience = async (id, userId, orgId, message, exact_info) => {
   try {
     const { rows } = await app.db.query(sql`
       INSERT INTO experience_credentials (
         user_id,
         org_id,
         experience_id,
-        message
+        message,
+        exact_info
       ) VALUES (
         ${userId},
         ${orgId},
         ${id},
-        ${message}
+        ${message},
+        ${exact_info}
       )
       RETURNING *
     `)

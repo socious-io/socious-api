@@ -15,6 +15,7 @@ exports[`add experience 1`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -33,6 +34,7 @@ exports[`add experience 2`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -330,6 +332,7 @@ exports[`request experience credentials 1`] = `
   "connection_id": null,
   "connection_url": null,
   "created_at": Any<String>,
+  "exact_info": null,
   "experience_id": Any<String>,
   "id": Any<String>,
   "message": "approve please",
@@ -345,6 +348,7 @@ exports[`request experience credentials 2`] = `
   "connection_id": null,
   "connection_url": null,
   "created_at": Any<String>,
+  "exact_info": null,
   "experience_id": Any<String>,
   "id": Any<String>,
   "message": "approve please",
@@ -370,6 +374,7 @@ exports[`update experience 1`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -388,6 +393,7 @@ exports[`update experience 2`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 

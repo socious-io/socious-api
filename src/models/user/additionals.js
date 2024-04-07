@@ -36,7 +36,19 @@ export const removeLanguage = async (id, user) => {
 
 export const addExperience = async (
   user,
-  { org_id, title, description, skills, start_at, end_at, city, country, employment_type, job_category_id }
+  {
+    org_id,
+    title,
+    description,
+    skills,
+    start_at,
+    end_at,
+    city,
+    country,
+    employment_type,
+    job_category_id,
+    weekly_hours
+  }
 ) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -51,7 +63,8 @@ export const addExperience = async (
       city,
       country,
       employment_type,
-      job_category_id
+      job_category_id,
+      weekly_hours
     ) 
     VALUES (
       ${org_id},
@@ -64,7 +77,8 @@ export const addExperience = async (
       ${city},
       ${country},
       ${employment_type},
-      ${job_category_id}
+      ${job_category_id},
+      ${weekly_hours}
       )
     RETURNING *
   `)
@@ -77,7 +91,19 @@ export const addExperience = async (
 export const editExperience = async (
   id,
   user,
-  { org_id, title, description, skills, start_at, end_at, city, country, employment_type, job_category_id }
+  {
+    org_id,
+    title,
+    description,
+    skills,
+    start_at,
+    end_at,
+    city,
+    country,
+    employment_type,
+    job_category_id,
+    weekly_hours
+  }
 ) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -91,7 +117,8 @@ export const editExperience = async (
       city=${city},
       country=${country},
       employment_type=${employment_type},
-      job_category_id=${job_category_id}
+      job_category_id=${job_category_id},
+      weekly_hours=${weekly_hours}
     WHERE id=${id} AND user_id=${user.id}
     RETURNING *
   `)

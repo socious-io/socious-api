@@ -96,7 +96,7 @@ export const requestedExperiences = async (identityId, { limit = 10, offset = 0,
     JOIN experiences e ON e.id=c.experience_id
     JOIN users u ON u.id=c.user_id
     JOIN organizations o ON o.id=c.org_id
-    LEFT JOIN media m ON m.id=u.avatar
+    LEFT JOIN media m ON (m.id=u.avatar OR m.id=o.image)
       WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
     ${filtering(filter, experienceFilters, true, 'c')}
     ORDER BY created_at DESC

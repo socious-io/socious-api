@@ -6041,6 +6041,11 @@ paths:
             application/json: {}
   /credentials/experiences/{experience_id}:
     parameters:
+      - name: Current-Identity
+        in: header
+        schema:
+          type: string
+        example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
       - name: experience_id
         in: path
         schema:

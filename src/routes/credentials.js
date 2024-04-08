@@ -41,22 +41,31 @@ router.get('/experiences', loginRequired, paginate, async (ctx) => {
 })
 
 router.post('/experiences/:id', loginRequired, checkIdParams, async (ctx) => {
+  const options = { issuedByOrg: ctx.identity.type !== 'users' }
+  
   const experience = await User.getExperience(ctx.params.id)
-  if (experience.user_id !== ctx.user.id) throw new PermissionError()
+  const isOrganizationExperience = ctx.identity.type !== 'users' && experience.org_id == ctx.identity.id;
+  const isUserExperience = ctx.identity.type == 'users' && experience.user_id == ctx.user.id;
+  console.log(ctx.identity)
+
+  if (!isUserExperience && !isOrganizationExperience) throw new PermissionError()
+
   ctx.body = await Credential.requestExperience(
     experience.id,
     ctx.user.id,
     experience.org_id,
     ctx.request.body?.message,
-    ctx.request.body?.exact_info
+    ctx.request.body?.exact_info,
+    options
   )
 
-  Event.push(Event.Types.NOTIFICATION, experience.org_id, {
-    type: Notif.Types.EXPERIENCE_VERIFY_REQUEST,
-    refId: experience.id,
-    parentId: ctx.body.id,
-    identity: ctx.identity
-  })
+  if (!options.issuedByOrg)
+    Event.push(Event.Types.NOTIFICATION, experience.org_id, {
+      type: Notif.Types.EXPERIENCE_VERIFY_REQUEST,
+      refId: experience.id,
+      parentId: ctx.body.id,
+      identity: ctx.identity
+    })
 })
 
 router.post('/experiences/:id/approve', loginRequired, checkIdParams, async (ctx) => {

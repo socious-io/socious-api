@@ -91,13 +91,15 @@ export const requestedExperiences = async (identityId, { limit = 10, offset = 0,
       row_to_json(e.*) AS experience,
       row_to_json(u.*) AS user,
       row_to_json(o.*) AS org,
-      row_to_json(m.*) AS avatar
+      row_to_json(m.*) AS avatar,
+      row_to_json(mo.*) AS org_image
     FROM experience_credentials c
-    JOIN experiences e ON e.id=c.experience_id
-    JOIN users u ON u.id=c.user_id
-    JOIN organizations o ON o.id=c.org_id
-    LEFT JOIN media m ON (m.id=u.avatar OR m.id=o.image)
-      WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
+      JOIN experiences e ON e.id=c.experience_id
+      JOIN users u ON u.id=c.user_id
+      JOIN organizations o ON o.id=c.org_id
+      LEFT JOIN media m ON m.id=u.avatar
+      LEFT JOIN media mo ON mo.id=o.image
+    WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
     ${filtering(filter, experienceFilters, true, 'c')}
     ORDER BY created_at DESC
     LIMIT ${limit} OFFSET ${offset}

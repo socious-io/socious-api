@@ -13,8 +13,9 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
-import { BadRequestError } from '../utils/errors.js'
+import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
+import Credential from '../models/credentials/index.js'
 
 export const router = new Router()
 
@@ -145,6 +146,31 @@ router.post('/languages/update/:id', loginRequired, checkIdParams, async (ctx) =
 router.post('/languages/remove/:id', loginRequired, checkIdParams, async (ctx) => {
   await User.removeLanguage(ctx.params.id, ctx.user)
   ctx.body = { message: 'success' }
+})
+
+router.post('/experiences/issue/:user_id', loginRequired, async (ctx) => {
+  if (ctx.identity.type == 'users') throw new PermissionError() //Should have org identity
+  ctx.request.body.org_id = ctx.identity.id
+  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body) //FIXME: Validation?
+
+  //getting user
+  const user = await User.get(ctx.params.user_id)
+  if (!user) throw new NotFoundError()
+
+  const experience = await User.addExperience(user, ctx.request.body)
+  const credential = await Credential.requestExperience(
+    experience.id,
+    user.id,
+    experience.org_id,
+    ctx.request.body?.message,
+    ctx.request.body?.exact_info,
+    { issued: true }
+  )
+
+  ctx.body = {
+    experience,
+    credential
+  }
 })
 
 router.post('/experiences', loginRequired, async (ctx) => {

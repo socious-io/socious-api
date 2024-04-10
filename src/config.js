@@ -345,7 +345,7 @@ export default {
   wallet: {
     agent: 'https://agent.socious.io',
     agent_api_key: process.env.PRISM_AGENT_API_KEY,
-    connect_address: 'https://wallet.socious.io/connect',
+    connect_address: process.env.WALLET_CONNECT_URL || 'https://wallet.socious.io/connect',
     experience_vc_callback:
       process.env.WALLET_EXPERIENCE_VC_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback',
     verification_callback:

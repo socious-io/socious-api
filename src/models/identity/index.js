@@ -9,10 +9,12 @@ const get = async (id, identityId) => {
     SELECT i.*,
     (CASE WHEN er.id IS NOT NULL THEN true ELSE false END) AS following,
     (CASE WHEN ing.id IS NOT NULL THEN true ELSE false END) AS follower,
-    (c.status) AS connection_status
+    (c.status) AS connection_status,
+    (vc.status) AS verification_status
     FROM identities i
     LEFT JOIN follows er ON er.follower_identity_id=${identityId} AND er.following_identity_id=i.id
     LEFT JOIN follows ing ON ing.following_identity_id=${identityId} AND ing.follower_identity_id=i.id
+    LEFT JOIN verification_credentials vc ON vc.identity_id=${id}
     LEFT JOIN connections c ON 
       (c.requested_id=${id} AND c.requester_id=${identityId}) OR
       (c.requested_id=${identityId} AND c.requester_id=${id})
@@ -31,12 +33,19 @@ const getAll = async (userId, identityId) => {
       (CASE
         WHEN i.id=${identityId} THEN true
         ELSE false
-      END) AS current
+      END) AS current,
+      (vc.status) AS verification_status
     FROM org_members m
     JOIN identities i ON i.id=m.org_id
+    LEFT JOIN verification_credentials vc ON vc.identity_id=i.id
     WHERE user_id=${userId}
   `)
-  const primary = await app.db.get(sql`SELECT * FROM identities WHERE id=${userId}`)
+  const primary = await app.db.get(sql`
+  SELECT i.*, (vc.status) AS verification_status
+  FROM identities i
+  LEFT JOIN verification_credentials vc ON vc.identity_id=i.id
+  WHERE i.id=${userId}
+  `)
   rows.push({
     current: primary.id === identityId,
     primary: true,

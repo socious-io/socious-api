@@ -63,7 +63,11 @@ export const verifyProofRequest = async (connectionId) => {
   // but we will check required schema and present
   const payload = {
     connectionId,
-    proofs: []
+    proofs:[],
+    options: {
+      challenge: 'A challenge for the holder to sign',
+      domain: 'socious.io'
+  }
   }
 
   const res = await axios.post(`${config.wallet.agent}/prism-agent/present-proof/presentations`, payload, { headers })
@@ -75,7 +79,6 @@ export const getPresentVerification = async (presentId) => {
     headers
   })
   if (res.data.status !== 'PresentationVerified') throw new BadRequestError('not verified yet')
-
   const baseBody = decodeJWT(res.data.data[0])
   const { payload } = decodeJWT(baseBody.payload.vp.verifiableCredential[0])
 

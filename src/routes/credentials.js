@@ -26,14 +26,23 @@ router.post('/verifications', loginRequired, async (ctx) => {
 
 router.get('/verifications/connect/callback/:id', async (ctx) => {
   const vc = await Credential.getRequestVerificationByConnection(ctx.params.id)
-  await verifyProofRequest(vc.connection_id)
+  const pp = await verifyProofRequest(vc.connection_id)
+  await Credential.setPresent(vc.id, pp.presentationId)
   ctx.body = { message: 'success' }
 })
 
 router.get('/verifications/:id', loginRequired, checkIdParams, async (ctx) => {
   const vc = await Credential.getRequestVerification(ctx.params.id)
   if (!vc.present_id && vc.identity_id !== ctx.identity.id) throw new PermissionError()
-  return getPresentVerification(vc.present_id)
+  
+  if (vc.status === 'APPROVED') {
+    ctx.body = { message: 'success', verified: true }
+    return
+  }
+  
+  const credential = await getPresentVerification(vc.present_id)
+  await Credential.setVerificationApproved(vc.id, credential)
+  ctx.body = { message: 'success', verified: true }
 })
 
 router.get('/experiences', loginRequired, paginate, async (ctx) => {

@@ -202,7 +202,7 @@ export const getProfile = async (id, currentIdentity) => {
         LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
-        WHERE e.user_id=u.id
+        WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
     ) AS experiences
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar

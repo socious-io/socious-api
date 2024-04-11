@@ -13,7 +13,7 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
-import { BadRequestError, EntryError } from '../utils/errors.js'
+import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 import Credential from '../models/credentials/index.js'
 

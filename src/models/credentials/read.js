@@ -64,6 +64,17 @@ export const getRequestExperience = async (id) => {
   `)
 }
 
+export const getCredentialByExperienceId = async (experienceId) => {
+  return app.db.get(sql`
+  SELECT 
+    row_to_json(c.*) AS experience_credentials,
+    row_to_json(e.*) AS experience
+  FROM experiences e
+    JOIN experience_credentials c ON e.id=c.experience_id
+  WHERE e.id=${experienceId}
+  `)
+}
+
 export const getRequestExperiencebyConnection = async (connectId) => {
   return app.db.get(sql`
     SELECT 

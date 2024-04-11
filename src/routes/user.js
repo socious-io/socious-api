@@ -13,8 +13,9 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
-import { BadRequestError } from '../utils/errors.js'
+import { BadRequestError, EntryError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
+import Credential from '../models/credentials/index.js'
 
 export const router = new Router()
 
@@ -158,7 +159,23 @@ router.get('/experiences', loginRequired, async (ctx) => {
 
 router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
-  ctx.body = await User.editExperience(ctx.params.id, ctx.user, ctx.request.body)
+
+  //Preventing 'CLAIMED' and 'APPROVED' credentials to be changed except for description
+  let editPayload = ctx.request.body
+  try {
+    const {
+      experience_credentials: { status },
+      experience
+    } = await Credential.getCredentialByExperienceId(ctx.params.id)
+
+    if (status == 'CLAIMED' || status == 'APPROVED')
+      editPayload = {
+        ...experience,
+        description: editPayload.description ?? undefined
+      }
+  } catch (err) {} //in-case of there is no credentials for that experience
+
+  ctx.body = await User.editExperience(ctx.params.id, ctx.user, editPayload)
 })
 
 router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx) => {

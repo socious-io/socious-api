@@ -8,6 +8,12 @@ export class PermissionError extends Error {
 export class BadRequestError extends Error {
   status = 400
 }
+
+export class NotFoundError extends Error {
+  message = 'Not found'
+  status = 404
+}
+
 export class ValidationError extends Error {
   status = 400
 }

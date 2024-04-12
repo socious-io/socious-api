@@ -31,18 +31,25 @@ router.get('/verifications/connect/callback/:id', async (ctx) => {
   ctx.body = { message: 'success' }
 })
 
-router.get('/verifications/:id', loginRequired, checkIdParams, async (ctx) => {
-  const vc = await Credential.getRequestVerification(ctx.params.id)
+router.get('/verifications', loginRequired, checkIdParams, async (ctx) => {
+  const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
   if (!vc.present_id && vc.identity_id !== ctx.identity.id) throw new PermissionError()
-  
+
   if (vc.status === 'APPROVED') {
     ctx.body = { message: 'success', verified: true }
     return
   }
-  
-  const credential = await getPresentVerification(vc.present_id)
-  await Credential.setVerificationApproved(vc.id, credential)
-  ctx.body = { message: 'success', verified: true }
+  try {
+    const credential = await getPresentVerification(vc.present_id)
+    const rows = await Credential.searchSimilarVerification(credential)
+    if (rows.length > 0) {
+      ctx.body = { message: 'failed', verified: false }
+    }
+    await Credential.setVerificationApproved(vc.id, credential)
+    ctx.body = { message: 'success', verified: true }
+  } catch (err) {
+    ctx.body = { message: 'failed', verified: false }
+  }
 })
 
 router.get('/experiences', loginRequired, paginate, async (ctx) => {

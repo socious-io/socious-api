@@ -63,11 +63,11 @@ export const verifyProofRequest = async (connectionId) => {
   // but we will check required schema and present
   const payload = {
     connectionId,
-    proofs:[],
+    proofs: [],
     options: {
       challenge: 'A challenge for the holder to sign',
       domain: 'socious.io'
-  }
+    }
   }
 
   const res = await axios.post(`${config.wallet.agent}/prism-agent/present-proof/presentations`, payload, { headers })

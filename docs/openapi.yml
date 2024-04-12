@@ -6032,18 +6032,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /credentials/verifications/{id}:
-    parameters:
-      - name: Current-Identity
-        in: header
-        schema:
-          type: string
-        example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
-      - name: id
-        in: path
-        schema:
-          type: string
-        required: true
     get:
       tags:
         - credentials

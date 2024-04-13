@@ -38,7 +38,7 @@ router.post('/web/login', async (ctx) => {
 })
 
 router.post('/register', async (ctx) => {
-  const user = await Auth.register(ctx.request.body)
+  const user = await Auth.register(ctx.request.body, ctx.query.referred_by)
 
   ctx.body = {
     message: 'success'

@@ -80,6 +80,7 @@ export const getProfile = async (id, currentIdentity) => {
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
+    identity_verified,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -384,6 +385,7 @@ export const getProfileLimited = async (id) => {
     followers, followings, u.created_at,
     open_to_work,
     open_to_volunteer,
+    identity_verified,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image
@@ -414,6 +416,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     (c.status) AS connection_status,
     (c.id) AS connection_id,
     mobile_country_code,
+    identity_verified,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -561,6 +564,7 @@ export const getProfileByUsernameLimited = async (username) => {
     mission, bio, impact_points, skills,
     open_to_work,
     open_to_volunteer,
+    identity_verified,
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,

@@ -38,7 +38,7 @@ router.post('/web/login', async (ctx) => {
 })
 
 router.post('/register', async (ctx) => {
-  const user = await Auth.register(ctx.request.body)
+  const user = await Auth.register(ctx.request.body, ctx.query.referred_by)
 
   ctx.body = {
     message: 'success'
@@ -133,12 +133,12 @@ router.get('/stripe', async (ctx) => {
 })
 
 router.get('/google', async (ctx) => {
-  const { code, referrer_id } = ctx.query
-  const login = await googleLogin(code, referrer_id, ctx.headers.referer)
+  const { code, referrer_by } = ctx.query
+  const login = await googleLogin(code, referrer_by, ctx.headers.referer)
 
-  if (login.registered && referrer_id) {
+  if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)
-    Event.push(Event.Types.NOTIFICATION, referrer_id, {
+    Event.push(Event.Types.NOTIFICATION, referrer_by, {
       type: Notif.Types.REFERRAL_JOINED,
       refId: login.user.id,
       parentId: identity.id,

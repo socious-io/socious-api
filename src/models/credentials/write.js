@@ -63,7 +63,7 @@ export const setVerificationRejected = async (id) => {
 }
 
 export const requestExperience = async (id, userId, orgId, message, exact_info, options = {}) => {
-  const status = options.issued? "ISSUED": "PENDING";
+  const status = options.issued ? 'ISSUED' : 'PENDING'
   try {
     const { rows } = await app.db.query(sql`
       INSERT INTO experience_credentials (

@@ -63,7 +63,7 @@ export const basic = async (body) => {
   return signin(user.id)
 }
 
-export const register = async (body) => {
+export const register = async (body, referredById) => {
   await registerSchem.validateAsync(body)
   if (!config.mail.allowTest && isTestEmail(body.email)) {
     throw new ValidationError('Invalid email')
@@ -84,7 +84,6 @@ export const register = async (body) => {
     }
   }
 
-  const referredById = body.referred_by
   if (referredById) {
     const referrer = await User.get(referredById)
     if (!referrer.identity_verified) throw new BadRequestError('Referrer identity is not verified')

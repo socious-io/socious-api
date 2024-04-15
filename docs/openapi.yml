@@ -2299,11 +2299,10 @@ paths:
                 password: socious2022
                 email: info_2022@socious.io
       parameters:
-        - name: RefreshToken
-          in: header
+        - name: referred_by
+          in: query
           schema:
             type: string
-          example: '{{refresh_token}}'
       responses:
         '200':
           description: Successful response
@@ -6032,18 +6031,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /credentials/verifications/{id}:
-    parameters:
-      - name: Current-Identity
-        in: header
-        schema:
-          type: string
-        example: ebd02a72-f530-4d18-9a72-d7aa9ace1271
-      - name: id
-        in: path
-        schema:
-          type: string
-        required: true
     get:
       tags:
         - credentials

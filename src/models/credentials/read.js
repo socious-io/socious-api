@@ -6,6 +6,17 @@ export const experienceFilters = {
   status: String
 }
 
+export const getRequestVerificationByIdentity = async (identityId) => {
+  return app.db.get(sql`
+    SELECT 
+    vc.*,
+    row_to_json(i.*) AS identity
+    FROM verification_credentials vc
+    JOIN identities i ON i.id=vc.identity_id
+    WHERE vc.identity_id=${identityId}
+  `)
+}
+
 export const getRequestVerification = async (id) => {
   return app.db.get(sql`
     SELECT 
@@ -33,7 +44,7 @@ export const searchSimilarVerification = async (body) => {
     SELECT * FROM verification_credentials
     WHERE 
       (
-        body->>'document_number' = ${body.document_number}
+        body->>'document_number' = ${body.document_number} AND
         body->>'country' = ${body.country}
       ) OR 
       (

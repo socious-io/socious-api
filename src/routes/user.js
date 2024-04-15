@@ -16,6 +16,7 @@ import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 import Credential from '../models/credentials/index.js'
+import logger from '../utils/logging.js'
 
 export const router = new Router()
 
@@ -198,7 +199,9 @@ router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx)
         ...experience,
         description: editPayload.description ?? undefined
       }
-  } catch (err) {} //in-case of there is no credentials for that experience
+  } catch (err) {
+    logger.error(err)
+  } //in-case of there is no credentials for that experience
 
   ctx.body = await User.editExperience(ctx.params.id, ctx.user, editPayload)
 })

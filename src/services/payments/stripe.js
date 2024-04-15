@@ -20,7 +20,8 @@ const stripeAmount = (amount, currency) => {
   }
 }
 
-export const charge = async (identityId, { amount, currency, meta, source, description, transfers, is_jp }) => {
+export const charge = async (identityId, body) => {
+  let { amount, currency, meta, source, description, transfers, is_jp } = body
   let card = await getCard(source, identityId)
   if (!currency) currency = Data.PaymentCurrency.USD
 

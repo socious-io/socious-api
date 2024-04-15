@@ -2,12 +2,12 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async ({ identity_id, amount, currency, service, meta, source }, client) => {
+export const create = async ({ identity_id, amount, currency, service, meta, source, referrers_fee }, client) => {
   const db = client || app.db
   try {
     const { rows } = await db.query(sql`
-  INSERT INTO payments (identity_id, amount, currency, service, meta, source)
-  VALUES (${identity_id}, ${amount}, ${currency}, ${service}, ${meta}, ${source})
+  INSERT INTO payments (identity_id, amount, currency, service, meta, source, referrers_fee)
+  VALUES (${identity_id}, ${amount}, ${currency}, ${service}, ${meta}, ${source}, ${referrers_fee})
   RETURNING *
   `)
     return rows[0]

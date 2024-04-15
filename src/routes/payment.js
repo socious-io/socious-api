@@ -87,14 +87,14 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
   if (service === Data.PaymentService.CRYPTO) round = 100000
 
   const orgReferrer = await Referring.get(ctx.offer.offerer_id)
-  const contributorReferrer = await Referring.get(ctx.offer.applicant_id)
+  const userReferrer = await Referring.get(ctx.offer.recipient_id)
 
   const amounts = Payment.amounts({
     amount,
     service,
     verified: ctx.identity.meta.verified_impact,
     org_referred: orgReferrer?.wallet_address,
-    user_referred: contributorReferrer?.wallet_address,
+    user_referred: userReferrer?.wallet_address,
     round: round
   })
 
@@ -116,6 +116,9 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     description: ctx.offer.project.name,
     transfers,
     is_jp,
+    org_referrer: orgReferrer?.referred_by_id,
+    user_referrer: userReferrer?.referred_by_id,
+    fee: amounts.fee,
     meta: {
       ...ctx.request.body.meta,
       project_name: ctx.offer.project.name,

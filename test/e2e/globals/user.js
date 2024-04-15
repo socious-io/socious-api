@@ -382,7 +382,7 @@ export const registerReferredBy = async (request, data) => {
     first_name: data.users[0].first_name,
     last_name: data.users[0].last_name,
     email: 'test_referred@referred.com',
-    password: data.users[0].password,    
+    password: data.users[0].password
   })
   expect(response.status).toBe(400)
 }

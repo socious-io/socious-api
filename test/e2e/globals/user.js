@@ -377,13 +377,12 @@ export const registerReferredBy = async (request, data) => {
   const referrerProfileNotVerified = await request.get('/user/profile').set('Authorization', data.users[0].access_token)
   expect(referrerProfileNotVerified.status).toBe(200)
 
-  const response = await request.post('/auth/register').send({
+  const response = await request.post(`/auth/register?referred_by=${referrerProfileNotVerified.body.id}`).send({
     username: 'test_username_referred',
     first_name: data.users[0].first_name,
     last_name: data.users[0].last_name,
     email: 'test_referred@referred.com',
-    password: data.users[0].password,
-    referred_by: referrerProfileNotVerified.body.id
+    password: data.users[0].password,    
   })
   expect(response.status).toBe(400)
 }

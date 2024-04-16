@@ -133,7 +133,7 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
 }
 
 export const charge = async (identityId, body) => {
-  const { amount, currency, meta, source, txHash, org_referred, user_referred, fee } = body
+  const { amount, currency, meta, source, txHash, org_referrer, user_referrer, fee } = body
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === meta.token)[0]
     return t !== undefined
@@ -157,30 +157,30 @@ export const charge = async (identityId, body) => {
 
   await setCompleteTrx(trx.id, txHash)
 
-  if (org_referred) {
-    const trx = await create({
-      identity_id: org_referred,
+  if (org_referrer) {
+    await create({
+      identity_id: org_referrer,
       amount: fee * 0.5,
       currency,
       service: Data.PaymentService.CRYPTO,
       meta,
       source: source,
-      referrers_fee: true
+      referrers_fee: true,
+      ref_trx: trx.id
     })
-    await setCompleteTrx(trx.id, txHash)
   }
 
-  if (user_referred) {
-    const trx = await create({
-      identity_id: user_referred,
+  if (user_referrer) {
+    await create({
+      identity_id: user_referrer,
       amount: fee * 0.5,
       currency,
       service: Data.PaymentService.CRYPTO,
       meta,
       source: source,
-      referrers_fee: true
+      referrers_fee: true,
+      ref_trx: trx.id
     })
-    await setCompleteTrx(trx.id, txHash)
   }
 
   return {

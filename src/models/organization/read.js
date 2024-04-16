@@ -57,7 +57,12 @@ export const all = async ({ offset = 0, limit = 10, filter, sort, currentIdentit
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -119,7 +124,12 @@ export const get = async (id, currentIdentity) => {
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -237,7 +247,12 @@ export const getByShortname = async (shortname, currentIdentity) => {
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image

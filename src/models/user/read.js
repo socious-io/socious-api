@@ -204,7 +204,12 @@ export const getProfile = async (id, currentIdentity) => {
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
         WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
-    ) AS experiences
+    ) AS experiences,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=u.id OR c2.requester_id=u.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
@@ -362,7 +367,12 @@ export const getProfileByUsername = async (username, currentIdentity) => {
         LEFT JOIN job_categories j ON j.id=e.job_category_id
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
         WHERE e.user_id=u.id
-    ) AS experiences
+    ) AS experiences,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=u.id OR c2.requester_id=u.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
@@ -388,7 +398,12 @@ export const getProfileLimited = async (id) => {
     identity_verified,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
-    row_to_json(cover.*) AS cover_image
+    row_to_json(cover.*) AS cover_image,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=u.id OR c2.requester_id=u.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

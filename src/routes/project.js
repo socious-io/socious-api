@@ -54,6 +54,16 @@ router.post('/:id/questions', loginRequired, checkIdParams, projectPermission, a
   ctx.body = await Project.addQuestion(ctx.params.id, ctx.request.body)
 })
 
+router.post('/:id/questions/batch', loginRequired, checkIdParams, projectPermission, async (ctx) => {
+  const questions = ctx.request.body,
+    addedQuestions = [],
+    projectId = ctx.params.id
+
+  for (const question of questions) await validate.QuestionSchema.validateAsync(question)
+  for (const question of questions) addedQuestions.push(await Project.addQuestion(projectId, question))
+  ctx.body = addedQuestions
+})
+
 router.post('/update/:id/questions/:question_id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
   await validate.QuestionSchema.validateAsync(ctx.request.body)
   ctx.body = await Project.updateQuestion(ctx.params.question_id, ctx.request.body)

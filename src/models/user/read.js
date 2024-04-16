@@ -253,7 +253,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
           'sub_image', row_to_json(sub_img.*),
           'description', adds.description,
           'meta', adds.meta,
-          'url', adds.meta,
+          'url', adds.url,
           'enabled', adds.enabled,
           'created_at', adds.created_at
         ))

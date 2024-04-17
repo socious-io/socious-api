@@ -16,6 +16,7 @@ import {
   getPresentVerification
 } from '../services/wallet/index.js'
 import config from '../config.js'
+import logger from '../utils/logging.js'
 
 export const router = new Router()
 
@@ -48,6 +49,7 @@ router.get('/verifications', loginRequired, checkIdParams, async (ctx) => {
     await Credential.setVerificationApproved(vc.id, credential)
     ctx.body = { message: 'success', verified: true }
   } catch (err) {
+    logger.error(err)
     ctx.body = { message: 'failed', verified: false }
   }
 })

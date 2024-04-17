@@ -15,7 +15,10 @@ export const requestVerification = async (identityId, connectionId, connectionUr
         ${connectionUrl}
       )
       ON CONFLICT (identity_id) DO 
-      UPDATE SET connection_id = ${connectionId}, connection_url = ${connectionUrl}
+      UPDATE SET 
+        connection_id = EXCLUDED.connection_id,
+        connection_url = EXCLUDED.connection_url
+      WHERE verification_credentials.present_id IS NOT NULL
       RETURNING *
     `)
     return rows[0]

@@ -81,7 +81,7 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
 const coordinateNotifs = async (userId, body) => {
   const consolidateExceptions = [Data.NotificationType.APPLICATION, Data.NotificationType.FOLLOWED]
-  const name = body.identity?.meta?.name
+  const name = body.identity?.meta?.name || body.identity?.meta?.email
   let message = makeMessage(body.type, name)
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
@@ -101,7 +101,7 @@ const coordinateNotifs = async (userId, body) => {
       consolidate_number: consolidateNumbs
     })
 
-    return send(userId, message, body, latest.id, body.identity?.meta?.name, setting)
+    return send(userId, message, body, latest.id, name, setting)
   }
 
   const notifId = await Notif.create(userId, body.refId, body.type, !setting.in_app, {
@@ -110,7 +110,7 @@ const coordinateNotifs = async (userId, body) => {
     consolidate_number: 0
   })
 
-  return send(userId, message, body, notifId, body.identity?.meta?.name, setting)
+  return send(userId, message, body, notifId, name, setting)
 }
 
 const _push = async (eventType, userId, body) => {

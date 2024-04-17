@@ -10,6 +10,7 @@ import {
   getFiltered,
   getApplicant,
   addQuestion,
+  addMultipleQuestion,
   removeQuestion,
   apply,
   offer,
@@ -39,6 +40,7 @@ test('get', async () => get(request, data))
 test('get all', async () => getAll(request, data))
 test('get filtered', async () => getFiltered(request, data))
 test('add questions', async () => addQuestion(request, data))
+test('add multiple questions', async () => addMultipleQuestion(request, data))
 test('apply', async () => apply(request, data))
 test('get applicants', async () => getApplicant(request, data))
 test('offer', async () => offer(request, data))

@@ -158,6 +158,34 @@ export const addQuestion = async (request, data) => {
   }
 }
 
+export const addMultipleQuestion = async (request, data) => {
+  const projectList = data.projects.objs,
+    questionList = data.projects.questions
+
+  for (const project of projectList) {
+    const response = await request
+      .post(`/projects/${project.id}/questions/batch`)
+      .set('Authorization', data.users[0].access_token)
+      .set('Current-Identity', data.orgs[0].id)
+      .send(questionList)
+
+    expect(response.status).toBe(200)
+    expect(Array.isArray(response.body)).toBe(true);
+
+    for (const bodyItem of response.body)
+      expect(bodyItem).toMatchSnapshot({
+        id: expect.any(String),
+        project_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String)
+      })
+    if (!project.questions) {
+      project.questions = []
+    }
+    project.questions.push(response.body.id)
+  }
+}
+
 export const removeQuestion = async (request, data) => {
   for (const i in data.projects.objs) {
     for (const question of data.projects.objs[i].questions) {

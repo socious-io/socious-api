@@ -189,7 +189,6 @@ export const addMultipleQuestion = async (request, data) => {
 export const removeQuestion = async (request, data) => {
   for (const i in data.projects.objs) {
     for (const question of data.projects.objs[i].questions) {
-      console.log(question, data.projects.objs[i].id)
       const response = await request
         .post(`/projects/remove/${data.projects.objs[i].id}/questions/${question}`)
         .set('Authorization', data.users[0].access_token)

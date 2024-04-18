@@ -294,7 +294,9 @@ export const addEducation = async (request, data) => {
       id: expect.any(String),
       created_at: expect.any(String),
       user_id: expect.any(String),
-      org_id: expect.any(String)
+      org_id: expect.any(String),
+      start_at: expect.any(String),
+      end_at: expect.any(String),
     })
 
     data.users[i].education = response.body.id
@@ -322,7 +324,8 @@ export const updateEducation = async (request, data) => {
       created_at: expect.any(String),
       user_id: expect.any(String),
       org_id: expect.any(String),
-      start_at: expect.any(String)
+      start_at: expect.any(String),
+      end_at: expect.any(String),
     })
   }
 }

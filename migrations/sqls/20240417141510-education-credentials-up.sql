@@ -32,21 +32,3 @@ CREATE TABLE educations_credentials (
   CONSTRAINT fk_org FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE,
   CONSTRAINT fk_education FOREIGN KEY (education_id) REFERENCES educations(id) ON DELETE CASCADE
 );
-
-
-
-
-INSERT INTO educations (id, user_id, org_id, title, description, grade, degree, start_at, end_at, created_at)
-SELECT
-  id,
-  identity_id,
-  (meta->>'school_id')::uuid AS org_id,
-  title,
-  description,
-  meta->>'grade' AS grade,
-  meta->>'degree' AS degree,
-  TO_TIMESTAMP((meta->>'start_year') || '-' || (meta->>'start_month') || '-01', 'YYYY-MM-DD') AS start_at,
-  TO_TIMESTAMP((meta->>'end_year') || '-' || (meta->>'end_month') || '-01', 'YYYY-MM-DD') AS end_at,
-  created_at
-FROM additionals
-WHERE type = 'EDUCATION' AND meta->>'school_id' IS NOT NULL;

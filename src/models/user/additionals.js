@@ -139,3 +139,66 @@ export const getExperience = async (id) => {
 export const getExperiences = async (userId) => {
   return app.db.get(sql`SELECT * FROM experiences WHERE user_id=${userId}`)
 }
+
+export const addEducation = async (user, { org_id, title, description, grade, degree, start_at, end_at }) => {
+  try {
+    const { rows } = await app.db.query(sql`
+    INSERT INTO educations (
+      org_id,
+      title,
+      description,
+      grade,
+      degree,
+      start_at,
+      end_at,
+      user_id
+    ) 
+    VALUES (
+      ${org_id},
+      ${title},
+      ${description},
+      ${grade},
+      ${degree},
+      ${start_at},
+      ${end_at},
+      ${user.id}
+      )
+    RETURNING *
+  `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const editEducation = async (id, user, { org_id, title, description, grade, degree, start_at, end_at }) => {
+  try {
+    const { rows } = await app.db.query(sql`
+    UPDATE educations SET
+      org_id=${org_id},
+      title=${title},
+      description=${description},
+      grade=${grade},
+      degree=${degree},
+      start_at=${start_at},
+      end_at=${end_at}
+    WHERE id=${id} AND user_id=${user.id}
+    RETURNING *
+  `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const removeEducation = async (id, user) => {
+  await app.db.query(sql`DELETE FROM educations WHERE id=${id} AND user_id=${user.id}`)
+}
+
+export const getEducation = async (id) => {
+  return app.db.get(sql`SELECT * FROM educations WHERE id=${id}`)
+}
+
+export const getEducations = async (userId) => {
+  return app.db.get(sql`SELECT * FROM educations WHERE user_id=${userId}`)
+}

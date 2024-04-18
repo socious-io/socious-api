@@ -245,3 +245,63 @@ router.get('/:username/recommend/users', loginOptional, paginate, async (ctx) =>
 router.get('/:username/recommend/orgs', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendOrgByUser(ctx.params.username)
 })
+
+router.post('/educations/issue/:user_id', loginRequired, async (ctx) => {
+  if (ctx.identity.type == 'users') throw new PermissionError() //Should have org identity
+  ctx.request.body.org_id = ctx.identity.id
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+
+  //getting user
+  const user = await User.get(ctx.params.user_id)
+  if (!user) throw new NotFoundError()
+
+  const education = await User.addEducation(user, ctx.request.body)
+  const credential = await Credential.requestEducation(
+    education.id,
+    user.id,
+    education.org_id,
+    ctx.request.body?.message,
+    { issued: true }
+  )
+
+  ctx.body = {
+    education,
+    credential
+  }
+})
+
+router.post('/educations', loginRequired, async (ctx) => {
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.addEducation(ctx.user, ctx.request.body)
+})
+
+router.get('/educations', loginRequired, async (ctx) => {
+  ctx.body = await User.getEducation(ctx.user.id)
+})
+
+router.post('/educations/update/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+
+  //Preventing 'CLAIMED' and 'APPROVED' credentials to be changed except for description
+  let editPayload = ctx.request.body
+  try {
+    const {
+      experience_credentials: { status },
+      education
+    } = await Credential.getCredentialByEducationId(ctx.params.id)
+
+    if (status == 'CLAIMED' || status == 'APPROVED')
+      editPayload = {
+        ...education,
+        description: editPayload.description ?? undefined
+      }
+  } catch (err) {
+    logger.error(err)
+  } //in-case of there is no credentials for that experience
+
+  ctx.body = await User.editEducation(ctx.params.id, ctx.user, editPayload)
+})
+
+router.post('/educations/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await User.removeEducation(ctx.params.id, ctx.user)
+})

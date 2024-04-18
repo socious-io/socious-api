@@ -2933,6 +2933,41 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/{project_id}/questions/batch:
+    post:
+      tags:
+        - project
+      summary: add multiple questions (Maintains questions' order)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: 
+                - question: are you OK ? (Question no.1)
+                  required: false
+                  options:
+                    - 'yes'
+                    - 'no'
+                - question: Is weather good ? (Question no.2)
+                  required: true
+                  options:
+                    - 'Perfect'
+                    - 'Not Good'
+                    - 'Awful'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /projects/update/{project_id}/questions/{question_id}:
     post:
       tags:

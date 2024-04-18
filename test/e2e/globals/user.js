@@ -86,6 +86,13 @@ export const profile = async (request, data) => {
           org: expect.any(Object),
           credential: expect.any(Object)
         }
+      ],
+      educations: [
+        {
+          id: expect.any(String),
+          org: expect.any(Object),
+          credential: expect.any(Object)
+        }
       ]
     })
   }
@@ -105,6 +112,7 @@ export const updateProfile = async (request, data) => {
     delete body.experience
     delete body.id
     delete body.access_token
+    delete body.education
 
     const response = await request
       .post('/user/update/profile')
@@ -116,7 +124,6 @@ export const updateProfile = async (request, data) => {
       expect(response.body).toMatchSnapshot()
       continue
     }
-
     expect(response.status).toBe(200)
 
     expect(response.body).toMatchSnapshot({
@@ -131,6 +138,13 @@ export const updateProfile = async (request, data) => {
         {
           id: expect.any(String),
           job_category: expect.any(Object),
+          org: expect.any(Object),
+          credential: expect.any(Object)
+        }
+      ],
+      educations: [
+        {
+          id: expect.any(String),
           org: expect.any(Object),
           credential: expect.any(Object)
         }
@@ -262,6 +276,57 @@ export const updateExperience = async (request, data) => {
   }
 }
 
+export const addEducation = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue
+    }
+    const response = await request.post('/user/educations').set('Authorization', data.users[i].access_token).send({
+      org_id: data.orgs[0].id,
+      title: 'Test',
+      description: 'Test',
+      start_at: '2022-10-16T13:32:30.211Z',
+      end_at: '2022-11-16T13:32:30.211Z'
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      created_at: expect.any(String),
+      user_id: expect.any(String),
+      org_id: expect.any(String)
+    })
+
+    data.users[i].education = response.body.id
+  }
+}
+
+export const updateEducation = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue
+    }
+    const response = await request
+      .post(`/user/educations/update/${data.users[i].education}`)
+      .set('Authorization', data.users[i].access_token)
+      .send({
+        org_id: data.orgs[0].id,
+        title: 'Test 2',
+        description: 'Test',
+        start_at: '2022-10-16T13:32:30.211Z',
+        end_at: '2022-11-16T13:32:30.211Z'
+      })
+    expect(response.status).toBe(200)
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      created_at: expect.any(String),
+      user_id: expect.any(String),
+      org_id: expect.any(String),
+      start_at: expect.any(String)
+    })
+  }
+}
+
 export const requestExperienceCredentials = async (request, data) => {
   for (const i in data.users) {
     if (data.users[i].invalid) {
@@ -292,9 +357,6 @@ export const approveRequestedExperienceCredentials = async (request, data) => {
     .get(`/credentials/experiences/`)
     .set('Authorization', data.users[0].access_token)
     .set('Current-Identity', data.orgs[0].id)
-    .send({
-      message: 'approve please'
-    })
 
   expect(response.status).toBe(200)
   expect(response.body.items.length).toBe(2)
@@ -303,6 +365,49 @@ export const approveRequestedExperienceCredentials = async (request, data) => {
 
   const approveRes = await request
     .post(`/credentials/experiences/${response.body.items[0].id}/approve`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+
+  expect(approveRes.status).toBe(200)
+}
+
+export const requestEducationCredentials = async (request, data) => {
+  for (const i in data.users) {
+    if (data.users[i].invalid) {
+      continue
+    }
+
+    const response = await request
+      .post(`/credentials/educations/${data.users[i].education}`)
+      .set('Authorization', data.users[i].access_token)
+      .send({
+        message: 'approve please'
+      })
+    expect(response.status).toBe(200)
+    expect(response.body).toMatchSnapshot({
+      id: expect.any(String),
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+      user_id: expect.any(String),
+      org_id: expect.any(String),
+      education_id: expect.any(String)
+    })
+  }
+}
+
+export const approveRequestedEducationCredentials = async (request, data) => {
+  const response = await request
+    .get(`/credentials/educations/`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+
+  expect(response.status).toBe(200)
+  expect(response.body.items.length).toBe(2)
+
+  await Org.updateDID(data.orgs[0].id, 'testDID')
+
+  const approveRes = await request
+    .post(`/credentials/educations/${response.body.items[0].id}/approve`)
     .set('Authorization', data.users[0].access_token)
     .set('Current-Identity', data.orgs[0].id)
 
@@ -332,6 +437,14 @@ export const profileByUsername = async (request, data) => {
           id: expect.any(String),
           start_at: expect.any(String),
           job_category: expect.any(Object),
+          org: expect.any(Object),
+          credential: expect.any(Object)
+        }
+      ],
+      educations: [
+        {
+          id: expect.any(String),
+          start_at: expect.any(String),
           org: expect.any(Object),
           credential: expect.any(Object)
         }

@@ -108,3 +108,45 @@ export const requestedExperienceUpdate = async ({ id, status, connection_id = nu
     throw new EntryError(err.message)
   }
 }
+
+export const requestEducation = async (id, userId, orgId, message, options = {}) => {
+  const status = options.issued ? 'ISSUED' : 'PENDING'
+  try {
+    const { rows } = await app.db.query(sql`
+      INSERT INTO educations_credentials (
+        user_id,
+        org_id,
+        education_id,
+        message,
+        status
+      ) VALUES (
+        ${userId},
+        ${orgId},
+        ${id},
+        ${message},
+        ${status}
+      )
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const requestedEducationUpdate = async ({ id, status, connection_id = null, connection_url = null }) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE educations_credentials SET
+        status=${status},
+        connection_id=${connection_id},
+        connection_url=${connection_url},
+        updated_at=Now()
+      WHERE id=${id}
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}

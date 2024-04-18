@@ -128,3 +128,72 @@ export const requestedExperiences = async (identityId, { limit = 10, offset = 0,
   `)
   return rows
 }
+
+export const getRequestEducation = async (id) => {
+  return app.db.get(sql`
+  SELECT 
+    c.*,
+    row_to_json(e.*) AS education,
+    row_to_json(u.*) AS user,
+    row_to_json(o.*) AS org,
+    row_to_json(m.*) AS avatar
+  FROM educations_credentials c
+    JOIN educations e ON e.id=c.education_id
+    JOIN users u ON u.id=c.user_id
+    JOIN organizations o ON o.id=c.org_id
+    LEFT JOIN media m ON m.id=u.avatar
+    WHERE c.id=${id}
+  `)
+}
+
+export const getCredentialByEducationId = async (id) => {
+  return app.db.get(sql`
+  SELECT 
+    row_to_json(c.*) AS educations_credentials,
+    row_to_json(e.*) AS education
+  FROM experiences e
+    JOIN educations_credentials c ON e.id=c.education_id
+  WHERE e.id=${id}
+  `)
+}
+
+export const getRequestEducationbyConnection = async (connectId) => {
+  return app.db.get(sql`
+    SELECT 
+    c.*,
+    row_to_json(e.*) AS education,
+    row_to_json(u.*) AS user,
+    row_to_json(o.*) AS org,
+    row_to_json(m.*) AS avatar
+    FROM educations_credentials c
+    JOIN educations e ON e.id=c.education_id
+    JOIN users u ON u.id=c.user_id
+    JOIN organizations o ON o.id=c.org_id
+    LEFT JOIN media m ON m.id=u.avatar
+    WHERE c.connection_id=${connectId}
+  `)
+}
+
+export const requestedEducations = async (identityId, { limit = 10, offset = 0, filter }) => {
+  const { rows } = await app.db.query(sql`
+    SELECT
+      COUNT(c.*) OVER () as total_count,
+      c.*,
+      row_to_json(e.*) AS education,
+      row_to_json(u.*) AS user,
+      row_to_json(o.*) AS org,
+      row_to_json(m.*) AS avatar,
+      row_to_json(mo.*) AS org_image
+    FROM educations_credentials c
+      JOIN educations e ON e.id=c.education_id
+      JOIN users u ON u.id=c.user_id
+      JOIN organizations o ON o.id=c.org_id
+      LEFT JOIN media m ON m.id=u.avatar
+      LEFT JOIN media mo ON mo.id=o.image
+    WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
+    ${filtering(filter, experienceFilters, true, 'c')}
+    ORDER BY created_at DESC
+    LIMIT ${limit} OFFSET ${offset}
+  `)
+  return rows
+}

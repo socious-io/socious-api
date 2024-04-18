@@ -97,24 +97,6 @@ export const getProfile = async (id, currentIdentity) => {
         FROM additionals adds
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
-        WHERE adds.identity_id=u.id and type='EDUCATION'
-    ) AS educations,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', adds.id,
-          'type', adds.type,
-          'title', adds.title,
-          'image', row_to_json(img.*),
-          'sub_image', row_to_json(sub_img.*),
-          'description', adds.description,
-          'meta', adds.meta,
-          'url', adds.meta,
-          'enabled', adds.enabled,
-          'created_at', adds.created_at
-        ))
-        FROM additionals adds
-        LEFT JOIN media img ON img.id=adds.image
-        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=u.id and type='PORTFOLIO'
     ) AS portfolios,
     (SELECT
@@ -205,6 +187,45 @@ export const getProfile = async (id, currentIdentity) => {
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
         WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
     ) AS experiences,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', e.id,
+          'title', e.title,
+          'degree', e.degree,
+          'grade', e.grade,
+          'description', e.description,
+          'start_at', e.start_at,
+          'end_at', e.end_at,
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+          ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
+        ))
+        FROM educations e
+        JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
+        LEFT JOIN educations_credentials ec ON ec.education_id=e.id
+        WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
+    ) AS educations,
     (
 	    SELECT COUNT(*)::int
 	    FROM connections c2
@@ -244,24 +265,6 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     open_to_work,
     open_to_volunteer,
     identity_verified,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', adds.id,
-          'type', adds.type,
-          'title', adds.title,
-          'image', row_to_json(img.*),
-          'sub_image', row_to_json(sub_img.*),
-          'description', adds.description,
-          'meta', adds.meta,
-          'url', adds.url,
-          'enabled', adds.enabled,
-          'created_at', adds.created_at
-        ))
-        FROM additionals adds
-        LEFT JOIN media img ON img.id=adds.image
-        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
-        WHERE adds.identity_id=u.id and type='EDUCATION'
-    ) AS educations,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -368,6 +371,45 @@ export const getProfileByUsername = async (username, currentIdentity) => {
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
         WHERE e.user_id=u.id
     ) AS experiences,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', e.id,
+          'title', e.title,
+          'degree', e.degree,
+          'grade', e.grade,
+          'description', e.description,
+          'start_at', e.start_at,
+          'end_at', e.end_at,
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+          ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
+        ))
+        FROM educations e
+        JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
+        LEFT JOIN educations_credentials ec ON ec.education_id=e.id
+        WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
+    ) AS educations,
     (
 	    SELECT COUNT(*)::int
 	    FROM connections c2
@@ -432,24 +474,6 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     (c.id) AS connection_id,
     mobile_country_code,
     identity_verified,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', adds.id,
-          'type', adds.type,
-          'title', adds.title,
-          'image', row_to_json(img.*),
-          'sub_image', row_to_json(sub_img.*),
-          'description', adds.description,
-          'meta', adds.meta,
-          'url', adds.meta,
-          'enabled', adds.enabled,
-          'created_at', adds.created_at
-        ))
-        FROM additionals adds
-        LEFT JOIN media img ON img.id=adds.image
-        LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
-        WHERE adds.identity_id=u.id and type='EDUCATION'
-    ) AS educations,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -555,7 +579,46 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
         LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
         WHERE e.user_id=u.id
-    ) AS experiences
+    ) AS experiences,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', e.id,
+          'title', e.title,
+          'degree', e.degree,
+          'grade', e.grade,
+          'description', e.description,
+          'start_at', e.start_at,
+          'end_at', e.end_at,
+          'org', json_build_object(
+            'id', org.id,
+            'name', org.name,
+            'bio', org.bio,
+            'shortname', org.shortname,
+            'city', org.city,
+            'country', org.country,
+            'created_at', org.created_at,
+            'updated_at', org.created_at,
+            'description', org.description,
+            'image', row_to_json(org_media.*)
+          ),
+          'credential', CASE WHEN ec.id IS NULL THEN NULL
+          ELSE json_build_object(
+            'id', ec.id,
+            'status', ec.status,
+            'message', ec.message,
+            'connection_id', ec.connection_id,
+            'connection_url', ec.connection_url,
+            'created_at', ec.created_at,
+            'updated_at', ec.updated_at
+          )
+          END
+        ))
+        FROM educations e
+        JOIN organizations org ON org.id=e.org_id
+        LEFT JOIN media org_media ON org_media.id=org.image
+        LEFT JOIN educations_credentials ec ON ec.education_id=e.id
+        WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
+    ) AS educations
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

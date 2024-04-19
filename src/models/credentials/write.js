@@ -18,7 +18,6 @@ export const requestVerification = async (identityId, connectionId, connectionUr
       UPDATE SET 
         connection_id = EXCLUDED.connection_id,
         connection_url = EXCLUDED.connection_url
-      WHERE verification_credentials.present_id IS NOT NULL
       RETURNING *
     `)
     return rows[0]

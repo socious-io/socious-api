@@ -39,19 +39,14 @@ router.get('/verifications', loginRequired, checkIdParams, async (ctx) => {
     ctx.body = { message: 'success', verified: true }
     return
   }
-  try {
-    const credential = await getPresentVerification(vc.present_id)
-    const rows = await Credential.searchSimilarVerification(credential)
-    if (rows.length > 0) {
-      ctx.body = { message: 'failed', verified: false }
-      return
-    }
-    await Credential.setVerificationApproved(vc.id, credential)
-    ctx.body = { message: 'success', verified: true }
-  } catch (err) {
-    logger.error(err)
+  const credential = await getPresentVerification(vc.present_id)
+  /* const rows = await Credential.searchSimilarVerification(credential)
+  if (rows.length > 0) {
     ctx.body = { message: 'failed', verified: false }
-  }
+    return
+  } */
+  await Credential.setVerificationApproved(vc.id, credential)
+  ctx.body = { message: 'success', verified: true }
 })
 // -------------------------- Experience -------------------------------
 router.get('/experiences', loginRequired, paginate, async (ctx) => {

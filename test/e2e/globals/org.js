@@ -24,6 +24,64 @@ export const create = async (request, data) => {
   }
 }
 
+export const kybRequest = async (request, data) => {
+  const random_org = data.orgs[0]
+
+  const response = await request
+    .post('/credentials/verifications/org')
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', random_org.id)
+    .send({
+      documents: data.medias.kyb_documents
+    })
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String),
+    identity_id: expect.any(String),
+    status: expect.stringMatching('PENDING'),
+    documents: expect.arrayContaining([
+      expect.objectContaining({
+        id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        media_id: expect.any(String),
+        verification_id: expect.any(String)
+      })
+    ])
+  })
+}
+
+export const kybRequestFetch = async (request, data) => {
+  const random_org = data.orgs[0]
+
+  console.log(random_org)
+  const response = await request
+    .get(`/credentials/verifications/org`)
+    .set('Current-Identity', random_org.id)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String),
+    identity_id: expect.any(String),
+    status: expect.stringMatching('PENDING'),
+    documents: expect.arrayContaining([
+      expect.objectContaining({
+        id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        media_id: expect.any(String),
+        verification_id: expect.any(String)
+      })
+    ])
+  })
+}
+
 export const getAll = async (request, data) => {
   const response = await request.get('/orgs').set('Authorization', data.users[0].access_token)
 

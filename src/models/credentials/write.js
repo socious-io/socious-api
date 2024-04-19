@@ -1,6 +1,53 @@
-import sql from 'sql-template-tag'
+import sql, { raw } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
+export const requestOrgVerification = async (identityId, medias) => {
+  let verification = {}, documents = [];
+  await app.db.with(async (client) => {
+    await client.query('BEGIN')
+    try {
+      verification = await client.query(sql`
+      INSERT INTO org_verification_credentials (identity_id)
+      VALUES
+        (${identityId})
+      RETURNING *
+    `)
+      verification = verification.rows[0]
+
+      documents = await client.query(
+        raw(`
+        INSERT INTO org_verification_documents (media_id, verification_id)
+        VALUES
+        ${medias.map((media) => `('${media}','${verification.id}')`)}
+        RETURNING *
+    `)
+      )
+      documents = documents.rows
+      //query
+      await client.query('COMMIT')
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    }
+  })
+
+  return { verification, documents }
+}
+
+export const getOrgVerificationRequest = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      SELECT ovc.*, jsonb_agg(ovd.*) as documents
+      from org_verification_credentials ovc
+      JOIN org_verification_documents ovd on ovd.verification_id = ovc.id
+      WHERE ovc.identity_id = ${id}
+      GROUP BY ovc.id
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
 
 export const requestVerification = async (identityId, connectionId, connectionUrl) => {
   try {

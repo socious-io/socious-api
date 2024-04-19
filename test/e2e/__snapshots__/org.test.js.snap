@@ -102,6 +102,44 @@ exports[`create 3`] = `
 }
 `;
 
+exports[`create KYB Request 1`] = `
+{
+  "created_at": Any<String>,
+  "documents": ArrayContaining [
+    ObjectContaining {
+      "created_at": Any<String>,
+      "id": Any<String>,
+      "media_id": Any<String>,
+      "updated_at": Any<String>,
+      "verification_id": Any<String>,
+    },
+  ],
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "status": StringMatching /PENDING/,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`get KYB Request 1`] = `
+{
+  "created_at": Any<String>,
+  "documents": ArrayContaining [
+    ObjectContaining {
+      "created_at": Any<String>,
+      "id": Any<String>,
+      "media_id": Any<String>,
+      "updated_at": Any<String>,
+      "verification_id": Any<String>,
+    },
+  ],
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "status": StringMatching /PENDING/,
+  "updated_at": Any<String>,
+}
+`;
+
 exports[`get all 1`] = `
 {
   "items": [

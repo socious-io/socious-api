@@ -207,12 +207,12 @@ router.post('/educations/:id', loginRequired, checkIdParams, async (ctx) => {
     ctx.request.body?.exact_info
   )
 
-  /* Event.push(Event.Types.NOTIFICATION, education.org_id, {
-    type: Notif.Types.EXPERIENCE_VERIFY_REQUEST,
+  Event.push(Event.Types.NOTIFICATION, education.org_id, {
+    type: Notif.Types.EDUCATION_VERIFY_REQUEST,
     refId: education.id,
     parentId: ctx.body.id,
     identity: ctx.identity
-  }) */
+  })
 })
 
 router.post('/educations/:id/approve', loginRequired, checkIdParams, async (ctx) => {
@@ -228,12 +228,12 @@ router.post('/educations/:id/approve', loginRequired, checkIdParams, async (ctx)
 
   ctx.body = await Credential.requestedEducationUpdate({ id: ctx.params.id, status: 'APPROVED' })
 
-  /* Event.push(Event.Types.NOTIFICATION, education.user_id, {
-    type: Notif.Types.EXPERIENCE_VERIFY_APPROVED,
+  Event.push(Event.Types.NOTIFICATION, education.user_id, {
+    type: Notif.Types.EDUCATION_VERIFY_APPROVED,
     refId: education.id,
     parentId: ctx.body.id,
     identity: ctx.identity
-  }) */
+  })
 })
 
 router.post('/educations/:id/reject', loginRequired, checkIdParams, async (ctx) => {
@@ -242,12 +242,12 @@ router.post('/educations/:id/reject', loginRequired, checkIdParams, async (ctx) 
 
   ctx.body = await Credential.requestedEducationUpdate({ id: ctx.params.id, status: 'REJECTED' })
 
-  /* Event.push(Event.Types.NOTIFICATION, education.user_id, {
-    type: Notif.Types.EXPERIENCE_VERIFY_REJECTED,
+  Event.push(Event.Types.NOTIFICATION, education.user_id, {
+    type: Notif.Types.EDUCATION_VERIFY_REJECTED,
     refId: education.id,
     parentId: ctx.body.id,
     identity: ctx.identity
-  }) */
+  })
 })
 
 router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) => {

@@ -170,7 +170,7 @@ export const addMultipleQuestion = async (request, data) => {
       .send(questionList)
 
     expect(response.status).toBe(200)
-    expect(Array.isArray(response.body)).toBe(true);
+    expect(Array.isArray(response.body)).toBe(true)
 
     for (const bodyItem of response.body)
       expect(bodyItem).toMatchSnapshot({
@@ -182,7 +182,7 @@ export const addMultipleQuestion = async (request, data) => {
     if (!project.questions) {
       project.questions = []
     }
-    project.questions= [...project.questions, ...response.body.map(q=>q.id)]
+    project.questions = [...project.questions, ...response.body.map((q) => q.id)]
   }
 }
 

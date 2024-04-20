@@ -34,21 +34,6 @@ export const requestOrgVerification = async (identityId, medias) => {
   return { verification, documents }
 }
 
-export const getOrgVerificationRequest = async (id) => {
-  try {
-    const { rows } = await app.db.query(sql`
-      SELECT ovc.*, jsonb_agg(ovd.*) as documents
-      from org_verification_credentials ovc
-      JOIN org_verification_documents ovd on ovd.verification_id = ovc.id
-      WHERE ovc.identity_id = ${id}
-      GROUP BY ovc.id
-    `)
-    return rows[0]
-  } catch (err) {
-    throw new EntryError(err.message)
-  }
-}
-
 export const requestVerification = async (identityId, connectionId, connectionUrl) => {
   try {
     const { rows } = await app.db.query(sql`

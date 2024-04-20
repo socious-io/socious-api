@@ -6,6 +6,16 @@ export const experienceFilters = {
   status: String
 }
 
+export const getOrgVerificationRequest = (id) => {
+  return app.db.get(sql`
+      SELECT ovc.*, jsonb_agg(ovd.*) as documents
+      from org_verification_credentials ovc
+      JOIN org_verification_documents ovd on ovd.verification_id = ovc.id
+      WHERE ovc.identity_id = ${id}
+      GROUP BY ovc.id
+    `)
+}
+
 export const getRequestVerificationByIdentity = async (identityId) => {
   return app.db.get(sql`
     SELECT 

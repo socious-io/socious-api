@@ -127,10 +127,9 @@ exports[`get KYB Request 1`] = `
   "documents": ArrayContaining [
     ObjectContaining {
       "created_at": Any<String>,
+      "filename": Any<String>,
       "id": Any<String>,
-      "media_id": Any<String>,
-      "updated_at": Any<String>,
-      "verification_id": Any<String>,
+      "url": Any<String>,
     },
   ],
   "id": Any<String>,

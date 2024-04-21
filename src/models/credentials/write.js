@@ -1,8 +1,10 @@
 import sql, { raw } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
+
 export const requestOrgVerification = async (identityId, medias) => {
-  let verification = {}, documents = [];
+  let verification = {},
+    documents = []
   await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {

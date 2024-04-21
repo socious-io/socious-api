@@ -8,10 +8,23 @@ export const experienceFilters = {
 
 export const getOrgVerificationRequest = (id) => {
   return app.db.get(sql`
-      SELECT ovc.*, jsonb_agg(ovd.*) as documents
-      from org_verification_credentials ovc
-      JOIN org_verification_documents ovd on ovd.verification_id = ovc.id
-      WHERE ovc.identity_id = ${id}
+      SELECT ovc.id,
+      ovc.identity_id,
+      ovc.status,
+      ovc.created_at,
+      ovc.updated_at,
+      jsonb_agg(
+        json_build_object(
+          'id', m.id, 
+          'url', m.url, 
+          'filename', m.filename,
+          'created_at', m.created_at
+        )
+      ) AS documents
+        FROM org_verification_credentials ovc
+          JOIN org_verification_documents ovd on ovd.verification_id = ovc.id
+          JOIN media m ON m.id = ovd.media_id
+        WHERE ovc.identity_id = ${id}
       GROUP BY ovc.id
     `)
 }

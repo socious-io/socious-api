@@ -1,4 +1,4 @@
-import sql, { raw } from 'sql-template-tag'
+import { raw } from 'sql-template-tag'
 import { app } from '../../../src'
 
 export const create = async (request, data) => {

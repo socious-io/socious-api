@@ -1,6 +1,8 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Applicant from '../models/applicant/index.js'
+import Notif from '../models/notification/index.js'
+import Event from '../services/events/index.js'
 import Auth from '../services/auth/index.js'
 import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
@@ -167,6 +169,12 @@ router.post('/experiences/issue/:user_id', loginRequired, async (ctx) => {
     ctx.request.body?.exact_info,
     { issued: true }
   )
+  Event.push(Event.Types.NOTIFICATION, user.id, {
+    type: Notif.Types.EXPERIENCE_ISSUED,
+    refId: experience.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
 
   ctx.body = {
     experience,
@@ -263,6 +271,13 @@ router.post('/educations/issue/:user_id', loginRequired, async (ctx) => {
     ctx.request.body?.message,
     { issued: true }
   )
+
+  Event.push(Event.Types.NOTIFICATION, user.id, {
+    type: Notif.Types.EDUCATION_ISSUED,
+    refId: education.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
 
   ctx.body = {
     education,

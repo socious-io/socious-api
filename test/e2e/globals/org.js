@@ -31,12 +31,18 @@ export const kybRequest = async (request, data) => {
   const random_org = data.orgs[0],
     documents = data.medias.kyb_documents
 
-  
-  for(const document of documents) document.identity_id = random_org.id
+  for (const document of documents) document.identity_id = random_org.id
   app.db.query(
     raw(
       `INSERT INTO media (${Object.keys(documents[0])}) VALUES ${documents
-        .map((document) => '(' + Object.values(document).map(value=>`'${value}'`).join(',') + ')')
+        .map(
+          (document) =>
+            '(' +
+            Object.values(document)
+              .map((value) => `'${value}'`)
+              .join(',') +
+            ')'
+        )
         .join(',\n')}`
     )
   )

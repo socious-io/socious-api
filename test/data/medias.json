@@ -1,0 +1,25 @@
+{
+  "kyb_documents": [
+    {
+      "id": "9b3c0329-4131-46c2-8f31-4a72ec494a43",
+      "identity_id": "0029bc16-0a1c-4223-b9f5-d945f2bb810e",
+      "filename": "7DA224EA-2C02-4DCC-B413-0515841F2FD3_k4Ix0zf2.png",
+      "url": "https://soscious.s3-ap-northeast-1.amazonaws.com/public/1654337172/7DA224EA-2C02-4DCC-B413-0515841F2FD3_k4Ix0zf2.png",
+      "created_at": "2022-10-10T07:20:57.935185+00:00"
+    },
+    {
+      "id": "ceddb810-2f1b-4080-8155-a950dd6cae9b",
+      "identity_id": "0016ce77-7dea-4fe4-adb9-d2dc59d100b2",
+      "filename": "205cOrI1SsaqFv884nLd",
+      "url": "https://process.filestackapi.com/resize=width:600,height:315,fit:max/quality=value:90/205cOrI1SsaqFv884nLd",
+      "created_at": "2022-10-10T07:20:59.18245+00:00"
+    },
+    {
+      "id": "ad46f0d8-d9b6-4c17-8548-39224c85acf1",
+      "identity_id": "001b61e4-04d4-40ce-828c-a3724a006097",
+      "filename": "hcVESJB2QIy0H8ozSDJ9",
+      "url": "https://process.filestackapi.com/resize=width:600,height:315,fit:max/quality=value:90/hcVESJB2QIy0H8ozSDJ9",
+      "created_at": "2022-10-10T07:20:59.18245+00:00"
+    }
+  ]
+}

@@ -153,7 +153,7 @@ export default {
             name: 'milkomeda testnet',
             explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
+          escrow: '0x6193c4A81736Cd9e2F018F1Ce2121fD91931db50',
           tokens: [
             {
               name: 'USDC',
@@ -343,9 +343,13 @@ export default {
     }
   },
   wallet: {
-    agent: 'http://54.85.201.2:8000',
-    connect_address: 'https://wallet.socious.io/connect',
-    callback: process.env.WALLET_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback'
+    agent: 'https://agent.socious.io',
+    agent_api_key: process.env.PRISM_AGENT_API_KEY,
+    connect_address: process.env.WALLET_CONNECT_URL || 'https://wallet.socious.io/connect',
+    experience_vc_callback:
+      process.env.WALLET_EXPERIENCE_VC_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback',
+    verification_callback:
+      process.env.WALLET_VERIFICATION_CALLBACK || 'https://socious.io/api/v2/credentials/verifications/connect/callback'
   }
 }
 

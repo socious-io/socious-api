@@ -57,7 +57,12 @@ export const all = async ({ offset = 0, limit = 10, filter, sort, currentIdentit
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -66,7 +71,8 @@ export const all = async ({ offset = 0, limit = 10, filter, sort, currentIdentit
     LEFT JOIN connections c ON 
       (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
-    ${filtering(filter, filterColumns, false, 'org')}
+    WHERE (c.status <> 'BLOCKED' OR c.status IS NULL)
+    ${filtering(filter, filterColumns, true, 'org')}
     ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -118,7 +124,12 @@ export const get = async (id, currentIdentity) => {
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -127,7 +138,7 @@ export const get = async (id, currentIdentity) => {
     LEFT JOIN connections c ON 
       (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
-    WHERE org.id=${id}`)
+    WHERE (c.status <> 'BLOCKED' OR c.status IS NULL) AND org.id=${id}`)
 }
 
 export const getAll = async (ids, sort, currentIdentity) => {
@@ -236,7 +247,12 @@ export const getByShortname = async (shortname, currentIdentity) => {
         LEFT JOIN media img ON img.id=adds.image
         LEFT JOIN media sub_img ON sub_img.id=adds.sub_image
         WHERE adds.identity_id=org.id and type='RECOMMENDATIONS'
-    ) AS recommendations
+    ) AS recommendations,
+    (
+	    SELECT COUNT(*)::int
+	    FROM connections c2
+	    WHERE (c2.requested_id=org.id OR c2.requester_id=org.id) AND c2.status='CONNECTED'
+    ) AS connections
     FROM organizations org
     LEFT JOIN media m_image ON m_image.id=org.image
     LEFT JOIN media m_cover ON m_cover.id=org.cover_image
@@ -268,16 +284,20 @@ export const industries = async ({ offset = 0, limit = 10, q }) => {
   return rows
 }
 
-export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
+export const search = async (q, { offset = 0, limit = 10, filter, sort, currentIdentity }) => {
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,
       org.id
     FROM organizations org
+    LEFT JOIN connections c ON 
+      (c.requester_id = org.id OR c.requested_id = org.id ) AND 
+      (c.requester_id = ${currentIdentity} OR c.requested_id = ${currentIdentity} )
     WHERE
+      (c.status <> 'BLOCKED' OR c.status IS NULL) AND
       org.search_tsv @@ to_tsquery(${textSearch(q)})
-      ${filtering(filter, filterColumns)}
-    ${sorting(sort, sortColumns)}
+      ${filtering(filter, filterColumns, true, 'org')}
+    ${sorting(sort, sortColumns, 'org')}
     LIMIT ${limit} OFFSET ${offset}
     `)
 

@@ -1,5 +1,8 @@
 import User from '../../models/user/index.js'
+import Identity from '../../models/identity/index.js'
 import Org from '../../models/organization/index.js'
+import Event from '../events/index.js'
+import Notif from '../../models/notification/index.js'
 import Referring from '../../models/referring/index.js'
 import * as bcrypt from 'bcrypt'
 import { signin } from './jwt.js'
@@ -60,7 +63,7 @@ export const basic = async (body) => {
   return signin(user.id)
 }
 
-export const register = async (body) => {
+export const register = async (body, referredById) => {
   await registerSchem.validateAsync(body)
   if (!config.mail.allowTest && isTestEmail(body.email)) {
     throw new ValidationError('Invalid email')
@@ -81,15 +84,22 @@ export const register = async (body) => {
     }
   }
 
-  const referredById = body.referred_by
   if (referredById) {
     const referrer = await User.get(referredById)
-
     if (!referrer.identity_verified) throw new BadRequestError('Referrer identity is not verified')
   }
 
   const user = await User.insert(body.first_name, body.last_name, body.username, body.email, body.password)
-  if (referredById) await Referring.insert(user.id, referredById)
+  if (referredById) {
+    await Referring.insert(user.id, referredById)
+    const identity = await Identity.get(user.id)
+    Event.push(Event.Types.NOTIFICATION, referredById, {
+      type: Notif.Types.REFERRAL_JOINED,
+      refId: user.id,
+      parentId: identity.id,
+      identity: identity
+    })
+  }
 
   // sending OTP to verify user email after registeration
   const code = await createOTP(user.id, OTPType.EMAIL, OTPPurposeType.ACTIVATION)

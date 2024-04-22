@@ -36,7 +36,7 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
       return body.q ? Project.search(body.q, options) : Project.all(options)
 
     case Data.SearchType.ORGANIZATIONS:
-      return body.q ? Org.search(body.q, options) : Org.all(options)
+      return body.q ? Org.search(body.q, { ...options, currentIdentity: identityId }) : Org.all(options)
 
     default:
       throw new BadRequestError(`type '${body.type}' is not valid`)

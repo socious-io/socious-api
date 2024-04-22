@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`add education 1`] = `
+{
+  "created_at": Any<String>,
+  "degree": null,
+  "description": "Test",
+  "end_at": Any<String>,
+  "grade": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`add education 2`] = `
+{
+  "created_at": Any<String>,
+  "degree": null,
+  "description": "Test",
+  "end_at": Any<String>,
+  "grade": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "start_at": Any<String>,
+  "title": "Test",
+  "user_id": Any<String>,
+}
+`;
+
 exports[`add experience 1`] = `
 {
   "city": "Tehran",
@@ -15,6 +45,7 @@ exports[`add experience 1`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -33,6 +64,7 @@ exports[`add experience 2`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -82,10 +114,23 @@ exports[`profile 1`] = `
   "city": null,
   "connection_id": null,
   "connection_status": null,
+  "connections": 0,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "educations": null,
+  "educations": [
+    {
+      "credential": Any<Object>,
+      "degree": null,
+      "description": "Test",
+      "end_at": "2022-11-16T13:32:30.211",
+      "grade": null,
+      "id": Any<String>,
+      "org": Any<Object>,
+      "start_at": "2022-10-16T13:32:30.211",
+      "title": "Test",
+    },
+  ],
   "experiences": [
     {
       "city": "Tehran",
@@ -109,6 +154,7 @@ exports[`profile 1`] = `
   "followings": 2,
   "geoname_id": null,
   "id": Any<String>,
+  "identity_verified": false,
   "impact_points": 0,
   "languages": [
     {
@@ -143,10 +189,23 @@ exports[`profile 2`] = `
   "city": null,
   "connection_id": null,
   "connection_status": null,
+  "connections": 0,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "educations": null,
+  "educations": [
+    {
+      "credential": Any<Object>,
+      "degree": null,
+      "description": "Test",
+      "end_at": "2022-11-16T13:32:30.211",
+      "grade": null,
+      "id": Any<String>,
+      "org": Any<Object>,
+      "start_at": "2022-10-16T13:32:30.211",
+      "title": "Test",
+    },
+  ],
   "experiences": [
     {
       "city": "Tehran",
@@ -170,6 +229,7 @@ exports[`profile 2`] = `
   "followings": 0,
   "geoname_id": null,
   "id": Any<String>,
+  "identity_verified": false,
   "impact_points": 0,
   "languages": [
     {
@@ -204,10 +264,23 @@ exports[`profile by username 1`] = `
   "city": null,
   "connection_id": null,
   "connection_status": null,
+  "connections": 0,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "educations": null,
+  "educations": [
+    {
+      "credential": Any<Object>,
+      "degree": null,
+      "description": "Test",
+      "end_at": "2022-11-16T13:32:30.211",
+      "grade": null,
+      "id": Any<String>,
+      "org": Any<Object>,
+      "start_at": Any<String>,
+      "title": "Test 2",
+    },
+  ],
   "experiences": [
     {
       "city": "Tehran",
@@ -266,10 +339,23 @@ exports[`profile by username 2`] = `
   "city": null,
   "connection_id": null,
   "connection_status": null,
+  "connections": 0,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "educations": null,
+  "educations": [
+    {
+      "credential": Any<Object>,
+      "degree": null,
+      "description": "Test",
+      "end_at": "2022-11-16T13:32:30.211",
+      "grade": null,
+      "id": Any<String>,
+      "org": Any<Object>,
+      "start_at": Any<String>,
+      "title": "Test 2",
+    },
+  ],
   "experiences": [
     {
       "city": "Tehran",
@@ -325,11 +411,42 @@ exports[`register 1`] = `
 }
 `;
 
+exports[`request education credentials 1`] = `
+{
+  "connection_id": null,
+  "connection_url": null,
+  "created_at": Any<String>,
+  "education_id": Any<String>,
+  "id": Any<String>,
+  "message": "approve please",
+  "org_id": Any<String>,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`request education credentials 2`] = `
+{
+  "connection_id": null,
+  "connection_url": null,
+  "created_at": Any<String>,
+  "education_id": Any<String>,
+  "id": Any<String>,
+  "message": "approve please",
+  "org_id": Any<String>,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
 exports[`request experience credentials 1`] = `
 {
   "connection_id": null,
   "connection_url": null,
   "created_at": Any<String>,
+  "exact_info": null,
   "experience_id": Any<String>,
   "id": Any<String>,
   "message": "approve please",
@@ -345,12 +462,43 @@ exports[`request experience credentials 2`] = `
   "connection_id": null,
   "connection_url": null,
   "created_at": Any<String>,
+  "exact_info": null,
   "experience_id": Any<String>,
   "id": Any<String>,
   "message": "approve please",
   "org_id": Any<String>,
   "status": "PENDING",
   "updated_at": Any<String>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[`update education 1`] = `
+{
+  "created_at": Any<String>,
+  "degree": null,
+  "description": "Test",
+  "end_at": Any<String>,
+  "grade": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "start_at": Any<String>,
+  "title": "Test 2",
+  "user_id": Any<String>,
+}
+`;
+
+exports[`update education 2`] = `
+{
+  "created_at": Any<String>,
+  "degree": null,
+  "description": "Test",
+  "end_at": Any<String>,
+  "grade": null,
+  "id": Any<String>,
+  "org_id": Any<String>,
+  "start_at": Any<String>,
+  "title": "Test 2",
   "user_id": Any<String>,
 }
 `;
@@ -370,6 +518,7 @@ exports[`update experience 1`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -388,6 +537,7 @@ exports[`update experience 2`] = `
   "start_at": Any<String>,
   "title": "Test",
   "user_id": Any<String>,
+  "weekly_hours": null,
 }
 `;
 
@@ -420,10 +570,23 @@ exports[`update profile 1`] = `
   "city": null,
   "connection_id": null,
   "connection_status": null,
+  "connections": 0,
   "country": null,
   "cover_image": null,
   "created_at": Any<String>,
-  "educations": null,
+  "educations": [
+    {
+      "credential": Any<Object>,
+      "degree": null,
+      "description": "Test",
+      "end_at": "2022-11-16T13:32:30.211",
+      "grade": null,
+      "id": Any<String>,
+      "org": Any<Object>,
+      "start_at": "2022-10-16T13:32:30.211",
+      "title": "Test 2",
+    },
+  ],
   "experiences": [
     {
       "city": "Tehran",
@@ -447,6 +610,7 @@ exports[`update profile 1`] = `
   "followings": 2,
   "geoname_id": null,
   "id": Any<String>,
+  "identity_verified": false,
   "impact_points": 0,
   "languages": [
     {

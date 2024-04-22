@@ -1,6 +1,5 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
-import { filtering } from '../../utils/query.js'
 import { EntryError } from '../../utils/errors.js'
 
 export const addLanguage = async (user, { name, level }) => {
@@ -37,7 +36,19 @@ export const removeLanguage = async (id, user) => {
 
 export const addExperience = async (
   user,
-  { org_id, title, description, skills, start_at, end_at, city, country, employment_type, job_category_id }
+  {
+    org_id,
+    title,
+    description,
+    skills,
+    start_at,
+    end_at,
+    city,
+    country,
+    employment_type,
+    job_category_id,
+    weekly_hours
+  }
 ) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -52,7 +63,8 @@ export const addExperience = async (
       city,
       country,
       employment_type,
-      job_category_id
+      job_category_id,
+      weekly_hours
     ) 
     VALUES (
       ${org_id},
@@ -65,7 +77,8 @@ export const addExperience = async (
       ${city},
       ${country},
       ${employment_type},
-      ${job_category_id}
+      ${job_category_id},
+      ${weekly_hours}
       )
     RETURNING *
   `)
@@ -78,7 +91,19 @@ export const addExperience = async (
 export const editExperience = async (
   id,
   user,
-  { org_id, title, description, skills, start_at, end_at, city, country, employment_type, job_category_id }
+  {
+    org_id,
+    title,
+    description,
+    skills,
+    start_at,
+    end_at,
+    city,
+    country,
+    employment_type,
+    job_category_id,
+    weekly_hours
+  }
 ) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -92,7 +117,8 @@ export const editExperience = async (
       city=${city},
       country=${country},
       employment_type=${employment_type},
-      job_category_id=${job_category_id}
+      job_category_id=${job_category_id},
+      weekly_hours=${weekly_hours}
     WHERE id=${id} AND user_id=${user.id}
     RETURNING *
   `)
@@ -114,110 +140,65 @@ export const getExperiences = async (userId) => {
   return app.db.get(sql`SELECT * FROM experiences WHERE user_id=${userId}`)
 }
 
-export const getRequestExperienceCredentials = async (id) => {
-  return app.db.get(sql`
-  SELECT 
-    c.*,
-    row_to_json(e.*) AS experience,
-    row_to_json(u.*) AS user,
-    row_to_json(o.*) AS org,
-    row_to_json(j.*) AS job_category,
-    row_to_json(m.*) AS avatar
-  FROM experience_credentials c
-    JOIN experiences e ON e.id=c.experience_id
-    JOIN users u ON u.id=c.user_id
-    JOIN organizations o ON o.id=c.org_id
-    LEFT JOIN job_categories j ON j.id=e.job_category_id
-    LEFT JOIN media m ON m.id=u.avatar
-    WHERE c.id=${id}
-  `)
-}
-
-export const getRequestExperienceCredentialsbyConnection = async (connectId) => {
-  return app.db.get(sql`
-    SELECT 
-    c.*,
-    row_to_json(e.*) AS experience,
-    row_to_json(u.*) AS user,
-    row_to_json(o.*) AS org,
-    row_to_json(j.*) AS job_category,
-    row_to_json(m.*) AS avatar
-    FROM experience_credentials c
-    JOIN experiences e ON e.id=c.experience_id
-    JOIN users u ON u.id=c.user_id
-    JOIN organizations o ON o.id=c.org_id
-    LEFT JOIN job_categories j ON j.id=e.job_category_id
-    LEFT JOIN media m ON m.id=u.avatar
-    WHERE c.connection_id=${connectId}
-  `)
-}
-
-export const experienceCredentialsFilters = {
-  status: String
-}
-
-export const requestExperienceCredentials = async (id, userId, orgId, message) => {
+export const addEducation = async (user, { org_id, title, description, grade, degree, start_at, end_at }) => {
   try {
     const { rows } = await app.db.query(sql`
-      INSERT INTO experience_credentials (
-        user_id,
-        org_id,
-        experience_id,
-        message
-      ) VALUES (
-        ${userId},
-        ${orgId},
-        ${id},
-        ${message}
+    INSERT INTO educations (
+      org_id,
+      title,
+      description,
+      grade,
+      degree,
+      start_at,
+      end_at,
+      user_id
+    ) 
+    VALUES (
+      ${org_id},
+      ${title},
+      ${description},
+      ${grade},
+      ${degree},
+      ${start_at},
+      ${end_at},
+      ${user.id}
       )
-      RETURNING *
-    `)
+    RETURNING *
+  `)
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
   }
 }
 
-export const requestedExperienceCredentials = async (identityId, { limit = 10, offset = 0, filter }) => {
-  const { rows } = await app.db.query(sql`
-    SELECT
-      COUNT(c.*) OVER () as total_count,
-      c.*,
-      row_to_json(e.*) AS experience,
-      row_to_json(u.*) AS user,
-      row_to_json(o.*) AS org,
-      row_to_json(m.*) AS avatar
-    FROM experience_credentials c
-    JOIN experiences e ON e.id=c.experience_id
-    JOIN users u ON u.id=c.user_id
-    JOIN organizations o ON o.id=c.org_id
-    LEFT JOIN media m ON m.id=u.avatar
-      WHERE (c.org_id = ${identityId} OR c.user_id = ${identityId})
-    ${filtering(filter, experienceCredentialsFilters, true, 'c')}
-    ORDER BY created_at DESC
-    LIMIT ${limit} OFFSET ${offset}
-  `)
-  return rows
-}
-
-export const requestedExperienceCredentialsUpdate = async ({
-  id,
-  status,
-  connection_id = null,
-  connection_url = null
-}) => {
+export const editEducation = async (id, user, { org_id, title, description, grade, degree, start_at, end_at }) => {
   try {
     const { rows } = await app.db.query(sql`
-      UPDATE experience_credentials SET
-        status=${status},
-        connection_id=${connection_id},
-        connection_url=${connection_url},
-        updated_at=Now()
-      WHERE id=${id}
-      RETURNING *
-    `)
+    UPDATE educations SET
+      org_id=${org_id},
+      title=${title},
+      description=${description},
+      grade=${grade},
+      degree=${degree},
+      start_at=${start_at},
+      end_at=${end_at}
+    WHERE id=${id} AND user_id=${user.id}
+    RETURNING *
+  `)
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
   }
+}
+
+export const removeEducation = async (id, user) => {
+  await app.db.query(sql`DELETE FROM educations WHERE id=${id} AND user_id=${user.id}`)
+}
+
+export const getEducation = async (id) => {
+  return app.db.get(sql`SELECT * FROM educations WHERE id=${id}`)
+}
+
+export const getEducations = async (userId) => {
+  return app.db.get(sql`SELECT * FROM educations WHERE user_id=${userId}`)
 }

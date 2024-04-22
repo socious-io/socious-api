@@ -102,6 +102,94 @@ exports[` 4`] = `
 }
 `;
 
+exports[`add multiple questions 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add multiple questions 2`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add multiple questions 3`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add multiple questions 4`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add multiple questions 5`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`add multiple questions 6`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
 exports[`add questions 1`] = `
 {
   "created_at": Any<String>,

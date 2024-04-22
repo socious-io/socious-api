@@ -121,7 +121,6 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
-
         amount,
         txHash,
         token
@@ -133,7 +132,8 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
   return true
 }
 
-export const charge = async (identityId, { amount, currency, meta, source, txHash }) => {
+export const charge = async (identityId, body) => {
+  const { amount, currency, meta, source, txHash, org_referrer, user_referrer, fee } = body
   const network = config.crypto.networks[config.crypto.env].filter((n) => {
     const t = n.tokens.filter((t) => t.address === meta.token)[0]
     return t !== undefined
@@ -151,10 +151,37 @@ export const charge = async (identityId, { amount, currency, meta, source, txHas
     currency,
     service: Data.PaymentService.CRYPTO,
     meta,
-    source: source
+    source: source,
+    referrers_fee: false
   })
 
   await setCompleteTrx(trx.id, txHash)
+
+  if (org_referrer) {
+    await create({
+      identity_id: org_referrer,
+      amount: fee * 0.5,
+      currency,
+      service: Data.PaymentService.CRYPTO,
+      meta,
+      source: source,
+      referrers_fee: true,
+      ref_trx: trx.id
+    })
+  }
+
+  if (user_referrer) {
+    await create({
+      identity_id: user_referrer,
+      amount: fee * 0.5,
+      currency,
+      service: Data.PaymentService.CRYPTO,
+      meta,
+      source: source,
+      referrers_fee: true,
+      ref_trx: trx.id
+    })
+  }
 
   return {
     id: trx.id,

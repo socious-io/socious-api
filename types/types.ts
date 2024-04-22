@@ -494,6 +494,10 @@ export interface IChargeBody {
   source: string
   description?: string
   transfers?: any
+  is_jp: boolean
+  org_referrer?: string
+  user_referrer?: string
+  fee: number
 }
 
 export enum IUserStatusType {

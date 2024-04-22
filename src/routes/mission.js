@@ -2,6 +2,7 @@ import Router from '@koa/router'
 import Mission from '../models/mission/index.js'
 import Notif from '../models/notification/index.js'
 import Event from '../services/events/index.js'
+import Referring from '../models/referring/index.js'
 import ImpactPoints from '../services/impact_points/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import Analytics from '../services/analytics/index.js'
@@ -30,6 +31,16 @@ router.post('/:id/complete', loginRequired, checkIdParams, assignee, async (ctx)
     parentId: project.id,
     identity: ctx.identity
   })
+
+  const referred = await Referring.get(ctx.identity.id)
+  if (referred) {
+    Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+      type: Notif.Types.REFERRAL_COMPLETED_JOB,
+      refId: ctx.mission.id,
+      parentId: ctx.mission.project_id,
+      identity: ctx.identity
+    })
+  }
 
   Analytics.track({
     userId: ctx.user.id,
@@ -81,6 +92,26 @@ router.post('/:id/confirm', loginRequired, checkIdParams, assigner, async (ctx) 
     parentId: project.id,
     identity: ctx.identity
   })
+
+  const orgReferred = await Referring.get(ctx.identity.id)
+  if (orgReferred) {
+    Event.push(Event.Types.NOTIFICATION, orgReferred.referred_by_id, {
+      type: Notif.Types.REFERRAL_CONFIRMED_JOB,
+      refId: ctx.mission.id,
+      parentId: ctx.mission.project_id,
+      identity: ctx.identity
+    })
+  }
+
+  const userReferred = await Referring.get(ctx.mission.assignee_id)
+  if (userReferred) {
+    Event.push(Event.Types.NOTIFICATION, userReferred.referred_by_id, {
+      type: Notif.Types.REFERRAL_CONFIRMED_JOB,
+      refId: ctx.mission.id,
+      parentId: ctx.mission.project_id,
+      identity: ctx.identity
+    })
+  }
 
   if (ctx.identity.meta.verified_impact) ImpactPoints.calculate(ctx.mission)
 

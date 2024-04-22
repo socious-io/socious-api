@@ -108,6 +108,91 @@ export const makeMessage = (type, name) => {
         title: Data.NotificationTitle.ACCEPT_CONNECT,
         body: `${name} accepted your connection request. You can now message each other.`
       }
+    case Data.NotificationType.REFERRAL_JOINED:
+      return {
+        title: 'referral joined',
+        body: `has joined ${name} via your invitation`
+      }
+    case Data.NotificationType.REFERRAL_VERIFIED:
+      return {
+        title: 'referral verified',
+        body: `${name} has been verified`
+      }
+    case Data.NotificationType.REFERRAL_HIRED:
+      return {
+        title: 'referral hired',
+        body: `${name} has been hired`
+      }
+    case Data.NotificationType.REFERRAL_COMPLETED_JOB:
+      return {
+        title: 'referral completed job',
+        body: `${name} has been completed job`
+      }
+    case Data.NotificationType.REFERRAL_CONFIRMED_JOB:
+      return {
+        title: 'referral confirmed job',
+        body: `${name} has been confirmed job`
+      }
+    case Data.NotificationType.EXPERIENCE_VERIFY_REQUEST:
+      return {
+        title: 'request experience verify',
+        body: `${name} request to verify experience`
+      }
+    case Data.NotificationType.EXPERIENCE_VERIFY_APPROVED:
+      return {
+        title: 'experience verfied',
+        body: `${name} has been verified your experience`
+      }
+    case Data.NotificationType.EXPERIENCE_VERIFY_REJECTED:
+      return {
+        title: 'experience rejected',
+        body: `${name} has been rejected your experience`
+      }
+    case Data.NotificationType.EXPERIENCE_ISSUED:
+      return {
+        title: 'issued experience',
+        body: `${name} issued work experience for you`
+      }
+    case Data.NotificationType.EXPERIENCE_ISSUED_APPROVED:
+      return {
+        title: 'issued experience accepted',
+        body: `${name} accepted your work experience issue`
+      }
+    case Data.NotificationType.EXPERIENCE_ISSUED_REJECTED:
+      return {
+        title: 'issued experience rejected',
+        body: `${name} rejected your work experience issue`
+      }
+      case Data.NotificationType.EDUCATION_VERIFY_REQUEST:
+        return {
+          title: 'request education verify',
+          body: `${name} request to verify education`
+        }
+      case Data.NotificationType.EDUCATION_VERIFY_APPROVED:
+        return {
+          title: 'education verfied',
+          body: `${name} has been verified your education`
+        }
+      case Data.NotificationType.EDUCATION_VERIFY_REJECTED:
+        return {
+          title: 'education rejected',
+          body: `${name} has been rejected your education`
+        }
+      case Data.NotificationType.EDUCATION_ISSUED:
+        return {
+          title: 'issued education',
+          body: `${name} issued education certificate for you`
+        }
+      case Data.NotificationType.EDUCATION_ISSUED_APPROVED:
+        return {
+          title: 'issued experience accepted',
+          body: `${name} accepted issued education certificate`
+        }
+      case Data.NotificationType.EDUCATION_ISSUED_REJECTED:
+        return {
+          title: 'issued experience rejected',
+          body: `${name} rejected issued education certificate`
+        }
     default:
       throw new Error(`${type} is not valid to create message`)
   }

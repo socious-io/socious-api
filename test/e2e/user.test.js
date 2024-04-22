@@ -18,7 +18,11 @@ import {
   openToVolunteer,
   registerReferredBy,
   requestExperienceCredentials,
-  approveRequestedExperienceCredentials
+  approveRequestedExperienceCredentials,
+  addEducation,
+  updateEducation,
+  requestEducationCredentials,
+  approveRequestedEducationCredentials
 } from './globals/user.js'
 
 let server, request
@@ -33,11 +37,15 @@ test('verify', async () => verifyUser(request, data))
 test('login', async () => login(request, data))
 test('add language', async () => addLanguage(request, data))
 test('add experience', async () => addExperience(request, data))
+test('add education', async () => addEducation(request, data))
 test('profile', async () => profile(request, data))
 test('update language', async () => updateLanguage(request, data))
 test('update experience', async () => updateExperience(request, data))
+test('update education', async () => updateEducation(request, data))
 test('request experience credentials', async () => requestExperienceCredentials(request, data))
 test('approve request experience credentials', async () => approveRequestedExperienceCredentials(request, data))
+test('request education credentials', async () => requestEducationCredentials(request, data))
+test('approve request education credentials', async () => approveRequestedEducationCredentials(request, data))
 test('profile by username', async () => profileByUsername(request, data))
 test('update profile', async () => updateProfile(request, data))
 test('update wallet', async () => updateUserWallet(request, data))

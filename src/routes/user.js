@@ -1,6 +1,8 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Applicant from '../models/applicant/index.js'
+import Notif from '../models/notification/index.js'
+import Event from '../services/events/index.js'
 import Auth from '../services/auth/index.js'
 import Mission from '../models/mission/index.js'
 import Offer from '../models/offer/index.js'
@@ -13,8 +15,10 @@ import { loginOptional, loginRequired } from '../utils/middlewares/authorization
 import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
 import { putContact } from '../services/sendgrid/index.js'
-import { BadRequestError } from '../utils/errors.js'
+import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
+import Credential from '../models/credentials/index.js'
+import logger from '../utils/logging.js'
 
 export const router = new Router()
 
@@ -147,6 +151,37 @@ router.post('/languages/remove/:id', loginRequired, checkIdParams, async (ctx) =
   ctx.body = { message: 'success' }
 })
 
+router.post('/experiences/issue/:user_id', loginRequired, async (ctx) => {
+  if (ctx.identity.type == 'users') throw new PermissionError() //Should have org identity
+  ctx.request.body.org_id = ctx.identity.id
+  await validate.ProfileExperienceSchema.validateAsync(ctx.request.body) //FIXME: Validation?
+
+  //getting user
+  const user = await User.get(ctx.params.user_id)
+  if (!user) throw new NotFoundError()
+
+  const experience = await User.addExperience(user, ctx.request.body)
+  const credential = await Credential.requestExperience(
+    experience.id,
+    user.id,
+    experience.org_id,
+    ctx.request.body?.message,
+    ctx.request.body?.exact_info,
+    { issued: true }
+  )
+  Event.push(Event.Types.NOTIFICATION, user.id, {
+    type: Notif.Types.EXPERIENCE_ISSUED,
+    refId: experience.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
+
+  ctx.body = {
+    experience,
+    credential
+  }
+})
+
 router.post('/experiences', loginRequired, async (ctx) => {
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
   ctx.body = await User.addExperience(ctx.user, ctx.request.body)
@@ -158,7 +193,25 @@ router.get('/experiences', loginRequired, async (ctx) => {
 
 router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
-  ctx.body = await User.editExperience(ctx.params.id, ctx.user, ctx.request.body)
+
+  //Preventing 'CLAIMED' and 'APPROVED' credentials to be changed except for description
+  let editPayload = ctx.request.body
+  try {
+    const {
+      experience_credentials: { status },
+      experience
+    } = await Credential.getCredentialByExperienceId(ctx.params.id)
+
+    if (status == 'CLAIMED' || status == 'APPROVED')
+      editPayload = {
+        ...experience,
+        description: editPayload.description ?? undefined
+      }
+  } catch (err) {
+    logger.error(err)
+  } //in-case of there is no credentials for that experience
+
+  ctx.body = await User.editExperience(ctx.params.id, ctx.user, editPayload)
 })
 
 router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx) => {
@@ -199,4 +252,71 @@ router.get('/:username/recommend/users', loginOptional, paginate, async (ctx) =>
 
 router.get('/:username/recommend/orgs', loginOptional, paginate, async (ctx) => {
   ctx.body = await recommendOrgByUser(ctx.params.username)
+})
+
+router.post('/educations/issue/:user_id', loginRequired, async (ctx) => {
+  if (ctx.identity.type == 'users') throw new PermissionError() //Should have org identity
+  ctx.request.body.org_id = ctx.identity.id
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+
+  //getting user
+  const user = await User.get(ctx.params.user_id)
+  if (!user) throw new NotFoundError()
+
+  const education = await User.addEducation(user, ctx.request.body)
+  const credential = await Credential.requestEducation(
+    education.id,
+    user.id,
+    education.org_id,
+    ctx.request.body?.message,
+    { issued: true }
+  )
+
+  Event.push(Event.Types.NOTIFICATION, user.id, {
+    type: Notif.Types.EDUCATION_ISSUED,
+    refId: education.id,
+    parentId: ctx.body.id,
+    identity: ctx.identity
+  })
+
+  ctx.body = {
+    education,
+    credential
+  }
+})
+
+router.post('/educations', loginRequired, async (ctx) => {
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+  ctx.body = await User.addEducation(ctx.user, ctx.request.body)
+})
+
+router.get('/educations', loginRequired, async (ctx) => {
+  ctx.body = await User.getEducation(ctx.user.id)
+})
+
+router.post('/educations/update/:id', loginRequired, checkIdParams, async (ctx) => {
+  await validate.ProfileEducationSchema.validateAsync(ctx.request.body)
+
+  //Preventing 'CLAIMED' and 'APPROVED' credentials to be changed except for description
+  let editPayload = ctx.request.body
+  try {
+    const {
+      experience_credentials: { status },
+      education
+    } = await Credential.getCredentialByEducationId(ctx.params.id)
+
+    if (status == 'CLAIMED' || status == 'APPROVED')
+      editPayload = {
+        ...education,
+        description: editPayload.description ?? undefined
+      }
+  } catch (err) {
+    logger.error(err)
+  } //in-case of there is no credentials for that experience
+
+  ctx.body = await User.editEducation(ctx.params.id, ctx.user, editPayload)
+})
+
+router.post('/educations/remove/:id', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await User.removeEducation(ctx.params.id, ctx.user)
 })

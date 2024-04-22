@@ -16,15 +16,4 @@ test('calculate', async () => {
       'mainet'
     )
   ).toBe(true)
-
-  expect(
-    await confirmTx(
-      '0xAC87EDb9209E9637549c43fA9Ca267b4d4577959',
-      0.01021,
-      '0xa742ccf421dc6cfdecc94b6748e9c3a84d731b6fb53d1fac9c4dcca15d93c6a7',
-      '0xC12F6Ee5c853393105f29EF0310e61e6B494a70F',
-      0,
-      'testnet'
-    )
-  ).toBe(true)
 })

@@ -31,7 +31,9 @@ router.get('/', loginRequired, async (ctx) => {
           }
         }
       }
-    } catch {}
+    } catch(err) {
+      console.log(err)
+    }
   }
   ctx.body = await Identity.getAll(ctx.user.id, ctx.identity.id)
 })

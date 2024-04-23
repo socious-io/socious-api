@@ -104,6 +104,9 @@ exports[`create 3`] = `
 
 exports[`create KYB Request 1`] = `
 {
+  "body": null,
+  "connection_id": null,
+  "connection_url": null,
   "created_at": Any<String>,
   "documents": ArrayContaining [
     ObjectContaining {
@@ -116,6 +119,7 @@ exports[`create KYB Request 1`] = `
   ],
   "id": Any<String>,
   "identity_id": Any<String>,
+  "present_id": null,
   "status": StringMatching /PENDING/,
   "updated_at": Any<String>,
 }

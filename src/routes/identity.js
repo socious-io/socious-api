@@ -13,23 +13,25 @@ export const router = new Router()
 router.get('/', loginRequired, async (ctx) => {
   
   if (!ctx.user.identity_verified) {
-    const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
-    if (vc.present_id) {
-      const credential = await getPresentVerification(vc.present_id)
-      const rows = await Credential.searchSimilarVerification(credential)
-      if (rows.length < 1) {
-        await Credential.setVerificationApproved(vc.id, credential)
-        const referred = await Referring.get(ctx.identity.id)
-        if (referred) {
-          Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
-            type: Notif.Types.REFERRAL_VERIFIED,
-            refId: ctx.identity.id,
-            parentId: ctx.identity.id,
-            identity: ctx.identity
-          })
+    try {
+      const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
+      if (vc.present_id) {
+        const credential = await getPresentVerification(vc.present_id)
+        const rows = await Credential.searchSimilarVerification(credential)
+        if (rows.length < 1) {
+          await Credential.setVerificationApproved(vc.id, credential)
+          const referred = await Referring.get(ctx.identity.id)
+          if (referred) {
+            Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+              type: Notif.Types.REFERRAL_VERIFIED,
+              refId: ctx.identity.id,
+              parentId: ctx.identity.id,
+              identity: ctx.identity
+            })
+          }
         }
       }
-    }
+    } catch {}
   }
   ctx.body = await Identity.getAll(ctx.user.id, ctx.identity.id)
 })

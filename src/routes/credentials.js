@@ -26,8 +26,11 @@ router.post('/verifications', loginRequired, async (ctx) => {
 })
 
 router.post('/verifications/org', loginRequired, async (ctx) => {
-  if(ctx.identity.type !== "organizations") throw new PermissionError('Not allow')
-  const {verification, documents} = await Credential.requestOrgVerification(ctx.identity.id, ctx.request.body.documents)
+  if (ctx.identity.type !== 'organizations') throw new PermissionError('Not allow')
+  const { verification, documents } = await Credential.requestOrgVerification(
+    ctx.identity.id,
+    ctx.request.body.documents
+  )
   ctx.body = {
     ...verification,
     documents
@@ -35,10 +38,9 @@ router.post('/verifications/org', loginRequired, async (ctx) => {
 })
 
 router.get('/verifications/org', loginRequired, async (ctx) => {
-  if(ctx.identity.type !== "organizations") throw new PermissionError('Not allow')
+  if (ctx.identity.type !== 'organizations') throw new PermissionError('Not allow')
   ctx.body = await Credential.getOrgVerificationRequest(ctx.identity.id)
 })
-
 
 router.get('/verifications/connect/callback/:id', async (ctx) => {
   const vc = await Credential.getRequestVerificationByConnection(ctx.params.id)

@@ -85,3 +85,21 @@ export const all = async (identityId, { limit = 10, offset = 0 }) => {
   `)
   return rows
 }
+
+export const getOne = async (id, identityId) => {
+  const { rows } = await app.db.query(sql`
+    SELECT
+      p.*, row_to_json(ref.*) as reference,
+      row_to_json(i.*) as payer_identity,
+      row_to_json(i2.*) as receiver_identity
+    FROM payments p
+    LEFT JOIN payments ref ON ref.id=p.ref_trx
+    JOIN escrows e ON e.payment_id=p.id OR e.payment_id=ref.id
+    JOIN projects pr ON pr.id=e.project_id
+    JOIN identities i ON i.id=pr.identity_id
+    JOIN offers o ON o.id=e.offer_id
+    JOIN identities i2 ON i2.id=o.recipient_id
+    WHERE p.id=${id} AND (p.identity_id=${identityId} OR o.recipient_id=${identityId})
+  `)
+  return rows
+}

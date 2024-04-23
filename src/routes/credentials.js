@@ -1,6 +1,7 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Credential from '../models/credentials/index.js'
+import Referring from '../models/referring/index.js'
 import Notif from '../models/notification/index.js'
 import Event from '../services/events/index.js'
 import Org from '../models/organization/index.js'
@@ -64,6 +65,16 @@ router.get('/verifications', loginRequired, checkIdParams, async (ctx) => {
       return
     }
     await Credential.setVerificationApproved(vc.id, credential)
+
+    const referred = await Referring.get(ctx.identity.id)
+    if (referred) {
+      Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+        type: Notif.Types.REFERRAL_VERIFIED,
+        refId: ctx.identity.id,
+        parentId: ctx.identity.id,
+        identity: ctx.identity
+      })
+    }
     ctx.body = { message: 'success', verified: true }
   } catch (err) {
     logger.error(err)

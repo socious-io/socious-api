@@ -151,17 +151,47 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EXPERIENCE_ISSUED:
       return {
         title: 'issued experience',
-        body: ``
+        body: `${name} issued work experience for you`
       }
     case Data.NotificationType.EXPERIENCE_ISSUED_APPROVED:
       return {
         title: 'issued experience accepted',
-        body: ``
+        body: `${name} accepted your work experience issue`
       }
     case Data.NotificationType.EXPERIENCE_ISSUED_REJECTED:
       return {
         title: 'issued experience rejected',
-        body: ``
+        body: `${name} rejected your work experience issue`
+      }
+    case Data.NotificationType.EDUCATION_VERIFY_REQUEST:
+      return {
+        title: 'request education verify',
+        body: `${name} request to verify education`
+      }
+    case Data.NotificationType.EDUCATION_VERIFY_APPROVED:
+      return {
+        title: 'education verfied',
+        body: `${name} has been verified your education`
+      }
+    case Data.NotificationType.EDUCATION_VERIFY_REJECTED:
+      return {
+        title: 'education rejected',
+        body: `${name} has been rejected your education`
+      }
+    case Data.NotificationType.EDUCATION_ISSUED:
+      return {
+        title: 'issued education',
+        body: `${name} issued education certificate for you`
+      }
+    case Data.NotificationType.EDUCATION_ISSUED_APPROVED:
+      return {
+        title: 'issued experience accepted',
+        body: `${name} accepted issued education certificate`
+      }
+    case Data.NotificationType.EDUCATION_ISSUED_REJECTED:
+      return {
+        title: 'issued experience rejected',
+        body: `${name} rejected issued education certificate`
       }
     default:
       throw new Error(`${type} is not valid to create message`)

@@ -67,7 +67,7 @@ router.get('/', loginRequired, paginate, async (ctx) => {
 })
 
 router.get('/:id', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await Payment.get(ctx.params.id, ctx.identity.id)
+  ctx.body = await Payment.getOne(ctx.params.id, ctx.identity.id)
 })
 
 router.post('/donate', loginRequired, async (ctx) => {

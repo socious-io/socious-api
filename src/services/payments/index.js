@@ -1,6 +1,6 @@
 import { NotImplementedError } from '../../utils/errors.js'
 import Data from '@socious/data'
-import { get, all } from './transaction.js'
+import { get, all, getOne } from './transaction.js'
 import * as Card from './card.js'
 import * as Escrow from './escrow.js'
 import * as Stripe from './stripe.js'
@@ -75,6 +75,7 @@ export default {
   ...Card,
   ...Escrow,
   get,
+  getOne,
   all,
   charge,
   payout,

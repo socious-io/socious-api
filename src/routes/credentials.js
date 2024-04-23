@@ -22,6 +22,24 @@ import logger from '../utils/logging.js'
 export const router = new Router()
 
 router.post('/verifications', loginRequired, async (ctx) => {
+  const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
+  if (vc.present_id) {
+    const credential = await getPresentVerification(vc.present_id)
+    const rows = await Credential.searchSimilarVerification(credential)
+    if (rows.length < 1) {
+      ctx.body = await Credential.setVerificationApproved(vc.id, credential)
+      const referred = await Referring.get(ctx.identity.id)
+      if (referred) {
+        Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+          type: Notif.Types.REFERRAL_VERIFIED,
+          refId: ctx.identity.id,
+          parentId: ctx.identity.id,
+          identity: ctx.identity
+        })
+      }
+      return
+    }
+  }
   const connect = await createConnectURL(config.wallet.verification_callback)
   ctx.body = await Credential.requestVerification(ctx.identity.id, connect.id, connect.url)
 })

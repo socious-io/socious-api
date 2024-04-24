@@ -223,7 +223,9 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
     employment_type: e.experience.employment_type,
     company_name: e.org.name,
     start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+    end_date: e.experience.end_at,
+    issued_date: new Date().toISOString(),
+    type: 'experience',
   }
 
   await sendCredentials({
@@ -329,7 +331,9 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
     employment_type: e.experience.employment_type,
     company_name: e.org.name,
     start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+    end_date: e.experience.end_at,
+    issued_date: new Date().toISOString(),
+    type: 'education',
   }
 
   await sendCredentials({

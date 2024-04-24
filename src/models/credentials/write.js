@@ -9,7 +9,7 @@ export const requestOrgVerification = async (identityId, medias) => {
     await client.query('BEGIN')
     try {
       verification = await client.query(sql`
-      INSERT INTO org_verification_credentials (identity_id)
+      INSERT INTO verification_credentials (identity_id)
       VALUES
         (${identityId})
       RETURNING *
@@ -18,7 +18,7 @@ export const requestOrgVerification = async (identityId, medias) => {
 
       documents = await client.query(
         raw(`
-        INSERT INTO org_verification_documents (media_id, verification_id)
+        INSERT INTO verification_documents (media_id, verification_id)
         VALUES
         ${medias.map((media) => `('${media}','${verification.id}')`)}
         RETURNING *

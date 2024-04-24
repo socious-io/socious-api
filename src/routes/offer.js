@@ -111,13 +111,13 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
     identity: ctx.identity
   })
 
-  const referred = await Referring.get(ctx.identity.id)
+  const referred = await Referring.get(ctx.offer.recipient_id)
   if (referred) {
     Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
       type: Notif.Types.REFERRAL_HIRED,
       refId: ctx.offer.id,
       parentId: ctx.offer.project_id,
-      identity: ctx.identity
+      identity: ctx.offer.recipient_id
     })
   }
 })

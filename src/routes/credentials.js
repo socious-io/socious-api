@@ -1,6 +1,7 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
 import Credential from '../models/credentials/index.js'
+import Referring from '../models/referring/index.js'
 import Notif from '../models/notification/index.js'
 import Event from '../services/events/index.js'
 import Org from '../models/organization/index.js'
@@ -21,13 +22,38 @@ import logger from '../utils/logging.js'
 export const router = new Router()
 
 router.post('/verifications', loginRequired, async (ctx) => {
+  try {
+    const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
+    if (vc.present_id) {
+      const credential = await getPresentVerification(vc.present_id)
+      const rows = await Credential.searchSimilarVerification(credential)
+      if (rows.length < 1) {
+        ctx.body = await Credential.setVerificationApproved(vc.id, credential)
+        const referred = await Referring.get(ctx.identity.id)
+        if (referred) {
+          Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+            type: Notif.Types.REFERRAL_VERIFIED,
+            refId: ctx.identity.id,
+            parentId: ctx.identity.id,
+            identity: ctx.identity
+          })
+        }
+        return
+      }
+    }
+  } catch(err) {
+    console.log(err)
+  }
   const connect = await createConnectURL(config.wallet.verification_callback)
   ctx.body = await Credential.requestVerification(ctx.identity.id, connect.id, connect.url)
 })
 
 router.post('/verifications/org', loginRequired, async (ctx) => {
-  if(ctx.identity.type !== "organizations") throw new PermissionError('Not allow')
-  const {verification, documents} = await Credential.requestOrgVerification(ctx.identity.id, ctx.request.body.documents)
+  if (ctx.identity.type !== 'organizations') throw new PermissionError('Not allow')
+  const { verification, documents } = await Credential.requestOrgVerification(
+    ctx.identity.id,
+    ctx.request.body.documents
+  )
   ctx.body = {
     ...verification,
     documents
@@ -35,10 +61,9 @@ router.post('/verifications/org', loginRequired, async (ctx) => {
 })
 
 router.get('/verifications/org', loginRequired, async (ctx) => {
-  if(ctx.identity.type !== "organizations") throw new PermissionError('Not allow')
+  if (ctx.identity.type !== 'organizations') throw new PermissionError('Not allow')
   ctx.body = await Credential.getOrgVerificationRequest(ctx.identity.id)
 })
-
 
 router.get('/verifications/connect/callback/:id', async (ctx) => {
   const vc = await Credential.getRequestVerificationByConnection(ctx.params.id)
@@ -62,6 +87,16 @@ router.get('/verifications', loginRequired, checkIdParams, async (ctx) => {
       return
     }
     await Credential.setVerificationApproved(vc.id, credential)
+
+    const referred = await Referring.get(ctx.identity.id)
+    if (referred) {
+      Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
+        type: Notif.Types.REFERRAL_VERIFIED,
+        refId: ctx.identity.id,
+        parentId: ctx.identity.id,
+        identity: ctx.identity
+      })
+    }
     ctx.body = { message: 'success', verified: true }
   } catch (err) {
     logger.error(err)
@@ -188,7 +223,9 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
     employment_type: e.experience.employment_type,
     company_name: e.org.name,
     start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+    end_date: e.experience.end_at,
+    issued_date: new Date().toISOString(),
+    type: 'experience',
   }
 
   await sendCredentials({
@@ -280,38 +317,6 @@ router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) =
   ctx.body = connect
 })
 
-router.get('/educations/connect/callback/:id', async (ctx) => {
-  if (ctx.query.reject) throw new BadRequestError()
-
-  const e = await Credential.getRequestEducationbyConnection(ctx.params.id)
-
-  if (e.status !== 'APPROVED') throw new PermissionError()
-
-  const claims = {
-    recipient_name: `${e.user.first_name} ${e.user.last_name}`,
-    job_title: e.experience.title,
-    job_category: e.job_category.name,
-    employment_type: e.experience.employment_type,
-    company_name: e.org.name,
-    start_date: e.experience.start_at,
-    end_date: e.experience.end_at
-  }
-
-  await sendCredentials({
-    connectionId: e.connection_id,
-    issuingDID: e.org.did,
-    claims
-  })
-
-  await Credential.requestedEducationUpdate({
-    id: e.id,
-    status: 'SENT',
-    connection_id: e.connection_id,
-    connection_url: e.connection_url
-  })
-
-  ctx.body = { message: 'success' }
-})
 
 router.get('/educations/connect/callback/:id', async (ctx) => {
   if (ctx.query.reject) throw new BadRequestError()
@@ -326,8 +331,10 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
     institute_name: e.org.name,
     degree: e.education.degree,
     grade: e.education.grade,
-    start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+    start_date: e.education.start_at,
+    end_date: e.education.end_at,
+    issued_date: new Date().toISOString(),
+    type: 'education',
   }
 
   await sendCredentials({

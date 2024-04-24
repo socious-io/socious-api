@@ -5908,6 +5908,12 @@ paths:
           content:
             application/json: {}
   /payments:
+    parameters:
+    - name: Current-Identity
+      in: header
+      schema:
+        type: string
+        example: 311fca4c-057d-4752-9e7c-b985ff1c5294
     get:
       tags:
         - payments

@@ -22,8 +22,8 @@ import logger from '../utils/logging.js'
 export const router = new Router()
 
 router.post('/verifications', loginRequired, async (ctx) => {
-  const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
   try {
+    const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
     if (vc.present_id) {
       const credential = await getPresentVerification(vc.present_id)
       const rows = await Credential.searchSimilarVerification(credential)

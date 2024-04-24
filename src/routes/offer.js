@@ -117,7 +117,7 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
       type: Notif.Types.REFERRAL_HIRED,
       refId: ctx.offer.id,
       parentId: ctx.offer.project_id,
-      identity: ctx.identity
+      identity: ctx.offer.recipient_id
     })
   }
 })

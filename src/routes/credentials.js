@@ -317,40 +317,6 @@ router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) =
   ctx.body = connect
 })
 
-router.get('/educations/connect/callback/:id', async (ctx) => {
-  if (ctx.query.reject) throw new BadRequestError()
-
-  const e = await Credential.getRequestEducationbyConnection(ctx.params.id)
-
-  if (e.status !== 'APPROVED') throw new PermissionError()
-
-  const claims = {
-    recipient_name: `${e.user.first_name} ${e.user.last_name}`,
-    job_title: e.experience.title,
-    job_category: e.job_category.name,
-    employment_type: e.experience.employment_type,
-    company_name: e.org.name,
-    start_date: e.experience.start_at,
-    end_date: e.experience.end_at,
-    issued_date: new Date().toISOString(),
-    type: 'education',
-  }
-
-  await sendCredentials({
-    connectionId: e.connection_id,
-    issuingDID: e.org.did,
-    claims
-  })
-
-  await Credential.requestedEducationUpdate({
-    id: e.id,
-    status: 'SENT',
-    connection_id: e.connection_id,
-    connection_url: e.connection_url
-  })
-
-  ctx.body = { message: 'success' }
-})
 
 router.get('/educations/connect/callback/:id', async (ctx) => {
   if (ctx.query.reject) throw new BadRequestError()
@@ -365,8 +331,10 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
     institute_name: e.org.name,
     degree: e.education.degree,
     grade: e.education.grade,
-    start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+    start_date: e.education.start_at,
+    end_date: e.education.end_at,
+    issued_date: new Date().toISOString(),
+    type: 'education',
   }
 
   await sendCredentials({

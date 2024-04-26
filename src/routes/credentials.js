@@ -176,6 +176,7 @@ router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) 
   ctx.body = connect
 })
 
+
 router.get('/experiences/connect/callback/:id', async (ctx) => {
   if (ctx.query.reject) throw new BadRequestError()
 
@@ -183,38 +184,10 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
 
   if (e.status !== 'APPROVED') throw new PermissionError()
 
-  const claims = {
-    recipient_name: `${e.user.first_name} ${e.user.last_name}`,
-    job_title: e.experience.title,
-    job_category: e.job_category.name,
-    employment_type: e.experience.employment_type,
-    company_name: e.org.name,
-    start_date: e.experience.start_at,
-    end_date: e.experience.end_at
+  if (!e.org.did) {
+    const did = await createDID()
+    await Org.updateDID(e.org.id, did)
   }
-
-  await sendCredentials({
-    connectionId: e.connection_id,
-    issuingDID: e.org.did,
-    claims
-  })
-
-  await Credential.requestedExperienceUpdate({
-    id: e.id,
-    status: 'SENT',
-    connection_id: e.connection_id,
-    connection_url: e.connection_url
-  })
-
-  ctx.body = { message: 'success' }
-})
-
-router.get('/experiences/connect/callback/:id', async (ctx) => {
-  if (ctx.query.reject) throw new BadRequestError()
-
-  const e = await Credential.getRequestExperiencebyConnection(ctx.params.id)
-
-  if (e.status !== 'APPROVED') throw new PermissionError()
 
   const claims = {
     recipient_name: `${e.user.first_name} ${e.user.last_name}`,
@@ -324,6 +297,12 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
   const e = await Credential.getRequestEducationbyConnection(ctx.params.id)
 
   if (e.status !== 'APPROVED') throw new PermissionError()
+
+
+  if (!e.org.did) {
+    const did = await createDID()
+    await Org.updateDID(e.org.id, did)
+  }
 
   const claims = {
     recipient_name: `${e.user.first_name} ${e.user.last_name}`,

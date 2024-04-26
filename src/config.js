@@ -348,6 +348,8 @@ export default {
     connect_address: process.env.WALLET_CONNECT_URL || 'https://wallet.socious.io/connect',
     experience_vc_callback:
       process.env.WALLET_EXPERIENCE_VC_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback',
+    education_vc_callback:
+      process.env.WALLET_EDUCATION_VC_CALLBACK || 'https://socious.io/api/v2/credentials/educations/connect/callback',
     verification_callback:
       process.env.WALLET_VERIFICATION_CALLBACK || 'https://socious.io/api/v2/credentials/verifications/connect/callback'
   }

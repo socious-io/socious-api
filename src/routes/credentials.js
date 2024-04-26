@@ -278,7 +278,7 @@ router.post('/educations/:id/reject', loginRequired, checkIdParams, async (ctx) 
 router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) => {
   const education = await Credential.getRequestEducation(ctx.params.id)
   if (education.user_id !== ctx.user.id) throw new PermissionError()
-  const connect = await createConnectURL(config.wallet.experience_vc_callback)
+  const connect = await createConnectURL(config.wallet.education_vc_callback)
 
   await Credential.requestedEducationUpdate({
     id: ctx.params.id,

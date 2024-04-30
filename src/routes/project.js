@@ -9,10 +9,15 @@ import Event from '../services/events/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
-import { PermissionError } from '../utils/errors.js'
+import { ConflictError, NotFoundError, PermissionError } from '../utils/errors.js'
 import Analytics from '../services/analytics/index.js'
 import { recommendProjectByProject } from '../services/recommender/index.js'
 export const router = new Router()
+
+router.get('/mark', loginRequired, paginate, async (ctx) => {
+  const { identity, paginate } = ctx;
+  ctx.body = await Project.getAllMarksByIdentity(identity.id, paginate)
+})
 
 router.get('/categories', async (ctx) => {
   ctx.body = { categories: await Project.jobCategories() }
@@ -146,4 +151,30 @@ router.get('/:id/feedbacks', loginRequired, checkIdParams, paginate, async (ctx)
 
 router.get('/:id/similars', loginOptional, checkIdParams, paginate, async (ctx) => {
   ctx.body = await recommendProjectByProject(ctx.params.id)
+})
+
+router.post('/:id/mark', loginRequired, checkIdParams, async (ctx) => {
+  const {
+    query: { type },
+    params,
+    identity
+  } = ctx
+
+  const mark = await Project.getMarkByIdentityAndTypeAndJobId(params.id, identity.id, type);
+  if(mark[0]) throw new ConflictError();
+
+  ctx.body = await Project.markJob(params.id, identity.id, type)
+})
+
+router.delete('/mark/:mark_id', loginOptional, checkIdParams, async (ctx) => {
+  const {
+    params: { mark_id },
+    identity
+  } = ctx;
+
+  await Project.removeMark(identity.id, mark_id)
+
+  ctx.body = {
+    status: "OK"
+  };
 })

@@ -30,6 +30,7 @@ exports[` 2`] = `
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
+  "old_id": null,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -75,6 +76,7 @@ exports[` 3`] = `
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
+  "old_id": null,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -915,62 +917,6 @@ exports[`reject 1`] = `
   "share_contact_info": true,
   "status": "REJECTED",
   "updated_at": Any<String>,
-  "user_id": Any<String>,
-}
-`;
-
-exports[`user applicants 1`] = `
-{
-  "answers": Any<Array>,
-  "attachment": null,
-  "closed_at": null,
-  "cover_letter": "test cover 2",
-  "created_at": Any<String>,
-  "cv_link": "https://test.com/test.cv",
-  "cv_name": "test",
-  "deleted_at": null,
-  "feedback": null,
-  "id": Any<String>,
-  "offer_message": null,
-  "offer_rate": null,
-  "organization": Any<Object>,
-  "payment_rate": 30000,
-  "payment_type": "PAID",
-  "project": Any<Object>,
-  "project_id": Any<String>,
-  "questions": Any<Array>,
-  "share_contact_info": true,
-  "status": "CLOSED",
-  "updated_at": Any<String>,
-  "user": Any<Object>,
-  "user_id": Any<String>,
-}
-`;
-
-exports[`user applicants 2`] = `
-{
-  "answers": Any<Array>,
-  "attachment": null,
-  "closed_at": null,
-  "cover_letter": "test cover 2",
-  "created_at": Any<String>,
-  "cv_link": "https://test.com/test.cv",
-  "cv_name": "test",
-  "deleted_at": null,
-  "feedback": null,
-  "id": Any<String>,
-  "offer_message": null,
-  "offer_rate": null,
-  "organization": Any<Object>,
-  "payment_rate": 30000,
-  "payment_type": "PAID",
-  "project": Any<Object>,
-  "project_id": Any<String>,
-  "questions": Any<Array>,
-  "share_contact_info": true,
-  "status": "CLOSED",
-  "updated_at": Any<String>,
-  "user": Any<Object>,
   "user_id": Any<String>,
 }
 `;

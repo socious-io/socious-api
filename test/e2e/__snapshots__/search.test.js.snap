@@ -30,6 +30,7 @@ exports[` 2`] = `
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
+  "old_id": null,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -75,6 +76,7 @@ exports[` 3`] = `
   "mission": "test",
   "mobile_country_code": null,
   "name": "test ORG",
+  "old_id": null,
   "other_party_id": null,
   "other_party_title": null,
   "other_party_url": null,
@@ -99,94 +101,6 @@ exports[` 3`] = `
 exports[` 4`] = `
 {
   "error": ""phone" must be a string",
-}
-`;
-
-exports[` 5`] = `
-{
-  "causes_tags": [
-    "POVERTY",
-  ],
-  "city": "Tokyo",
-  "commitment_hours_higher": "13",
-  "commitment_hours_lower": "12",
-  "country": "JP",
-  "created_at": Any<String>,
-  "deleted_at": null,
-  "description": "Data testing",
-  "experience_level": 1,
-  "expires_at": null,
-  "geoname_id": null,
-  "id": Any<String>,
-  "identity_id": Any<String>,
-  "impact_job": true,
-  "job_category_id": Any<String>,
-  "other_party_id": null,
-  "other_party_title": null,
-  "other_party_url": null,
-  "payment_currency": "JPY",
-  "payment_range_higher": "13",
-  "payment_range_lower": "12",
-  "payment_scheme": "FIXED",
-  "payment_type": "VOLUNTEER",
-  "project_length": "1_3_MONTHS",
-  "project_type": "FULL_TIME",
-  "promoted": false,
-  "remote_preference": "HYBRID",
-  "search_tsv": Any<String>,
-  "skills": [
-    "ANDROID",
-    "ANGULARJS",
-  ],
-  "status": "ACTIVE",
-  "title": "Testing 1",
-  "updated_at": Any<String>,
-  "weekly_hours_higher": "13",
-  "weekly_hours_lower": "12",
-}
-`;
-
-exports[` 6`] = `
-{
-  "causes_tags": [
-    "POVERTY",
-  ],
-  "city": "Tehran",
-  "commitment_hours_higher": "13",
-  "commitment_hours_lower": "12",
-  "country": "IR",
-  "created_at": Any<String>,
-  "deleted_at": null,
-  "description": "Data testing",
-  "experience_level": 1,
-  "expires_at": null,
-  "geoname_id": null,
-  "id": Any<String>,
-  "identity_id": Any<String>,
-  "impact_job": true,
-  "job_category_id": Any<String>,
-  "other_party_id": null,
-  "other_party_title": null,
-  "other_party_url": null,
-  "payment_currency": "USD",
-  "payment_range_higher": "13",
-  "payment_range_lower": "12",
-  "payment_scheme": "FIXED",
-  "payment_type": "VOLUNTEER",
-  "project_length": "LESS_THAN_A_MONTH",
-  "project_type": "ONE_OFF",
-  "promoted": false,
-  "remote_preference": "HYBRID",
-  "search_tsv": Any<String>,
-  "skills": [
-    "ANDROID",
-    "ANGULARJS",
-  ],
-  "status": "ACTIVE",
-  "title": "Testing 2",
-  "updated_at": Any<String>,
-  "weekly_hours_higher": "13",
-  "weekly_hours_lower": "12",
 }
 `;
 

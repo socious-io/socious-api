@@ -22,7 +22,7 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
   if (offer.payment_mode === Data.PaymentService.CRYPTO) round = 100000
 
   const orgReferrer = await Referring.get(offer.offerer_id)
-  const contributorReferrer = await Referring.get(offer.applicant_id)
+  const contributorReferrer = await Referring.get(offer.recipient_id)
 
   ctx.body = {
     ...offer,

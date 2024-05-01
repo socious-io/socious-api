@@ -16,7 +16,7 @@ export const router = new Router()
 
 router.get('/mark', loginRequired, paginate, async (ctx) => {
   const { identity, paginate } = ctx;
-  ctx.body = await Project.getAllMarksByIdentity(identity.id, paginate)
+  ctx.body = await Project.getAllWithMarksByIdentity(identity.id, paginate)
 })
 
 router.get('/categories', async (ctx) => {
@@ -155,18 +155,18 @@ router.get('/:id/similars', loginOptional, checkIdParams, paginate, async (ctx) 
 
 router.post('/:id/mark', loginRequired, checkIdParams, async (ctx) => {
   const {
-    query: { type },
+    query: { mark_as },
     params,
     identity
   } = ctx
 
-  const mark = await Project.getMarkByIdentityAndTypeAndJobId(params.id, identity.id, type);
+  const mark = await Project.getMarkByIdentityAndTypeAndProjectId(params.id, identity.id, mark_as);
   if(mark[0]) throw new ConflictError();
 
-  ctx.body = await Project.markJob(params.id, identity.id, type)
+  ctx.body = await Project.addMark(params.id, identity.id, mark_as)
 })
 
-router.delete('/mark/:mark_id', loginOptional, checkIdParams, async (ctx) => {
+router.post('/mark/:mark_id/delete', loginOptional, checkIdParams, async (ctx) => {
   const {
     params: { mark_id },
     identity

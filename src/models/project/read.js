@@ -1,4 +1,4 @@
-import sql from 'sql-template-tag'
+import sql, { join } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
 import { filtering, textSearch, sorting } from '../../utils/query.js'
@@ -20,6 +20,10 @@ export const filterColumns = {
   promoted: Boolean,
   experience_level: Number,
   job_category_id: String
+}
+
+export const markingFilterColumns = {
+  marked_as: String
 }
 
 export const sortColumns = [
@@ -61,6 +65,25 @@ export const getAll = async (ids, sort) => {
   WHERE p.id=ANY(${ids})
   ${sorting(sort, sortColumns, 'p')}
   `)
+  return rows
+}
+
+export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
+  const { rows } = await app.db.query(sql`
+      SELECT COUNT(*) OVER () as total_count, p.*,
+      array_to_json(p.causes_tags) AS causes_tags,
+      i.type  as identity_type, i.meta as identity_meta,
+      row_to_json(j.*) AS job_category,
+      jm.marked_as,
+      (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
+      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
+      FROM projects p
+      JOIN identities i ON i.id=p.identity_id
+      JOIN project_marks jm on jm.project_id=p.id AND jm.identity_id=${identityId}
+      LEFT JOIN job_categories j ON j.id=p.job_category_id
+      ${filtering(filter, markingFilterColumns, false, 'jm')}
+      ${sorting(sort, sortColumns, 'p')}
+      LIMIT ${limit} OFFSET ${offset}`)
   return rows
 }
 

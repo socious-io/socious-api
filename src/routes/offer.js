@@ -13,6 +13,7 @@ import Analytics from '../services/analytics/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { offerPermission, offerer, recipient, checkIdParams } from '../utils/middlewares/route.js'
 import { setEscrowMission } from '../services/payments/escrow.js'
+import Identity from '../models/identity/index.js'
 
 export const router = new Router()
 
@@ -113,11 +114,12 @@ router.post('/:id/hire', loginRequired, checkIdParams, offerer, async (ctx) => {
 
   const referred = await Referring.get(ctx.offer.recipient_id)
   if (referred) {
+    const recipient = await Identity.get(ctx.offer.recipient_id)
     Event.push(Event.Types.NOTIFICATION, referred.referred_by_id, {
       type: Notif.Types.REFERRAL_HIRED,
       refId: ctx.offer.id,
       parentId: ctx.offer.project_id,
-      identity: ctx.offer.recipient_id
+      identity: recipient
     })
   }
 })

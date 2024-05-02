@@ -1,4 +1,4 @@
-import sql from 'sql-template-tag'
+import sql, { raw } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError, PermissionError } from '../../utils/errors.js'
 import Data from '@socious/data'
@@ -113,6 +113,33 @@ export const reject = async (id, { feedback }) => {
     )
     return rows[0]
   } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const rejectMany = async (applicants) => {
+  const flattedApplicants = applicants
+    .map((idAndFeedback) => {
+      const { id, feedback } = idAndFeedback
+      return `(uuid('${id}'), ${feedback ? `'${feedback}'` : 'NULL'})`
+    })
+    .join(',')
+
+  try {
+    const { rows } = await app.db.query(
+      raw(`
+        UPDATE applicants as a
+        SET feedback=col.feedback, status='${StatusTypes.REJECTED}'
+        FROM (
+          VALUES ${flattedApplicants}
+        ) AS col(id, feedback)
+        WHERE a.id=col.id AND status='${StatusTypes.PENDING}'
+        RETURNING *
+      `)
+    )
+    return rows
+  } catch (err) {
+    console.log(err)
     throw new EntryError(err.message)
   }
 }

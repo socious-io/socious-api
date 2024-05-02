@@ -8,6 +8,7 @@ import Analytics from '../services/analytics/index.js'
 
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { applicantOwner, projectOwner, checkIdParams } from '../utils/middlewares/route.js'
+import { BadRequestError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -71,6 +72,40 @@ router.post('/:id/reject', loginRequired, checkIdParams, projectOwner, async (ct
     event: 'rejected_applicant',
     meta: ctx.applicant
   })
+})
+
+router.post('/reject', loginRequired, async (ctx) => {
+  const targetApplicants = ctx.request.body.applicants,
+    targetApplicantsIds = targetApplicants.map((targetApplicant) => targetApplicant.id)
+
+  const ownedApplicants = await Applicant.projectsOwner(ctx.identity.id, targetApplicantsIds),
+  ownedApplicantsIds = ownedApplicants.map((ownedApplicant) => ownedApplicant.id)
+
+  
+  // Validation
+  if (!(targetApplicants && Array.isArray(targetApplicants))) throw new BadRequestError()
+  for (const applicant of targetApplicants) {
+    const { id, ...rest } = applicant
+    if (!(ownedApplicantsIds.includes(id))) throw new BadRequestError()
+    await validate.ApplicantRejectSchema.validateAsync(rest)
+  }
+
+  ctx.body = await Applicant.rejectMany(targetApplicants)
+
+  // const project = ctx.applicant.project
+
+  // Event.push(Event.Types.NOTIFICATION, ctx.applicant.user_id, {
+  //   type: Notif.Types.REJECT,
+  //   refId: ctx.body.id,
+  //   parentId: project.id,
+  //   identity: ctx.identity
+  // })
+
+  // Analytics.track({
+  //   userId: ctx.applicant.user_id,
+  //   event: 'rejected_applicant',
+  //   meta: ctx.applicant
+  // })
 })
 
 router.post('/update/:id', loginRequired, checkIdParams, applicantOwner, async (ctx) => {

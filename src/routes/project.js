@@ -9,7 +9,7 @@ import Event from '../services/events/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
-import { ConflictError, NotFoundError, PermissionError } from '../utils/errors.js'
+import { ConflictError, PermissionError } from '../utils/errors.js'
 import Analytics from '../services/analytics/index.js'
 import { recommendProjectByProject } from '../services/recommender/index.js'
 export const router = new Router()

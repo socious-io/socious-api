@@ -541,8 +541,8 @@ export async function markOtherProjectAsNotInterested(request, data) {
 }
 
 export async function fetchAllMarks(request, data) {
-  const projects = data.projects.objs,
-    marks = data.projects.marks
+  // const projects = data.projects.objs
+  // const marks = data.projects.marks
 
   // for (const projectIndex in projects) projects[projectIndex].marked_as = marks[projectIndex].marked_as
 
@@ -580,9 +580,8 @@ export async function fetchAllMarks(request, data) {
 }
 
 export async function removeProjectMark(request, data) {
-
-  const projects = data.projects.objs,
-    marks = data.projects.marks
+  // const projects = data.projects.objs;
+  const marks = data.projects.marks
 
   //Remove NOT_INTERERSTED mark
   const markRemovalResponse = await request
@@ -590,10 +589,10 @@ export async function removeProjectMark(request, data) {
     .set('Authorization', data.users[0].access_token)
     .set('Current-Identity', data.orgs[0].id)
 
-  expect(markRemovalResponse.status).toBe(200);
+  expect(markRemovalResponse.status).toBe(200)
   expect(markRemovalResponse.body).toStrictEqual({
-    status: "OK"
-  });
+    status: 'OK'
+  })
 
   // delete projects[1].marked_as;
 
@@ -614,9 +613,8 @@ export async function removeProjectMark(request, data) {
         identity_meta: expect.any(Object),
         job_category_id: expect.any(String),
         job_category: expect.any(Object),
-        marked_as: expect.stringMatching("SAVE")
+        marked_as: expect.stringMatching('SAVE')
       }
     ]
   })
-
 }

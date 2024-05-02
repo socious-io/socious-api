@@ -1,4 +1,4 @@
-import sql, { join } from 'sql-template-tag'
+import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
 import { filtering, textSearch, sorting } from '../../utils/query.js'

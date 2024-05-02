@@ -484,6 +484,110 @@ exports[`create 2`] = `
 }
 `;
 
+exports[`fetch all marks on projects 1`] = `
+{
+  "items": [
+    {
+      "applicants": 2,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tehran",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "IR",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "impact_job": true,
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "marked_as": Any<String>,
+      "missions": 1,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "USD",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "LESS_THAN_A_MONTH",
+      "project_type": "ONE_OFF",
+      "promoted": false,
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 2",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+    {
+      "applicants": 2,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tokyo",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "JP",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "impact_job": true,
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "marked_as": Any<String>,
+      "missions": 0,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "JPY",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "1_3_MONTHS",
+      "project_type": "FULL_TIME",
+      "promoted": false,
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 1",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 2,
+}
+`;
+
 exports[`get 1`] = `
 {
   "applicants": 0,
@@ -863,6 +967,26 @@ exports[`get filtered 1`] = `
 }
 `;
 
+exports[`mark a project as SAVED 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "marked_as": "SAVE",
+  "project_id": Any<String>,
+}
+`;
+
+exports[`mark other project as NOT_INTERESTED 1`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "marked_as": "NOT_INTERESTED",
+  "project_id": Any<String>,
+}
+`;
+
 exports[`offer 1`] = `
 {
   "applicant": Any<Object>,
@@ -916,6 +1040,63 @@ exports[`reject 1`] = `
   "status": "REJECTED",
   "updated_at": Any<String>,
   "user_id": Any<String>,
+}
+`;
+
+exports[`remove a mark on project 1`] = `
+{
+  "items": [
+    {
+      "applicants": 2,
+      "causes_tags": [
+        "POVERTY",
+      ],
+      "city": "Tokyo",
+      "commitment_hours_higher": "13",
+      "commitment_hours_lower": "12",
+      "country": "JP",
+      "created_at": Any<String>,
+      "deleted_at": null,
+      "description": "Data testing",
+      "experience_level": 1,
+      "expires_at": null,
+      "geoname_id": null,
+      "id": Any<String>,
+      "identity_id": Any<String>,
+      "identity_meta": Any<Object>,
+      "identity_type": "organizations",
+      "impact_job": true,
+      "job_category": Any<Object>,
+      "job_category_id": Any<String>,
+      "marked_as": StringMatching /SAVE/,
+      "missions": 0,
+      "other_party_id": null,
+      "other_party_title": null,
+      "other_party_url": null,
+      "payment_currency": "JPY",
+      "payment_range_higher": "13",
+      "payment_range_lower": "12",
+      "payment_scheme": "FIXED",
+      "payment_type": "VOLUNTEER",
+      "project_length": "1_3_MONTHS",
+      "project_type": "FULL_TIME",
+      "promoted": false,
+      "remote_preference": "HYBRID",
+      "search_tsv": Any<String>,
+      "skills": [
+        "ANDROID",
+        "ANGULARJS",
+      ],
+      "status": "ACTIVE",
+      "title": "Testing 1",
+      "updated_at": Any<String>,
+      "weekly_hours_higher": "13",
+      "weekly_hours_lower": "12",
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
 }
 `;
 

@@ -22,7 +22,12 @@ import {
   confirm,
   feedback,
   feedbacks,
-  userApplicants
+  userApplicants,
+  markProjectAsSaved,
+  fetchAllMarks,
+  removeProjectMark,
+  markSameProjectAsNotInterested,
+  markOtherProjectAsNotInterested
 } from './globals/project.js'
 
 let server, request
@@ -54,6 +59,13 @@ test('send feedback', async () => feedback(request, data))
 test('get feedbacks', async () => feedbacks(request, data))
 test('user applicants', async () => userApplicants(request, data))
 test('remove questions', async () => removeQuestion(request, data))
+
+//Marking Projects
+test('mark a project as SAVED', async () => markProjectAsSaved(request, data))
+test('mark the same project as NOT_INTERESTED results in error', async () => markSameProjectAsNotInterested(request, data))
+test('mark other project as NOT_INTERESTED', async () => markOtherProjectAsNotInterested(request, data))
+test('fetch all marks on projects', async () => fetchAllMarks(request, data))
+test('remove a mark on project', async () => removeProjectMark(request, data))
 
 const cleanup = async () => {
   await app.db.query('DELETE FROM users')

@@ -13,8 +13,13 @@
       "payment_type": "VOLUNTEER",
       "payment_scheme": "FIXED",
       "country": "JP",
-      "skills": ["ANDROID", "ANGULARJS"],
-      "causes_tags": ["POVERTY"],
+      "skills": [
+        "ANDROID",
+        "ANGULARJS"
+      ],
+      "causes_tags": [
+        "POVERTY"
+      ],
       "remote_preference": "HYBRID",
       "city": "Tokyo",
       "weekly_hours_lower": "12",
@@ -35,8 +40,13 @@
       "payment_type": "VOLUNTEER",
       "payment_scheme": "FIXED",
       "country": "IR",
-      "skills": ["ANDROID", "ANGULARJS"],
-      "causes_tags": ["POVERTY"],
+      "skills": [
+        "ANDROID",
+        "ANGULARJS"
+      ],
+      "causes_tags": [
+        "POVERTY"
+      ],
       "remote_preference": "HYBRID",
       "city": "Tehran",
       "weekly_hours_lower": "12",
@@ -53,7 +63,17 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 2 }, { "selected_option": 1 }, { "answer": "TEST" }]
+      "answers": [
+        {
+          "selected_option": 2
+        },
+        {
+          "selected_option": 1
+        },
+        {
+          "answer": "TEST"
+        }
+      ]
     },
     {
       "cover_letter": "test cover 2",
@@ -62,7 +82,14 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
+      "answers": [
+        {
+          "selected_option": 3
+        },
+        {
+          "selected_option": 2
+        }
+      ]
     },
     {
       "invalid": true,
@@ -72,19 +99,34 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
+      "answers": [
+        {
+          "selected_option": 3
+        },
+        {
+          "selected_option": 2
+        }
+      ]
     }
   ],
   "questions": [
     {
       "question": "test question 1?",
       "required": true,
-      "options": ["a", "b", "c"]
+      "options": [
+        "a",
+        "b",
+        "c"
+      ]
     },
     {
       "question": "test question 2?",
       "required": false,
-      "options": ["a", "b", "c"]
+      "options": [
+        "a",
+        "b",
+        "c"
+      ]
     },
     {
       "question": "test question 3?",
@@ -100,5 +142,6 @@
       "assignment_total": 30000,
       "total_hours": 180
     }
-  ]
+  ],
+  "marks": []
 }

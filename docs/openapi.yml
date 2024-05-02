@@ -3104,6 +3104,65 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /projects/mark:
+    parameters:
+      - name: filter.marked_as
+        in: query
+        schema:
+          type: string
+        required: false
+    get:
+      tags:
+        - project
+      summary: Get project's marks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/mark:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: mark_as
+        in: query
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: Mark a project
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/mark/{mark_id}/delete:
+    parameters:
+      - name: mark_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: Delete a mark on project
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /chats:
     get:
       tags:

@@ -488,3 +488,135 @@ export const userApplicants = async (request, data) => {
     }
   }
 }
+
+//Markings
+export async function markProjectAsSaved(request, data) {
+  const project = data.projects.objs[0],
+    mark_as = 'SAVE'
+
+  const response = await request
+    .post(`/projects/${project.id}/mark?mark_as=${mark_as}`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    project_id: expect.any(String),
+    identity_id: expect.any(String),
+    marked_as: mark_as,
+    created_at: expect.any(String)
+  })
+  data.projects.marks.push(response.body)
+}
+
+export async function markSameProjectAsNotInterested(request, data) {
+  const project = data.projects.objs[0],
+    mark_as = 'NOT_INTERESTED'
+
+  const response = await request
+    .post(`/projects/${project.id}/mark?mark_as=${mark_as}`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response.status).toBe(400)
+}
+export async function markOtherProjectAsNotInterested(request, data) {
+  const project = data.projects.objs[1],
+    mark_as = 'NOT_INTERESTED'
+
+  const response = await request
+    .post(`/projects/${project.id}/mark?mark_as=${mark_as}`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    project_id: expect.any(String),
+    identity_id: expect.any(String),
+    marked_as: mark_as,
+    created_at: expect.any(String)
+  })
+
+  data.projects.marks.push(response.body)
+}
+
+export async function fetchAllMarks(request, data) {
+  const projects = data.projects.objs,
+    marks = data.projects.marks
+
+  // for (const projectIndex in projects) projects[projectIndex].marked_as = marks[projectIndex].marked_as
+
+  const response = await request
+    .get(`/projects/mark`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
+        marked_as: expect.any(String)
+      },
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
+        marked_as: expect.any(String)
+      }
+    ]
+  })
+}
+
+export async function removeProjectMark(request, data) {
+
+  const projects = data.projects.objs,
+    marks = data.projects.marks
+
+  //Remove NOT_INTERERSTED mark
+  const markRemovalResponse = await request
+    .post(`/projects/mark/${marks[1].id}/delete`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+
+  expect(markRemovalResponse.status).toBe(200);
+  expect(markRemovalResponse.body).toStrictEqual({
+    status: "OK"
+  });
+
+  // delete projects[1].marked_as;
+
+  //Checking Removal
+  const response = await request
+    .get(`/projects/mark`)
+    .set('Authorization', data.users[0].access_token)
+    .set('Current-Identity', data.orgs[0].id)
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        identity_id: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+        search_tsv: expect.any(String),
+        identity_meta: expect.any(Object),
+        job_category_id: expect.any(String),
+        job_category: expect.any(Object),
+        marked_as: expect.stringMatching("SAVE")
+      }
+    ]
+  })
+
+}

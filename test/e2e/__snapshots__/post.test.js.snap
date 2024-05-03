@@ -32,6 +32,7 @@ exports[`create posts 1`] = `
   "shared_from_identity": null,
   "shared_id": null,
   "shared_post": null,
+  "title": "test title 1",
   "updated_at": Any<String>,
 }
 `;
@@ -61,6 +62,7 @@ exports[`create posts 2`] = `
   "shared_from_identity": null,
   "shared_id": null,
   "shared_post": null,
+  "title": "test title 2",
   "updated_at": Any<String>,
 }
 `;
@@ -93,6 +95,7 @@ exports[`filter posts 1`] = `
       "shared_from_identity": null,
       "shared_id": null,
       "shared_post": null,
+      "title": "test title 1",
       "updated_at": Any<String>,
     },
   ],
@@ -129,6 +132,7 @@ exports[`get posts 1`] = `
       "shared_from_identity": null,
       "shared_id": null,
       "shared_post": null,
+      "title": "test title 2",
       "updated_at": Any<String>,
     },
     {
@@ -156,6 +160,7 @@ exports[`get posts 1`] = `
       "shared_from_identity": null,
       "shared_id": null,
       "shared_post": null,
+      "title": "test title 1",
       "updated_at": Any<String>,
     },
   ],

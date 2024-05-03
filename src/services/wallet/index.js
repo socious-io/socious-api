@@ -78,7 +78,7 @@ export const getPresentVerification = async (presentId) => {
   const date = new Date()
   const res = await axios.get(`${config.wallet.agent}/prism-agent/present-proof/presentations/${presentId}`, {
     headers,
-    params: {t: date.getTime()}
+    params: { t: date.getTime() }
   })
   if (!res.data.status.toLowerCase().includes('verified')) throw new BadRequestError('not verified yet')
   const baseBody = decodeJWT(res.data.data[0])

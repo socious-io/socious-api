@@ -4,14 +4,14 @@ import { EntryError } from '../../utils/errors.js'
 import sanitizeHtml from 'sanitize-html'
 import { get } from './read.js'
 
-export const insert = async (identityId, { content, causes_tags, hashtags, identity_tags, media }) => {
+export const insert = async (identityId, { title, content, causes_tags, hashtags, identity_tags, media }) => {
   content = sanitizeHtml(content)
 
   try {
     const { rows } = await app.db.query(
       sql`
-      INSERT INTO posts (content, identity_id, causes_tags, hashtags, identity_tags, media) 
-        VALUES (${content}, ${identityId}, ${causes_tags}, ${hashtags}, ${identity_tags}, ${media})
+      INSERT INTO posts (title, content, identity_id, causes_tags, hashtags, identity_tags, media) 
+        VALUES (${title}, ${content}, ${identityId}, ${causes_tags}, ${hashtags}, ${identity_tags}, ${media})
         RETURNING id`
     )
     return get(rows[0].id, identityId)
@@ -20,13 +20,14 @@ export const insert = async (identityId, { content, causes_tags, hashtags, ident
   }
 }
 
-export const update = async (id, identityId, { content, causes_tags, hashtags, identity_tags, media }) => {
+export const update = async (id, identityId, { title, content, causes_tags, hashtags, identity_tags, media }) => {
   content = sanitizeHtml(content)
 
   try {
     const { rows } = await app.db.query(
       sql`
       UPDATE posts SET
+        title=${title},
         content=${content},
         causes_tags=${causes_tags},
         hashtags=${hashtags},

@@ -15,7 +15,7 @@ import { recommendProjectByProject } from '../services/recommender/index.js'
 export const router = new Router()
 
 router.get('/mark', loginRequired, paginate, async (ctx) => {
-  const { identity, paginate } = ctx;
+  const { identity, paginate } = ctx
   ctx.body = await Project.getAllWithMarksByIdentity(identity.id, paginate)
 })
 
@@ -160,8 +160,8 @@ router.post('/:id/mark', loginRequired, checkIdParams, async (ctx) => {
     identity
   } = ctx
 
-  const mark = await Project.getMarkByIdentityAndTypeAndProjectId(params.id, identity.id, mark_as);
-  if(mark[0]) throw new ConflictError();
+  const mark = await Project.getMarkByIdentityAndTypeAndProjectId(params.id, identity.id, mark_as)
+  if (mark[0]) throw new ConflictError()
 
   ctx.body = await Project.addMark(params.id, identity.id, mark_as)
 })
@@ -170,11 +170,11 @@ router.post('/mark/:mark_id/delete', loginOptional, checkIdParams, async (ctx) =
   const {
     params: { mark_id },
     identity
-  } = ctx;
+  } = ctx
 
   await Project.removeMark(identity.id, mark_id)
 
   ctx.body = {
-    status: "OK"
-  };
+    status: 'OK'
+  }
 })

@@ -227,6 +227,7 @@ export const addExperience = async (request, data) => {
         country: 'IR',
         city: 'Tehran',
         employment_type: 'FULL_TIME',
+        total_hours: 24,
         job_category_id: categoriesRes.body.categories.filter((c) => c.name === 'Other')[0].id
       })
 
@@ -260,6 +261,7 @@ export const updateExperience = async (request, data) => {
         start_at: '2022-10-16T13:32:30.211Z',
         country: 'IR',
         city: 'Tehran',
+        total_hours: 22,
         employment_type: 'FULL_TIME',
         job_category_id: categoriesRes.body.categories.filter((c) => c.name === 'Other')[0].id
       })

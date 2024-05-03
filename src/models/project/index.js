@@ -7,5 +7,5 @@ export default {
   ...read,
   ...write,
   ...questions,
-  ...marks,
+  ...marks
 }

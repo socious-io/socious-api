@@ -9,7 +9,6 @@ export const getMarkByIdentityAndTypeAndProjectId = async (projectId, identityId
   return rows
 }
 
-
 export const addMark = async (projectId, identityId, mark_as) => {
   try {
     const { rows } = await app.db.query(sql`INSERT INTO project_marks 

@@ -13,13 +13,8 @@
       "payment_type": "VOLUNTEER",
       "payment_scheme": "FIXED",
       "country": "JP",
-      "skills": [
-        "ANDROID",
-        "ANGULARJS"
-      ],
-      "causes_tags": [
-        "POVERTY"
-      ],
+      "skills": ["ANDROID", "ANGULARJS"],
+      "causes_tags": ["POVERTY"],
       "remote_preference": "HYBRID",
       "city": "Tokyo",
       "weekly_hours_lower": "12",
@@ -40,13 +35,8 @@
       "payment_type": "VOLUNTEER",
       "payment_scheme": "FIXED",
       "country": "IR",
-      "skills": [
-        "ANDROID",
-        "ANGULARJS"
-      ],
-      "causes_tags": [
-        "POVERTY"
-      ],
+      "skills": ["ANDROID", "ANGULARJS"],
+      "causes_tags": ["POVERTY"],
       "remote_preference": "HYBRID",
       "city": "Tehran",
       "weekly_hours_lower": "12",
@@ -113,20 +103,12 @@
     {
       "question": "test question 1?",
       "required": true,
-      "options": [
-        "a",
-        "b",
-        "c"
-      ]
+      "options": ["a", "b", "c"]
     },
     {
       "question": "test question 2?",
       "required": false,
-      "options": [
-        "a",
-        "b",
-        "c"
-      ]
+      "options": ["a", "b", "c"]
     },
     {
       "question": "test question 3?",

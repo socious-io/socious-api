@@ -62,7 +62,8 @@ test('remove questions', async () => removeQuestion(request, data))
 
 //Marking Projects
 test('mark a project as SAVED', async () => markProjectAsSaved(request, data))
-test('mark the same project as NOT_INTERESTED results in error', async () => markSameProjectAsNotInterested(request, data))
+test('mark the same project as NOT_INTERESTED results in error', async () =>
+  markSameProjectAsNotInterested(request, data))
 test('mark other project as NOT_INTERESTED', async () => markOtherProjectAsNotInterested(request, data))
 test('fetch all marks on projects', async () => fetchAllMarks(request, data))
 test('remove a mark on project', async () => removeProjectMark(request, data))

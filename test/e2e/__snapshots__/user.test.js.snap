@@ -44,6 +44,7 @@ exports[`add experience 1`] = `
   "skills": null,
   "start_at": Any<String>,
   "title": "Test",
+  "total_hours": 24,
   "user_id": Any<String>,
   "weekly_hours": null,
 }
@@ -63,6 +64,7 @@ exports[`add experience 2`] = `
   "skills": null,
   "start_at": Any<String>,
   "title": "Test",
+  "total_hours": 24,
   "user_id": Any<String>,
   "weekly_hours": null,
 }
@@ -517,6 +519,7 @@ exports[`update experience 1`] = `
   "skills": null,
   "start_at": Any<String>,
   "title": "Test",
+  "total_hours": 22,
   "user_id": Any<String>,
   "weekly_hours": null,
 }
@@ -536,6 +539,7 @@ exports[`update experience 2`] = `
   "skills": null,
   "start_at": Any<String>,
   "title": "Test",
+  "total_hours": 22,
   "user_id": Any<String>,
   "weekly_hours": null,
 }

@@ -5,6 +5,7 @@ import User from '../../models/user/index.js'
 import Applicant from '../../models/applicant/index.js'
 import Organization from '../../models/organization/index.js'
 import { getRecommendeds } from './model.js'
+import { getMarkByIdentityAndTypeAndProjectId, getMarkedProjects } from '../../models/project/marks.js'
 
 const projectToQuery = (project) => {
   return {
@@ -69,7 +70,17 @@ export const recommendUserByUser = async (username) => {
 
   query.push(...(applies?.map((a) => projectToQuery(a.project)) || []))
 
-  const result = await axios.post(Config.ai.talents_recommender_url, { query: query })
+  const [saves, notIntresteds] = await Promise.all([
+    Project.getMarkedProjects(user.id, 'SAVE'),
+    Project.getMarkedProjects(user.id, 'NOT_INTERESTED')
+  ])
+
+  const result = await axios.post(Config.ai.talents_recommender_url, { 
+    query: query,
+    excludes: notIntresteds.map(m => m.project_id),
+    intrests: saves.map(m => m.project_id)
+  })
+  
   return User.getAllProfile(result.data.talents, '-impact_points', user.id)
 }
 

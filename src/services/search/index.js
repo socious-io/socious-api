@@ -33,7 +33,7 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
       return body.q ? User.searchRelateds(body.q, identityId, options) : User.getRelateds(identityId, options)
 
     case Data.SearchType.PROJECTS:
-      return body.q ? Project.search(body.q, options) : Project.all(options)
+      return body.q ? Project.search(body.q, options) : Project.all(identityId, options)
 
     case Data.SearchType.ORGANIZATIONS:
       return body.q ? Org.search(body.q, { ...options, currentIdentity: identityId }) : Org.all(options)

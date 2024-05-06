@@ -75,37 +75,43 @@ router.post('/:id/reject', loginRequired, checkIdParams, projectOwner, async (ct
 })
 
 router.post('/reject', loginRequired, async (ctx) => {
-  const targetApplicants = ctx.request.body.applicants,
-    targetApplicantsIds = targetApplicants.map((targetApplicant) => targetApplicant.id)
+  const {
+    identity,
+    request: {
+      body: { applicants }
+    }
+  } = ctx
 
-  const ownedApplicants = await Applicant.projectsOwner(ctx.identity.id, targetApplicantsIds),
-  ownedApplicantsIds = ownedApplicants.map((ownedApplicant) => ownedApplicant.id)
+  const targetApplicantsIds = []
 
-  
-  // Validation
-  if (!(targetApplicants && Array.isArray(targetApplicants))) throw new BadRequestError()
-  for (const applicant of targetApplicants) {
-    const { id, ...rest } = applicant
-    if (!(ownedApplicantsIds.includes(id))) throw new BadRequestError()
-    await validate.ApplicantRejectSchema.validateAsync(rest)
+  //Validation
+  if (!(applicants && Array.isArray(applicants))) throw new BadRequestError()
+  for (const applicant of applicants) {
+    targetApplicantsIds.push(applicant.id)
+    delete applicant.id
+    await validate.ApplicantRejectSchema.validateAsync(applicant)
   }
 
-  ctx.body = await Applicant.rejectMany(targetApplicants)
+  const ownedApplicants = await Applicant.projectsOwnerOnPending(identity.id, targetApplicantsIds),
+    rejecteeApplicants = ownedApplicants.map((ownedApplicant) =>
+      applicants.find((applicant) => applicant.id == ownedApplicant.id)
+    )
 
-  // const project = ctx.applicant.project
+  ctx.body = await Applicant.rejectMany(rejecteeApplicants)
 
-  // Event.push(Event.Types.NOTIFICATION, ctx.applicant.user_id, {
-  //   type: Notif.Types.REJECT,
-  //   refId: ctx.body.id,
-  //   parentId: project.id,
-  //   identity: ctx.identity
-  // })
-
-  // Analytics.track({
-  //   userId: ctx.applicant.user_id,
-  //   event: 'rejected_applicant',
-  //   meta: ctx.applicant
-  // })
+  for (const ownedApplicant of ownedApplicants) {
+    Event.push(Event.Types.NOTIFICATION, ownedApplicant.user_id, {
+      type: Notif.Types.REJECT,
+      refId: ownedApplicant.id,
+      parentId: ownedApplicant.project.id,
+      identity
+    })
+    Analytics.track({
+      userId: ownedApplicant.user_id,
+      event: 'rejected_applicant',
+      meta: ownedApplicants
+    })
+  }
 })
 
 router.post('/update/:id', loginRequired, checkIdParams, applicantOwner, async (ctx) => {

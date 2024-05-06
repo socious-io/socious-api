@@ -1,4 +1,4 @@
-import sql, { raw } from 'sql-template-tag'
+import sql from 'sql-template-tag'
 import User from '../user/index.js'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
@@ -232,20 +232,19 @@ export const projectOwner = async (identityId, id) => {
   }
 }
 
-export const projectsOwner = async (identityId, ids) => {
-  const flattedIds = `(${ids.map((id) => `'${id}'`).join(',')})`
+export const projectsOwnerOnPending = async (identityId, ids) => {
   try {
     const { rows } = await app.db.query(
-      raw(`
+      sql`
       SELECT 
         a.*,
         row_to_json(p.*) AS project
       FROM applicants a 
-      JOIN projects p ON a.project_id=p.id
-      WHERE a.id in ${flattedIds} AND p.identity_id='${identityId}'
-    `)
+      JOIN projects p ON a.project_id=p.id AND p.identity_id=${identityId}
+      WHERE a.id=ANY(${ids}) AND a.status=PENDING
+    `
     )
-    return rows;
+    return rows
   } catch (e) {
     throw new PermissionError()
   }

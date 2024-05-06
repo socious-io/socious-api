@@ -71,7 +71,7 @@ router.get('/jobs', loginOptional, paginateCTX, async (ctx) => {
     return
   }
   ctx.paginate.filter = { other_party_title: null }
-  const jobs = await Project.all(ctx.paginate)
+  const jobs = await Project.all(ctx.identity, ctx.paginate)
   if (jobs.length > 0) {
     ctx.paginate.total_count = parseInt(jobs[0].total_count)
     ctx.paginate.total_pages = ctx.paginate.total_count / ctx.paginate.limit

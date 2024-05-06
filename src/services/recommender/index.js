@@ -5,7 +5,6 @@ import User from '../../models/user/index.js'
 import Applicant from '../../models/applicant/index.js'
 import Organization from '../../models/organization/index.js'
 import { getRecommendeds } from './model.js'
-import { getMarkByIdentityAndTypeAndProjectId, getMarkedProjects } from '../../models/project/marks.js'
 
 const projectToQuery = (project) => {
   return {
@@ -30,11 +29,16 @@ export const recommendProjectByUser = async (username, options) => {
     const now = new Date()
     const recommendDate = new Date(recommends[0].updated_at)
     const timeDiff = now.getTime() - recommendDate.getDate()
-    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24))
     newRecommends = daysDiff >= 7
   }
 
-  if (!newRecommends) return Project.getAll(recommends.map(r => r.entity_id))
+  if (!newRecommends)
+    return Project.getAll(
+      recommends.map((r) => r.entity_id),
+      undefined,
+      user.id
+    )
 
   const query = [
     {
@@ -51,7 +55,7 @@ export const recommendProjectByUser = async (username, options) => {
   query.push(...(applies?.map((a) => projectToQuery(a.project)) || []))
 
   const result = await axios.post(Config.ai.jobs_recommender_url, { query: query })
-  return Project.getAll(result.data.jobs)
+  return Project.getAll(result.data.jobs, undefined, user.id)
 }
 
 export const recommendUserByUser = async (username) => {
@@ -75,12 +79,12 @@ export const recommendUserByUser = async (username) => {
     Project.getMarkedProjects(user.id, 'NOT_INTERESTED')
   ])
 
-  const result = await axios.post(Config.ai.talents_recommender_url, { 
+  const result = await axios.post(Config.ai.talents_recommender_url, {
     query: query,
-    excludes: notIntresteds.map(m => m.project_id),
-    intrests: saves.map(m => m.project_id)
+    excludes: notIntresteds.map((m) => m.project_id),
+    intrests: saves.map((m) => m.project_id)
   })
-  
+
   return User.getAllProfile(result.data.talents, '-impact_points', user.id)
 }
 
@@ -96,7 +100,12 @@ export const recommendUserByOrg = async (shortname) => {
     }
   ]
 
-  const projects = await Project.all({ limit: 3, offset: 0, filter: { identity_id: org.id }, sort: '-created_at' })
+  const projects = await Project.all(org.id, {
+    limit: 3,
+    offset: 0,
+    filter: { identity_id: org.id },
+    sort: '-created_at'
+  })
 
   query.push(...(projects?.map((p) => projectToQuery(p)) || []))
 
@@ -136,7 +145,12 @@ export const recommendOrgByOrg = async (shortname) => {
     }
   ]
 
-  const projects = await Project.all({ limit: 3, offset: 0, filter: { identity_id: org.id }, sort: '-created_at' })
+  const projects = await Project.all(org.id, {
+    limit: 3,
+    offset: 0,
+    filter: { identity_id: org.id },
+    sort: '-created_at'
+  })
 
   query.push(...(projects?.map((p) => projectToQuery(p)) || []))
 

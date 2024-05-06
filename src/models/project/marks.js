@@ -32,7 +32,6 @@ export const removeMark = async (identityId, projectId) => {
   }
 }
 
-
 export const getMarkedProjects = async (identityId, markedAs) => {
   const { rows } = await app.db.query(
     sql`SELECT * FROM project_marks WHERE identity_id=${identityId} AND marked_as=${markedAs} ORDER BY created_at`

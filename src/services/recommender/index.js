@@ -4,6 +4,7 @@ import Project from '../../models/project/index.js'
 import User from '../../models/user/index.js'
 import Applicant from '../../models/applicant/index.js'
 import Organization from '../../models/organization/index.js'
+import { getRecommendeds } from './model.js'
 
 const projectToQuery = (project) => {
   return {
@@ -19,8 +20,21 @@ export const recommendProjectByProject = async (id) => {
   return Project.getAll(result.data.jobs)
 }
 
-export const recommendProjectByUser = async (username) => {
+export const recommendProjectByUser = async (username, options) => {
   const user = await User.getByUsername(username)
+  const recommends = await getRecommendeds(user.id, 'projects', options)
+
+  let newRecommends = recommends.length < 3
+  if (recommends.length > 0) {
+    const now = new Date()
+    const recommendDate = new Date(recommends[0].updated_at)
+    const timeDiff = now.getTime() - recommendDate.getDate()
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    newRecommends = daysDiff >= 7
+  }
+
+  if (!newRecommends) return Project.getAll(recommends.map(r => r.entity_id))
+
   const query = [
     {
       mission: user.mission,

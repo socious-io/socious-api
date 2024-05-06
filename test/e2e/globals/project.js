@@ -589,7 +589,7 @@ export async function removeProjectMark(request, data) {
 
   expect(markRemovalResponse.status).toBe(200)
   expect(markRemovalResponse.body).toStrictEqual({
-    status: 'OK'
+    message: 'success'
   })
 
   // delete projects[1].marked_as;

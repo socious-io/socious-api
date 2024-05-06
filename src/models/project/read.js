@@ -35,14 +35,14 @@ export const sortColumns = [
   'payment_range_lower'
 ]
 
-export const get = async (id, { userId = undefined, identityId = undefined } = {}) => {
+export const get = async (id, identityId) => {
   return app.db.get(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
-    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied,
+    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${identityId}) AS applied,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
     FROM projects p
@@ -52,7 +52,7 @@ export const get = async (id, { userId = undefined, identityId = undefined } = {
   `)
 }
 
-export const getAll = async (ids, sort, { identityId = undefined } = {}) => {
+export const getAll = async (ids, sort, identityId) => {
   const { rows } = await app.db.query(sql`
   SELECT p.*,
     i.type  as identity_type,
@@ -92,7 +92,7 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
   return rows
 }
 
-export const all = async ({ offset = 0, limit = 10, filter, sort }, { identityId = undefined } = {}) => {
+export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,

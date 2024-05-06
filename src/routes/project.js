@@ -24,11 +24,18 @@ router.get('/categories', async (ctx) => {
 })
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
-  ctx.body = await Project.get(ctx.params.id, ctx.user.id)
+  const optionals = {
+    userId: ctx.user.id,
+    identityId: ctx.identity.id
+  }
+  ctx.body = await Project.get(ctx.params.id, optionals)
 })
 
 router.get('/', loginOptional, paginate, async (ctx) => {
-  ctx.body = await Project.all(ctx.paginate)
+  const optionals = {
+    identityId: ctx.identity.id
+  }
+  ctx.body = await Project.all(ctx.paginate, optionals)
 })
 
 router.post('/', loginRequired, async (ctx) => {
@@ -166,13 +173,13 @@ router.post('/:id/mark', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Project.addMark(params.id, identity.id, mark_as)
 })
 
-router.post('/mark/:mark_id/delete', loginOptional, checkIdParams, async (ctx) => {
+router.post('/:id/mark/delete', loginOptional, checkIdParams, async (ctx) => {
   const {
-    params: { mark_id },
+    params: { id },
     identity
   } = ctx
 
-  await Project.removeMark(identity.id, mark_id)
+  await Project.removeMark(identity.id, id)
 
   ctx.body = {
     status: 'OK'

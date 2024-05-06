@@ -3133,6 +3133,8 @@ paths:
         in: query
         schema:
           type: string
+          enum: ['SAVE', 'NOT_INTERESTED']
+          default: 'SAVE'
         required: true
     post:
       tags:
@@ -3145,9 +3147,9 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /projects/mark/{mark_id}/delete:
+  /projects/{project_id}/mark/delete:
     parameters:
-      - name: mark_id
+      - name: project_id
         in: path
         schema:
           type: string

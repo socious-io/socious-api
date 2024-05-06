@@ -22,10 +22,10 @@ export const addMark = async (projectId, identityId, mark_as) => {
   }
 }
 
-export const removeMark = async (identityId, markId) => {
+export const removeMark = async (identityId, projectId) => {
   try {
     await app.db.query(sql`
-    DELETE FROM project_marks WHERE id=${markId} AND identity_id=${identityId}
+    DELETE FROM project_marks WHERE project_id=${projectId} AND identity_id=${identityId}
   `)
   } catch (err) {
     throw new EntryError(err.message)

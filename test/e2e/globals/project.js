@@ -561,8 +561,7 @@ export async function fetchAllMarks(request, data) {
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
         job_category_id: expect.any(String),
-        job_category: expect.any(Object),
-        marked_as: expect.any(String)
+        job_category: expect.any(Object)
       },
       {
         id: expect.any(String),
@@ -572,20 +571,19 @@ export async function fetchAllMarks(request, data) {
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
         job_category_id: expect.any(String),
-        job_category: expect.any(Object),
-        marked_as: expect.any(String)
+        job_category: expect.any(Object)
       }
     ]
   })
 }
 
 export async function removeProjectMark(request, data) {
-  // const projects = data.projects.objs;
-  const marks = data.projects.marks
+  const projects = data.projects.objs
+  // const marks = data.projects.marks
 
   //Remove NOT_INTERERSTED mark
   const markRemovalResponse = await request
-    .post(`/projects/mark/${marks[1].id}/delete`)
+    .post(`/projects/${projects[1].id}/mark/delete`)
     .set('Authorization', data.users[0].access_token)
     .set('Current-Identity', data.orgs[0].id)
 
@@ -612,8 +610,7 @@ export async function removeProjectMark(request, data) {
         search_tsv: expect.any(String),
         identity_meta: expect.any(Object),
         job_category_id: expect.any(String),
-        job_category: expect.any(Object),
-        marked_as: expect.stringMatching('SAVE')
+        job_category: expect.any(Object)
       }
     ]
   })

@@ -35,14 +35,16 @@ export const sortColumns = [
   'payment_range_lower'
 ]
 
-export const get = async (id, userId = undefined) => {
+export const get = async (id, { userId = undefined, identityId = undefined } = {}) => {
   return app.db.get(sql`
   SELECT p.*, i.type  as identity_type, i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
-    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied
+    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${userId}) AS applied,
+    EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
+    EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
@@ -50,7 +52,7 @@ export const get = async (id, userId = undefined) => {
   `)
 }
 
-export const getAll = async (ids, sort) => {
+export const getAll = async (ids, sort, { identityId = undefined } = {}) => {
   const { rows } = await app.db.query(sql`
   SELECT p.*,
     i.type  as identity_type,
@@ -58,7 +60,9 @@ export const getAll = async (ids, sort) => {
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
-    (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions
+    (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
+    EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
+    EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
@@ -74,9 +78,10 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
       row_to_json(j.*) AS job_category,
-      jm.marked_as,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
-      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
+      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
+      (CASE WHEN jm.marked_as='SAVE' THEN true ELSE false END) AS saved,
+      (CASE WHEN jm.marked_as='NOT_INTERESTED' THEN true ELSE false END) AS not_interested
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
       JOIN project_marks jm on jm.project_id=p.id AND jm.identity_id=${identityId}
@@ -87,14 +92,16 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
   return rows
 }
 
-export const all = async ({ offset = 0, limit = 10, filter, sort }) => {
+export const all = async ({ offset = 0, limit = 10, filter, sort }, { identityId = undefined } = {}) => {
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
       row_to_json(j.*) AS job_category,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
-      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants
+      (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
+      EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
+      EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
       LEFT JOIN job_categories j ON j.id=p.job_category_id

@@ -78,26 +78,18 @@ router.post('/reject', loginRequired, async (ctx) => {
   const {
     identity,
     request: {
-      body: { applicants }
+      body: { applicants, feedback }
     }
   } = ctx
 
-  const targetApplicantsIds = []
-
   //Validation
   if (!(applicants && Array.isArray(applicants))) throw new BadRequestError()
-  for (const applicant of applicants) {
-    targetApplicantsIds.push(applicant.id)
-    delete applicant.id
-    await validate.ApplicantRejectSchema.validateAsync(applicant)
-  }
+  await validate.ApplicantRejectSchema.validateAsync({ feedback })
 
-  const ownedApplicants = await Applicant.projectsOwnerOnPending(identity.id, targetApplicantsIds),
-    rejecteeApplicants = ownedApplicants.map((ownedApplicant) =>
-      applicants.find((applicant) => applicant.id == ownedApplicant.id)
-    )
+  const ownedApplicants = await Applicant.projectsOwnerOnPending(identity.id, applicants),
+    rejecteeApplicants = ownedApplicants.map((ownedApplicant) => ownedApplicant.id)
 
-  ctx.body = await Applicant.rejectMany(rejecteeApplicants)
+  ctx.body = await Applicant.rejectMany(rejecteeApplicants, { feedback })
 
   for (const ownedApplicant of ownedApplicants) {
     Event.push(Event.Types.NOTIFICATION, ownedApplicant.user_id, {

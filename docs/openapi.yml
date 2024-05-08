@@ -3097,9 +3097,11 @@ paths:
             schema:
               type: object
               example:
+                feedback: Optional feedback (Applied to all of the applicants)
                 applicants:
-                  - id: 370003c7-787d-4a20-95b5-7df3e482d31b
-                    feedback: feedback example
+                  - 370003c7-787d-4a20-95b5-7df3e482d31b
+                  - 00122daf-98b8-4839-b369-ba0313f48d0a
+                    
       security:
         - bearerAuth: []
       responses:

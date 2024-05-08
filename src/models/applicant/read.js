@@ -3,6 +3,9 @@ import User from '../user/index.js'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
 import { filtering, sorting } from '../../utils/query.js'
+import Data from '@socious/data'
+
+const StatusTypes = Data.ApplicantStatus
 
 export const filterColumns = {
   project_id: String,
@@ -241,7 +244,7 @@ export const projectsOwnerOnPending = async (identityId, ids) => {
         row_to_json(p.*) AS project
       FROM applicants a 
       JOIN projects p ON a.project_id=p.id AND p.identity_id=${identityId}
-      WHERE a.id=ANY(${ids}) AND a.status=PENDING
+      WHERE a.id=ANY(${ids}) AND a.status=${StatusTypes.PENDING}
     `
     )
     return rows

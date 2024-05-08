@@ -117,6 +117,22 @@ export const reject = async (id, { feedback }) => {
   }
 }
 
+export const rejectMany = async (ids, { feedback }) => {
+  try {
+    const { rows } = await app.db.query(
+      sql`
+        UPDATE applicants as a
+        SET feedback=${feedback}, status=${StatusTypes.REJECTED}
+        WHERE id=ANY(${ids}) AND status=${StatusTypes.PENDING}
+        RETURNING *
+      `
+    )
+    return rows
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
 export const giveAnswer = async (applicantId, projectId, { id, answer, selected_option }) => {
   try {
     return app.db.get(sql`

@@ -51,7 +51,7 @@ export const all = async (currentIdentity, { offset = 0, limit = 10, filter, sor
         )
         FROM likes lk
         JOIN identities li ON li.id = lk.identity_id
-        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL LIMIT 5
       ) AS liked_identities
     FROM posts 
     JOIN identities i ON posts.identity_id=i.id
@@ -103,7 +103,7 @@ export const get = async (id, currentIdentity) => {
       )
       FROM likes lk
       JOIN identities li ON li.id = lk.identity_id
-      WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+      WHERE lk.post_id=posts.id AND lk.comment_id IS NULL LIMIT 5
     ) AS liked_identities,
     row_to_json(sp.*) AS shared_post,
     row_to_json(sp_i.*) AS shared_from_identity
@@ -154,7 +154,7 @@ export const getAll = async (ids, currentIdentity, sort) => {
         )
         FROM likes lk
         JOIN identities li ON li.id = lk.identity_id
-        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL LIMIT 5
       ) AS liked_identities
     FROM posts 
     JOIN identities i ON posts.identity_id=i.id

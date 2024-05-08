@@ -26,7 +26,33 @@ export const all = async (currentIdentity, { offset = 0, limit = 10, filter, sor
         jsonb_agg(json_build_object('url', m.url, 'id', m.id))
         FROM media m
         WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media)
-      ) AS media
+      ) AS media,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', e.id, 
+            'emoji', e.emoji, 
+            'identity', row_to_json(ei.*),
+            'created_at', e.created_at 
+          )
+        )
+        FROM emojis e
+        JOIN identities ei ON ei.id=e.identity_id
+        WHERE e.post_id=posts.id AND comment_id IS NULL
+      ) AS emojis,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', li.id, 
+            'meta', li.meta, 
+            'type', li.type,
+            'created_at', li.created_at 
+          )
+        )
+        FROM likes lk
+        JOIN identities li ON li.id = lk.identity_id
+        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+      ) AS liked_identities
     FROM posts 
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id
@@ -53,6 +79,32 @@ export const get = async (id, currentIdentity) => {
       FROM media m
       WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media)
     ) AS media,
+    (SELECT
+      jsonb_agg(
+        json_build_object(
+          'id', e.id, 
+          'emoji', e.emoji, 
+          'identity', row_to_json(ei.*),
+          'created_at', e.created_at 
+        )
+      )
+      FROM emojis e
+      JOIN identities ei ON ei.id=e.identity_id
+      WHERE e.post_id=posts.id AND comment_id IS NULL
+    ) AS emojis,
+    (SELECT
+      jsonb_agg(
+        json_build_object(
+          'id', li.id, 
+          'meta', li.meta, 
+          'type', li.type,
+          'created_at', li.created_at 
+        )
+      )
+      FROM likes lk
+      JOIN identities li ON li.id = lk.identity_id
+      WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+    ) AS liked_identities,
     row_to_json(sp.*) AS shared_post,
     row_to_json(sp_i.*) AS shared_from_identity
   FROM posts 
@@ -77,7 +129,33 @@ export const getAll = async (ids, currentIdentity, sort) => {
         WHERE m.id=ANY(posts.media) OR m.id=ANY(sp.media)
       ) AS media,
       row_to_json(sp.*) AS shared_post,
-      row_to_json(sp_i.*) AS shared_from_identity
+      row_to_json(sp_i.*) AS shared_from_identity,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', e.id, 
+            'emoji', e.emoji, 
+            'identity', row_to_json(ei.*),
+            'created_at', e.created_at 
+          )
+        )
+        FROM emojis e
+        JOIN identities ei ON ei.id=e.identity_id
+        WHERE e.post_id=posts.id AND comment_id IS NULL
+      ) AS emojis,
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'id', li.id, 
+            'meta', li.meta, 
+            'type', li.type,
+            'created_at', li.created_at 
+          )
+        )
+        FROM likes lk
+        JOIN identities li ON li.id = lk.identity_id
+        WHERE lk.post_id=posts.id AND lk.comment_id IS NULL
+      ) AS liked_identities
     FROM posts 
     JOIN identities i ON posts.identity_id=i.id
     LEFT JOIN posts sp ON sp.id = posts.shared_id

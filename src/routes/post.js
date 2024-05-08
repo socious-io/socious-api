@@ -110,6 +110,14 @@ router.post('/:id/like', loginRequired, checkIdParams, async (ctx) => {
   })
 })
 
+router.post('/:id/react', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await Post.react(ctx.identity.id, ctx.body.emoji, ctx.params.id)
+})
+
+router.post('/:id/unreact', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await Post.unreact(ctx.identity.id, ctx.body.emoji, ctx.params.id)
+})
+
 router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id)
   ctx.body = {
@@ -132,6 +140,17 @@ router.post('/:id/comments/:comment_id/like', loginRequired, checkIdParams, asyn
 
 router.post('/:id/comments/:comment_id/unlike', loginRequired, checkIdParams, async (ctx) => {
   await Post.unlike(ctx.params.id, ctx.identity.id, ctx.params.comment_id)
+  ctx.body = {
+    message: 'success'
+  }
+})
+
+router.post('/:id/comments/:comment_id/react', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await Post.react(ctx.identity.id, ctx.body.emoji, ctx.params.id, ctx.params.comment_id)
+})
+
+router.post('/:id/comments/:comment_id/unreact', loginRequired, checkIdParams, async (ctx) => {
+  ctx.body = await Post.unreact(ctx.identity.id, ctx.body.emoji, ctx.params.id, ctx.params.comment_id)
   ctx.body = {
     message: 'success'
   }

@@ -41,9 +41,10 @@ export const getAll = async (request, data) => {
 
 export const comment = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/comments`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/comments`)
       .set('Authorization', data.users[0].access_token)
-      .send({content: 'test comment'})
+      .send({ content: 'test comment' })
 
     expect(response.status).toBe(200)
     data.posts[i].comment_id = response.body.id
@@ -52,9 +53,10 @@ export const comment = async (request, data) => {
 
 export const reply = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/comments`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/comments`)
       .set('Authorization', data.users[0].access_token)
-      .send({content: 'test comment reply', reply_id: data.posts[i].comment_id})
+      .send({ content: 'test comment reply', reply_id: data.posts[i].comment_id })
 
     expect(response.status).toBe(200)
   }
@@ -62,9 +64,10 @@ export const reply = async (request, data) => {
 
 export const reactPost = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/react`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/react`)
       .set('Authorization', data.users[0].access_token)
-      .send({emoji: ':D'})
+      .send({ emoji: ':D' })
 
     expect(response.status).toBe(200)
   }
@@ -72,9 +75,10 @@ export const reactPost = async (request, data) => {
 
 export const unreactPost = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/unreact`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/unreact`)
       .set('Authorization', data.users[0].access_token)
-      .send({emoji: ':D'})
+      .send({ emoji: ':D' })
 
     expect(response.status).toBe(200)
   }
@@ -82,9 +86,10 @@ export const unreactPost = async (request, data) => {
 
 export const reactComment = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/comments/${data.posts[i].comment_id}/react`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/comments/${data.posts[i].comment_id}/react`)
       .set('Authorization', data.users[0].access_token)
-      .send({emoji: ':D'})
+      .send({ emoji: ':D' })
 
     expect(response.status).toBe(200)
   }
@@ -92,9 +97,10 @@ export const reactComment = async (request, data) => {
 
 export const unreactComment = async (request, data) => {
   for (const i in data.posts) {
-    const response = await request.post(`/posts/${data.posts[i].id}/comments/${data.posts[i].comment_id}/unreact`)
+    const response = await request
+      .post(`/posts/${data.posts[i].id}/comments/${data.posts[i].comment_id}/unreact`)
       .set('Authorization', data.users[0].access_token)
-      .send({emoji: ':D'})
+      .send({ emoji: ':D' })
 
     expect(response.status).toBe(200)
   }

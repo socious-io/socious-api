@@ -25,7 +25,6 @@ export const unlike = async (id, identityId, commentId = null) => {
   return app.db.query(sql`DELETE FROM likes WHERE post_id=${id} AND identity_id=${identityId} AND comment_id IS NULL`)
 }
 
-
 export const react = async (identityId, emoji, postId, commentId = null) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -40,14 +39,11 @@ export const react = async (identityId, emoji, postId, commentId = null) => {
   }
 }
 
-
 export const unreact = async (identityId, emoji, postId, commentId = null) => {
   if (commentId !== null) {
     return app.db.query(
       sql`DELETE FROM emojis WHERE post_id=${postId} AND identity_id=${identityId} AND comment_id=${commentId} AND emoji=${emoji}`
     )
   }
-  return app.db.query(
-    sql`DELETE FROM emojis WHERE post_id=${postId} AND identity_id=${identityId} AND emoji=${emoji}`
-  )
+  return app.db.query(sql`DELETE FROM emojis WHERE post_id=${postId} AND identity_id=${identityId} AND emoji=${emoji}`)
 }

@@ -2,7 +2,17 @@ import supertest from 'supertest'
 import { app } from '../../src/index.js'
 import data from '../data/index.js'
 import { registerAndVerify } from './globals/user.js'
-import { comment, create, getAll, getFiltered, reactComment, reactPost, reply, unreactComment, unreactPost } from './globals/post.js'
+import {
+  comment,
+  create,
+  getAll,
+  getFiltered,
+  reactComment,
+  reactPost,
+  reply,
+  unreactComment,
+  unreactPost
+} from './globals/post.js'
 
 let server, request
 

@@ -115,7 +115,10 @@ router.post('/:id/react', loginRequired, checkIdParams, async (ctx) => {
 })
 
 router.post('/:id/unreact', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await Post.unreact(ctx.identity.id, ctx.request.body.emoji, ctx.params.id)
+  await Post.unreact(ctx.identity.id, ctx.request.body.emoji, ctx.params.id)
+  ctx.body = ctx.body = {
+    message: 'success'
+  }
 })
 
 router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
@@ -150,7 +153,7 @@ router.post('/:id/comments/:comment_id/react', loginRequired, checkIdParams, asy
 })
 
 router.post('/:id/comments/:comment_id/unreact', loginRequired, checkIdParams, async (ctx) => {
-  ctx.body = await Post.unreact(ctx.identity.id, ctx.request.body.emoji, ctx.params.id, ctx.params.comment_id)
+  await Post.unreact(ctx.identity.id, ctx.request.body.emoji, ctx.params.id, ctx.params.comment_id)
   ctx.body = {
     message: 'success'
   }

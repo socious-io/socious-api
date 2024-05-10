@@ -243,7 +243,7 @@ router.post('/open-to-volunteer', loginRequired, async (ctx) => {
 })
 
 router.get('/:username/recommend/jobs', loginOptional, paginate, async (ctx) => {
-  ctx.body = await recommendProjectByUser(ctx.params.username)
+  ctx.body = await recommendProjectByUser(ctx.params.username, ctx.paginate)
 })
 
 router.get('/:username/recommend/users', loginOptional, paginate, async (ctx) => {

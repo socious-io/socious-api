@@ -83,7 +83,7 @@
     "pg": "^8.10.0",
     "sanitize-html": "^2.10.0",
     "sitemap": "^7.1.1",
-    "socket.io": "^4.6.1",
+    "socket.io": "^4.7.5",
     "sql-template-tag": "^5.0.3",
     "stripe": "^12.18.0",
     "supertest-koa-agent": "^0.3.2",

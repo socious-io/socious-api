@@ -38,7 +38,8 @@ router.post('/:id/complete', loginRequired, checkIdParams, assignee, async (ctx)
       type: Notif.Types.REFERRAL_COMPLETED_JOB,
       refId: ctx.mission.id,
       parentId: ctx.mission.project_id,
-      identity: ctx.identity
+      identity: ctx.identity,
+      job_name: project.title
     })
   }
 

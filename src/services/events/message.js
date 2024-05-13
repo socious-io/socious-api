@@ -1,6 +1,6 @@
 import Data from '@socious/data'
 
-export const makeMessage = (type, name) => {
+export const makeMessage = (type, {name, job_name=undefined, org_name=undefined}) => {
   switch (type) {
     case Data.NotificationType.FOLLOWED:
       return {
@@ -111,7 +111,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.REFERRAL_JOINED:
       return {
         title: 'referral joined',
-        body: `${name} has joined via your invitation`
+        body: `${name} has joined Socious via your invitation`
       }
     case Data.NotificationType.REFERRAL_VERIFIED:
       return {
@@ -121,12 +121,12 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.REFERRAL_HIRED:
       return {
         title: 'referral hired',
-        body: `${name} has been hired`
+        body: `${name} has been hired by ${org_name} as ${job_name}`
       }
     case Data.NotificationType.REFERRAL_COMPLETED_JOB:
       return {
         title: 'referral completed job',
-        body: `${name} has been completed job`
+        body: `${name} successfully completed their job as ${job_name}`
       }
     case Data.NotificationType.REFERRAL_CONFIRMED_JOB:
       return {
@@ -136,12 +136,12 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EXPERIENCE_VERIFY_REQUEST:
       return {
         title: 'request experience verify',
-        body: `${name} requested to verify their experience`
+        body: `${name} sent you a request to receive a digital certificate from your organization`
       }
     case Data.NotificationType.EXPERIENCE_VERIFY_APPROVED:
       return {
         title: 'experience verfied',
-        body: `${name} has verified your experience`
+        body: `${org_name} has approved your request and issued you a digital certificate. Claim now`
       }
     case Data.NotificationType.EXPERIENCE_VERIFY_REJECTED:
       return {
@@ -156,7 +156,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EXPERIENCE_ISSUED_APPROVED:
       return {
         title: 'issued experience accepted',
-        body: `${name} accepted your work experience issue`
+        body: `${name} has accepted your credential`
       }
     case Data.NotificationType.EXPERIENCE_ISSUED_REJECTED:
       return {
@@ -166,12 +166,12 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EDUCATION_VERIFY_REQUEST:
       return {
         title: 'request education verify',
-        body: `${name} request to verify education`
+        body: `${name} sent a request for a digital certificate confirming her education at your organization`
       }
     case Data.NotificationType.EDUCATION_VERIFY_APPROVED:
       return {
         title: 'education verfied',
-        body: `${name} has been verified your education`
+        body: `${name} Has approved your request and issued you a digital certificate. Claim now.`
       }
     case Data.NotificationType.EDUCATION_VERIFY_REJECTED:
       return {
@@ -186,7 +186,7 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EDUCATION_ISSUED_APPROVED:
       return {
         title: 'issued experience accepted',
-        body: `${name} accepted issued education certificate`
+        body: `${name} has accepted your credential`
       }
     case Data.NotificationType.EDUCATION_ISSUED_REJECTED:
       return {

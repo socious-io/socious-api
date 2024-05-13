@@ -1,5 +1,5 @@
 ALTER TABLE applicants ADD COLUMN search_tsv tsvector;
-CREATE INDEX applicant_search_tsv_idx ON projects USING GIST (search_tsv); 
+CREATE INDEX applicant_search_tsv_idx ON applicants USING GIST (search_tsv); 
 
 
 CREATE  FUNCTION applicant_tsv()

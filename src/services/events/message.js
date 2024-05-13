@@ -111,12 +111,12 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.REFERRAL_JOINED:
       return {
         title: 'referral joined',
-        body: `has joined ${name} via your invitation`
+        body: `${name} has joined via your invitation`
       }
     case Data.NotificationType.REFERRAL_VERIFIED:
       return {
         title: 'referral verified',
-        body: `${name} has been verified`
+        body: `${name} has verified their profile. You will earn now 1% of their earnings.`
       }
     case Data.NotificationType.REFERRAL_HIRED:
       return {
@@ -136,12 +136,12 @@ export const makeMessage = (type, name) => {
     case Data.NotificationType.EXPERIENCE_VERIFY_REQUEST:
       return {
         title: 'request experience verify',
-        body: `${name} request to verify experience`
+        body: `${name} requested to verify their experience`
       }
     case Data.NotificationType.EXPERIENCE_VERIFY_APPROVED:
       return {
         title: 'experience verfied',
-        body: `${name} has been verified your experience`
+        body: `${name} has verified your experience`
       }
     case Data.NotificationType.EXPERIENCE_VERIFY_REJECTED:
       return {

@@ -67,7 +67,8 @@ router.post('/remove/comments/:id', loginRequired, checkIdParams, async (ctx) =>
 router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
   await validate.CommentSchema.validateAsync(ctx.request.body)
 
-  ctx.body = await Post.newComment(ctx.params.id, ctx.identity.id, ctx.request.body)
+  await Post.newComment(ctx.params.id, ctx.identity.id, ctx.request.body)
+  ctx.body = await Post.getComment(ctx.params.id, ctx.identity.id)
 
   const post = await Post.miniGet(ctx.params.id)
 
@@ -94,7 +95,8 @@ router.post('/comments/:id/report', loginRequired, async (ctx) => {
 
 router.post('/update/comments/:id', loginRequired, checkIdParams, async (ctx) => {
   await validate.CommentSchema.validateAsync(ctx.request.body)
-  ctx.body = await Post.updateComment(ctx.params.id, ctx.identity.id, ctx.request.body)
+  await Post.updateComment(ctx.params.id, ctx.identity.id, ctx.request.body)
+  ctx.body = await Post.getComment(ctx.params.id, ctx.identity.id)
 })
 
 router.post('/:id/like', loginRequired, checkIdParams, async (ctx) => {
@@ -131,7 +133,7 @@ router.post('/:id/unlike', loginRequired, checkIdParams, async (ctx) => {
 router.post('/:id/comments/:comment_id/like', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await Post.like(ctx.params.id, ctx.identity.id, ctx.params.comment_id)
 
-  const comment = await Post.getComment(ctx.params.comment_id)
+  const comment = await Post.getCommentMini(ctx.params.comment_id)
 
   Event.push(Event.Types.NOTIFICATION, comment.identity_id, {
     type: Notif.Types.COMMENT_LIKE,

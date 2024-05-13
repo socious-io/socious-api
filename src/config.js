@@ -222,7 +222,7 @@ export default {
             name: 'milkomeda',
             explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com/api'
           },
-          escrow: '0xA9D4e4351ca77e5a47673f13DD4d0745dE175B38',
+          escrow: '0x9Af0dCc68357854a62Df29cE04951C416377310c',
           tokens: [
             {
               name: 'USD Coin',

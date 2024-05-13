@@ -27,7 +27,8 @@ import {
   fetchAllMarks,
   removeProjectMark,
   markSameProjectAsNotInterested,
-  markOtherProjectAsNotInterested
+  markOtherProjectAsNotInterested,
+  searchApplicants
 } from './globals/project.js'
 
 let server, request
@@ -58,6 +59,7 @@ test('confirm', async () => confirm(request, data))
 test('send feedback', async () => feedback(request, data))
 test('get feedbacks', async () => feedbacks(request, data))
 test('user applicants', async () => userApplicants(request, data))
+test('search applicants', async () => searchApplicants(request, data))
 test('remove questions', async () => removeQuestion(request, data))
 
 //Marking Projects

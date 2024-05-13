@@ -1,6 +1,6 @@
 import Data from '@socious/data'
 
-export const makeMessage = (type, {name, job_name=undefined, org_name=undefined}) => {
+export const makeMessage = (type, { name, job_name = undefined, org_name = undefined }) => {
   switch (type) {
     case Data.NotificationType.FOLLOWED:
       return {

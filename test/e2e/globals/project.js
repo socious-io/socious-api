@@ -489,6 +489,15 @@ export const userApplicants = async (request, data) => {
   }
 }
 
+export const searchApplicants = async (request, data) => {
+  const response = await request.post('/search').set('Authorization', data.users[0].access_token).send({
+    q: 'test',
+    type: 'applicants'
+  })
+  expect(response.status).toBe(200)
+  console.log(response.body)
+}
+
 //Markings
 export async function markProjectAsSaved(request, data) {
   const project = data.projects.objs[0],

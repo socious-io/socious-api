@@ -67,8 +67,8 @@ router.post('/remove/comments/:id', loginRequired, checkIdParams, async (ctx) =>
 router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
   await validate.CommentSchema.validateAsync(ctx.request.body)
 
-  await Post.newComment(ctx.params.id, ctx.identity.id, ctx.request.body)
-  ctx.body = await Post.getComment(ctx.params.id, ctx.identity.id)
+  const comment = await Post.newComment(ctx.params.id, ctx.identity.id, ctx.request.body)
+  ctx.body = await Post.getComment(comment.id, ctx.identity.id)
 
   const post = await Post.miniGet(ctx.params.id)
 

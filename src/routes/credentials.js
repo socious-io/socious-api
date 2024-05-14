@@ -41,7 +41,7 @@ router.post('/verifications', loginRequired, async (ctx) => {
         return
       }
     }
-  } catch(err) {
+  } catch (err) {
     console.log(err)
   }
   const connect = await createConnectURL(config.wallet.verification_callback)
@@ -176,7 +176,6 @@ router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) 
   ctx.body = connect
 })
 
-
 router.get('/experiences/connect/callback/:id', async (ctx) => {
   if (ctx.query.reject) throw new BadRequestError()
 
@@ -198,7 +197,7 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
     start_date: e.experience.start_at,
     end_date: e.experience.end_at,
     issued_date: new Date().toISOString(),
-    type: 'experience',
+    type: 'experience'
   }
 
   await sendCredentials({
@@ -290,14 +289,12 @@ router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) =
   ctx.body = connect
 })
 
-
 router.get('/educations/connect/callback/:id', async (ctx) => {
   if (ctx.query.reject) throw new BadRequestError()
 
   const e = await Credential.getRequestEducationbyConnection(ctx.params.id)
 
   if (e.status !== 'APPROVED') throw new PermissionError()
-
 
   if (!e.org.did) {
     const did = await createDID()
@@ -313,7 +310,7 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
     start_date: e.education.start_at,
     end_date: e.education.end_at,
     issued_date: new Date().toISOString(),
-    type: 'education',
+    type: 'education'
   }
 
   await sendCredentials({

@@ -8,6 +8,7 @@ import Analytics from '../services/analytics/index.js'
 
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { applicantOwner, projectOwner, checkIdParams } from '../utils/middlewares/route.js'
+import { BadRequestError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -71,6 +72,38 @@ router.post('/:id/reject', loginRequired, checkIdParams, projectOwner, async (ct
     event: 'rejected_applicant',
     meta: ctx.applicant
   })
+})
+
+router.post('/reject', loginRequired, async (ctx) => {
+  const {
+    identity,
+    request: {
+      body: { applicants, feedback }
+    }
+  } = ctx
+
+  //Validation
+  if (!(applicants && Array.isArray(applicants))) throw new BadRequestError()
+  await validate.ApplicantRejectSchema.validateAsync({ feedback })
+
+  const ownedApplicants = await Applicant.projectsOwnerOnPending(identity.id, applicants),
+    rejecteeApplicants = ownedApplicants.map((ownedApplicant) => ownedApplicant.id)
+
+  ctx.body = await Applicant.rejectMany(rejecteeApplicants, { feedback })
+
+  for (const ownedApplicant of ownedApplicants) {
+    Event.push(Event.Types.NOTIFICATION, ownedApplicant.user_id, {
+      type: Notif.Types.REJECT,
+      refId: ownedApplicant.id,
+      parentId: ownedApplicant.project.id,
+      identity
+    })
+    Analytics.track({
+      userId: ownedApplicant.user_id,
+      event: 'rejected_applicant',
+      meta: ownedApplicants
+    })
+  }
 })
 
 router.post('/update/:id', loginRequired, checkIdParams, applicantOwner, async (ctx) => {

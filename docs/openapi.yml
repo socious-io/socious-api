@@ -3086,6 +3086,29 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /applicants/reject:
+    post:
+      tags:
+        - project
+      summary: reject multiple applicatons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                feedback: Optional feedback (Applied to all of the applicants)
+                applicants:
+                  - 370003c7-787d-4a20-95b5-7df3e482d31b
+                  - 00122daf-98b8-4839-b369-ba0313f48d0a
+                    
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /applicants/{applicant_id}:
     parameters:
       - name: applicant_id
@@ -3097,6 +3120,67 @@ paths:
       tags:
         - project
       summary: get applicant
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/mark:
+    parameters:
+      - name: filter.marked_as
+        in: query
+        schema:
+          type: string
+        required: false
+    get:
+      tags:
+        - project
+      summary: Get project's marks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/mark:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: mark_as
+        in: query
+        schema:
+          type: string
+          enum: ['SAVE', 'NOT_INTERESTED']
+          default: 'SAVE'
+        required: true
+    post:
+      tags:
+        - project
+      summary: Mark a project
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /projects/{project_id}/mark/delete:
+    parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - project
+      summary: Delete a mark on project
       security:
         - bearerAuth: []
       responses:
@@ -3602,7 +3686,7 @@ paths:
               example: |-
                 {
                     "content": "comment reply",
-                    
+                    "media_id": "ebd02a72-f530-4d18-9a72-d7aa9ace1271"
                 }
       security:
         - bearerAuth: []
@@ -3663,6 +3747,66 @@ paths:
       tags:
         - post
       summary: unlike comment
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/comments/{comment_id}/react:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emoji: :D
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/comments/{comment_id}/unreact:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: comment_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emoji: :D
       security:
         - bearerAuth: []
       responses:
@@ -3731,6 +3875,56 @@ paths:
               type: object
               example:
                 content: content
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/react:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emoji: :D
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /posts/{post_id}/unreact:
+    parameters:
+      - name: post_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - post
+      summary: like
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emoji: :D
       security:
         - bearerAuth: []
       responses:

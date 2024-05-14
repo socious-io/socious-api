@@ -46,7 +46,7 @@ router.post('/', loginRequired, async (ctx) => {
     throw new ValidationError('Invalid email')
   }
 
-  const referredById = ctx.request.body?.referredBy
+  const referredById = ctx.query.referred_by
   if (referredById) {
     const user = await User.get(referredById)
 

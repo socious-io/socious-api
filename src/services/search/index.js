@@ -3,6 +3,7 @@ import Post from '../../models/post/index.js'
 import User from '../../models/user/index.js'
 import Org from '../../models/organization/index.js'
 import Project from '../../models/project/index.js'
+import Applicant from '../../models/applicant/index.js'
 import Data from '@socious/data'
 import { app } from '../../index.js'
 import { BadRequestError } from '../../utils/errors.js'
@@ -29,11 +30,14 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
     case Data.SearchType.USERS:
       return body.q ? User.search(body.q, identityId, options) : User.getUsers(identityId, options)
 
+    case Data.SearchType.APPLICANTS:
+      return body.q ? Applicant.search(body.q, identityId, options) : Applicant.allByIdentity(identityId, options)
+
     case Data.SearchType.RELATED_USERS:
       return body.q ? User.searchRelateds(body.q, identityId, options) : User.getRelateds(identityId, options)
 
     case Data.SearchType.PROJECTS:
-      return body.q ? Project.search(body.q, options) : Project.all(options)
+      return body.q ? Project.search(body.q, options) : Project.all(identityId, options)
 
     case Data.SearchType.ORGANIZATIONS:
       return body.q ? Org.search(body.q, { ...options, currentIdentity: identityId }) : Org.all(options)

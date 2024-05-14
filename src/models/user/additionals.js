@@ -47,7 +47,8 @@ export const addExperience = async (
     country,
     employment_type,
     job_category_id,
-    weekly_hours
+    weekly_hours,
+    total_hours
   }
 ) => {
   try {
@@ -64,7 +65,8 @@ export const addExperience = async (
       country,
       employment_type,
       job_category_id,
-      weekly_hours
+      weekly_hours,
+      total_hours
     ) 
     VALUES (
       ${org_id},
@@ -78,7 +80,8 @@ export const addExperience = async (
       ${country},
       ${employment_type},
       ${job_category_id},
-      ${weekly_hours}
+      ${weekly_hours},
+      ${total_hours}
       )
     RETURNING *
   `)
@@ -102,7 +105,8 @@ export const editExperience = async (
     country,
     employment_type,
     job_category_id,
-    weekly_hours
+    weekly_hours,
+    total_hours
   }
 ) => {
   try {
@@ -118,7 +122,8 @@ export const editExperience = async (
       country=${country},
       employment_type=${employment_type},
       job_category_id=${job_category_id},
-      weekly_hours=${weekly_hours}
+      weekly_hours=${weekly_hours},
+      total_hours=${total_hours}
     WHERE id=${id} AND user_id=${user.id}
     RETURNING *
   `)

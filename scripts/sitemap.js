@@ -16,7 +16,7 @@ async function main() {
   // Pipe the sitemap stream to write stream
   sitemap.pipe(writeStream)
 
-  const projects = await Project.all({
+  const projects = await Project.all(undefined, {
     limit: 100,
     offset: 0,
     filter: { other_party_title: null },

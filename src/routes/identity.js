@@ -11,7 +11,6 @@ import { checkIdParams } from '../utils/middlewares/route.js'
 export const router = new Router()
 
 router.get('/', loginRequired, async (ctx) => {
-  
   if (!ctx.user.identity_verified) {
     try {
       const vc = await Credential.getRequestVerificationByIdentity(ctx.identity.id)
@@ -31,7 +30,7 @@ router.get('/', loginRequired, async (ctx) => {
           }
         }
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }

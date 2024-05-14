@@ -2,12 +2,12 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const newComment = async (id, identityId, { content, reply_id }) => {
+export const newComment = async (id, identityId, { content, reply_id, media_id }) => {
   try {
     const { rows } = await app.db.query(sql`
     INSERT 
-      INTO comments (identity_id, post_id, content, reply_id)
-      VALUES(${identityId}, ${id}, ${content}, ${reply_id})
+      INTO comments (identity_id, post_id, content, reply_id, media_id)
+      VALUES(${identityId}, ${id}, ${content}, ${reply_id}, ${media_id})
       RETURNING *
     `)
     return rows[0]
@@ -16,11 +16,12 @@ export const newComment = async (id, identityId, { content, reply_id }) => {
   }
 }
 
-export const updateComment = async (id, identityId, { content }) => {
+export const updateComment = async (id, identityId, { content, media_id }) => {
   try {
     const { rows } = await app.db.query(sql`
     UPDATE comments SET
-      content=${content}
+      content=${content},
+      media_id=${media_id}
     WHERE id=${id} AND identity_id=${identityId}
     RETURNING *
     `)
@@ -44,9 +45,24 @@ export const comments = async (id, currentIdentity, { offset = 0, limit = 10 }) 
     SELECT id FROM likes WHERE post_id=${id} AND 
     identity_id=${currentIdentity} AND
     comment_id=c.id
-  ) AS liked
+  ) AS liked,
+  row_to_json(m.*) AS media,
+  (SELECT
+    jsonb_agg(
+      json_build_object(
+        'id', e.id, 
+        'emoji', e.emoji, 
+        'identity', row_to_json(ei.*),
+        'created_at', e.created_at 
+      )
+    )
+    FROM emojis e
+    JOIN identities ei ON ei.id=e.identity_id
+    WHERE e.comment_id=c.id
+  ) AS emojis
   FROM comments c 
   JOIN identities i ON c.identity_id=i.id
+  LEFT JOIN media m ON m.id=c.media_id
   LEFT JOIN reports r ON (r.comment_id=c.id OR r.user_id=c.identity_id) AND r.identity_id=${currentIdentity}
   WHERE c.post_id=${id} AND c.reply_id IS NULL AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
@@ -63,9 +79,24 @@ export const commentsReplies = async (id, currentIdentity, { offset = 0, limit =
     SELECT id FROM likes WHERE post_id=${id} AND 
     identity_id=${currentIdentity} AND
     comment_id=c.id
-  ) AS liked
-  FROM comments c 
+  ) AS liked,
+  row_to_json(m.*) AS media,
+  (SELECT
+    jsonb_agg(
+      json_build_object(
+        'id', e.id, 
+        'emoji', e.emoji, 
+        'identity', row_to_json(ei.*),
+        'created_at', e.created_at
+      )
+    )
+    FROM emojis e
+    JOIN identities ei ON ei.id=e.identity_id
+    WHERE e.comment_id=c.id
+  ) AS emojis
+  FROM comments c
   JOIN identities i ON c.identity_id=i.id
+  LEFT JOIN media m ON m.id=c.media_id
   LEFT JOIN reports r ON (r.comment_id=c.id OR r.user_id=c.identity_id) AND r.identity_id=${currentIdentity}
   WHERE c.reply_id=${id} AND (r.blocked IS NULL OR r.blocked = false)
   ORDER BY created_at DESC  LIMIT ${limit} OFFSET ${offset}
@@ -73,8 +104,43 @@ export const commentsReplies = async (id, currentIdentity, { offset = 0, limit =
   return rows
 }
 
-export const getComment = async (id) => {
-  return app.db.get(sql`SELECT * FROM comments WHERE id=${id}`)
+export const getComment = async (id, currentIdentity) => {
+  return app.db.get(sql`
+  SELECT 
+  COUNT(*) OVER () as total_count,
+  c.*, i.type  as identity_type, i.meta as identity_meta,
+  COALESCE(r.id IS NOT NULL, false) AS reported,
+  EXISTS (
+    SELECT id FROM likes WHERE post_id=${id} AND 
+    identity_id=${currentIdentity} AND
+    comment_id=c.id
+  ) AS liked,
+  row_to_json(m.*) AS media,
+  (SELECT
+    jsonb_agg(
+      json_build_object(
+        'id', e.id, 
+        'emoji', e.emoji, 
+        'identity', row_to_json(ei.*),
+        'created_at', e.created_at 
+      )
+    )
+    FROM emojis e
+    JOIN identities ei ON ei.id=e.identity_id
+    WHERE e.comment_id=c.id
+  ) AS emojis
+  FROM comments c 
+  JOIN identities i ON c.identity_id=i.id
+  LEFT JOIN media m ON m.id=c.media_id
+  LEFT JOIN reports r ON (r.comment_id=c.id OR r.user_id=c.identity_id) AND r.identity_id=${currentIdentity}
+  WHERE c.id=${id}
+  `)
+}
+
+export const getCommentMini = async (id) => {
+  return app.db.get(sql`
+  SELECT * FROM comments WHERE id=${id}
+  `)
 }
 
 export const reportComment = async ({ identity_id, comment_id, comment, blocked }) => {

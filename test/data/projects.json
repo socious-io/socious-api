@@ -53,7 +53,17 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 2 }, { "selected_option": 1 }, { "answer": "TEST" }]
+      "answers": [
+        {
+          "selected_option": 2
+        },
+        {
+          "selected_option": 1
+        },
+        {
+          "answer": "TEST"
+        }
+      ]
     },
     {
       "cover_letter": "test cover 2",
@@ -62,7 +72,14 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
+      "answers": [
+        {
+          "selected_option": 3
+        },
+        {
+          "selected_option": 2
+        }
+      ]
     },
     {
       "invalid": true,
@@ -72,7 +89,14 @@
       "cv_name": "test",
       "cv_link": "https://test.com/test.cv",
       "share_contact_info": true,
-      "answers": [{ "selected_option": 3 }, { "selected_option": 2 }]
+      "answers": [
+        {
+          "selected_option": 3
+        },
+        {
+          "selected_option": 2
+        }
+      ]
     }
   ],
   "questions": [
@@ -100,5 +124,6 @@
       "assignment_total": 30000,
       "total_hours": 180
     }
-  ]
+  ],
+  "marks": []
 }

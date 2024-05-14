@@ -5,8 +5,8 @@ import {} from '../../utils/query.js'
 
 export const recommended = async (identityId, entityId, entityType, order) => {
   try {
-    const { rows } = app.db.query(sql`
-  INSERT INTO verification_credentials (
+    const { rows } = await app.db.query(sql`
+  INSERT INTO recommends (
     identity_id,
     entity_id,
     entity_type,
@@ -19,9 +19,9 @@ export const recommended = async (identityId, entityId, entityType, order) => {
     true,
     ${order}
   )
-  ON CONFLICT (idx_identity_entity) DO 
+  ON CONFLICT (identity_id, entity_id) DO 
   UPDATE SET 
-    recommended_count=recommended_count+1,
+    recommened_count=EXCLUDED.recommened_count+1,
     updated_at=NOW()
   RETURNING *
   `)

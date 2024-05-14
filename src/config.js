@@ -294,7 +294,7 @@ export default {
             name: 'bsc',
             explorer: 'https://api.bscscan.com/api'
           },
-          escrow: '0x057e82120fc16ddDAF8B1Fb697ab5506f8874B6e',
+          escrow: '0xB41F3d20E87278d1224922f728dE36dd2A59CE30',
           tokens: [
             {
               name: 'USD Coin',

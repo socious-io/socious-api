@@ -495,7 +495,6 @@ export const searchApplicants = async (request, data) => {
     type: 'applicants'
   })
   expect(response.status).toBe(200)
-  console.log(response.body)
 }
 
 //Markings

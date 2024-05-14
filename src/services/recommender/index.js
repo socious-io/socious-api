@@ -4,7 +4,7 @@ import Project from '../../models/project/index.js'
 import User from '../../models/user/index.js'
 import Applicant from '../../models/applicant/index.js'
 import Organization from '../../models/organization/index.js'
-import { getRecommendeds } from './model.js'
+import { getRecommendeds, recommended } from './model.js'
 
 const projectToQuery = (project) => {
   return {
@@ -55,7 +55,15 @@ export const recommendProjectByUser = async (username, options) => {
   query.push(...(applies?.map((a) => projectToQuery(a.project)) || []))
 
   const result = await axios.post(Config.ai.jobs_recommender_url, { query: query })
-  return Project.getAll(result.data.jobs, undefined, user.id)
+  const projects = await Project.getAll(result.data.jobs, undefined, user.id)
+  let saved = []
+  let i = 1
+  for (const p of projects) {    
+    saved.push(recommended(user.id, p.id, 'projects', i))
+    i++
+  }
+  await Promise.all(saved)
+  return projects
 }
 
 export const recommendUserByUser = async (username) => {

@@ -71,9 +71,9 @@ ALTER TYPE notification_type
 ADD
   VALUE 'DISPUTE_WITHDRAWN';
 
--- Indexes
-CREATE UNIQUE INDEX idx_disputes ON disputes(claimant_id, respondent_id);
+--Indexes
+CREATE INDEX idx_disputes ON disputes(claimant_id, respondent_id);
 
-CREATE UNIQUE INDEX idx_dispute_events ON chats_participants(dispute_id, created_at);
+CREATE INDEX idx_dispute_events ON dispute_events(dispute_id, created_at);
 
-CREATE UNIQUE INDEX idx_dispute_evidences ON dispute_evidences(dispute_event_id);
+CREATE INDEX idx_dispute_evidences ON dispute_evidences(dispute_event_id);

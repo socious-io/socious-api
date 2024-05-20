@@ -6,6 +6,7 @@ import { loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { checkIdParams, disputeClimant, disputeRespondent } from '../utils/middlewares/route.js'
 import { validate } from '@socious/data'
+import { BadRequestError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -13,6 +14,9 @@ router.post('/', loginRequired, async (ctx) => {
   const { identity, request } = ctx
 
   await validate.DisputeSchema.validateAsync(request.body)
+  if (request.body.evidences && request.body.evidences.length > 30) {
+    throw new BadRequestError()
+  }
   ctx.body = await Dispute.create(identity.id, request.body)
 
   //Send Notification to Respondent
@@ -39,6 +43,9 @@ router.post('/:id/message', loginRequired, checkIdParams, disputeClimant, async 
   } = ctx
 
   await validate.DisputeMessagingSchema.validateAsync(request.body)
+  if (request.body.evidences && request.body.evidences.length > 30) {
+    throw new BadRequestError()
+  }
   ctx.body = await Dispute.createEventOnDispute(identity.id, id, request.body)
 
   //TODO:Send Notification to Respondent
@@ -58,6 +65,9 @@ router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, as
   } = ctx
 
   await validate.DisputeMessagingSchema.validateAsync(request.body)
+  if (request.body.evidences && request.body.evidences.length > 30) {
+    throw new BadRequestError()
+  }
   ctx.body = await Dispute.createEventOnDispute(
     identity.id,
     id,

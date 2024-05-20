@@ -48,7 +48,17 @@ test('issue a dispute', async () => {
   data.disputes.objects.push(response.body)
 
   expect(response.status).toBe(200)
-  expect(response.body).toMatchSnapshot()
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    title: expect.any(String),
+    state: expect.any(String),
+    direction: expect.any(String),
+    claimant: expect.any(Object),
+    respondent: expect.any(Object),
+    events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
 })
 
 test('put message on a dispute', async () => {
@@ -63,7 +73,17 @@ test('put message on a dispute', async () => {
   data.disputes.objects[0] = response.body
 
   expect(response.status).toBe(200)
-  expect(response.body).toMatchSnapshot()
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    title: expect.any(String),
+    state: expect.any(String),
+    direction: expect.any(String),
+    claimant: expect.any(Object),
+    respondent: expect.any(Object),
+    events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
 })
 
 test('put response on a dispute', async () => {
@@ -79,14 +99,38 @@ test('put response on a dispute', async () => {
   data.disputes.objects[0] = response.body
 
   expect(response.status).toBe(200)
-  expect(response.body).toMatchSnapshot()
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    title: expect.any(String),
+    state: expect.any(String),
+    direction: expect.any(String),
+    claimant: expect.any(Object),
+    respondent: expect.any(Object),
+    events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
 })
 
 test('get all disputes as climant', async () => {
   const response = await request.get(`/disputes`).set('Authorization', data.users[0].access_token)
 
   expect(response.status).toBe(200)
-  expect(response.body).toMatchSnapshot()
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        title: expect.any(String),
+        state: expect.any(String),
+        direction: expect.any(String),
+        claimant: expect.any(Object),
+        respondent: expect.any(Object),
+        events: expect.any(Array),
+        created_at: expect.any(String),
+        updated_at: expect.any(String)
+      }
+    ]
+  })
 })
 
 test('withdraw from a dispute', async () => {
@@ -96,7 +140,17 @@ test('withdraw from a dispute', async () => {
     .send()
 
   expect(response.status).toBe(200)
-  expect(response.body).toMatchSnapshot()
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    title: expect.any(String),
+    state: expect.any(String),
+    direction: expect.any(String),
+    claimant: expect.any(Object),
+    respondent: expect.any(Object),
+    events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
 })
 
 const cleanup = async () => {

@@ -1,6 +1,6 @@
 import Data from '@socious/data'
 
-export const makeMessage = (type, {name, job_name=undefined, org_name=undefined}) => {
+export const makeMessage = (type, { name, job_name = undefined, org_name = undefined }) => {
   switch (type) {
     case Data.NotificationType.FOLLOWED:
       return {
@@ -192,6 +192,26 @@ export const makeMessage = (type, {name, job_name=undefined, org_name=undefined}
       return {
         title: 'issued experience rejected',
         body: `${name} rejected issued education certificate`
+      }
+    case Data.NotificationType.DISPUTE_INITIATED:
+      return {
+        title: Data.NotificationTitle.DISPUTE_INITIATED,
+        body: `${name} has been initiated a dispute against you.`
+      }
+    case Data.NotificationType.DISPUTE_NEW_MESSAGE:
+      return {
+        title: Data.NotificationTitle.DISPUTE_NEW_MESSAGE,
+        body: `${name} had put a message on the dispute.`
+      }
+    case Data.NotificationType.DISPUTE_NEW_RESPONSE:
+      return {
+        title: Data.NotificationTitle.DISPUTE_NEW_RESPONSE,
+        body: `${name} had send a response on the dispute.`
+      }
+    case Data.NotificationType.DISPUTE_WITHDRAWN:
+      return {
+        title: Data.NotificationTitle.DISPUTE_WITHDRAWN,
+        body: `${name} has been withdrawn the dispute.`
       }
     default:
       throw new Error(`${type} is not valid to create message`)

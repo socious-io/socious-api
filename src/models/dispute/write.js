@@ -1,10 +1,11 @@
 import sql from 'sql-template-tag'
-import { EntryError } from '../../utils/errors.js'
 import { app } from '../../index.js'
+import { getByClimantIdAndId, getByRespondentIdAndId } from './read.js'
+import { EntryError } from '../../utils/errors.js'
 
 export const create = async (identityId, { title, description, respondent_id, evidences = [] }) => {
-  let dispute, disputeEvent
-  await app.db.with(async (client) => {
+  let dispute, disputeEvent, disputeEvidences
+  return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
       dispute = await client.query(
@@ -25,21 +26,31 @@ export const create = async (identityId, { title, description, respondent_id, ev
 
       disputeEvent = await client.query(
         sql`
-          INSERT INTO dispute_events(identity_id, dispute_id, message, evidences)
-          VALUES (${identityId}, ${dispute.id}, ${description}, ${evidences})
+          INSERT INTO dispute_events(identity_id, dispute_id, message)
+          VALUES (${identityId}, ${dispute.id}, ${description})
           RETURNING *
         `
       )
       disputeEvent = disputeEvent.rows[0]
 
+      if (evidences && evidences.length) {
+        //TODO: Needs to be fixed for multiple evidences
+        disputeEvidences = await client.query(
+          sql`
+            INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
+            VALUES (${identityId}, ${dispute.id}, ${disputeEvent.id}, ${evidences[0]})
+            RETURNING *
+          `
+        )
+        disputeEvidences = disputeEvidences.rows[0]
+      }
       await client.query('COMMIT')
+      return await getByClimantIdAndId(identityId, dispute.id)
     } catch (err) {
       await client.query('ROLLBACK')
       throw err
     }
   })
-
-  return { dispute, disputeEvent }
 }
 
 export const updateDisputeState = async (disputeId, state = 'MESSAGE') => {
@@ -54,7 +65,7 @@ export const updateDisputeState = async (disputeId, state = 'MESSAGE') => {
     )
     return rows[0]
   } catch (err) {
-    throw err
+    throw new EntryError(err.message)
   }
 }
 
@@ -64,19 +75,31 @@ export const createEventOnDispute = async (
   { message = null, evidences = [], eventType = 'MESSAGE' },
   { changeState = null } = {}
 ) => {
-  let dispute_event, dispute
+  let disputeEvent, dispute, disputeEvidences
 
-  await app.db.with(async (client) => {
+  return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
-      dispute_event = await client.query(
+      disputeEvent = await client.query(
         sql`
-            INSERT INTO dispute_events(identity_id, dispute_id, message, evidences, type)
-            VALUES (${identityId}, ${disputeId}, ${message}, ${evidences}, ${eventType})
+            INSERT INTO dispute_events(identity_id, dispute_id, message, type)
+            VALUES (${identityId}, ${disputeId}, ${message}, ${eventType})
             RETURNING *
           `
       )
-      dispute_event = dispute_event.rows[0]
+      disputeEvent = disputeEvent.rows[0]
+
+      if (evidences && evidences.length) {
+        //TODO: Needs to be fixed for multiple evidences
+        disputeEvidences = await client.query(
+          sql`
+            INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
+            VALUES (${identityId}, ${disputeId}, ${disputeEvent.id}, ${evidences[0]})
+            RETURNING *
+          `
+        )
+        disputeEvidences = disputeEvidences.rows[0]
+      }
 
       if (changeState) {
         dispute = await client.query(
@@ -91,11 +114,12 @@ export const createEventOnDispute = async (
       }
 
       await client.query('COMMIT')
+
+      if (eventType == 'RESPONSE') return await getByRespondentIdAndId(identityId, disputeId)
+      else return await getByClimantIdAndId(identityId, disputeId)
     } catch (err) {
       await client.query('ROLLBACK')
       throw err
     }
   })
-
-  return { dispute_event, dispute }
 }

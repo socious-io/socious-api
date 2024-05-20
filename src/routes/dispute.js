@@ -1,67 +1,96 @@
 import Router from '@koa/router'
-import { loginRequired } from '../utils/middlewares/authorization.js'
 import Dispute from '../models/dispute/index.js'
+import Event from '../services/events/index.js'
+import Notif from '../models/notification/index.js'
+import { loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
+import { checkIdParams, disputeClimant, disputeRespondent } from '../utils/middlewares/route.js'
+import { validate } from '@socious/data'
 
 export const router = new Router()
 
 router.post('/', loginRequired, async (ctx) => {
-  const {
-    identity,
-    request: { body }
-  } = ctx
+  const { identity, request } = ctx
 
-  ctx.body = await Dispute.create(identity.id, body)
-  //TODO:Send Notification to Respondent
+  await validate.DisputeSchema.validateAsync(request.body)
+  ctx.body = await Dispute.create(identity.id, request.body)
+
+  //Send Notification to Respondent
+  const { respondent_id } = request.body
+  Event.push(Event.Types.NOTIFICATION, respondent_id, {
+    type: Notif.Types.DISPUTE_INITIATED,
+    refId: ctx.body.id,
+    parentId: null,
+    identity
+  })
 })
 
 router.get('/', loginRequired, paginate, async (ctx) => {
-  const {
-    identity,
-    request: { body }
-  } = ctx
+  const { identity } = ctx
 
   ctx.body = await Dispute.all(identity.id, ctx.paginate)
 })
 
-router.post('/:dispute_id/message', loginRequired, async (ctx) => {
+router.post('/:id/message', loginRequired, checkIdParams, disputeClimant, async (ctx) => {
   const {
     identity,
-    request: { body },
-    params: { dispute_id }
+    request,
+    params: { id }
   } = ctx
-  //TODO:check if i am the claimant of this dispute
-  ctx.body = await Dispute.createEventOnDispute(identity.id, dispute_id, body)
+
+  await validate.DisputeMessagingSchema.validateAsync(request.body)
+  ctx.body = await Dispute.createEventOnDispute(identity.id, id, request.body)
+
   //TODO:Send Notification to Respondent
+  Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
+    type: Notif.Types.DISPUTE_NEW_MESSAGE,
+    refId: ctx.body.id,
+    parentId: null,
+    identity
+  })
 })
 
-router.post('/:dispute_id/response', loginRequired, async (ctx) => {
+router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, async (ctx) => {
   const {
     identity,
-    request: { body },
-    params: { dispute_id }
+    request,
+    params: { id }
   } = ctx
-  //TODO:check if i am the respondant of this dispute
+
+  await validate.DisputeMessagingSchema.validateAsync(request.body)
   ctx.body = await Dispute.createEventOnDispute(
     identity.id,
-    dispute_id,
-    { ...body, eventType: 'RESPONSE' },
+    id,
+    { ...request.body, eventType: 'RESPONSE' },
     { changeState: 'PENDING_REVIEW' }
   )
+
   //TODO:Send Notification to Claimant
+  Event.push(Event.Types.NOTIFICATION, ctx.body.claimant.id, {
+    type: Notif.Types.DISPUTE_NEW_RESPONSE,
+    refId: id,
+    parentId: null,
+    identity
+  })
 })
 
-router.post('/:dispute_id/withdraw', loginRequired, async (ctx) => {
+router.post('/:id/withdraw', loginRequired, checkIdParams, disputeClimant, async (ctx) => {
   const {
     identity,
-    params: { dispute_id }
+    params: { id }
   } = ctx
-  //TODO:check if i am the claimant of this dispute
+
   ctx.body = await Dispute.createEventOnDispute(
     identity.id,
-    dispute_id,
+    id,
     { eventType: 'WITHDRAW' },
     { changeState: 'WITHDRAWN' }
   )
   //TODO:Send Notification to Respondent
+  Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
+    type: Notif.Types.DISPUTE_WITHDRAWN, //Notif.Types.DISPUTE_WITHDRAWN
+    refId: id,
+    parentId: null,
+    identity
+  })
 })

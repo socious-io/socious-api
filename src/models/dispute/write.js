@@ -4,7 +4,9 @@ import { getByClimantIdAndId, getByRespondentIdAndId } from './read.js'
 import { EntryError } from '../../utils/errors.js'
 
 export const create = async (identityId, { title, description, respondent_id, evidences = [] }) => {
-  let dispute, disputeEvent, disputeEvidences
+  let dispute,
+    disputeEvent,
+    disputeEvidences = []
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
@@ -34,15 +36,18 @@ export const create = async (identityId, { title, description, respondent_id, ev
       disputeEvent = disputeEvent.rows[0]
 
       if (evidences && evidences.length) {
-        //TODO: Needs to be fixed for multiple evidences
-        disputeEvidences = await client.query(
-          sql`
-            INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
-            VALUES (${identityId}, ${dispute.id}, ${disputeEvent.id}, ${evidences[0]})
-            RETURNING *
-          `
-        )
-        disputeEvidences = disputeEvidences.rows[0]
+        evidences.forEach((evidence, index) => {
+          disputeEvidences.push(
+            client.query(
+              sql`
+                INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
+                VALUES (${identityId}, ${dispute.id}, ${disputeEvent.id}, ${evidences[index]})
+                RETURNING *
+              `
+            )
+          )
+        })
+        disputeEvidences = await Promise.all(disputeEvidences)
       }
       await client.query('COMMIT')
       return await getByClimantIdAndId(identityId, dispute.id)
@@ -75,7 +80,9 @@ export const createEventOnDispute = async (
   { message = null, evidences = [], eventType = 'MESSAGE' },
   { changeState = null } = {}
 ) => {
-  let disputeEvent, dispute, disputeEvidences
+  let disputeEvent,
+    dispute,
+    disputeEvidences = []
 
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
@@ -90,15 +97,18 @@ export const createEventOnDispute = async (
       disputeEvent = disputeEvent.rows[0]
 
       if (evidences && evidences.length) {
-        //TODO: Needs to be fixed for multiple evidences
-        disputeEvidences = await client.query(
-          sql`
-            INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
-            VALUES (${identityId}, ${disputeId}, ${disputeEvent.id}, ${evidences[0]})
-            RETURNING *
-          `
-        )
-        disputeEvidences = disputeEvidences.rows[0]
+        evidences.forEach((evidence, index) => {
+          disputeEvidences.push(
+            client.query(
+              sql`
+                INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
+                VALUES (${identityId}, ${disputeId}, ${disputeEvent.id}, ${evidences[index]})
+                RETURNING *
+              `
+            )
+          )
+        })
+        disputeEvidences = await Promise.all(disputeEvidences)
       }
 
       if (changeState) {
@@ -106,7 +116,7 @@ export const createEventOnDispute = async (
           sql`
               UPDATE disputes
               SET state=${changeState}
-              WHERE id=${disputeId} AND state='AWAITING_RESPONSE'
+              WHERE id=${disputeId}
               RETURNING *
             `
         )
@@ -118,6 +128,7 @@ export const createEventOnDispute = async (
       if (eventType == 'RESPONSE') return await getByRespondentIdAndId(identityId, disputeId)
       else return await getByClimantIdAndId(identityId, disputeId)
     } catch (err) {
+      console.log(err)
       await client.query('ROLLBACK')
       throw err
     }

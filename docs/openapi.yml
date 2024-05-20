@@ -2253,6 +2253,49 @@ components:
         - PPLR
         - PPLS
         - STLMT
+    DisputeEvents:
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        type:
+          enum:
+            - RESPONSE
+            - MESSAGE
+            - WITHDRAW
+            - VOTE
+        evidences:
+          type: array
+          items:
+            id: string
+            url: string
+    Disputes:
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        state:
+          enum:
+            - AWAITING_RESPONSE
+            - PENDING_REVIEW
+            - RESOLVED
+            - WITHDRAWN
+        direction:
+          enum:
+            - received
+            - submitted
+        claimant:
+          $ref: '#/components/schemas/Identities'
+        respondent:
+          $ref: '#/components/schemas/Identities'
+        events:
+          $ref: '#/components/schemas/DisputeEvents'
+        created_at:
+          type: string
+        updated_at:
+          type: string
 paths:
   /site/options:
     get:
@@ -6534,5 +6577,112 @@ paths:
           description: Successful response
           content:
             application/json: {}
-
-  
+  /disputes:
+    post:
+      tags:
+        - disputes
+      summary: Issue a dispute
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: dispute 1
+                description: same as initial message
+                respondent_id: 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                evidences:
+                  - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                  - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
+                  - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
+  /disputes/{dispute_id}/message:
+    parameters:
+      - name: dispute_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Put message on dispute (from climant on dispute)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                message: content of the message
+                evidences:
+                  - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                  - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
+                  - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
+  /disputes/{dispute_id}/response:
+    parameters:
+      - name: dispute_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Put response on dispute (from responedent on dispute)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                message: content of the response
+                evidences:
+                  - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                  - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
+                  - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
+  /disputes/{dispute_id}/withdraw:
+    parameters:
+      - name: dispute_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Withdraw from a dispute
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'

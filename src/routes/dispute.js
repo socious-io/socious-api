@@ -4,7 +4,7 @@ import Event from '../services/events/index.js'
 import Notif from '../models/notification/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
-import { checkIdParams, disputeClimant, disputeRespondent } from '../utils/middlewares/route.js'
+import { checkIdParams, dispute } from '../utils/middlewares/route.js'
 import { validate } from '@socious/data'
 import { BadRequestError } from '../utils/errors.js'
 
@@ -19,7 +19,6 @@ router.post('/', loginRequired, async (ctx) => {
   }
   ctx.body = await Dispute.create(identity.id, request.body)
 
-  //Send Notification to Respondent
   const { respondent_id } = request.body
   Event.push(Event.Types.NOTIFICATION, respondent_id, {
     type: Notif.Types.DISPUTE_INITIATED,
@@ -35,7 +34,11 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Dispute.all(identity.id, ctx.paginate)
 })
 
-router.post('/:id/message', loginRequired, checkIdParams, disputeClimant, async (ctx) => {
+router.get('/:id', loginRequired, dispute, async (ctx) => {
+  ctx.body = ctx.dispute
+})
+
+router.post('/:id/message', loginRequired, checkIdParams, dispute, async (ctx) => {
   const {
     identity,
     request,
@@ -43,12 +46,12 @@ router.post('/:id/message', loginRequired, checkIdParams, disputeClimant, async 
   } = ctx
 
   await validate.DisputeMessagingSchema.validateAsync(request.body)
-  if (request.body.evidences && request.body.evidences.length > 30) {
+  console.log(ctx.dispute.claimant.id, identity.id)
+  if ((request.body.evidences && request.body.evidences.length > 30) || ctx.dispute.claimant.id != identity.id) {
     throw new BadRequestError()
   }
   ctx.body = await Dispute.createEventOnDispute(identity.id, id, request.body)
 
-  //TODO:Send Notification to Respondent
   Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
     type: Notif.Types.DISPUTE_NEW_MESSAGE,
     refId: ctx.body.id,
@@ -57,7 +60,7 @@ router.post('/:id/message', loginRequired, checkIdParams, disputeClimant, async 
   })
 })
 
-router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, async (ctx) => {
+router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) => {
   const {
     identity,
     request,
@@ -65,7 +68,7 @@ router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, as
   } = ctx
 
   await validate.DisputeMessagingSchema.validateAsync(request.body)
-  if (request.body.evidences && request.body.evidences.length > 30) {
+  if ((request.body.evidences && request.body.evidences.length > 30) || ctx.dispute.respondent.id != identity.id) {
     throw new BadRequestError()
   }
   ctx.body = await Dispute.createEventOnDispute(
@@ -75,7 +78,6 @@ router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, as
     { changeState: 'PENDING_REVIEW' }
   )
 
-  //TODO:Send Notification to Claimant
   Event.push(Event.Types.NOTIFICATION, ctx.body.claimant.id, {
     type: Notif.Types.DISPUTE_NEW_RESPONSE,
     refId: id,
@@ -84,19 +86,22 @@ router.post('/:id/response', loginRequired, checkIdParams, disputeRespondent, as
   })
 })
 
-router.post('/:id/withdraw', loginRequired, checkIdParams, disputeClimant, async (ctx) => {
+router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) => {
   const {
     identity,
     params: { id }
   } = ctx
 
+  if (ctx.dispute.claimant.id != identity.id) {
+    throw new BadRequestError()
+  }
   ctx.body = await Dispute.createEventOnDispute(
     identity.id,
     id,
     { eventType: 'WITHDRAW' },
     { changeState: 'WITHDRAWN' }
   )
-  //TODO:Send Notification to Respondent
+
   Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
     type: Notif.Types.DISPUTE_WITHDRAWN, //Notif.Types.DISPUTE_WITHDRAWN
     refId: id,

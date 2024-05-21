@@ -61,6 +61,25 @@ test('issue a dispute', async () => {
   })
 })
 
+test('get a dispute', async () => {
+  const response = await request
+    .get(`/disputes/${data.disputes.objects[0].id}`)
+    .set('Authorization', data.users[0].access_token)
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    title: expect.any(String),
+    state: expect.any(String),
+    direction: expect.any(String),
+    claimant: expect.any(Object),
+    respondent: expect.any(Object),
+    events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
 test('put message on a dispute', async () => {
   const response = await request
     .post(`/disputes/${data.disputes.objects[0].id}/message`)

@@ -86,11 +86,7 @@ export const connectPermission = async (ctx, next) => {
   return next()
 }
 
-export const disputeClimant = async (ctx, next) => {
-  ctx.disputeClimant = await Dispute.getByClimantIdAndId(ctx.identity.id, ctx.params.id)
-  return next()
-}
-export const disputeRespondent = async (ctx, next) => {
-  ctx.disputeRespondent = await Dispute.getByRespondentIdAndId(ctx.identity.id, ctx.params.id)
+export const dispute = async (ctx, next) => {
+  ctx.dispute = await Dispute.getByIdentityIdAndId(ctx.identity.id, ctx.params.id)
   return next()
 }

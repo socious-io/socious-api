@@ -1,6 +1,6 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
-import { getByClimantIdAndId, getByRespondentIdAndId } from './read.js'
+import { getByIdentityIdAndId } from './read.js'
 import { EntryError } from '../../utils/errors.js'
 
 export const create = async (identityId, { title, description, respondent_id, evidences = [] }) => {
@@ -50,7 +50,7 @@ export const create = async (identityId, { title, description, respondent_id, ev
         disputeEvidences = await Promise.all(disputeEvidences)
       }
       await client.query('COMMIT')
-      return await getByClimantIdAndId(identityId, dispute.id)
+      return await getByIdentityIdAndId(identityId, dispute.id)
     } catch (err) {
       await client.query('ROLLBACK')
       throw err
@@ -125,8 +125,7 @@ export const createEventOnDispute = async (
 
       await client.query('COMMIT')
 
-      if (eventType == 'RESPONSE') return await getByRespondentIdAndId(identityId, disputeId)
-      else return await getByClimantIdAndId(identityId, disputeId)
+      return await getByIdentityIdAndId(identityId, disputeId)
     } catch (err) {
       console.log(err)
       await client.query('ROLLBACK')

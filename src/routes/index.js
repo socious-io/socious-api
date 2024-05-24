@@ -30,6 +30,7 @@ import { router as geo } from './geo.js'
 import { router as additionals } from './additionals.js'
 import { router as credentials } from './credentials.js'
 import { router as referring } from './referring.js'
+import { router as dispute } from './dispute.js'
 
 export default (app) => {
   const blueprint = new Router()
@@ -67,6 +68,7 @@ export default (app) => {
   blueprint.use('/additionals', additionals.routes(), additionals.allowedMethods())
   blueprint.use('/credentials', credentials.routes(), credentials.allowedMethods())
   blueprint.use('/referrers', referring.routes(), referring.allowedMethods())
+  blueprint.use('/disputes', dispute.routes(), referring.allowedMethods())
 
   if (Config.mail.allowTest) {
     blueprint.use('/test-emails', testEmails.routes(), testEmails.allowedMethods())

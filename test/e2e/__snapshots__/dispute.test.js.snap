@@ -104,130 +104,99 @@ exports[` 4`] = `
 }
 `;
 
-exports[`accept connect request 1`] = `
+exports[`get a dispute 1`] = `
 {
-  "connected_at": Any<String>,
+  "claimant": Any<Object>,
+  "code": "DIS-1",
   "created_at": Any<String>,
+  "direction": Any<String>,
+  "events": Any<Array>,
   "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "CONNECTED",
-  "text": "test",
+  "respondent": Any<Object>,
+  "state": Any<String>,
+  "title": Any<String>,
   "updated_at": Any<String>,
 }
 `;
 
-exports[`accept connect request 2`] = `
+exports[`get all disputes as climant 1`] = `
 {
-  "connected_at": Any<String>,
+  "items": [
+    {
+      "claimant": Any<Object>,
+      "code": "DIS-1",
+      "created_at": Any<String>,
+      "direction": Any<String>,
+      "events": Any<Array>,
+      "id": Any<String>,
+      "respondent": Any<Object>,
+      "state": Any<String>,
+      "title": Any<String>,
+      "updated_at": Any<String>,
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
+}
+`;
+
+exports[`issue a dispute 1`] = `
+{
+  "claimant": Any<Object>,
+  "code": "DIS-1",
   "created_at": Any<String>,
+  "direction": Any<String>,
+  "events": Any<Array>,
   "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "CONNECTED",
-  "text": "test",
+  "respondent": Any<Object>,
+  "state": Any<String>,
+  "title": Any<String>,
   "updated_at": Any<String>,
 }
 `;
 
-exports[`block connection 1`] = `
+exports[`put message on a dispute 1`] = `
 {
-  "connected_at": null,
+  "claimant": Any<Object>,
+  "code": "DIS-1",
   "created_at": Any<String>,
+  "direction": Any<String>,
+  "events": Any<Array>,
   "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "BLOCKED",
-  "text": "test",
+  "respondent": Any<Object>,
+  "state": Any<String>,
+  "title": Any<String>,
   "updated_at": Any<String>,
 }
 `;
 
-exports[`block connection 2`] = `
+exports[`put response on a dispute 1`] = `
 {
-  "connected_at": null,
+  "claimant": Any<Object>,
+  "code": "DIS-1",
   "created_at": Any<String>,
+  "direction": Any<String>,
+  "events": Any<Array>,
   "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "BLOCKED",
-  "text": "test",
+  "respondent": Any<Object>,
+  "state": Any<String>,
+  "title": Any<String>,
   "updated_at": Any<String>,
 }
 `;
 
-exports[`connect request 1`] = `
+exports[`withdraw from a dispute 1`] = `
 {
-  "connected_at": null,
+  "claimant": Any<Object>,
+  "code": "DIS-1",
   "created_at": Any<String>,
+  "direction": Any<String>,
+  "events": Any<Array>,
   "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "PENDING",
-  "text": "test",
-  "updated_at": Any<String>,
-}
-`;
-
-exports[`connect request 2`] = `
-{
-  "connected_at": null,
-  "created_at": Any<String>,
-  "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "PENDING",
-  "text": "test",
-  "updated_at": Any<String>,
-}
-`;
-
-exports[`connect request 3`] = `
-{
-  "connected_at": null,
-  "created_at": Any<String>,
-  "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "PENDING",
-  "text": "test",
-  "updated_at": Any<String>,
-}
-`;
-
-exports[`connect request 4`] = `
-{
-  "connected_at": null,
-  "created_at": Any<String>,
-  "id": Any<String>,
-  "relation_id": Any<String>,
-  "requested": Any<Object>,
-  "requested_id": Any<String>,
-  "requester": Any<Object>,
-  "requester_id": Any<String>,
-  "status": "PENDING",
-  "text": "test",
+  "respondent": Any<Object>,
+  "state": Any<String>,
+  "title": Any<String>,
   "updated_at": Any<String>,
 }
 `;

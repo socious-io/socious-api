@@ -4,6 +4,7 @@ import Project from '../../models/project/index.js'
 import Mission from '../../models/mission/index.js'
 import Offer from '../../models/offer/index.js'
 import Connect from '../../models/connect/index.js'
+import Dispute from '../../models/dispute/index.js'
 import Applicant from '../../models/applicant/index.js'
 import { validate } from '@socious/data'
 
@@ -82,5 +83,10 @@ export const connectRequested = async (ctx, next) => {
 
 export const connectPermission = async (ctx, next) => {
   ctx.connection = await Connect.permission(ctx.identity.id, ctx.params.id)
+  return next()
+}
+
+export const dispute = async (ctx, next) => {
+  ctx.dispute = await Dispute.getByIdentityIdAndId(ctx.identity.id, ctx.params.id)
   return next()
 }

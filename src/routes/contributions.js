@@ -48,12 +48,11 @@ router.get('/invitations', loginRequired, async (ctx) => {
     query: { invitation_type }
   } = ctx
 
-  try{
+  try {
     ctx.body = await Contribution.getAllContributionInvitationsByType(id, invitation_type)
-  }catch(e){
+  } catch (e) {
     console.log(e)
   }
-  
 })
 
 router.get('/invitations/:invitation_id', loginRequired, async (ctx) => {

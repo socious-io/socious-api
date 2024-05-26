@@ -1,4 +1,4 @@
-import sql, { raw } from 'sql-template-tag'
+import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 
@@ -16,7 +16,7 @@ export const optInContributions = async (identityId) => {
   }
 }
 
-export const leaveOutContributions = async (identityId, medias) => {
+export const leaveOutContributions = async (identityId) => {
   return await app.db.query(sql` DELETE FROM contributors WHERE contributor_id=${identityId}`)
 }
 

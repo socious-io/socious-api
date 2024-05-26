@@ -6,9 +6,9 @@ import { getProfile } from './read.js'
 export const insert = async (first_name, last_name, username, email, hashedPasswd) => {
   try {
     const { rows } = await app.db.query(sql`
-    INSERT INTO users (first_name, last_name, username, email, password) 
+    INSERT INTO users (first_name, last_name, username, email, password, status) 
     VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
-      ${email.toLowerCase()}, ${hashedPasswd}) RETURNING *
+      ${email.toLowerCase()}, ${hashedPasswd}, 'ACTIVE') RETURNING *
   `)
     return rows[0]
   } catch (err) {

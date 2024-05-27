@@ -125,7 +125,6 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
 router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
   const {
     identity,
-    params: { id },
     query: { vote_side },
     dispute
   } = ctx

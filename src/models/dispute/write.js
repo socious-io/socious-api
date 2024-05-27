@@ -135,7 +135,7 @@ export const createEventOnDispute = async (
 }
 
 export const updateInvitationStatus = async (identityId, invitationId, status) => {
-  let contributeInvitation, disputeJuror
+  let contributeInvitation
 
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
@@ -152,7 +152,7 @@ export const updateInvitationStatus = async (identityId, invitationId, status) =
       contributeInvitation = contributeInvitation.rows[0]
 
       if (contributeInvitation && contributeInvitation.status == 'ACCEPTED') {
-        disputeJuror = await client.query(sql`
+        await client.query(sql`
           INSERT INTO dispute_jourors (dispute_id, juror_id)
           VALUES (${contributeInvitation.dispute_id}, ${identityId})
         `)
@@ -176,8 +176,8 @@ export const castVoteOnDispute = async (id, identityId, voteSide) => {
         RETURNING *
       `
     )
-    return rows[0];
-  }catch(err){
-    throw err
+    return rows[0]
+  } catch (err) {
+    new EntryError(err.message)
   }
 }

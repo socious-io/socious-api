@@ -1,6 +1,5 @@
 import Router from '@koa/router'
 import User from '../models/user/index.js'
-import Dispute from '../models/dispute/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
 import { NotFoundError, PermissionError } from '../utils/errors.js'
 

@@ -6,7 +6,7 @@ import { loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { checkIdParams, dispute } from '../utils/middlewares/route.js'
 import { validate } from '@socious/data'
-import { BadRequestError } from '../utils/errors.js'
+import { BadRequestError, NotFoundError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -32,6 +32,18 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   const { identity } = ctx
 
   ctx.body = await Dispute.all(identity.id, ctx.paginate)
+})
+
+router.get('/invitations', loginRequired, async (ctx) => {
+  const {
+    identity: { id }
+  } = ctx
+
+  try {
+    ctx.body = await Dispute.getAllInvitationsIdentityId(id)
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 router.get('/:id', loginRequired, dispute, async (ctx) => {
@@ -108,4 +120,57 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
     parentId: null,
     identity
   })
+})
+
+router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
+  const {
+    identity,
+    params: { id },
+    query: { vote_side },
+    dispute
+  } = ctx
+
+  if (ctx.dispute.direction != 'juror' || (vote_side != 'CLAIMANT' && vote_side != 'RESPONDENT')) {
+    throw new BadRequestError()
+  }
+
+  ctx.body = await Dispute.castVoteOnDispute(dispute.id, identity.id, vote_side)
+})
+
+//Contribution Invitations
+router.get('/invitations/:invitation_id', loginRequired, async (ctx) => {
+  const {
+    identity: { id },
+    params: { invitation_id }
+  } = ctx
+
+  try {
+    ctx.body = await Dispute.getInvitationIdentityIdAndId(id, invitation_id)
+  } catch (e) {
+    throw new NotFoundError()
+  }
+})
+
+router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => {
+  const {
+    identity: { id },
+    params: { invitation_id }
+  } = ctx
+  try {
+    ctx.body = await Dispute.updateInvitationStatus(id, invitation_id, 'ACCEPTED')
+  } catch (e) {
+    throw new NotFoundError()
+  }
+})
+
+router.post('/invitations/:invitation_id/decline', loginRequired, async (ctx) => {
+  const {
+    identity: { id },
+    params: { invitation_id }
+  } = ctx
+  try {
+    ctx.body = await Dispute.updateInvitationStatus(id, invitation_id, 'DECLINED')
+  } catch (e) {
+    throw new NotFoundError()
+  }
 })

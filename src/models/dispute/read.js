@@ -11,7 +11,12 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(
     sql`
     SELECT d.id, title, state, code,
-    (CASE WHEN d.claimant_id=${identityId} THEN 'submitted' ELSE 'received' END) AS direction,
+    (
+      CASE
+        WHEN d.claimant_id=${identityId} THEN 'submitted'
+        WHEN d.respondent_id=${identityId} THEN 'received'
+        ELSE 'juror' END
+    ) AS direction,
     row_to_json(i1.*) AS claimant,
     row_to_json(i2.*) AS respondent,
     ARRAY (
@@ -20,7 +25,6 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
           'id', de.id,
           'message', de.message,
           'type', de.type,
-          'vote_side', de.vote_side,
           'evidences', COALESCE(
                   json_agg(json_build_object(
                   'id', m.id,
@@ -40,8 +44,9 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     FROM disputes d
     JOIN identities i1 ON i1.id=d.claimant_id
     JOIN identities i2 ON i2.id=d.respondent_id
-    WHERE claimant_id=${identityId} OR respondent_id=${identityId}
-    GROUP BY d.id, i1.id, i2.id
+    LEFT JOIN dispute_jourors dj ON dispute_id=d.id
+    WHERE claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId}
+    GROUP BY d.id, i1.id, i2.id, dj.id
     ${sorting(sort, sortColumns, 'd')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -54,7 +59,12 @@ export const getByIdentityIdAndId = async (identityId, id) => {
     return await app.db.get(
       sql`
         SELECT d.id, title, state, code,
-        (CASE WHEN d.claimant_id=${identityId} THEN 'submitted' ELSE 'received' END) AS direction,
+        (
+          CASE
+            WHEN d.claimant_id=${identityId} THEN 'submitted'
+            WHEN d.respondent_id=${identityId} THEN 'received'
+            ELSE 'juror' END
+        ) AS direction,
         row_to_json(i1.*) AS claimant,
         row_to_json(i2.*) AS respondent,
         ARRAY (
@@ -63,7 +73,6 @@ export const getByIdentityIdAndId = async (identityId, id) => {
               'id', de.id,
               'message', de.message,
               'type', de.type,
-              'vote_side', de.vote_side,
               'evidences', COALESCE(
                       json_agg(json_build_object(
                       'id', m.id,
@@ -83,11 +92,29 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         FROM disputes d
         JOIN identities i1 ON i1.id=d.claimant_id
         JOIN identities i2 ON i2.id=d.respondent_id
-        WHERE d.id=${id} AND (claimant_id=${identityId} OR respondent_id=${identityId})
-        GROUP BY d.id, i1.id, i2.id
+        LEFT JOIN dispute_jourors dj ON dispute_id=d.id
+        WHERE d.id=${id} AND (claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId})
+        GROUP BY d.id, i1.id, i2.id, dj.id
       `
     )
   } catch (e) {
     throw new PermissionError()
   }
+}
+
+export const getAllInvitationsIdentityId = async (identityId) => {
+  const { rows } = await app.db.query(sql`
+    SELECT id, status, created_at, updated_at
+    FROM dispute_contributor_invitations dci
+    WHERE contributor_id=${identityId}
+  `)
+  return rows
+}
+
+export const getInvitationIdentityIdAndId = (identityId, id) => {
+  return app.db.get(sql`
+    SELECT id, status, created_at, updated_at
+    FROM dispute_contributor_invitations dci
+    WHERE contributor_id=${identityId} AND id=${id}
+  `)
 }

@@ -600,6 +600,7 @@ exports[`get 1`] = `
 {
   "applicants": 0,
   "applied": false,
+  "applied_date": null,
   "causes_tags": [
     "POVERTY",
   ],
@@ -652,6 +653,7 @@ exports[`get 2`] = `
 {
   "applicants": 0,
   "applied": false,
+  "applied_date": null,
   "causes_tags": [
     "POVERTY",
   ],

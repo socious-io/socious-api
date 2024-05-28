@@ -42,11 +42,13 @@ export const get = async (id, identityId) => {
     row_to_json(j.*) AS job_category,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
-    EXISTS(SELECT id FROM applicants WHERE project_id=${id} AND user_id=${identityId}) AS applied,
+    CASE WHEN a.id IS NOT NULL THEN TRUE ELSE FALSE END AS applied,
+    a.created_at AS applied_date,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
+    LEFT JOIN applicants a ON a.project_id=${id} AND a.user_id=${identityId}
     LEFT JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=${id}
   `)

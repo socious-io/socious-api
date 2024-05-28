@@ -10,15 +10,36 @@ export const sortColumns = ['created_at', 'updated_at', 'state', 'claimant_id', 
 export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(
     sql`
-    SELECT d.id, title, state, code,
+    SELECT d.id, title,
+    (
+      CASE
+        WHEN d.claimant_id!=${identityId} AND d.respondent_id!=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+        ELSE d.state
+        END
+    ) AS state,
+    code,
     (
       CASE
         WHEN d.claimant_id=${identityId} THEN 'submitted'
         WHEN d.respondent_id=${identityId} THEN 'received'
-        ELSE 'juror' END
+        ELSE 'juror'
+        END
     ) AS direction,
     row_to_json(i1.*) AS claimant,
     row_to_json(i2.*) AS respondent,
+    COALESCE(
+      (
+        SELECT
+          json_build_object(
+            'voted', COUNT(DISTINCT dj.vote_side),
+            'members', COUNT(DISTINCT dj.juror_id)
+          )
+        FROM dispute_jourors dj
+        WHERE dj.dispute_id=d.id
+        GROUP BY dj.dispute_id
+      ),
+      '{"voted":0, "members":0}'
+    ) as jury,
     ARRAY (
       SELECT
       json_build_object(
@@ -58,7 +79,14 @@ export const getByIdentityIdAndId = async (identityId, id) => {
   try {
     return await app.db.get(
       sql`
-        SELECT d.id, title, state, code,
+        SELECT d.id, title, 
+        (
+          CASE
+            WHEN d.claimant_id!=${identityId} AND d.respondent_id!=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+            ELSE d.state
+            END
+        ) AS state,
+        code,
         (
           CASE
             WHEN d.claimant_id=${identityId} THEN 'submitted'
@@ -67,6 +95,19 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         ) AS direction,
         row_to_json(i1.*) AS claimant,
         row_to_json(i2.*) AS respondent,
+        COALESCE(
+          (
+            SELECT
+              json_build_object(
+                'voted', COUNT(DISTINCT dj.vote_side),
+                'members', COUNT(DISTINCT dj.juror_id)
+              )
+            FROM dispute_jourors dj
+            WHERE dj.dispute_id=d.id
+            GROUP BY dj.dispute_id
+          ),
+          '{"voted":0, "members":0}'
+        ) as jury,
         ARRAY (
           SELECT
           json_build_object(

@@ -133,7 +133,8 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
     throw new BadRequestError()
   }
 
-  ctx.body = await Dispute.castVoteOnDispute(dispute.id, identity.id, vote_side)
+  await Dispute.castVoteOnDispute(dispute.id, identity.id, vote_side)
+  ctx.body = await Dispute.getByIdentityIdAndId(identity.id, dispute.id)
 })
 
 //Contribution Invitations

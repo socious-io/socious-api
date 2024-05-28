@@ -146,7 +146,7 @@ export const updateInvitationStatus = async (identityId, invitationId, status) =
         UPDATE dispute_contributor_invitations dci
         SET status=${status}
         WHERE contributor_id=${identityId} AND id=${invitationId}
-        RETURNING *
+        RETURNING id, status, created_at, updated_at
       `
       )
       contributeInvitation = contributeInvitation.rows[0]

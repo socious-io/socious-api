@@ -13,7 +13,7 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     SELECT d.id, title,
     (
       CASE
-        WHEN d.claimant_id!=${identityId} AND d.respondent_id!=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+        WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
         ELSE d.state
         END
     ) AS state,
@@ -82,7 +82,7 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         SELECT d.id, title, 
         (
           CASE
-            WHEN d.claimant_id!=${identityId} AND d.respondent_id!=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+            WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
             ELSE d.state
             END
         ) AS state,

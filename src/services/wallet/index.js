@@ -9,7 +9,7 @@ const headers = {
 
 export const createDID = async () => {
   const didRes = await axios.post(
-    `${config.wallet.agent}/prism-agent/did-registrar/dids`,
+    `${config.wallet.agent}/cloud-agent/did-registrar/dids`,
     {
       documentTemplate: {
         publicKeys: [
@@ -29,14 +29,14 @@ export const createDID = async () => {
   )
 
   const res = await axios.post(
-    `${config.wallet.agent}/prism-agent/did-registrar/dids/${didRes.data.longFormDid}/publications`
+    `${config.wallet.agent}/cloud-agent/did-registrar/dids/${didRes.data.longFormDid}/publications`
   )
 
   return res.data.scheduledOperation.didRef
 }
 
 export const createConnectURL = async (callback) => {
-  const res = await axios.post(`${config.wallet.agent}/prism-agent/connections`, { label: 'Socious Claim Connection' })
+  const res = await axios.post(`${config.wallet.agent}/cloud-agent/connections`, { label: 'Socious Claim Connection' })
   const id = res.data.connectionId
   let url = res.data.invitation.invitationUrl
   url = url.replace('https://my.domain.com/path', config.wallet.connect_address)
@@ -52,7 +52,7 @@ export const sendCredentials = async ({ connectionId, issuingDID, claims }) => {
     schemaId: null,
     automaticIssuance: true
   }
-  const res = await axios.post(`${config.wallet.agent}/prism-agent/issue-credentials/credential-offers`, payload, {
+  const res = await axios.post(`${config.wallet.agent}/cloud-agent/issue-credentials/credential-offers`, payload, {
     headers
   })
   return res.data
@@ -70,13 +70,13 @@ export const verifyProofRequest = async (connectionId) => {
     }
   }
 
-  const res = await axios.post(`${config.wallet.agent}/prism-agent/present-proof/presentations`, payload, { headers })
+  const res = await axios.post(`${config.wallet.agent}/cloud-agent/present-proof/presentations`, payload, { headers })
   return res.data
 }
 
 export const getPresentVerification = async (presentId) => {
   const date = new Date()
-  const res = await axios.get(`${config.wallet.agent}/prism-agent/present-proof/presentations/${presentId}`, {
+  const res = await axios.get(`${config.wallet.agent}/cloud-agent/present-proof/presentations/${presentId}`, {
     headers,
     params: { t: date.getTime() }
   })

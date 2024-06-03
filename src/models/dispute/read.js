@@ -6,6 +6,7 @@ import { sorting } from '../../utils/query.js'
 export const filterColumns = {}
 
 export const sortColumns = ['created_at', 'updated_at', 'state', 'claimant_id', 'respondent_id']
+export const sortColumnsInvitations = ['created_at', 'updated_at', 'dispute_id']
 
 export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(
@@ -143,18 +144,20 @@ export const getByIdentityIdAndId = async (identityId, id) => {
   }
 }
 
-export const getAllInvitationsIdentityId = async (identityId) => {
+export const getAllInvitationsIdentityId = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(sql`
-    SELECT id, status, created_at, updated_at
+    SELECT id, dispute_id, status, created_at, updated_at
     FROM dispute_contributor_invitations dci
     WHERE contributor_id=${identityId}
+    ${sorting(sort, sortColumnsInvitations, 'dci')}
+    LIMIT ${limit} OFFSET ${offset}
   `)
   return rows
 }
 
 export const getInvitationIdentityIdAndId = (identityId, id) => {
   return app.db.get(sql`
-    SELECT id, status, created_at, updated_at
+    SELECT id, dispute_id, status, created_at, updated_at
     FROM dispute_contributor_invitations dci
     WHERE contributor_id=${identityId} AND id=${id}
   `)

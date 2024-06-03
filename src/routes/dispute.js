@@ -34,13 +34,13 @@ router.get('/', loginRequired, paginate, async (ctx) => {
   ctx.body = await Dispute.all(identity.id, ctx.paginate)
 })
 
-router.get('/invitations', loginRequired, async (ctx) => {
+router.get('/invitations', loginRequired, paginate, async (ctx) => {
   const {
     identity: { id }
   } = ctx
 
   try {
-    ctx.body = await Dispute.getAllInvitationsIdentityId(id)
+    ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
   } catch (e) {
     console.log(e)
   }
@@ -58,7 +58,6 @@ router.post('/:id/message', loginRequired, checkIdParams, dispute, async (ctx) =
   } = ctx
 
   await validate.DisputeMessagingSchema.validateAsync(request.body)
-  console.log(ctx.dispute.claimant.id, identity.id)
   if ((request.body.evidences && request.body.evidences.length > 30) || ctx.dispute.claimant.id != identity.id) {
     throw new BadRequestError()
   }
@@ -143,7 +142,6 @@ router.get('/invitations/:invitation_id', loginRequired, async (ctx) => {
     identity: { id },
     params: { invitation_id }
   } = ctx
-
   try {
     ctx.body = await Dispute.getInvitationIdentityIdAndId(id, invitation_id)
   } catch (e) {
@@ -159,6 +157,7 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
   try {
     ctx.body = await Dispute.updateInvitationStatus(id, invitation_id, 'ACCEPTED')
   } catch (e) {
+    console.log(e)
     throw new NotFoundError()
   }
 })

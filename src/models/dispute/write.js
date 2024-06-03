@@ -146,11 +146,10 @@ export const updateInvitationStatus = async (identityId, invitationId, status) =
         UPDATE dispute_contributor_invitations dci
         SET status=${status}
         WHERE contributor_id=${identityId} AND id=${invitationId}
-        RETURNING id, status, created_at, updated_at
+        RETURNING id, dispute_id, status,  created_at, updated_at
       `
       )
       contributeInvitation = contributeInvitation.rows[0]
-
       if (contributeInvitation && contributeInvitation.status == 'ACCEPTED') {
         await client.query(sql`
           INSERT INTO dispute_jourors (dispute_id, juror_id)

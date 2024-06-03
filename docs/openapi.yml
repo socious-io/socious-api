@@ -2306,6 +2306,8 @@ components:
       properties:
         id:
           type: string
+        dispute_id:
+          type: string
         status:
           enum:
             - INVITED

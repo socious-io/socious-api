@@ -104,6 +104,26 @@ exports[` 4`] = `
 }
 `;
 
+exports[`accepting the dispute contribution invitation 1`] = `
+{
+  "created_at": Any<String>,
+  "dispute_id": Any<String>,
+  "id": Any<String>,
+  "status": Any<String>,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[`declining the dispute contribution invitation 1`] = `
+{
+  "created_at": Any<String>,
+  "dispute_id": Any<String>,
+  "id": Any<String>,
+  "status": Any<String>,
+  "updated_at": Any<String>,
+}
+`;
+
 exports[`get a dispute 1`] = `
 {
   "claimant": Any<Object>,
@@ -146,6 +166,33 @@ exports[`get all disputes as climant 1`] = `
   "limit": 10,
   "page": 1,
   "total_count": 1,
+}
+`;
+
+exports[`getting all of the dispute contribution invitations 1`] = `
+{
+  "items": [
+    {
+      "created_at": Any<String>,
+      "dispute_id": Any<String>,
+      "id": Any<String>,
+      "status": Any<String>,
+      "updated_at": Any<String>,
+    },
+  ],
+  "limit": 10,
+  "page": 1,
+  "total_count": 1,
+}
+`;
+
+exports[`getting one of the dispute contribution invitations 1`] = `
+{
+  "created_at": Any<String>,
+  "dispute_id": Any<String>,
+  "id": Any<String>,
+  "status": Any<String>,
+  "updated_at": Any<String>,
 }
 `;
 

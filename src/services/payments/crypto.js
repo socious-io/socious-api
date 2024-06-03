@@ -160,7 +160,7 @@ export const charge = async (identityId, body) => {
   if (org_referrer) {
     await create({
       identity_id: org_referrer,
-      amount: fee * 0.5,
+      amount: (amount - fee) * 0.01,
       currency,
       service: Data.PaymentService.CRYPTO,
       meta,
@@ -173,7 +173,7 @@ export const charge = async (identityId, body) => {
   if (user_referrer) {
     await create({
       identity_id: user_referrer,
-      amount: fee * 0.5,
+      amount: (amount - fee) * 0.01,
       currency,
       service: Data.PaymentService.CRYPTO,
       meta,

@@ -3,7 +3,7 @@ import { app } from '../../index.js'
 import { getByIdentityIdAndId } from './read.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async (identityId, { title, description, respondent_id, evidences = [] }) => {
+export const create = async (identityId, { title, description, respondent_id, evidences = [], category_id }) => {
   let dispute,
     disputeEvent,
     disputeEvidences = []
@@ -15,17 +15,18 @@ export const create = async (identityId, { title, description, respondent_id, ev
           INSERT INTO disputes (
             title,
             claimant_id,
-            respondent_id
+            respondent_id,
+            category_id
           ) VALUES (
             ${title},
             ${identityId},
-            ${respondent_id}
+            ${respondent_id},
+            ${category_id}
           )
           RETURNING *;
         `
       )
       dispute = dispute.rows[0]
-
       disputeEvent = await client.query(
         sql`
           INSERT INTO dispute_events(identity_id, dispute_id, message)

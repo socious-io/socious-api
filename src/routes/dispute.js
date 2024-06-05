@@ -13,6 +13,7 @@ export const router = new Router()
 router.post('/', loginRequired, async (ctx) => {
   const { identity, request } = ctx
 
+  //TODO: Add category_id in the validation
   await validate.DisputeSchema.validateAsync(request.body)
   if (request.body.evidences && request.body.evidences.length > 30) {
     throw new BadRequestError()
@@ -39,11 +40,11 @@ router.get('/invitations', loginRequired, paginate, async (ctx) => {
     identity: { id }
   } = ctx
 
-  try {
-    ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
-  } catch (e) {
-    console.log(e)
-  }
+  ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
+})
+
+router.get('/categories', async (ctx) => {
+  ctx.body = await Dispute.getAllCategories()
 })
 
 router.get('/:id', loginRequired, dispute, async (ctx) => {

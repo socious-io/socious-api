@@ -2264,7 +2264,6 @@ components:
             - RESPONSE
             - MESSAGE
             - WITHDRAW
-            - VOTE
         evidences:
           type: array
           items:
@@ -2279,23 +2278,47 @@ components:
         state:
           enum:
             - AWAITING_RESPONSE
+            - DECISION_SUBMITTED
             - PENDING_REVIEW
-            - RESOLVED
             - WITHDRAWN
+            - CLOSED
+        code:
+          type: string
         direction:
           enum:
             - received
             - submitted
+            - juror
         claimant:
           $ref: '#/components/schemas/Identities'
         respondent:
           $ref: '#/components/schemas/Identities'
+        jury:
+          voted: number
+          members: number
         events:
           $ref: '#/components/schemas/DisputeEvents'
         created_at:
           type: string
         updated_at:
           type: string
+    DisputeContributionInvitations:
+      properties:
+        id:
+          type: string
+        dispute_id:
+          type: string
+        status:
+          enum:
+            - INVITED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          
 paths:
   /site/options:
     get:
@@ -6604,6 +6627,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Disputes'
+    get:
+      tags:
+        - disputes
+      summary: Get all of my disputes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
+  /disputes/{dispute_id}:
+    parameters:
+      - name: dispute_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - disputes
+      summary: Get a dispute by id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
   /disputes/{dispute_id}/message:
     parameters:
       - name: dispute_id
@@ -6686,3 +6742,123 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Disputes'
+  /disputes/{dispute_id}/vote:
+    parameters:
+      - name: vote_side
+        in: query
+        schema:
+          type: string
+          enum: ['CLAIMANT', 'RESPONDENT']
+          default: 'SAVE'
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Cast vote on a dispute
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Disputes'
+  /disputes/invitations:
+    get:
+      tags:
+        - disputes
+      summary: Get All Dispute Contribution Invitations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeContributionInvitations'
+  /disputes/invitations/{invitation_id}:
+    parameters:
+      - name: invitation_id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - disputes
+      summary: Get Dispute Contribution Invitations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeContributionInvitations'
+  /disputes/invitations/{invitation_id}/accept:
+    parameters:
+      - name: invitation_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Accept Dispute Contribution Invitation
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeContributionInvitations'
+  /disputes/invitations/{invitation_id}/decline:
+    parameters:
+      - name: invitation_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - disputes
+      summary: Decline Dispute Contribution Invitation
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeContributionInvitations'
+  /contributions/optin:
+    post:
+      tags:
+        - contributions
+      summary: Opt-In Contribution Program
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /contributions/leave:
+    post:
+      tags:
+        - contributions
+      summary: Leave Contribution Program
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}

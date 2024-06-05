@@ -136,3 +136,31 @@ export const openToVolunteer = async (id) => {
     throw new EntryError(err.message)
   }
 }
+
+export const optInContributions = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE users
+      SET is_contributor=true
+      WHERE id=${id} AND is_contributor=false
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const leaveOutContributions = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE users
+      SET is_contributor=false
+      WHERE id=${id} AND is_contributor=true
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}

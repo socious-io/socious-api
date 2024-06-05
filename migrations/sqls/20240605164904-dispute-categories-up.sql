@@ -24,7 +24,8 @@ DELETE FROM
 ALTER TABLE
   disputes
 ADD
-  COLUMN category_id uuid NOT NULL;
+  COLUMN category_id uuid NOT NULL
+  CONSTRAINT fk_category REFERENCES dispute_categories(id) ON DELETE CASCADE;
 
 ALTER TABLE
-  disputes DROP COLUMN evidences;
+  dispute_events DROP COLUMN evidences;

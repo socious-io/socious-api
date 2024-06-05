@@ -6,9 +6,9 @@ import { getProfile } from './read.js'
 export const insert = async (first_name, last_name, username, email, hashedPasswd) => {
   try {
     const { rows } = await app.db.query(sql`
-    INSERT INTO users (first_name, last_name, username, email, password) 
+    INSERT INTO users (first_name, last_name, username, email, password, status) 
     VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
-      ${email.toLowerCase()}, ${hashedPasswd}) RETURNING *
+      ${email.toLowerCase()}, ${hashedPasswd}, 'ACTIVE') RETURNING *
   `)
     return rows[0]
   } catch (err) {
@@ -132,6 +132,34 @@ export const openToVolunteer = async (id) => {
       sql`UPDATE users SET open_to_volunteer=NOT open_to_volunteer WHERE id=${id} RETURNING open_to_volunteer`
     )
     return rows[0].open_to_volunteer
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const optInContributions = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE users
+      SET is_contributor=true
+      WHERE id=${id} AND is_contributor=false
+      RETURNING *
+    `)
+    return rows[0]
+  } catch (err) {
+    throw new EntryError(err.message)
+  }
+}
+
+export const leaveOutContributions = async (id) => {
+  try {
+    const { rows } = await app.db.query(sql`
+      UPDATE users
+      SET is_contributor=false
+      WHERE id=${id} AND is_contributor=true
+      RETURNING *
+    `)
+    return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
   }

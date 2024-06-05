@@ -3,7 +3,7 @@ import { app } from '../../src/index.js'
 import data from '../data/index.js'
 import { registerAndVerify } from './globals/user.js'
 import { create as createOrg } from './globals/org.js'
-import { raw } from 'sql-template-tag'
+import sql, { raw } from 'sql-template-tag'
 
 let server, request
 
@@ -23,6 +23,37 @@ function createEvidences(documents, identityId) {
         .join(',\n')}`
     )
   )
+}
+
+async function createContributionInvitations() {
+  //Getting Users in the same order
+  const contributorId = (await app.db.get(sql`SELECT * FROM users WHERE email=${data.users[0].email}`)).id,
+    invitations = []
+
+  data.disputes.objects.forEach((dispute) => {
+    invitations.push({ dispute_id: dispute.id, contributor_id: contributorId })
+  })
+
+  const { rows } = await app.db.query(
+    raw(
+      `INSERT INTO dispute_contributor_invitations
+      (${Object.keys(invitations[0])})
+      VALUES ${invitations
+        .map(
+          (invitation) =>
+            '(' +
+            Object.values(invitation)
+              .map((value) => `'${value}'`)
+              .join(',') +
+            ')'
+        )
+        .join(',\n')}
+        RETURNING *
+        `
+    )
+  )
+  data.disputes.invitations = rows
+  console.log(rows)
 }
 
 beforeAll(async () => {
@@ -59,6 +90,9 @@ test('issue a dispute', async () => {
     created_at: expect.any(String),
     updated_at: expect.any(String)
   })
+
+  //Send invitations
+  await createContributionInvitations()
 })
 
 test('get a dispute', async () => {
@@ -172,6 +206,73 @@ test('withdraw from a dispute', async () => {
   })
 })
 
+//TODO: voting
+
+test('getting all of the dispute contribution invitations', async () => {
+  const response = await request.get(`/disputes/invitations`).set('Authorization', data.users[0].access_token).send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        dispute_id: expect.any(String),
+        status: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String)
+      }
+    ]
+  })
+})
+
+test('getting one of the dispute contribution invitations', async () => {
+  const response = await request
+    .get(`/disputes/invitations/${data.disputes.invitations[0].id}`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
+test('declining the dispute contribution invitation', async () => {
+  const response = await request
+    .post(`/disputes/invitations/${data.disputes.invitations[0].id}/decline`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
+test('accepting the dispute contribution invitation', async () => {
+  const response = await request
+    .post(`/disputes/invitations/${data.disputes.invitations[0].id}/accept`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
 const cleanup = async () => {
   await app.db.query('DELETE FROM users')
   await app.db.query('DELETE FROM organizations')
@@ -180,7 +281,7 @@ const cleanup = async () => {
 }
 
 afterAll((done) => {
-  cleanup(done).then(() => {
+  cleanup().then(() => {
     server.close(done)
   })
 })

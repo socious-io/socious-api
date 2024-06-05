@@ -10,8 +10,10 @@ export const sortColumns = ['updated_at', 'created_at']
 export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(
     sql`
-    SELECT COUNT(*) OVER () as total_count, chats.*
-      FROM chats JOIN chats_participants p ON p.chat_id=chats.id
+    SELECT COUNT(*) OVER () as total_count, chats.*,
+    EXISTS(SELECT r.id FROM reports r WHERE r.user_id=p.identity_id AND r.identity_id=${identityId} AND blocked=true) AS blocked
+    FROM chats
+    JOIN chats_participants p ON p.chat_id=chats.id
     WHERE p.identity_id=${identityId}
     ${sorting(sort, sortColumns, 'chats')}
     LIMIT ${limit} OFFSET ${offset}`
@@ -22,7 +24,8 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
 export const filtered = async (identityId, { offset = 0, limit = 10, sort }, filter) => {
   const { rows } = await app.db.query(
     sql`
-    SELECT COUNT(*) OVER () as total_count, chats.*
+    SELECT COUNT(*) OVER () as total_count, chats.*,
+    EXISTS(SELECT r.id FROM reports r WHERE r.user_id=p.identity_id AND r.identity_id=${identityId} AND blocked=true) AS blocked
     FROM chats
     JOIN chats_participants p ON p.chat_id=chats.id
     JOIN chats_participants p2 ON (p2.chat_id=chats.id and p.id!=p2.id)

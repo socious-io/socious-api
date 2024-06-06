@@ -158,6 +158,7 @@ exports[`profile 1`] = `
   "id": Any<String>,
   "identity_verified": false,
   "impact_points": 0,
+  "is_contributor": false,
   "languages": [
     {
       "id": Any<String>,
@@ -233,6 +234,7 @@ exports[`profile 2`] = `
   "id": Any<String>,
   "identity_verified": false,
   "impact_points": 0,
+  "is_contributor": false,
   "languages": [
     {
       "id": Any<String>,
@@ -308,6 +310,7 @@ exports[`profile by username 1`] = `
   "id": Any<String>,
   "identity_verified": false,
   "impact_points": 0,
+  "is_contributor": false,
   "languages": [
     {
       "id": Any<String>,
@@ -383,6 +386,7 @@ exports[`profile by username 2`] = `
   "id": Any<String>,
   "identity_verified": false,
   "impact_points": 0,
+  "is_contributor": false,
   "languages": [
     {
       "id": Any<String>,
@@ -616,6 +620,7 @@ exports[`update profile 1`] = `
   "id": Any<String>,
   "identity_verified": false,
   "impact_points": 0,
+  "is_contributor": false,
   "languages": [
     {
       "id": Any<String>,

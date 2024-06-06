@@ -13,7 +13,6 @@ export const router = new Router()
 router.post('/', loginRequired, async (ctx) => {
   const { identity, request } = ctx
 
-  //TODO: Add category_id in the validation
   await validate.DisputeSchema.validateAsync(request.body)
   if (request.body.evidences && request.body.evidences.length > 30) {
     throw new BadRequestError()

@@ -29,7 +29,8 @@ export const createDID = async () => {
   )
 
   const res = await axios.post(
-    `${config.wallet.agent}/cloud-agent/did-registrar/dids/${didRes.data.longFormDid}/publications`
+    `${config.wallet.agent}/cloud-agent/did-registrar/dids/${didRes.data.longFormDid}/publications`, {}, 
+    { headers }
   )
 
   return res.data.scheduledOperation.didRef

@@ -3,7 +3,10 @@ import { app } from '../../index.js'
 import { getByIdentityIdAndId } from './read.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async (identityId, { title, description, respondent_id, evidences = [], category_id }) => {
+export const create = async (
+  identityId,
+  { title, description, respondent_id, evidences = [], category_id, contract_id }
+) => {
   let dispute,
     disputeEvent,
     disputeEvidences = []
@@ -16,12 +19,14 @@ export const create = async (identityId, { title, description, respondent_id, ev
             title,
             claimant_id,
             respondent_id,
-            category_id
+            category_id,
+            mission_id
           ) VALUES (
             ${title},
             ${identityId},
             ${respondent_id},
-            ${category_id}
+            ${category_id},
+            ${contract_id}
           )
           RETURNING *;
         `

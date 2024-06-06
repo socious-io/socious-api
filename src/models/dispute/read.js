@@ -28,6 +28,7 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     ) AS direction,
     row_to_json(i1.*) AS claimant,
     row_to_json(i2.*) AS respondent,
+    row_to_json(m.*) AS contract,
     json_build_object(
       'id', dcat.id,
       'name', dcat.name
@@ -72,8 +73,9 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     JOIN identities i2 ON i2.id=d.respondent_id
     LEFT JOIN dispute_jourors dj ON dispute_id=d.id
     JOIN dispute_categories dcat ON category_id=dcat.id
+    JOIN missions m ON mission_id=m.id
     WHERE claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId}
-    GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id
+    GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id, m.id
     ${sorting(sort, sortColumns, 'd')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -101,6 +103,7 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         ) AS direction,
         row_to_json(i1.*) AS claimant,
         row_to_json(i2.*) AS respondent,
+        row_to_json(m.*) AS contract,
         json_build_object(
           'id', dcat.id,
           'name', dcat.name
@@ -145,8 +148,9 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         JOIN identities i2 ON i2.id=d.respondent_id
         LEFT JOIN dispute_jourors dj ON dispute_id=d.id
         JOIN dispute_categories dcat ON category_id=dcat.id
+        JOIN missions m ON mission_id=m.id
         WHERE d.id=${id} AND (claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId})
-        GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id
+        GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id, m.id
       `
     )
   } catch (e) {

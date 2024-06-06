@@ -69,10 +69,18 @@ export const get = async (id, identityId) => {
 export const all = async (identityId, { limit = 10, offset = 0 }) => {
   const { rows } = await app.db.query(sql`
     SELECT 
-      COUNT(*) OVER () as total_count, p.*, row_to_json(ref.*) as reference,
+      COUNT(*) OVER () as total_count,
+      p.*,
+      row_to_json(ref.*) as reference,
       row_to_json(i.*) as payer_identity,
       row_to_json(i2.*) as receiver_identity,
-      row_to_json(m.*) as mission
+      row_to_json(m.*) as mission,
+      (
+        CASE
+          WHEN o.recipient_id=${identityId} THEN o.assignment_total
+          ELSE p.amount
+        END
+      ) AS amount
     FROM payments p
     LEFT JOIN payments ref ON ref.id=p.ref_trx
     JOIN escrows e ON e.payment_id=p.id OR e.payment_id=ref.id
@@ -81,7 +89,7 @@ export const all = async (identityId, { limit = 10, offset = 0 }) => {
     JOIN offers o ON o.id=e.offer_id
     JOIN identities i2 ON i2.id=o.recipient_id
     LEFT JOIN missions m ON m.offer_id=o.id
-    WHERE p.identity_id=${identityId} OR o.recipient_id=${identityId}
+    WHERE p.identity_id=${identityId} OR (o.recipient_id=${identityId} AND p.ref_trx IS NULL)
     ORDER BY p.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `)
@@ -94,7 +102,13 @@ export const getOne = async (id, identityId) => {
       p.*, row_to_json(ref.*) as reference,
       row_to_json(i.*) as payer_identity,
       row_to_json(i2.*) as receiver_identity,
-      row_to_json(m.*) as mission
+      row_to_json(m.*) as mission,
+      (
+        CASE
+          WHEN o.recipient_id=${identityId} THEN o.assignment_total
+          ELSE p.amount
+        END
+      ) AS amount
     FROM payments p
     LEFT JOIN payments ref ON ref.id=p.ref_trx
     JOIN escrows e ON e.payment_id=p.id OR e.payment_id=ref.id
@@ -103,7 +117,7 @@ export const getOne = async (id, identityId) => {
     JOIN offers o ON o.id=e.offer_id
     JOIN identities i2 ON i2.id=o.recipient_id
     LEFT JOIN missions m ON m.offer_id=o.id
-    WHERE p.id=${id} AND (p.identity_id=${identityId} OR o.recipient_id=${identityId})
+    WHERE p.id=${id} AND (p.identity_id=${identityId} OR (o.recipient_id=${identityId} AND p.ref_trx IS NULL))
   `)
   return rows
 }

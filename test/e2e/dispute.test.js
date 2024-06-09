@@ -100,7 +100,6 @@ test('issue a dispute', async () => {
     })
 
   data.disputes.objects.push(response.body)
-  console.log(response.body)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
@@ -234,9 +233,9 @@ test('get all disputes as climant', async () => {
           name: expect.any(String)
         },
         contract: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+          id: expect.any(String),
+          name: expect.any(String)
+        },
         title: expect.any(String),
         state: expect.any(String),
         direction: expect.any(String),

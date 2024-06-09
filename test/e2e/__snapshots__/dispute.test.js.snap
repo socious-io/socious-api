@@ -106,6 +106,339 @@ exports[` 4`] = `
 }
 `;
 
+exports[` 5`] = `
+{
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tokyo",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "JP",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "impact_job": true,
+  "job_category_id": Any<String>,
+  "old_id": null,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "JPY",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "1_3_MONTHS",
+  "project_type": "FULL_TIME",
+  "promoted": false,
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 1",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[` 6`] = `
+{
+  "causes_tags": [
+    "POVERTY",
+  ],
+  "city": "Tehran",
+  "commitment_hours_higher": "13",
+  "commitment_hours_lower": "12",
+  "country": "IR",
+  "created_at": Any<String>,
+  "deleted_at": null,
+  "description": "Data testing",
+  "experience_level": 1,
+  "expires_at": null,
+  "geoname_id": null,
+  "id": Any<String>,
+  "identity_id": Any<String>,
+  "impact_job": true,
+  "job_category_id": Any<String>,
+  "old_id": null,
+  "other_party_id": null,
+  "other_party_title": null,
+  "other_party_url": null,
+  "payment_currency": "USD",
+  "payment_range_higher": "13",
+  "payment_range_lower": "12",
+  "payment_scheme": "FIXED",
+  "payment_type": "VOLUNTEER",
+  "project_length": "LESS_THAN_A_MONTH",
+  "project_type": "ONE_OFF",
+  "promoted": false,
+  "remote_preference": "HYBRID",
+  "search_tsv": Any<String>,
+  "skills": [
+    "ANDROID",
+    "ANGULARJS",
+  ],
+  "status": "ACTIVE",
+  "title": "Testing 2",
+  "updated_at": Any<String>,
+  "weekly_hours_higher": "13",
+  "weekly_hours_lower": "12",
+}
+`;
+
+exports[` 7`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 8`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 9`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 10`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 1?",
+  "required": true,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 11`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": [
+    "a",
+    "b",
+    "c",
+  ],
+  "project_id": Any<String>,
+  "question": "test question 2?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 12`] = `
+{
+  "created_at": Any<String>,
+  "id": Any<String>,
+  "old_id": null,
+  "options": null,
+  "project_id": Any<String>,
+  "question": "test question 3?",
+  "required": false,
+  "updated_at": Any<String>,
+}
+`;
+
+exports[` 13`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "old_id": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "questions": Any<Array>,
+  "search_tsv": "'lastnam':4 'test':1 'testnam':3 'usernam':2",
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[` 14`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 1",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "old_id": null,
+  "payment_rate": 50000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "questions": Any<Array>,
+  "search_tsv": "'2':3 'lastnam':5 'test':1 'testnam':4 'usernam':2",
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[` 15`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "old_id": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "questions": Any<Array>,
+  "search_tsv": "'lastnam':4 'test':1 'testnam':3 'usernam':2",
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[` 16`] = `
+{
+  "answers": Any<Array>,
+  "attachment": null,
+  "closed_at": null,
+  "cover_letter": "test cover 2",
+  "created_at": Any<String>,
+  "cv_link": "https://test.com/test.cv",
+  "cv_name": "test",
+  "deleted_at": null,
+  "feedback": null,
+  "id": Any<String>,
+  "offer_message": null,
+  "offer_rate": null,
+  "old_id": null,
+  "payment_rate": 30000,
+  "payment_type": "PAID",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "questions": Any<Array>,
+  "search_tsv": "'2':3 'lastnam':5 'test':1 'testnam':4 'usernam':2",
+  "share_contact_info": true,
+  "status": "PENDING",
+  "updated_at": Any<String>,
+  "user": Any<Object>,
+  "user_id": Any<String>,
+}
+`;
+
+exports[` 17`] = `
+{
+  "applicant": Any<Object>,
+  "applicant_id": Any<String>,
+  "assignment_total": 30000,
+  "created_at": Any<String>,
+  "crypto_currency_address": null,
+  "currency": null,
+  "due_date": Any<String>,
+  "escrow": Any<Object>,
+  "id": Any<String>,
+  "job_category": Any<Object>,
+  "mission": null,
+  "offer_message": "Test",
+  "offer_rate": 9000,
+  "offerer": Any<Object>,
+  "offerer_id": Any<String>,
+  "org_feedback": null,
+  "organization": Any<Object>,
+  "payment": null,
+  "payment_mode": "FIAT",
+  "project": Any<Object>,
+  "project_id": Any<String>,
+  "recipient": Any<Object>,
+  "recipient_id": Any<String>,
+  "status": "PENDING",
+  "total_hours": 180,
+  "updated_at": Any<String>,
+  "user_feedback": null,
+  "weekly_limit": null,
+}
+`;
+
 exports[`accepting the dispute contribution invitation 1`] = `
 {
   "created_at": Any<String>,
@@ -128,6 +461,10 @@ exports[`declining the dispute contribution invitation 1`] = `
 
 exports[`get a dispute 1`] = `
 {
+  "category": {
+    "id": Any<String>,
+    "name": Any<String>,
+  },
   "claimant": Any<Object>,
   "code": "DIS-1",
   "created_at": Any<String>,
@@ -149,6 +486,10 @@ exports[`get all disputes as climant 1`] = `
 {
   "items": [
     {
+      "category": {
+        "id": Any<String>,
+        "name": Any<String>,
+      },
       "claimant": Any<Object>,
       "code": "DIS-1",
       "created_at": Any<String>,
@@ -200,6 +541,10 @@ exports[`getting one of the dispute contribution invitations 1`] = `
 
 exports[`issue a dispute 1`] = `
 {
+  "category": {
+    "id": Any<String>,
+    "name": Any<String>,
+  },
   "claimant": Any<Object>,
   "code": "DIS-1",
   "created_at": Any<String>,
@@ -219,6 +564,10 @@ exports[`issue a dispute 1`] = `
 
 exports[`put message on a dispute 1`] = `
 {
+  "category": {
+    "id": Any<String>,
+    "name": Any<String>,
+  },
   "claimant": Any<Object>,
   "code": "DIS-1",
   "created_at": Any<String>,
@@ -238,6 +587,10 @@ exports[`put message on a dispute 1`] = `
 
 exports[`put response on a dispute 1`] = `
 {
+  "category": {
+    "id": Any<String>,
+    "name": Any<String>,
+  },
   "claimant": Any<Object>,
   "code": "DIS-1",
   "created_at": Any<String>,
@@ -257,6 +610,10 @@ exports[`put response on a dispute 1`] = `
 
 exports[`withdraw from a dispute 1`] = `
 {
+  "category": {
+    "id": Any<String>,
+    "name": Any<String>,
+  },
   "claimant": Any<Object>,
   "code": "DIS-1",
   "created_at": Any<String>,

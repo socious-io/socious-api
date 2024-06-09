@@ -80,6 +80,7 @@ export const getProfile = async (id, currentIdentity) => {
     mobile_country_code,
     open_to_work,
     open_to_volunteer,
+    is_contributor,
     identity_verified,
     (SELECT
       jsonb_agg(json_build_object(
@@ -265,6 +266,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     open_to_work,
     open_to_volunteer,
     identity_verified,
+    is_contributor,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -474,6 +476,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     (c.id) AS connection_id,
     mobile_country_code,
     identity_verified,
+    is_contributor,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,

@@ -100,11 +100,16 @@ test('issue a dispute', async () => {
     })
 
   data.disputes.objects.push(response.body)
+  console.log(response.body)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
     category: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
+    contract: {
       id: expect.any(String),
       name: expect.any(String)
     },
@@ -134,6 +139,10 @@ test('get a dispute', async () => {
       id: expect.any(String),
       name: expect.any(String)
     },
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -160,6 +169,10 @@ test('put message on a dispute', async () => {
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
     category: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
+    contract: {
       id: expect.any(String),
       name: expect.any(String)
     },
@@ -193,6 +206,10 @@ test('put response on a dispute', async () => {
       id: expect.any(String),
       name: expect.any(String)
     },
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -216,6 +233,10 @@ test('get all disputes as climant', async () => {
           id: expect.any(String),
           name: expect.any(String)
         },
+        contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
         title: expect.any(String),
         state: expect.any(String),
         direction: expect.any(String),
@@ -239,6 +260,10 @@ test('withdraw from a dispute', async () => {
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
     category: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
+    contract: {
       id: expect.any(String),
       name: expect.any(String)
     },

@@ -5,7 +5,6 @@ import { registerAndVerify } from './globals/user.js'
 import { create as createOrg } from './globals/org.js'
 import sql, { raw } from 'sql-template-tag'
 import { create as createProjects, apply, addQuestion, offer, hire, approve } from './globals/project.js'
-import util from 'util'
 
 let server, request
 

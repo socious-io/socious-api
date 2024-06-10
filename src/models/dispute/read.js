@@ -11,7 +11,7 @@ export const sortColumnsInvitations = ['created_at', 'updated_at', 'dispute_id']
 export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
   const { rows } = await app.db.query(
     sql`
-    SELECT d.id, d.title,
+    SELECT d.id, d.title, d.category,
     (
       CASE
         WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
@@ -28,11 +28,6 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     ) AS direction,
     row_to_json(i1.*) AS claimant,
     row_to_json(i2.*) AS respondent,
-    row_to_json(m.*) AS contract,
-    json_build_object(
-      'id', dcat.id,
-      'name', dcat.name
-    ) as category,
     json_build_object(
       'id', m.id,
       'name', p.title
@@ -76,11 +71,10 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     JOIN identities i1 ON i1.id=d.claimant_id
     JOIN identities i2 ON i2.id=d.respondent_id
     LEFT JOIN dispute_jourors dj ON dispute_id=d.id
-    JOIN dispute_categories dcat ON category_id=dcat.id
     JOIN missions m ON mission_id=m.id
     JOIN projects p ON m.project_id=p.id
     WHERE claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId}
-    GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id, m.id, p.id
+    GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id
     ${sorting(sort, sortColumns, 'd')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -92,7 +86,7 @@ export const getByIdentityIdAndId = async (identityId, id) => {
   try {
     return await app.db.get(
       sql`
-        SELECT d.id, d.title, 
+        SELECT d.id, d.title, d.category,
         (
           CASE
             WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
@@ -108,11 +102,6 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         ) AS direction,
         row_to_json(i1.*) AS claimant,
         row_to_json(i2.*) AS respondent,
-        row_to_json(m.*) AS contract,
-        json_build_object(
-          'id', dcat.id,
-          'name', dcat.name
-        ) as category,
         json_build_object(
           'id', m.id,
           'name', p.title
@@ -156,11 +145,10 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         JOIN identities i1 ON i1.id=d.claimant_id
         JOIN identities i2 ON i2.id=d.respondent_id
         LEFT JOIN dispute_jourors dj ON dispute_id=d.id
-        JOIN dispute_categories dcat ON category_id=dcat.id
         JOIN missions m ON mission_id=m.id
         JOIN projects p ON m.project_id=p.id
         WHERE d.id=${id} AND (claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId})
-        GROUP BY d.id, i1.id, i2.id, dj.id, dcat.id, m.id, p.id
+        GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id
       `
     )
   } catch (e) {
@@ -185,9 +173,4 @@ export const getInvitationIdentityIdAndId = (identityId, id) => {
     FROM dispute_contributor_invitations dci
     WHERE contributor_id=${identityId} AND id=${id}
   `)
-}
-
-export const getAllCategories = async () => {
-  const { rows } = await app.db.query(sql`SELECT id,name FROM dispute_categories`)
-  return rows
 }

@@ -80,7 +80,7 @@ beforeAll(async () => {
     ]
   }
 
-  data.disputes.categories = (await request.get('/disputes/categories')).body
+  data.disputes.categories = (await request.get('/disputes/categories')).body.items
 })
 
 test('issue a dispute', async () => {
@@ -95,20 +95,16 @@ test('issue a dispute', async () => {
       description: 'same as initial message',
       respondent_id: data.orgs[0].id,
       mission_id: mission.id,
-      category_id: otherCategory.id,
+      category_id: otherCategory,
       evidences: data.disputes.documents.map((dispute) => dispute.id)
     })
 
   data.disputes.objects.push(response.body)
-  console.log(response.body)
 
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    category: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+    category: expect.any(String),
     contract: {
       id: expect.any(String),
       name: expect.any(String)
@@ -135,10 +131,7 @@ test('get a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    category: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+    category: expect.any(String),
     contract: {
       id: expect.any(String),
       name: expect.any(String)
@@ -168,10 +161,7 @@ test('put message on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    category: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+    category: expect.any(String),
     contract: {
       id: expect.any(String),
       name: expect.any(String)
@@ -202,10 +192,7 @@ test('put response on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    category: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+    category: expect.any(String),
     contract: {
       id: expect.any(String),
       name: expect.any(String)
@@ -229,14 +216,11 @@ test('get all disputes as climant', async () => {
     items: [
       {
         id: expect.any(String),
-        category: {
+        category: expect.any(String),
+        contract: {
           id: expect.any(String),
           name: expect.any(String)
         },
-        contract: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
         title: expect.any(String),
         state: expect.any(String),
         direction: expect.any(String),
@@ -259,10 +243,7 @@ test('withdraw from a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    category: {
-      id: expect.any(String),
-      name: expect.any(String)
-    },
+    category: expect.any(String),
     contract: {
       id: expect.any(String),
       name: expect.any(String)

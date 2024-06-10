@@ -42,8 +42,10 @@ router.get('/invitations', loginRequired, paginate, async (ctx) => {
   ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
 })
 
-router.get('/categories', async (ctx) => {
-  ctx.body = await Dispute.getAllCategories()
+router.get('/categories', (ctx) => {
+  ctx.body = {
+    items: Dispute.Categories
+  }
 })
 
 router.get('/:id', loginRequired, dispute, async (ctx) => {

@@ -461,10 +461,7 @@ exports[`declining the dispute contribution invitation 1`] = `
 
 exports[`get a dispute 1`] = `
 {
-  "category": {
-    "id": Any<String>,
-    "name": Any<String>,
-  },
+  "category": Any<String>,
   "claimant": Any<Object>,
   "code": "DIS-1",
   "contract": {
@@ -490,10 +487,7 @@ exports[`get all disputes as climant 1`] = `
 {
   "items": [
     {
-      "category": {
-        "id": Any<String>,
-        "name": Any<String>,
-      },
+      "category": Any<String>,
       "claimant": Any<Object>,
       "code": "DIS-1",
       "contract": {
@@ -549,10 +543,7 @@ exports[`getting one of the dispute contribution invitations 1`] = `
 
 exports[`issue a dispute 1`] = `
 {
-  "category": {
-    "id": Any<String>,
-    "name": Any<String>,
-  },
+  "category": Any<String>,
   "claimant": Any<Object>,
   "code": "DIS-1",
   "contract": {
@@ -576,10 +567,7 @@ exports[`issue a dispute 1`] = `
 
 exports[`put message on a dispute 1`] = `
 {
-  "category": {
-    "id": Any<String>,
-    "name": Any<String>,
-  },
+  "category": Any<String>,
   "claimant": Any<Object>,
   "code": "DIS-1",
   "contract": {
@@ -603,10 +591,7 @@ exports[`put message on a dispute 1`] = `
 
 exports[`put response on a dispute 1`] = `
 {
-  "category": {
-    "id": Any<String>,
-    "name": Any<String>,
-  },
+  "category": Any<String>,
   "claimant": Any<Object>,
   "code": "DIS-1",
   "contract": {
@@ -630,10 +615,7 @@ exports[`put response on a dispute 1`] = `
 
 exports[`withdraw from a dispute 1`] = `
 {
-  "category": {
-    "id": Any<String>,
-    "name": Any<String>,
-  },
+  "category": Any<String>,
   "claimant": Any<Object>,
   "code": "DIS-1",
   "contract": {

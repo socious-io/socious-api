@@ -1,14 +1,66 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { PermissionError } from '../../utils/errors.js'
-import { sorting } from '../../utils/query.js'
+import { filtering, sorting } from '../../utils/query.js'
 
-export const filterColumns = {}
+export const filterColumns = { direction: String, code: String, title: String, category: String, state: String }
 
 export const sortColumns = ['created_at', 'updated_at', 'state', 'claimant_id', 'respondent_id']
 export const sortColumnsInvitations = ['created_at', 'updated_at', 'dispute_id']
 
-export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
+const createDirectionFiltering = (
+  identityId,
+  filteredAttribute,
+  filters = {
+    claimant: true,
+    respondent: true,
+    juror: true
+  }
+) => {
+  const filtersToQuery = {
+    claimant: sql`d.claimant_id=${identityId}`,
+    respondent: sql`d.respondent_id=${identityId}`,
+    juror: sql`dj.juror_id=${identityId}`
+  }
+
+  if (filteredAttribute) {
+    filters = {
+      claimant: false,
+      respondent: false,
+      juror: false
+    }
+    filters[filteredAttribute] = true
+  }
+
+  let filterings = sql`( `,
+    firstFilter = true
+  for (const filter in filters) {
+    if (filters[filter]) {
+      if (firstFilter) {
+        filterings = sql`${filterings} ${filtersToQuery[filter]}`
+        firstFilter = false
+      } else filterings = sql`${filterings} OR ${filtersToQuery[filter]}`
+    }
+  }
+  filterings = sql`${filterings} )`
+
+  return filterings
+}
+
+export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) => {
+  const directionToAttribute = {
+    submitted: 'claimant',
+    received: 'respondent',
+    juror: 'juror'
+  }
+  let customFiltering = createDirectionFiltering(identityId, directionToAttribute[filter.direction])
+  if (filter.direction) delete filter.direction
+
+  if (filter.state && filter.state == 'DECISION_SUBMITTED') {
+    customFiltering = sql`${customFiltering} AND (dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL)`
+    delete filter.state
+  }
+
   const { rows } = await app.db.query(
     sql`
     SELECT d.id, d.title, d.category,
@@ -76,7 +128,8 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
     LEFT JOIN dispute_jourors dj ON dispute_id=d.id
     JOIN missions m ON mission_id=m.id
     JOIN projects p ON m.project_id=p.id
-    WHERE claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId}
+    WHERE ${customFiltering}
+    ${filtering(filter, filterColumns, true, 'd')}
     GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id
     ${sorting(sort, sortColumns, 'd')}
     LIMIT ${limit} OFFSET ${offset}`

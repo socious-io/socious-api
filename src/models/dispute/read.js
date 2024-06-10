@@ -49,21 +49,24 @@ export const all = async (identityId, { offset = 0, limit = 10, sort }) => {
       SELECT
       json_build_object(
           'id', de.id,
+          'creator', de_i.*,
           'message', de.message,
           'type', de.type,
           'evidences', COALESCE(
-                  json_agg(json_build_object(
-                  'id', m.id,
-                  'url', m.url
-                  )) FILTER (WHERE dev.id IS NOT NULL),
-                  '[]'
-              )
+            json_agg(json_build_object(
+            'id', m.id,
+            'url', m.url
+            )) FILTER (WHERE dev.id IS NOT NULL),
+            '[]'
+          ),
+          'created_at', de.created_at
       )
       FROM dispute_events de
+      JOIN identities de_i ON de_i.id=de.identity_id
       LEFT JOIN dispute_evidences dev ON dev.dispute_event_id=de.id
       LEFT JOIN media m ON m.id=dev.media_id
       WHERE de.dispute_id=d.id
-      GROUP BY de.id
+      GROUP BY de.id,de_i.id
       ORDER BY de.created_at
     ) as events,
     d.created_at, d.updated_at
@@ -123,21 +126,24 @@ export const getByIdentityIdAndId = async (identityId, id) => {
           SELECT
           json_build_object(
               'id', de.id,
+              'creator', de_i.*,
               'message', de.message,
               'type', de.type,
               'evidences', COALESCE(
-                      json_agg(json_build_object(
-                      'id', m.id,
-                      'url', m.url
-                      )) FILTER (WHERE dev.id IS NOT NULL),
-                      '[]'
-                  )
+                json_agg(json_build_object(
+                'id', m.id,
+                'url', m.url
+                )) FILTER (WHERE dev.id IS NOT NULL),
+                '[]'
+              ),
+              'created_at', de.created_at
           )
           FROM dispute_events de
+          JOIN identities de_i ON de_i.id=de.identity_id
           LEFT JOIN dispute_evidences dev ON dev.dispute_event_id=de.id
           LEFT JOIN media m ON m.id=dev.media_id
           WHERE de.dispute_id=d.id
-          GROUP BY de.id
+          GROUP BY de.id,de_i.id
           ORDER BY de.created_at
         ) as events,
         d.created_at, d.updated_at

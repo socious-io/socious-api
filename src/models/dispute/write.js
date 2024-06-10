@@ -5,7 +5,7 @@ import { EntryError } from '../../utils/errors.js'
 
 export const create = async (
   identityId,
-  { title, description, respondent_id, evidences = [], category = 'Others', mission_id }
+  { title, description, respondent_id, evidences = [], category = 'OTHERS', mission_id }
 ) => {
   let dispute,
     disputeEvent,

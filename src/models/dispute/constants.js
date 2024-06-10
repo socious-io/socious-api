@@ -1,10 +1,10 @@
 export const Categories = [
-  'Scope and Contract Disputes Issues',
-  'Incomplete or Unsatisfactory Work',
-  'Communication Problems',
-  'Scope and Contract Disputes',
-  'Intellectual Property and Confidentiality',
-  'Professionalism and Conduct',
-  'Cancellation and Refunds',
-  'Others'
+  'SCOPE_AND_CONTRACT_DISPUTES_ISSUES',
+  'INCOMPLETE_OR_UNSATISFACTORY_WORK',
+  'COMMUNICATION_PROBLEMS',
+  'SCOPE_AND_CONTRACT_DISPUTES',
+  'INTELLECTUAL_PROPERTY_AND_CONFIDENTIALITY',
+  'PROFESSIONALISM_AND_CONDUCT',
+  'CANCELLATION_AND_REFUNDS',
+  'OTHERS'
 ]

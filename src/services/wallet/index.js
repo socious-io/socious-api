@@ -38,7 +38,11 @@ export const createDID = async () => {
 }
 
 export const createConnectURL = async (callback) => {
-  const res = await axios.post(`${config.wallet.agent}/cloud-agent/connections`, { label: 'Socious Claim Connection' })
+  const res = await axios.post(
+    `${config.wallet.agent}/cloud-agent/connections`,
+    { label: 'Socious Claim Connection' },
+    { headers }
+  )
   const id = res.data.connectionId
   let url = res.data.invitation.invitationUrl
   url = url.replace('https://my.domain.com/path', config.wallet.connect_address)

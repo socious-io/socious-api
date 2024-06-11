@@ -39,10 +39,12 @@ router.get('/invitations', loginRequired, paginate, async (ctx) => {
     identity: { id }
   } = ctx
 
-  try {
-    ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
-  } catch (e) {
-    console.log(e)
+  ctx.body = await Dispute.getAllInvitationsIdentityId(id, ctx.paginate)
+})
+
+router.get('/categories', (ctx) => {
+  ctx.body = {
+    items: Dispute.Categories
   }
 })
 

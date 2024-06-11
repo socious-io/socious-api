@@ -65,7 +65,6 @@ export const filtering = (filter, columns, append = true, prefix = '') => {
   }
 
   if (conditions.length < 1) return raw('')
-
   const result = join(conditions, ' AND ')
 
   if (append) return join([raw(' AND '), result], '')

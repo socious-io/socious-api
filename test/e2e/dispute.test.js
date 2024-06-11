@@ -4,6 +4,7 @@ import data from '../data/index.js'
 import { registerAndVerify } from './globals/user.js'
 import { create as createOrg } from './globals/org.js'
 import sql, { raw } from 'sql-template-tag'
+import { create as createProjects, apply, addQuestion, offer, hire, approve } from './globals/project.js'
 
 let server, request
 
@@ -53,7 +54,6 @@ async function createContributionInvitations() {
     )
   )
   data.disputes.invitations = rows
-  console.log(rows)
 }
 
 beforeAll(async () => {
@@ -63,9 +63,30 @@ beforeAll(async () => {
   await registerAndVerify(request, data)
   await createOrg(request, data)
   await createEvidences(data.disputes.documents, data.orgs[0].id)
+  await createProjects(request, data)
+  await addQuestion(request, data)
+  await apply(request, data)
+  await offer(request, data)
+  await approve(request, data)
+  await hire(request, data)
+
+  //Get Offers
+  data.projects.offers = []
+  for (const user of data.users) {
+    if (user.invalid) continue
+    data.projects.offers = [
+      ...data.projects.offers,
+      ...(await request.get('/user/offers').set('Authorization', user.access_token)).body.items
+    ]
+  }
+
+  data.disputes.categories = (await request.get('/disputes/categories')).body.items
 })
 
 test('issue a dispute', async () => {
+  const otherCategory = data.disputes.categories.find((category) => category.name === 'Others')
+  const mission = data.projects.offers[0].mission
+
   const response = await request
     .post('/disputes')
     .set('Authorization', data.users[0].access_token)
@@ -73,6 +94,8 @@ test('issue a dispute', async () => {
       title: 'dispute #1',
       description: 'same as initial message',
       respondent_id: data.orgs[0].id,
+      mission_id: mission.id,
+      category_id: otherCategory,
       evidences: data.disputes.documents.map((dispute) => dispute.id)
     })
 
@@ -81,6 +104,11 @@ test('issue a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -103,6 +131,11 @@ test('get a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -128,6 +161,11 @@ test('put message on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -154,6 +192,11 @@ test('put response on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -173,6 +216,11 @@ test('get all disputes as climant', async () => {
     items: [
       {
         id: expect.any(String),
+        category: expect.any(String),
+        contract: {
+          id: expect.any(String),
+          name: expect.any(String)
+        },
         title: expect.any(String),
         state: expect.any(String),
         direction: expect.any(String),
@@ -195,6 +243,11 @@ test('withdraw from a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),

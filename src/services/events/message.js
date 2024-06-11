@@ -141,7 +141,7 @@ export const makeMessage = (type, { name, job_name = undefined, org_name = undef
     case Data.NotificationType.EXPERIENCE_VERIFY_APPROVED:
       return {
         title: 'experience verfied',
-        body: `${org_name} has approved your request and issued you a digital certificate. Claim now`
+        body: `${name} has approved your request and issued you a digital certificate. Claim now`
       }
     case Data.NotificationType.EXPERIENCE_VERIFY_REJECTED:
       return {

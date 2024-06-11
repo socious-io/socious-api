@@ -3,7 +3,8 @@ import { app } from '../../src/index.js'
 import data from '../data/index.js'
 import { registerAndVerify } from './globals/user.js'
 import { create as createOrg } from './globals/org.js'
-import { raw } from 'sql-template-tag'
+import sql, { raw } from 'sql-template-tag'
+import { create as createProjects, apply, addQuestion, offer, hire, approve } from './globals/project.js'
 
 let server, request
 
@@ -25,6 +26,36 @@ function createEvidences(documents, identityId) {
   )
 }
 
+async function createContributionInvitations() {
+  //Getting Users in the same order
+  const contributorId = (await app.db.get(sql`SELECT * FROM users WHERE email=${data.users[0].email}`)).id,
+    invitations = []
+
+  data.disputes.objects.forEach((dispute) => {
+    invitations.push({ dispute_id: dispute.id, contributor_id: contributorId })
+  })
+
+  const { rows } = await app.db.query(
+    raw(
+      `INSERT INTO dispute_contributor_invitations
+      (${Object.keys(invitations[0])})
+      VALUES ${invitations
+        .map(
+          (invitation) =>
+            '(' +
+            Object.values(invitation)
+              .map((value) => `'${value}'`)
+              .join(',') +
+            ')'
+        )
+        .join(',\n')}
+        RETURNING *
+        `
+    )
+  )
+  data.disputes.invitations = rows
+}
+
 beforeAll(async () => {
   server = app.listen()
   request = supertest(server)
@@ -32,9 +63,30 @@ beforeAll(async () => {
   await registerAndVerify(request, data)
   await createOrg(request, data)
   await createEvidences(data.disputes.documents, data.orgs[0].id)
+  await createProjects(request, data)
+  await addQuestion(request, data)
+  await apply(request, data)
+  await offer(request, data)
+  await approve(request, data)
+  await hire(request, data)
+
+  //Get Offers
+  data.projects.offers = []
+  for (const user of data.users) {
+    if (user.invalid) continue
+    data.projects.offers = [
+      ...data.projects.offers,
+      ...(await request.get('/user/offers').set('Authorization', user.access_token)).body.items
+    ]
+  }
+
+  data.disputes.categories = (await request.get('/disputes/categories')).body.items
 })
 
 test('issue a dispute', async () => {
+  const otherCategory = data.disputes.categories.find((category) => category.name === 'Others')
+  const mission = data.projects.offers[0].mission
+
   const response = await request
     .post('/disputes')
     .set('Authorization', data.users[0].access_token)
@@ -42,6 +94,8 @@ test('issue a dispute', async () => {
       title: 'dispute #1',
       description: 'same as initial message',
       respondent_id: data.orgs[0].id,
+      mission_id: mission.id,
+      category_id: otherCategory,
       evidences: data.disputes.documents.map((dispute) => dispute.id)
     })
 
@@ -50,6 +104,11 @@ test('issue a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -59,6 +118,9 @@ test('issue a dispute', async () => {
     created_at: expect.any(String),
     updated_at: expect.any(String)
   })
+
+  //Send invitations
+  await createContributionInvitations()
 })
 
 test('get a dispute', async () => {
@@ -69,6 +131,11 @@ test('get a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -94,6 +161,11 @@ test('put message on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -120,6 +192,11 @@ test('put response on a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -139,6 +216,11 @@ test('get all disputes as climant', async () => {
     items: [
       {
         id: expect.any(String),
+        category: expect.any(String),
+        contract: {
+          id: expect.any(String),
+          name: expect.any(String)
+        },
         title: expect.any(String),
         state: expect.any(String),
         direction: expect.any(String),
@@ -161,12 +243,84 @@ test('withdraw from a dispute', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
+    category: expect.any(String),
+    contract: {
+      id: expect.any(String),
+      name: expect.any(String)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
     claimant: expect.any(Object),
     respondent: expect.any(Object),
     events: expect.any(Array),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
+//TODO: voting
+
+test('getting all of the dispute contribution invitations', async () => {
+  const response = await request.get(`/disputes/invitations`).set('Authorization', data.users[0].access_token).send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    items: [
+      {
+        id: expect.any(String),
+        dispute_id: expect.any(String),
+        status: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String)
+      }
+    ]
+  })
+})
+
+test('getting one of the dispute contribution invitations', async () => {
+  const response = await request
+    .get(`/disputes/invitations/${data.disputes.invitations[0].id}`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
+test('declining the dispute contribution invitation', async () => {
+  const response = await request
+    .post(`/disputes/invitations/${data.disputes.invitations[0].id}/decline`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
+    created_at: expect.any(String),
+    updated_at: expect.any(String)
+  })
+})
+
+test('accepting the dispute contribution invitation', async () => {
+  const response = await request
+    .post(`/disputes/invitations/${data.disputes.invitations[0].id}/accept`)
+    .set('Authorization', data.users[0].access_token)
+    .send()
+
+  expect(response.status).toBe(200)
+  expect(response.body).toMatchSnapshot({
+    id: expect.any(String),
+    dispute_id: expect.any(String),
+    status: expect.any(String),
     created_at: expect.any(String),
     updated_at: expect.any(String)
   })
@@ -180,7 +334,7 @@ const cleanup = async () => {
 }
 
 afterAll((done) => {
-  cleanup(done).then(() => {
+  cleanup().then(() => {
     server.close(done)
   })
 })

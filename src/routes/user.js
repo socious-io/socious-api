@@ -192,13 +192,16 @@ router.get('/experiences', loginRequired, async (ctx) => {
 })
 
 router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx) => {
+  if (!ctx.request.body.org_id) ctx.request.body.org_id = ctx.identity.id
   await validate.ProfileExperienceSchema.validateAsync(ctx.request.body)
 
   //Preventing 'CLAIMED' and 'APPROVED' credentials to be changed except for description
   let editPayload = ctx.request.body
+  let userId = ctx.user.id
+  let editable = true
   try {
     const {
-      experience_credentials: { status },
+      experience_credentials: { status, org_id },
       experience
     } = await Credential.getCredentialByExperienceId(ctx.params.id)
 
@@ -207,11 +210,15 @@ router.post('/experiences/update/:id', loginRequired, checkIdParams, async (ctx)
         ...experience,
         description: editPayload.description ?? undefined
       }
-  } catch (err) {
-    logger.error(err)
-  } //in-case of there is no credentials for that experience
 
-  ctx.body = await User.editExperience(ctx.params.id, ctx.user, editPayload)
+    userId = experience.user_id
+    editable = !(org_id != ctx.identity.id && userId != ctx.identity.id)
+  } catch (err) {
+    // ignore error credential not exists normal flow happening
+    console.log(err)
+  } //in-case of there is no credentials for that experience
+  if (!editable) throw new PermissionError()
+  ctx.body = await User.editExperience(ctx.params.id, userId, editPayload)
 })
 
 router.post('/experiences/remove/:id', loginRequired, checkIdParams, async (ctx) => {

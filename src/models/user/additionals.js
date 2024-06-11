@@ -93,7 +93,7 @@ export const addExperience = async (
 
 export const editExperience = async (
   id,
-  user,
+  userId,
   {
     org_id,
     title,
@@ -124,7 +124,7 @@ export const editExperience = async (
       job_category_id=${job_category_id},
       weekly_hours=${weekly_hours},
       total_hours=${total_hours}
-    WHERE id=${id} AND user_id=${user.id}
+    WHERE id=${id} AND user_id=${userId}
     RETURNING *
   `)
     return rows[0]

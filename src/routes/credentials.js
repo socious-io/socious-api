@@ -181,7 +181,7 @@ router.get('/experiences/connect/callback/:id', async (ctx) => {
 
   const e = await Credential.getRequestExperiencebyConnection(ctx.params.id)
 
-  if (e.status !== 'APPROVED' || e.status !== 'SENT') throw new PermissionError()
+  if (e.status !== 'APPROVED' && e.status !== 'SENT') throw new PermissionError()
 
   if (!e.org.did) {
     const did = await createDID()
@@ -294,7 +294,7 @@ router.get('/educations/connect/callback/:id', async (ctx) => {
 
   const e = await Credential.getRequestEducationbyConnection(ctx.params.id)
 
-  if (e.status !== 'APPROVED' || e.status !== 'SENT') throw new PermissionError()
+  if (e.status !== 'APPROVED' && e.status !== 'SENT') throw new PermissionError()
 
   if (!e.org.did) {
     const did = await createDID()

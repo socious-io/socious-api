@@ -32,12 +32,14 @@ import { router as credentials } from './credentials.js'
 import { router as referring } from './referring.js'
 import { router as dispute } from './dispute.js'
 import { router as contribution } from './contributions.js'
+import { router as root } from './root.js'
 
 export default (app) => {
   const blueprint = new Router()
 
   const spec = yamljs.load('./docs/openapi.yml')
 
+  blueprint.use('', root.routes(), site.allowedMethods())
   blueprint.use('/site', site.routes(), site.allowedMethods())
 
   blueprint.get('/docs', koaSwagger({ routePrefix: false, swaggerOptions: { spec } }))

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Shortner from '../../models/shortner/index.js'
 import config from '../../config.js'
 import { decodeJWT } from '../../utils/tools.js'
 import { BadRequestError } from '../../utils/errors.js'
@@ -47,7 +48,8 @@ export const createConnectURL = async (callback) => {
   let url = res.data.invitation.invitationUrl
   url = url.replace('https://my.domain.com/path', config.wallet.connect_address)
   url += `&callback=${callback}/${id}`
-  return { url, id }
+  const shortner = await Shortner.create(url)
+  return { url, id, short_id: shortner.short_id }
 }
 
 export const sendCredentials = async ({ connectionId, issuingDID, claims }) => {

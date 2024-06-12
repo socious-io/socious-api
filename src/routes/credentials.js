@@ -45,7 +45,10 @@ router.post('/verifications', loginRequired, async (ctx) => {
     console.log(err)
   }
   const connect = await createConnectURL(config.wallet.verification_callback)
-  ctx.body = await Credential.requestVerification(ctx.identity.id, connect.id, connect.url)
+  ctx.body = {
+    ...(await Credential.requestVerification(ctx.identity.id, connect.id, connect.url)),
+    short_url: `${ctx.request.header.origin}/r/${connect.short_id}`
+  }
 })
 
 router.post('/verifications/org', loginRequired, async (ctx) => {
@@ -173,7 +176,10 @@ router.post('/experiences/:id/claim', loginRequired, checkIdParams, async (ctx) 
     connection_url: connect.url
   })
 
-  ctx.body = connect
+  ctx.body = {
+    ...connect,
+    short_url: `${ctx.request.header.origin}/r/${connect.short_id}`
+  }
 })
 
 router.get('/experiences/connect/callback/:id', async (ctx) => {
@@ -286,7 +292,10 @@ router.post('/educations/:id/claim', loginRequired, checkIdParams, async (ctx) =
     connection_url: connect.url
   })
 
-  ctx.body = connect
+  ctx.body = {
+    ...connect,
+    short_url: `${ctx.request.header.origin}/r/${connect.short_id}`
+  }
 })
 
 router.get('/educations/connect/callback/:id', async (ctx) => {

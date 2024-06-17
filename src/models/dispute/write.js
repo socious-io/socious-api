@@ -128,7 +128,7 @@ const addJurorToDispute = async (identityId, disputeId, { transaction }) => {
 
   return juror.rows[0]
 }
-  
+
 //Initiate a "dispute" with a "dispute event"
 //"description" treated as a event with "MESSAGE" type and text as description that will attach after the creation of the dispute
 export const initiate = async (
@@ -159,15 +159,12 @@ export const dispatchEvent = async (
   { message = null, evidences = [], eventType = 'MESSAGE' },
   { changeState = null, transaction = null } = {}
 ) => {
-  const client = transaction ?? app.db
   let disputeEvent
 
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
-      disputeEvent = await createEvent(identityId, disputeId, message, { eventType,
-        transaction: client
-      })
+      disputeEvent = await createEvent(identityId, disputeId, message, { eventType, transaction: client })
       await createEvidences(identityId, disputeId, disputeEvent.id, evidences, {
         transaction: client
       })
@@ -184,7 +181,6 @@ export const dispatchEvent = async (
 
 //TODO: Change usage name
 export const updateInvitation = async (identityId, invitationId, status) => {
-
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
@@ -196,18 +192,17 @@ export const updateInvitation = async (identityId, invitationId, status) => {
       if (contributeInvitation && contributeInvitation.status == 'ACCEPTED')
         await addJurorToDispute(identityId, contributeInvitation.dispute_id, { transaction: client })
 
-      const contributeInvitationsAggregation = (await getInvitationCountGroupedByStatus(
-        contributeInvitation.dispute_id,
-        { transaction: client }
-      )).reduce((pv,cv)=> {
+      const contributeInvitationsAggregation = (
+        await getInvitationCountGroupedByStatus(contributeInvitation.dispute_id, { transaction: client })
+      ).reduce((pv, cv) => {
         return {
           ...pv,
           [cv.status]: cv.count
-        };
+        }
       }, {})
 
       //TODO: Handle race condition
-      const { ACCEPTED, INVITED, DECLINED, EXPIRED } = contributeInvitationsAggregation
+      const { ACCEPTED, INVITED } = contributeInvitationsAggregation // + DECLINED, EXPIRED
       if (ACCEPTED && ACCEPTED >= 3) {
         await updateDisputeState(contributeInvitation.dispute_id, 'PENDING_REVIEW', { transaction: client })
         await deleteRedudantInvitations(contributeInvitation.dispute_id, { transaction: client })

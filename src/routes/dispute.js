@@ -91,7 +91,7 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
     identity.id,
     id,
     { ...request.body, eventType: 'RESPONSE' },
-    { changeState: isInAwaitingResponseState ? 'JUROR_SELECTION' : null}
+    { changeState: isInAwaitingResponseState ? 'JUROR_SELECTION' : null }
   )
   console.log(ctx.dispute.state)
   Event.push(Event.Types.NOTIFICATION, ctx.body.claimant.id, {
@@ -125,12 +125,7 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
   if (ctx.dispute.claimant.id != identity.id) {
     throw new BadRequestError()
   }
-  ctx.body = await Dispute.dispatchEvent(
-    identity.id,
-    id,
-    { eventType: 'WITHDRAW' },
-    { changeState: 'WITHDRAWN' }
-  )
+  ctx.body = await Dispute.dispatchEvent(identity.id, id, { eventType: 'WITHDRAW' }, { changeState: 'WITHDRAWN' })
 
   Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
     type: Notif.Types.DISPUTE_WITHDRAWN,

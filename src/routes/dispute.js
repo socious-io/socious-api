@@ -17,7 +17,7 @@ router.post('/', loginRequired, async (ctx) => {
   if (request.body.evidences && request.body.evidences.length > 30) {
     throw new BadRequestError()
   }
-  ctx.body = await Dispute.create(identity.id, request.body)
+  ctx.body = await Dispute.initiate(identity.id, request.body)
 
   const { respondent_id } = request.body
   Event.push(Event.Types.NOTIFICATION, respondent_id, {
@@ -63,7 +63,7 @@ router.post('/:id/message', loginRequired, checkIdParams, dispute, async (ctx) =
   if ((request.body.evidences && request.body.evidences.length > 30) || ctx.dispute.claimant.id != identity.id) {
     throw new BadRequestError()
   }
-  ctx.body = await Dispute.createEventOnDispute(identity.id, id, request.body)
+  ctx.body = await Dispute.dispatchEvent(identity.id, id, request.body)
 
   Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
     type: Notif.Types.DISPUTE_NEW_MESSAGE,
@@ -84,19 +84,36 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
   if ((request.body.evidences && request.body.evidences.length > 30) || ctx.dispute.respondent.id != identity.id) {
     throw new BadRequestError()
   }
-  ctx.body = await Dispute.createEventOnDispute(
+  const isInAwaitingResponseState = ctx.dispute.state == 'AWAITING_RESPONSE'
+
+  //Creating response to dispute
+  ctx.body = await Dispute.dispatchEvent(
     identity.id,
     id,
     { ...request.body, eventType: 'RESPONSE' },
-    { changeState: 'PENDING_REVIEW' }
+    { changeState: isInAwaitingResponseState ? 'JUROR_SELECTION' : null}
   )
-
+  console.log(ctx.dispute.state)
   Event.push(Event.Types.NOTIFICATION, ctx.body.claimant.id, {
     type: Notif.Types.DISPUTE_NEW_RESPONSE,
     refId: id,
     parentId: null,
     identity
   })
+
+  //Sending Invitations
+  if (isInAwaitingResponseState) {
+    const potentialJurors = await Dispute.getPotentialJurors(id, { dispute: ctx.dispute })
+    const contributionInvitations = await Dispute.sendDisputeContributionInvitation(id, potentialJurors)
+    for (const contributionInvitation of contributionInvitations) {
+      Event.push(Event.Types.NOTIFICATION, contributionInvitation.contributor_id, {
+        type: Notif.Types.DISPUTE_JUROR_CONTRIBUTION_INVITED,
+        refId: contributionInvitation.id,
+        parentId: null,
+        identity
+      })
+    }
+  }
 })
 
 router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) => {
@@ -108,7 +125,7 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
   if (ctx.dispute.claimant.id != identity.id) {
     throw new BadRequestError()
   }
-  ctx.body = await Dispute.createEventOnDispute(
+  ctx.body = await Dispute.dispatchEvent(
     identity.id,
     id,
     { eventType: 'WITHDRAW' },
@@ -116,7 +133,7 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
   )
 
   Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
-    type: Notif.Types.DISPUTE_WITHDRAWN, //Notif.Types.DISPUTE_WITHDRAWN
+    type: Notif.Types.DISPUTE_WITHDRAWN,
     refId: id,
     parentId: null,
     identity
@@ -157,7 +174,7 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
     params: { invitation_id }
   } = ctx
   try {
-    ctx.body = await Dispute.updateInvitationStatus(id, invitation_id, 'ACCEPTED')
+    ctx.body = await Dispute.updateInvitation(id, invitation_id, 'ACCEPTED')
   } catch (e) {
     console.log(e)
     throw new NotFoundError()
@@ -170,7 +187,7 @@ router.post('/invitations/:invitation_id/decline', loginRequired, async (ctx) =>
     params: { invitation_id }
   } = ctx
   try {
-    ctx.body = await Dispute.updateInvitationStatus(id, invitation_id, 'DECLINED')
+    ctx.body = await Dispute.updateInvitation(id, invitation_id, 'DECLINED')
   } catch (e) {
     throw new NotFoundError()
   }

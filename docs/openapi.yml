@@ -6892,7 +6892,11 @@ paths:
         in: query
         schema:
           type: string
-          enum: ['INVITED', 'ACCEPTED', 'DECLINED', 'EXPIRED']
+          enum:
+            - INVITED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
         required: false
       - name: filter.dispute_id
         in: query

@@ -21,9 +21,9 @@ const get = async (referredIdentityId) => {
       SELECT 
         r.referred_by_id,
         u.wallet_address,
-        (r.created_at > NOW() - '1 month') AS fee_discount
+        (r.created_at > NOW() - INTERVAL '1 month') AS fee_discount
       FROM referrings r
-      LEFT JOIN users u ON referred_by_id=users.id
+      LEFT JOIN users u ON r.referred_by_id=u.id
       WHERE
         r.referred_identity_id=${referredIdentityId} AND
         r.created_at > NOW() - INTERVAL '1 year' AND

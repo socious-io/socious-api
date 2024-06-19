@@ -88,6 +88,19 @@ const data = [
     expect_stripe_fee: 0,
     expect_payout: 975,
     service: 'CRYPTO'
+  },
+  {
+    amount: 2105.26,
+    verfied: true,
+    org_referred: null,
+    user_referred: '0x1111111111111111111111111111111111111111',
+    user_fee_discount: false,
+    round: 10000,
+    expect_total: 2147.3652,
+    expect_app_fee: 147.36820000000003,
+    expect_stripe_fee: 0,
+    expect_payout: 1999.9970000000003,
+    service: 'CRYPTO'
   }
 ]
 

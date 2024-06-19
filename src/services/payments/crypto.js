@@ -5,7 +5,7 @@ import config from '../../config.js'
 import { ValidationError } from '../../utils/errors.js'
 import { delay } from '../../utils/tools.js'
 import logger from '../../utils/logging.js'
-import { parseUnits } from 'ethers'
+import { parseUnits, ethers } from 'ethers'
 
 export const cryptoUSDRate = async (token) => {
   const convertor = config.crypto.usd_convertor[token]
@@ -85,16 +85,16 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     )
     return false
   }
-
-  const expectedAmount = parseUnits(`${amount}`, decimals).toString()
-  if (tx.value.substring(0, tx.value.length - 3) != expectedAmount.substring(0, expectedAmount.length - 3)) {
+  const expectedAmount = parseUnits(`${amount}`, decimals).toString().replace(/0+$/, '')
+  const txAmount = tx.value.replace(/0+$/, '')
+  if (txAmount.substring(0, txAmount.length - 1) != expectedAmount.substring(0, expectedAmount.length - 1)) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
         amount,
         txHash,
         token
-      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${tx.value} >= ${expectedAmount}`
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${tx.value} < ${expectedAmount}`
     )
     return false
   }

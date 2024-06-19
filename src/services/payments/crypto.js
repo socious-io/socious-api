@@ -5,7 +5,7 @@ import config from '../../config.js'
 import { ValidationError } from '../../utils/errors.js'
 import { delay } from '../../utils/tools.js'
 import logger from '../../utils/logging.js'
-import { parseUnits, ethers } from 'ethers'
+import { parseUnits } from 'ethers'
 
 export const cryptoUSDRate = async (token) => {
   const convertor = config.crypto.usd_convertor[token]

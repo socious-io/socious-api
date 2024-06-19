@@ -1,3 +1,6 @@
+DELETE FROM
+  disputes;
+
 ALTER TYPE notification_type
 ADD
   VALUE 'DISPUTE_JUROR_CONTRIBUTION_INVITED';

@@ -33,10 +33,14 @@ router.get('/:id', loginRequired, checkIdParams, offerPermission, async (ctx) =>
       verified: offer.offerer.meta.verified_impact,
       org_referred: orgReferrer?.wallet_address,
       user_referred: contributorReferrer?.wallet_address,
-      round
+      round,
+      org_fee_discount: orgReferrer?.fee_discount,
+      user_fee_discount: contributorReferrer?.fee_discount
     }),
     org_referrer_wallet: orgReferrer?.wallet_address,
-    contributor_referrer_wallet: contributorReferrer?.wallet_address
+    contributor_referrer_wallet: contributorReferrer?.wallet_address,
+    org_fee_discount: orgReferrer?.fee_discount,
+    contributor_fee_discount: contributorReferrer?.fee_discount
   }
 })
 

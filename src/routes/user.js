@@ -125,7 +125,9 @@ router.get('/missions', loginRequired, paginate, async (ctx) => {
             : Data.PaymentService.CRYPTO,
           org_referred: orgReferrer?.wallet_address,
           user_referred: contributorReferrer?.wallet_address,
-          verified: m.assigner.meta.verified_impact
+          verified: m.assigner.meta.verified_impact,
+          org_fee_discount: orgReferrer?.fee_discount,
+          user_fee_discount: contributorReferrer?.fee_discount
         })
       }
     })

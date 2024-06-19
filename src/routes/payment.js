@@ -95,7 +95,9 @@ router.post('/offers/:id', loginRequired, checkIdParams, offerer, async (ctx) =>
     verified: ctx.identity.meta.verified_impact,
     org_referred: orgReferrer?.wallet_address,
     user_referred: userReferrer?.wallet_address,
-    round: round
+    round: round,
+    org_fee_discount: orgReferrer?.fee_discount,
+    user_fee_discount: userReferrer?.fee_discount
   })
 
   const transfers = {}
@@ -167,7 +169,9 @@ router.post('/missions/:id/payout', loginRequired, checkIdParams, assignee, asyn
     verified: mission.assigner.meta.verified_impact,
     org_referred: orgReferrer?.wallet_address,
     user_referred: contributorReferrer?.wallet_address,
-    round
+    round,
+    org_fee_discount: orgReferrer?.fee_discount,
+    user_fee_discount: contributorReferrer?.fee_discount
   })
 
   const payout = await Payment.payout(Data.PaymentService.STRIPE, {

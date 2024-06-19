@@ -4,6 +4,7 @@ import { PermissionError } from '../../utils/errors.js'
 import { filtering, sorting } from '../../utils/query.js'
 
 export const filterColumns = { direction: String, code: String, title: String, category: String, state: String }
+export const invitationFilterColumns = { status: String, dispute_id: String }
 
 export const sortColumns = ['created_at', 'updated_at', 'state', 'claimant_id', 'respondent_id']
 export const sortColumnsInvitations = ['created_at', 'updated_at', 'dispute_id']
@@ -145,7 +146,7 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         SELECT d.id, d.title, d.category,
         (
           CASE
-            WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+            WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL AND d.state='PENDING_REVIEW' THEN 'DECISION_SUBMITTED'
             ELSE d.state
             END
         ) AS state,
@@ -215,11 +216,40 @@ export const getByIdentityIdAndId = async (identityId, id) => {
   }
 }
 
-export const getAllInvitationsIdentityId = async (identityId, { offset = 0, limit = 10, sort }) => {
+export const getPotentialJurors = async (disputeId, { dispute, status = 'JUROR_SELECTION' }) => {
+  let { rows } = await app.db.query(sql`
+    SELECT u.id
+    FROM users u
+    JOIN disputes d ON d.id=${disputeId}
+    LEFT JOIN dispute_contributor_invitations dci ON dci.contributor_id=u.id AND dci.dispute_id=d.id
+    WHERE u.is_contributor=TRUE AND dci.id IS NULL AND d.state=${status} AND u.id!=${dispute.claimant.id} AND u.id!=${dispute.respondent.id}
+    ORDER BY RANDOM()
+    LIMIT 50
+  `)
+  rows = rows.map((row) => row.id)
+  return rows
+}
+
+export const getAllInvitationsIdentityId = async (identityId, { offset = 0, limit = 10, sort, filter }) => {
   const { rows } = await app.db.query(sql`
-    SELECT id, dispute_id, status, created_at, updated_at
+    SELECT dci.id,
+    json_build_object(
+      'id', d.id,
+      'title', d.title,
+      'code', d.code,
+      'category', d.category,
+      'contract', json_build_object(
+        'id', m.id,
+        'name', p.title
+      )
+    ) as dispute,
+    dci.status, dci.created_at, dci.updated_at
     FROM dispute_contributor_invitations dci
-    WHERE contributor_id=${identityId}
+    JOIN disputes d ON d.id=dci.dispute_id
+    JOIN missions m ON d.mission_id=m.id
+    JOIN projects p ON m.project_id=p.id
+    WHERE dci.contributor_id=${identityId}
+    ${filtering(filter, invitationFilterColumns, true, 'dci')}
     ${sorting(sort, sortColumnsInvitations, 'dci')}
     LIMIT ${limit} OFFSET ${offset}
   `)
@@ -228,8 +258,22 @@ export const getAllInvitationsIdentityId = async (identityId, { offset = 0, limi
 
 export const getInvitationIdentityIdAndId = (identityId, id) => {
   return app.db.get(sql`
-    SELECT id, dispute_id, status, created_at, updated_at
+    SELECT dci.id,
+    json_build_object(
+      'id', d.id,
+      'title', d.title,
+      'code', d.code,
+      'category', d.category,
+      'contract', json_build_object(
+        'id', m.id,
+        'name', p.title
+      )
+    ) as dispute,
+    dci.status, dci.created_at, dci.updated_at
     FROM dispute_contributor_invitations dci
-    WHERE contributor_id=${identityId} AND id=${id}
+    JOIN disputes d ON d.id=dci.dispute_id
+    JOIN missions m ON d.mission_id=m.id
+    JOIN projects p ON m.project_id=p.id
+    WHERE dci.contributor_id=${identityId} AND dci.id=${id}
   `)
 }

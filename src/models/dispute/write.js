@@ -1,72 +1,56 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
-import { getByIdentityIdAndId } from './read.js'
+import { getByIdentityIdAndId, getInvitationIdentityIdAndId } from './read.js'
 import { EntryError } from '../../utils/errors.js'
 
-export const create = async (
-  identityId,
-  { title, description, respondent_id, evidences = [], category = 'OTHERS', mission_id }
-) => {
-  let dispute,
-    disputeEvent,
-    disputeEvidences = []
-  return await app.db.with(async (client) => {
-    await client.query('BEGIN')
-    try {
-      dispute = await client.query(
-        sql`
-          INSERT INTO disputes (
-            title,
-            claimant_id,
-            respondent_id,
-            mission_id,
-            category
-          ) VALUES (
-            ${title},
-            ${identityId},
-            ${respondent_id},
-            ${mission_id},
-            ${category}
-          )
-          RETURNING *;
-        `
+//Create a "dispute"
+const create = async (title, identityId, respondentId, missionId, category, { transaction }) => {
+  const client = transaction ?? app.db
+  const dispute = await client.query(
+    sql`
+      INSERT INTO disputes (
+        title,
+        claimant_id,
+        respondent_id,
+        mission_id,
+        category
+      ) VALUES (
+        ${title},
+        ${identityId},
+        ${respondentId},
+        ${missionId},
+        ${category}
       )
-      dispute = dispute.rows[0]
-      disputeEvent = await client.query(
-        sql`
-          INSERT INTO dispute_events(identity_id, dispute_id, message)
-          VALUES (${identityId}, ${dispute.id}, ${description})
-          RETURNING *
-        `
-      )
-      disputeEvent = disputeEvent.rows[0]
-
-      if (evidences && evidences.length) {
-        evidences.forEach((evidence, index) => {
-          disputeEvidences.push(
-            client.query(
-              sql`
-                INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
-                VALUES (${identityId}, ${dispute.id}, ${disputeEvent.id}, ${evidences[index]})
-                RETURNING *
-              `
-            )
-          )
-        })
-        disputeEvidences = await Promise.all(disputeEvidences)
-      }
-      await client.query('COMMIT')
-      return await getByIdentityIdAndId(identityId, dispute.id)
-    } catch (err) {
-      await client.query('ROLLBACK')
-      throw err
-    }
-  })
+      RETURNING *;
+    `
+  )
+  return dispute.rows[0]
 }
 
-export const updateDisputeState = async (disputeId, state = 'MESSAGE') => {
+const createEvidences = async (identityId, disputeId, disputeEventId, evidences, { transaction }) => {
+  const client = transaction ?? app.db
+  let disputeEvidences = []
+  if (evidences && evidences.length) {
+    evidences.forEach((evidence) => {
+      disputeEvidences.push(
+        client.query(
+          sql`
+            INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
+            VALUES (${identityId}, ${disputeId}, ${disputeEventId}, ${evidence})
+            RETURNING *
+          `
+        )
+      )
+    })
+    disputeEvidences = await Promise.all(disputeEvidences)
+  }
+  return disputeEvidences
+}
+
+const updateDisputeState = async (disputeId, state = 'MESSAGE', { transaction }) => {
+  const client = transaction ?? app.db
   try {
-    const { rows } = await app.db.query(
+    const { rows } = await client.query(
       sql`
           UPDATE disputes
           SET state=${state}
@@ -80,90 +64,157 @@ export const updateDisputeState = async (disputeId, state = 'MESSAGE') => {
   }
 }
 
-export const createEventOnDispute = async (
-  identityId,
-  disputeId,
-  { message = null, evidences = [], eventType = 'MESSAGE' },
-  { changeState = null } = {}
-) => {
-  let disputeEvent,
-    dispute,
-    disputeEvidences = []
+//TODO: merge with createEventOnDispute
+const createEvent = async (identityId, disputeId, message, { eventType = 'MESSAGE', transaction }) => {
+  const client = transaction ?? app.db
+  let disputeEvent = await client.query(
+    sql`
+      INSERT INTO dispute_events(identity_id, dispute_id, message, type)
+      VALUES (${identityId}, ${disputeId}, ${message}, ${eventType})
+      RETURNING *
+    `
+  )
+  return disputeEvent.rows[0]
+}
 
+//Get status count of the "dispute contribution invitations" by dispute id aggregated by status type
+const getInvitationCountGroupedByStatus = async (disputeId, { transaction }) => {
+  const client = transaction ?? app.db
+  const contributeInvitationsAggregation = await client.query(
+    sql`
+    SELECT status, COUNT(dci.id)::int
+    FROM dispute_contributor_invitations dci
+    WHERE dispute_id=${disputeId}
+    GROUP BY status
+  `
+  )
+  return contributeInvitationsAggregation.rows
+}
+
+//Delete the "dispute contribution invitations" that are not accepted
+const deleteRedudantInvitations = async (disputeId, { transaction }) => {
+  const client = transaction ?? app.db
+  await client.query(
+    sql`
+    DELETE
+    FROM dispute_contributor_invitations dci
+    WHERE dispute_id=${disputeId} AND status!='ACCEPTED'
+  `
+  )
+}
+
+//Update a "dispute contribution invitation"
+const updateInvitationStatus = async (identityId, invitationId, status, { transaction }) => {
+  const client = transaction ?? app.db
+  const contributeInvitation = await client.query(
+    sql`
+    UPDATE dispute_contributor_invitations dci
+    SET status=${status}
+    WHERE contributor_id=${identityId} AND id=${invitationId}
+    RETURNING id, dispute_id, status,  created_at, updated_at
+  `
+  )
+
+  return contributeInvitation.rows[0]
+}
+
+//Add a "identity" to a "dispute jurors"
+const addJurorToDispute = async (identityId, disputeId, { transaction }) => {
+  const client = transaction ?? app.db
+  const juror = await client.query(sql`
+    INSERT INTO dispute_jourors (juror_id, dispute_id)
+    VALUES (${identityId}, ${disputeId})
+  `)
+
+  return juror.rows[0]
+}
+
+//Initiate a "dispute" with a "dispute event"
+//"description" treated as a event with "MESSAGE" type and text as description that will attach after the creation of the dispute
+export const initiate = async (
+  identityId,
+  { title, description, respondent_id, evidences = [], category = 'OTHERS', mission_id }
+) => {
+  let dispute, disputeEvent
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
-      disputeEvent = await client.query(
-        sql`
-            INSERT INTO dispute_events(identity_id, dispute_id, message, type)
-            VALUES (${identityId}, ${disputeId}, ${message}, ${eventType})
-            RETURNING *
-          `
-      )
-      disputeEvent = disputeEvent.rows[0]
-
-      if (evidences && evidences.length) {
-        evidences.forEach((evidence, index) => {
-          disputeEvidences.push(
-            client.query(
-              sql`
-                INSERT INTO dispute_evidences(identity_id, dispute_id, dispute_event_id, media_id)
-                VALUES (${identityId}, ${disputeId}, ${disputeEvent.id}, ${evidences[index]})
-                RETURNING *
-              `
-            )
-          )
-        })
-        disputeEvidences = await Promise.all(disputeEvidences)
-      }
-
-      if (changeState) {
-        dispute = await client.query(
-          sql`
-              UPDATE disputes
-              SET state=${changeState}
-              WHERE id=${disputeId}
-              RETURNING *
-            `
-        )
-        dispute = dispute.rows[0]
-      }
-
+      dispute = await create(title, identityId, respondent_id, mission_id, category, { transaction: client })
+      disputeEvent = await createEvent(identityId, dispute.id, description, { transaction: client })
+      await createEvidences(identityId, dispute.id, disputeEvent.id, evidences, {
+        transaction: client
+      })
       await client.query('COMMIT')
-
-      return await getByIdentityIdAndId(identityId, disputeId)
+      return await getByIdentityIdAndId(identityId, dispute.id)
     } catch (err) {
-      console.log(err)
       await client.query('ROLLBACK')
       throw err
     }
   })
 }
 
-export const updateInvitationStatus = async (identityId, invitationId, status) => {
-  let contributeInvitation
+export const dispatchEvent = async (
+  identityId,
+  disputeId,
+  { message = null, evidences = [], eventType = 'MESSAGE' },
+  { changeState = null } = {}
+) => {
+  let disputeEvent
 
   return await app.db.with(async (client) => {
     await client.query('BEGIN')
     try {
-      //Updating Invitation
-      contributeInvitation = await client.query(
-        sql`
-        UPDATE dispute_contributor_invitations dci
-        SET status=${status}
-        WHERE contributor_id=${identityId} AND id=${invitationId}
-        RETURNING id, dispute_id, status,  created_at, updated_at
-      `
-      )
-      contributeInvitation = contributeInvitation.rows[0]
-      if (contributeInvitation && contributeInvitation.status == 'ACCEPTED') {
-        await client.query(sql`
-          INSERT INTO dispute_jourors (dispute_id, juror_id)
-          VALUES (${contributeInvitation.dispute_id}, ${identityId})
-        `)
-      }
+      disputeEvent = await createEvent(identityId, disputeId, message, { eventType, transaction: client })
+      await createEvidences(identityId, disputeId, disputeEvent.id, evidences, {
+        transaction: client
+      })
+      if (changeState) await updateDisputeState(disputeId, changeState, { transaction: client })
+
       await client.query('COMMIT')
-      return contributeInvitation
+      return await getByIdentityIdAndId(identityId, disputeId)
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    }
+  })
+}
+
+//TODO: Change usage name
+export const updateInvitation = async (identityId, invitationId, status) => {
+  return await app.db.with(async (client) => {
+    await client.query('BEGIN')
+    try {
+      //Updating Invitation
+      const contributeInvitation = await updateInvitationStatus(identityId, invitationId, status, {
+        transaction: client
+      })
+
+      if (contributeInvitation && contributeInvitation.status == 'ACCEPTED')
+        await addJurorToDispute(identityId, contributeInvitation.dispute_id, { transaction: client })
+
+      const contributeInvitationsAggregation = (
+        await getInvitationCountGroupedByStatus(contributeInvitation.dispute_id, { transaction: client })
+      ).reduce((pv, cv) => {
+        return {
+          ...pv,
+          [cv.status]: cv.count
+        }
+      }, {})
+
+      //TODO: Handle race condition
+      const { ACCEPTED, INVITED } = contributeInvitationsAggregation // + DECLINED, EXPIRED
+      if (ACCEPTED && ACCEPTED >= 3) {
+        await updateDisputeState(contributeInvitation.dispute_id, 'PENDING_REVIEW', { transaction: client })
+        await deleteRedudantInvitations(contributeInvitation.dispute_id, { transaction: client })
+      } else if (!INVITED || (INVITED && INVITED + ACCEPTED < 3)) {
+        await updateDisputeState(contributeInvitation.dispute_id, 'JUROR_RESELECTION', { transaction: client })
+        //TODO: Reselect Jury?
+      } else {
+        await updateDisputeState(contributeInvitation.dispute_id, 'JUROR_SELECTION', { transaction: client })
+      }
+
+      await client.query('COMMIT')
+      return await getInvitationIdentityIdAndId(identityId, invitationId)
     } catch (err) {
       await client.query('ROLLBACK')
       throw err
@@ -182,6 +233,30 @@ export const castVoteOnDispute = async (id, identityId, voteSide) => {
       `
     )
     return rows[0]
+  } catch (err) {
+    new EntryError(err.message)
+  }
+}
+
+export const sendDisputeContributionInvitation = async (disputeId, userIds) => {
+  const invitations = []
+  try {
+    for (const userId of userIds) {
+      const { rows } = await app.db.query(
+        sql`
+          INSERT INTO dispute_contributor_invitations (
+              contributor_id,
+              dispute_id
+            ) VALUES (
+              ${userId},
+              ${disputeId}
+            )
+          RETURNING *;
+        `
+      )
+      invitations.push(rows)
+    }
+    return invitations
   } catch (err) {
     new EntryError(err.message)
   }

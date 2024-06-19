@@ -269,7 +269,7 @@ test('getting all of the dispute contribution invitations', async () => {
     items: [
       {
         id: expect.any(String),
-        dispute_id: expect.any(String),
+        dispute: expect.any(Object),
         status: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String)
@@ -287,7 +287,7 @@ test('getting one of the dispute contribution invitations', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    dispute_id: expect.any(String),
+    dispute: expect.any(Object),
     status: expect.any(String),
     created_at: expect.any(String),
     updated_at: expect.any(String)
@@ -303,7 +303,7 @@ test('declining the dispute contribution invitation', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    dispute_id: expect.any(String),
+    dispute: expect.any(Object),
     status: expect.any(String),
     created_at: expect.any(String),
     updated_at: expect.any(String)
@@ -319,7 +319,7 @@ test('accepting the dispute contribution invitation', async () => {
   expect(response.status).toBe(200)
   expect(response.body).toMatchSnapshot({
     id: expect.any(String),
-    dispute_id: expect.any(String),
+    dispute: expect.any(Object),
     status: expect.any(String),
     created_at: expect.any(String),
     updated_at: expect.any(String)

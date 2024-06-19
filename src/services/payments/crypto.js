@@ -85,16 +85,16 @@ export const confirmTx = async (src, amount, txHash, token, retry = 0, env = und
     )
     return false
   }
-  const expectedAmount = parseUnits(`${amount}`, decimals).toString().replace(/0+$/, '')
-  const txAmount = tx.value.replace(/0+$/, '')
-  if (txAmount.substring(0, txAmount.length - 1) != expectedAmount.substring(0, expectedAmount.length - 1)) {
+  const expectedAmount = parseInt(parseUnits(`${amount}`, decimals).toString().replace(/0+$/, ''))
+  const txAmount = parseInt(tx.value.replace(/0+$/, ''))
+  if (expectedAmount + 1 < txAmount) {
     logger.error(
       `CONFIRM CRYPTODATA ${JSON.stringify({
         src,
         amount,
         txHash,
         token
-      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${tx.value} < ${expectedAmount}`
+      })}, PARAMS => ${JSON.stringify(data)}, RESULT => amount not match to offer ${txAmount} < ${expectedAmount}`
     )
     return false
   }

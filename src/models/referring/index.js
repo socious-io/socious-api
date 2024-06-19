@@ -18,13 +18,16 @@ const insert = async (referredIdentityId, referredById) => {
 const get = async (referredIdentityId) => {
   try {
     return await app.db.get(sql`
-      SELECT referred_by_id, users.wallet_address
-      FROM referrings
-      LEFT JOIN users ON referred_by_id=users.id
+      SELECT 
+        r.referred_by_id,
+        u.wallet_address,
+        (r.created_at > NOW() - INTERVAL '1 month') AS fee_discount
+      FROM referrings r
+      LEFT JOIN users u ON r.referred_by_id=u.id
       WHERE
-        referred_identity_id=${referredIdentityId} AND
-        referrings.created_at > now() - INTERVAL '1 year' AND
-        users.identity_verified
+        r.referred_identity_id=${referredIdentityId} AND
+        r.created_at > NOW() - INTERVAL '1 year' AND
+        u.identity_verified
     `)
   } catch {
     return null

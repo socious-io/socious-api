@@ -2260,6 +2260,7 @@ components:
         message:
           type: string
         type:
+          type: string
           enum:
             - RESPONSE
             - MESSAGE
@@ -2269,8 +2270,11 @@ components:
         evidences:
           type: array
           items:
-            id: string
-            url: string
+            properties:
+              id:
+                type: string
+              url:
+                type: string
         created_at:
           type: string
     Disputes:
@@ -2279,9 +2283,23 @@ components:
           type: string
         title:
           type: string
+        category: 
+          type: string
+          enum:
+            - SCOPE_AND_CONTRACT_DISPUTES_ISSUES
+            - INCOMPLETE_OR_UNSATISFACTORY_WORK
+            - COMMUNICATION_PROBLEMS
+            - SCOPE_AND_CONTRACT_DISPUTES
+            - INTELLECTUAL_PROPERTY_AND_CONFIDENTIALITY
+            - PROFESSIONALISM_AND_CONDUCT
+            - CANCELLATION_AND_REFUNDS
+            - OTHERS
         state:
+          type: string
           enum:
             - AWAITING_RESPONSE
+            - JUROR_SELECTION
+            - JUROR_RESELECTION
             - DECISION_SUBMITTED
             - PENDING_REVIEW
             - WITHDRAWN
@@ -2289,6 +2307,7 @@ components:
         code:
           type: string
         direction:
+          type: string
           enum:
             - received
             - submitted
@@ -2297,9 +2316,18 @@ components:
           $ref: '#/components/schemas/Identities'
         respondent:
           $ref: '#/components/schemas/Identities'
+        contract:
+          properties:
+            id:
+              type: string
+            name:
+              type: string
         jury:
-          voted: number
-          members: number
+          properties:
+            voted:
+              type: number
+            members:
+              type: number
         events:
           $ref: '#/components/schemas/DisputeEvents'
         created_at:
@@ -2310,9 +2338,39 @@ components:
       properties:
         id:
           type: string
-        dispute_id:
-          type: string
+        dispute:
+          properties:
+            id:
+              type: string
+              example: bcb21136-8067-4fb3-8d4d-8c8788adcf4c
+            title:
+              type: string
+              example: dispute 1
+            code:
+              type: string
+              example: DIS-97
+            category:
+              type: string
+              example: COMMUNICATION_PROBLEMS
+              enum:
+                - SCOPE_AND_CONTRACT_DISPUTES_ISSUES
+                - INCOMPLETE_OR_UNSATISFACTORY_WORK
+                - COMMUNICATION_PROBLEMS
+                - SCOPE_AND_CONTRACT_DISPUTES
+                - INTELLECTUAL_PROPERTY_AND_CONFIDENTIALITY
+                - PROFESSIONALISM_AND_CONDUCT
+                - CANCELLATION_AND_REFUNDS
+                - OTHERS
+            contract:
+              properties:
+                id:
+                  type: string
+                  example: 90fcb429-7d17-44dc-a5d3-2f4ebb2d0c0f
+                name:
+                  type: string
+                  example: Software Engineer
         status:
+          type: string
           enum:
             - INVITED
             - ACCEPTED
@@ -6620,6 +6678,8 @@ paths:
                 title: dispute 1
                 description: same as initial message
                 respondent_id: 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                mission_id: 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                category: OTHERS
                 evidences:
                   - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
                   - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
@@ -6632,6 +6692,54 @@ paths:
               schema:
                 $ref: '#/components/schemas/Disputes'
     get:
+      parameters:
+        - name: filter.title
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: filter.code
+          in: query
+          schema:
+            type: string
+            example: DIS-123
+          required: false
+        - name: filter.direction
+          in: query
+          schema:
+            type: string
+            enum: 
+              - received
+              - submitted
+              - juror
+          required: false
+        - name: filter.category
+          in: query
+          schema:
+            type: string
+            enum:
+              - SCOPE_AND_CONTRACT_DISPUTES_ISSUES
+              - INCOMPLETE_OR_UNSATISFACTORY_WORK
+              - COMMUNICATION_PROBLEMS
+              - SCOPE_AND_CONTRACT_DISPUTES
+              - INTELLECTUAL_PROPERTY_AND_CONFIDENTIALITY
+              - PROFESSIONALISM_AND_CONDUCT
+              - CANCELLATION_AND_REFUNDS
+              - OTHERS
+          required: false
+        - name: filter.state
+          in: query
+          schema:
+            type: string
+            enum: 
+              - AWAITING_RESPONSE
+              - JUROR_SELECTION
+              - JUROR_RESELECTION
+              - DECISION_SUBMITTED
+              - PENDING_REVIEW
+              - WITHDRAWN
+              - CLOSED
+          required: false
       tags:
         - disputes
       summary: Get all of my disputes
@@ -6681,13 +6789,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              example:
-                message: content of the message
+              properties:
+                message:
+                  type: string
+                  example: content of the response
                 evidences:
-                  - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
-                  - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
-                  - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                    - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
+                    - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
       responses:
         '200':
           description: Successful response
@@ -6712,13 +6825,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              example:
-                message: content of the response
+              properties:
+                message:
+                  type: string
+                  example: content of the response
                 evidences:
-                  - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
-                  - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
-                  - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - 1744f7d6-d90a-4e35-acc1-e59d5a18e925
+                    - 03fa3d0d-9204-4cea-b6d7-7858b72bfee5
+                    - 3a7a85d4-e4f0-4b98-9922-5e5aa9456a6b
       responses:
         '200':
           description: Successful response
@@ -6769,6 +6887,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Disputes'
   /disputes/invitations:
+    parameters:
+      - name: filter.status
+        in: query
+        schema:
+          type: string
+          enum:
+            - INVITED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
+        required: false
+      - name: filter.dispute_id
+        in: query
+        schema:
+          type: string
+          example: bcb21136-8067-4fb3-8d4d-8c8788adcf4c
+        required: false
     get:
       tags:
         - disputes
@@ -6781,7 +6916,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisputeContributionInvitations'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DisputeContributionInvitations'
   /disputes/invitations/{invitation_id}:
     parameters:
       - name: invitation_id

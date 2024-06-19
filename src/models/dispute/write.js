@@ -157,7 +157,7 @@ export const dispatchEvent = async (
   identityId,
   disputeId,
   { message = null, evidences = [], eventType = 'MESSAGE' },
-  { changeState = null, transaction = null } = {}
+  { changeState = null } = {}
 ) => {
   let disputeEvent
 

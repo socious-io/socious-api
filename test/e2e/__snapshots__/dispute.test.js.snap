@@ -442,7 +442,7 @@ exports[` 17`] = `
 exports[`accepting the dispute contribution invitation 1`] = `
 {
   "created_at": Any<String>,
-  "dispute_id": Any<String>,
+  "dispute": Any<Object>,
   "id": Any<String>,
   "status": Any<String>,
   "updated_at": Any<String>,
@@ -452,7 +452,7 @@ exports[`accepting the dispute contribution invitation 1`] = `
 exports[`declining the dispute contribution invitation 1`] = `
 {
   "created_at": Any<String>,
-  "dispute_id": Any<String>,
+  "dispute": Any<Object>,
   "id": Any<String>,
   "status": Any<String>,
   "updated_at": Any<String>,
@@ -519,7 +519,7 @@ exports[`getting all of the dispute contribution invitations 1`] = `
   "items": [
     {
       "created_at": Any<String>,
-      "dispute_id": Any<String>,
+      "dispute": Any<Object>,
       "id": Any<String>,
       "status": Any<String>,
       "updated_at": Any<String>,
@@ -534,7 +534,7 @@ exports[`getting all of the dispute contribution invitations 1`] = `
 exports[`getting one of the dispute contribution invitations 1`] = `
 {
   "created_at": Any<String>,
-  "dispute_id": Any<String>,
+  "dispute": Any<Object>,
   "id": Any<String>,
   "status": Any<String>,
   "updated_at": Any<String>,

@@ -15,8 +15,8 @@ router.get('/r/:id/fetch', async (ctx) => {
   ctx.body = await Shortner.get(ctx.params.id)
 })
 
-router.get('/verify/claims/:id', async (ctx) => {
-  if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
+router.get('/verify/claims/:apikey/:id', async (ctx) => {
+  if (ctx.params.apikey !== config.adminApiKey) throw new PermissionError()
   sendCredentials({
     connectionId: ctx.params.id,
     issuingDID: config.wallet.trust_did,
@@ -33,5 +33,5 @@ router.get('/verify/claims/:id', async (ctx) => {
 
 router.get('/generate/fake/kyc', async (ctx) => {
   if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
-  ctx.body = await createConnectURL(`https://${ctx.request.host}/verify/claims`)
+  ctx.body = await createConnectURL(`https://${ctx.request.host}/verify/claims/${config.adminApiKey}`)
 })

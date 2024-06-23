@@ -1,6 +1,6 @@
 import Shortner from '../models/shortner/index.js'
 import Router from '@koa/router'
-import { sendCredentials } from '../services/wallet/index.js'
+import { createConnectURL, sendCredentials } from '../services/wallet/index.js'
 import config from '../config.js'
 import { PermissionError } from '../utils/errors.js'
 
@@ -15,7 +15,6 @@ router.get('/r/:id/fetch', async (ctx) => {
   ctx.body = await Shortner.get(ctx.params.id)
 })
 
-
 router.get('/verify/claims/:id', async (ctx) => {
   if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
   sendCredentials({
@@ -26,8 +25,13 @@ router.get('/verify/claims/:id', async (ctx) => {
       first_name: 'Ehsan',
       last_name: 'Mahmoudi',
       document_type: 'WhoIsYourDaddy',
-      issued_date: new Date().toISOString(),
+      issued_date: new Date().toISOString()
     }
   })
   ctx.body = { message: 'success' }
+})
+
+router.get('/generate/fake/kyc', async (ctx) => {
+  if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
+  ctx.body = await createConnectURL(`https://${ctx.request.host}/verify/claims`)
 })

@@ -240,7 +240,6 @@ export const updateInvitation = async (identityId, invitationId, status) => {
       } else {
         await updateDisputeState(contributeInvitation.dispute_id, 'JUROR_SELECTION', { transaction: client })
       }
-      console.log(ACCEPTED, INVITED)
       await client.query('COMMIT') //TODO: check for locking the respective rows
 
       return await getInvitationIdentityIdAndId(identityId, invitationId)

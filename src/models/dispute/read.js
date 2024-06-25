@@ -71,6 +71,7 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
         ELSE d.state
         END
     ) AS state,
+    winner_party,
     code,
     (
       CASE
@@ -150,6 +151,7 @@ export const getByIdentityIdAndId = async (identityId, id) => {
             ELSE d.state
             END
         ) AS state,
+        winner_party,
         code,
         (
           CASE
@@ -222,7 +224,7 @@ export const getPotentialJurors = async (disputeId, { dispute, status = 'JUROR_S
     FROM users u
     JOIN disputes d ON d.id=${disputeId}
     LEFT JOIN dispute_contributor_invitations dci ON dci.contributor_id=u.id AND dci.dispute_id=d.id
-    WHERE u.is_contributor=TRUE AND dci.id IS NULL AND d.state=${status} AND u.id!=${dispute.claimant.id} AND u.id!=${dispute.respondent.id}
+    WHERE u.is_contributor=TRUE AND u.impact_points >= 10000 AND dci.id IS NULL AND d.state=${status} AND u.id!=${dispute.claimant.id} AND u.id!=${dispute.respondent.id}
     ORDER BY RANDOM()
     LIMIT 50
   `)

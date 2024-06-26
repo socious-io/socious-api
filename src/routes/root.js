@@ -34,12 +34,12 @@ router.get('/verify/claims/:apikey/:id', async (ctx) => {
 
 router.get('/generate/fake/kyc/conn', async (ctx) => {
   if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
-  ctx.body = await createConnectURL(`https://${ctx.request.host}/verify/claims/${config.adminApiKey}`)
+  ctx.body = await createConnectURL(`https://${ctx.request.host}/verify/claims/${config.adminApiKey}`, 'Fake KYC Connection')
 })
 
 router.get('/generate/fake/kyc', async (ctx) => {
   if (ctx.query.apikey !== config.adminApiKey) throw new PermissionError()
-  const conn = await createConnectURL(`https://${ctx.request.host}/verify/claims/${config.adminApiKey}`)
+  const conn = await createConnectURL(`https://${ctx.request.host}/verify/claims/${config.adminApiKey}`, 'Fake KYC Connection')
   const qrCodeDataURL = await QRCode.toDataURL(`https://${ctx.request.host}/r/${conn.short_id}`)
   ctx.type = 'html';
   ctx.body = `<html><body><img src="${qrCodeDataURL}" style="width: 400px; height: 400px;" /></body></html>`;

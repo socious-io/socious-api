@@ -82,7 +82,12 @@ const send = async (userId, message, body, id, identityName, setting) => {
 const coordinateNotifs = async (userId, body) => {
   const consolidateExceptions = [Data.NotificationType.APPLICATION, Data.NotificationType.FOLLOWED]
   const name = body.identity?.meta?.name || body.identity?.meta?.email
-  let message = makeMessage(body.type, { name, org_name: body.org_name, job_name: body.job_name })
+  let message = makeMessage(body.type, {
+    name,
+    org_name: body.org_name,
+    job_name: body.job_name,
+    dispute: body.dispute
+  })
   const consolidateTime = 30 * 60 * 1000
   const now = new Date()
   const latest = await Notif.latest(userId, body.type, body.refId, new Date(now.getTime() - consolidateTime))

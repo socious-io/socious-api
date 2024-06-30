@@ -7,6 +7,7 @@ import { paginate } from '../utils/middlewares/requests.js'
 import { checkIdParams, dispute } from '../utils/middlewares/route.js'
 import { validate } from '@socious/data'
 import { BadRequestError, NotFoundError } from '../utils/errors.js'
+import moment from 'moment'
 
 export const router = new Router()
 
@@ -24,7 +25,12 @@ router.post('/', loginRequired, async (ctx) => {
     type: Notif.Types.DISPUTE_INITIATED,
     refId: ctx.body.id,
     parentId: null,
-    identity
+    identity,
+    dispute: {
+      title: ctx.body.title,
+      code: ctx.body.code,
+      expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+    }
   })
 })
 
@@ -64,13 +70,6 @@ router.post('/:id/message', loginRequired, checkIdParams, dispute, async (ctx) =
     throw new BadRequestError()
   }
   ctx.body = await Dispute.dispatchEvent(identity.id, id, request.body)
-
-  Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
-    type: Notif.Types.DISPUTE_NEW_MESSAGE,
-    refId: ctx.body.id,
-    parentId: null,
-    identity
-  })
 })
 
 router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) => {
@@ -93,12 +92,16 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
     { ...request.body, eventType: 'RESPONSE' },
     { changeState: isInAwaitingResponseState ? 'JUROR_SELECTION' : null }
   )
-  console.log(ctx.dispute.state)
+
   Event.push(Event.Types.NOTIFICATION, ctx.body.claimant.id, {
     type: Notif.Types.DISPUTE_NEW_RESPONSE,
     refId: id,
     parentId: null,
-    identity
+    identity,
+    dispute: {
+      title: ctx.body.title,
+      code: ctx.body.code
+    }
   })
 
   //Sending Invitations
@@ -110,7 +113,11 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
         type: Notif.Types.DISPUTE_JUROR_CONTRIBUTION_INVITED,
         refId: contributionInvitation.id,
         parentId: null,
-        identity
+        identity,
+        dispute: {
+          title: ctx.body.title,
+          code: ctx.body.code
+        }
       })
     }
   }
@@ -126,13 +133,6 @@ router.post('/:id/withdraw', loginRequired, checkIdParams, dispute, async (ctx) 
     throw new BadRequestError()
   }
   ctx.body = await Dispute.dispatchEvent(identity.id, id, { eventType: 'WITHDRAW' }, { changeState: 'WITHDRAWN' })
-
-  Event.push(Event.Types.NOTIFICATION, ctx.body.respondent.id, {
-    type: Notif.Types.DISPUTE_WITHDRAWN,
-    refId: id,
-    parentId: null,
-    identity
-  })
 })
 
 router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
@@ -142,12 +142,31 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
     dispute
   } = ctx
 
-  if (ctx.dispute.direction != 'juror' || (vote_side != 'CLAIMANT' && vote_side != 'RESPONDENT')) {
+  if (
+    ctx.dispute.direction != 'juror' ||
+    (vote_side != 'CLAIMANT' && vote_side != 'RESPONDENT') ||
+    dispute.state != 'PENDING_REVIEW'
+  ) {
     throw new BadRequestError()
   }
 
   await Dispute.castVoteOnDispute(dispute.id, identity.id, vote_side)
   ctx.body = await Dispute.getByIdentityIdAndId(identity.id, dispute.id)
+
+  if (ctx.body.state == 'CLOSED' && ctx.body.winner_party) {
+    const looserPartyIdentityId = ctx.body.winner_party == 'CLAIMANT' ? ctx.body.respondent.id : ctx.body.claimant.id
+
+    Event.push(Event.Types.NOTIFICATION, looserPartyIdentityId, {
+      type: Notif.Types.DISPUTE_CLOSED_TO_LOSER_PARTY,
+      refId: ctx.body.id,
+      parentId: null,
+      identity,
+      dispute: {
+        title: ctx.body.title,
+        code: ctx.body.code
+      }
+    })
+  }
 })
 
 //Contribution Invitations
@@ -165,13 +184,52 @@ router.get('/invitations/:invitation_id', loginRequired, async (ctx) => {
 
 router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => {
   const {
-    identity: { id },
+    identity,
     params: { invitation_id }
   } = ctx
   try {
-    ctx.body = await Dispute.updateInvitation(id, invitation_id, 'ACCEPTED')
+    ctx.body = await Dispute.updateInvitation(identity.id, invitation_id, 'ACCEPTED')
+
+    //In case of all of the jurors has been selected disputes goes into the PENDING_REVIEW state
+    const DisputeJurors = await Dispute.getJurors(ctx.body.dispute.id),
+      dispute = await Dispute.getByIdentityIdAndId(identity.id, ctx.body.dispute.id)
+    if (dispute.state == 'PENDING_REVIEW') {
+      DisputeJurors.forEach((disputeJuror) => {
+        Event.push(Event.Types.NOTIFICATION, disputeJuror.juror.id, {
+          type: Notif.Types.DISPUTE_JUROR_SELECTION_COMPLETED_TO_JURORS,
+          refId: dispute.id,
+          parentId: null,
+          identity,
+          dispute: {
+            title: dispute.title,
+            code: dispute.code
+          }
+        })
+      })
+
+      Event.push(Event.Types.NOTIFICATION, dispute.claimant.id, {
+        type: Notif.Types.DISPUTE_JUROR_SELECTION_COMPLETED_TO_PARTIES,
+        refId: dispute.id,
+        parentId: null,
+        identity,
+        dispute: {
+          title: dispute.title,
+          code: dispute.code
+        }
+      })
+
+      Event.push(Event.Types.NOTIFICATION, dispute.respondent.id, {
+        type: Notif.Types.DISPUTE_JUROR_SELECTION_COMPLETED_TO_PARTIES,
+        refId: dispute.id,
+        parentId: null,
+        identity,
+        dispute: {
+          title: dispute.title,
+          code: dispute.code
+        }
+      })
+    }
   } catch (e) {
-    console.log(e)
     throw new NotFoundError()
   }
 })

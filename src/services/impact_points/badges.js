@@ -22,12 +22,19 @@ export const badges = async (identityId) => {
 
 export const addHistory = async (
   identityId,
-  { mission_id, social_cause, social_cause_category, total_points, submitted_work_id }
+  {
+    total_points,
+    social_cause = null,
+    mission_id = null,
+    social_cause_category = null,
+    submitted_work_id = null,
+    label = null
+  }
 ) => {
   try {
     return app.db.get(sql`
-      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category, submitted_work_id)
-      VALUES (${total_points}, ${mission_id}, ${identityId}, ${social_cause}, ${social_cause_category}, ${submitted_work_id})
+      INSERT INTO impact_points_history (total_points, mission_id, identity_id, social_cause, social_cause_category, submitted_work_id, label)
+      VALUES (${total_points}, ${mission_id}, ${identityId}, ${social_cause}, ${social_cause_category}, ${submitted_work_id}, ${label})
       RETURNING id
     `)
   } catch (err) {

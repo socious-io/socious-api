@@ -7,7 +7,8 @@ export const filterColumns = {
   city: String,
   type: String,
   social_causes: Array,
-  verified_impact: Boolean
+  verified_impact: Boolean,
+  impact_detected: Boolean
 }
 
 export const sortColumns = ['created_at', 'updated_at']

@@ -91,6 +91,34 @@ const getInvitationCountGroupedByStatus = async (disputeId, { transaction }) => 
   return contributeInvitationsAggregation.rows
 }
 
+//Get vote count of the "dispute jurors" by dispute id aggregated by vote_side
+const getJurorCountGroupedByVoteside = async (disputeId, { transaction = null } = {}) => {
+  const client = transaction ?? app.db
+  const jurorVotesideAggregation = await client.query(
+    sql`
+    SELECT vote_side, COUNT(dj.id)::int
+    FROM dispute_jourors dj
+    WHERE dispute_id=${disputeId}
+    GROUP BY vote_side
+  `
+  )
+  return jurorVotesideAggregation.rows
+}
+
+//Get "dispute jurors" by dispute id
+export const getJurors = async (disputeId, { transaction = null } = {}) => {
+  const client = transaction ?? app.db
+  const jurors = await client.query(
+    sql`
+    SELECT dj.*, row_to_json(u) as juror
+    FROM dispute_jourors dj
+    JOIN users u ON u.id=dj.juror_id
+    WHERE dispute_id=${disputeId}
+  `
+  )
+  return jurors.rows
+}
+
 //Delete the "dispute contribution invitations" that are not accepted
 const deleteRedudantInvitations = async (disputeId, { transaction }) => {
   const client = transaction ?? app.db
@@ -212,8 +240,8 @@ export const updateInvitation = async (identityId, invitationId, status) => {
       } else {
         await updateDisputeState(contributeInvitation.dispute_id, 'JUROR_SELECTION', { transaction: client })
       }
+      await client.query('COMMIT') //TODO: check for locking the respective rows
 
-      await client.query('COMMIT')
       return await getInvitationIdentityIdAndId(identityId, invitationId)
     } catch (err) {
       await client.query('ROLLBACK')
@@ -223,19 +251,60 @@ export const updateInvitation = async (identityId, invitationId, status) => {
 }
 
 export const castVoteOnDispute = async (id, identityId, voteSide) => {
-  try {
-    const { rows } = await app.db.query(
-      sql`
-        UPDATE dispute_jourors dj
-        SET vote_side=${voteSide}
-        WHERE dispute_id=${id} AND juror_id=${identityId}
-        RETURNING *
-      `
-    )
-    return rows[0]
-  } catch (err) {
-    new EntryError(err.message)
-  }
+  return await app.db.with(async (client) => {
+    await client.query('BEGIN')
+    try {
+      //TODO: Handle race conditions
+      const { rows } = await client.query(
+        sql`
+          UPDATE dispute_jourors dj
+          SET vote_side=${voteSide}
+          WHERE dispute_id=${id} AND juror_id=${identityId}
+          RETURNING *
+        `
+      )
+
+      const {
+        CLAIMANT = 0,
+        RESPONDENT = 0,
+        total
+      } = (await getJurorCountGroupedByVoteside(id, { transaction: client })).reduce(
+        (pv, cv) => {
+          pv.total += cv.count
+          return {
+            ...pv,
+            [cv.vote_side]: cv.count
+          }
+        },
+        {
+          total: 0
+        }
+      )
+
+      if (CLAIMANT + RESPONDENT == total) {
+        //There's no NULL vote remaining
+        //CAUTION: equal condition is not specified!
+        let winnerParty = null
+        if (CLAIMANT < RESPONDENT) winnerParty = 'RESPONDENT'
+        else if (CLAIMANT > RESPONDENT) winnerParty = 'CLAIMANT'
+        await client.query(
+          sql`
+            UPDATE disputes d
+            SET state='CLOSED', winner_party=${winnerParty}
+            WHERE id=${id}
+            RETURNING *
+          `
+        )
+      }
+      // else -> there's still a NULL vote
+
+      await client.query('COMMIT')
+      return rows[0]
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    }
+  })
 }
 
 export const sendDisputeContributionInvitation = async (disputeId, userIds) => {
@@ -254,7 +323,7 @@ export const sendDisputeContributionInvitation = async (disputeId, userIds) => {
           RETURNING *;
         `
       )
-      invitations.push(rows)
+      invitations.push(rows[0])
     }
     return invitations
   } catch (err) {

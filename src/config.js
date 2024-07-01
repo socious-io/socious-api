@@ -69,7 +69,8 @@ export default {
         ASSIGNER_CONFIRMED: 'd-c8701ca45acc4922a6551575953952d4',
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
-        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443'
+        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
+        IMPACT_POINTS_10K: ' d-f03c8940ad944e9b959b126247dcce55'
       }
     }
   },
@@ -345,6 +346,7 @@ export default {
   wallet: {
     agent: 'https://agent.socious.io',
     agent_api_key: process.env.PRISM_AGENT_API_KEY,
+    trust_did: process.env.PRISM_AGENT_TRUST_DID,
     connect_address: process.env.WALLET_CONNECT_URL || 'https://wallet.socious.io/connect',
     experience_vc_callback:
       process.env.WALLET_EXPERIENCE_VC_CALLBACK || 'https://socious.io/api/v2/credentials/experiences/connect/callback',
@@ -352,7 +354,8 @@ export default {
       process.env.WALLET_EDUCATION_VC_CALLBACK || 'https://socious.io/api/v2/credentials/educations/connect/callback',
     verification_callback:
       process.env.WALLET_VERIFICATION_CALLBACK || 'https://socious.io/api/v2/credentials/verifications/connect/callback'
-  }
+  },
+  adminApiKey: process.env.ADMIN_API_KEY
 }
 
 /**

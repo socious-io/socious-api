@@ -480,6 +480,7 @@ exports[`get a dispute 1`] = `
   "state": Any<String>,
   "title": Any<String>,
   "updated_at": Any<String>,
+  "winner_party": null,
 }
 `;
 
@@ -506,6 +507,7 @@ exports[`get all disputes as climant 1`] = `
       "state": Any<String>,
       "title": Any<String>,
       "updated_at": Any<String>,
+      "winner_party": null,
     },
   ],
   "limit": 10,
@@ -562,6 +564,7 @@ exports[`issue a dispute 1`] = `
   "state": Any<String>,
   "title": Any<String>,
   "updated_at": Any<String>,
+  "winner_party": null,
 }
 `;
 
@@ -586,6 +589,7 @@ exports[`put message on a dispute 1`] = `
   "state": Any<String>,
   "title": Any<String>,
   "updated_at": Any<String>,
+  "winner_party": null,
 }
 `;
 
@@ -610,6 +614,7 @@ exports[`put response on a dispute 1`] = `
   "state": Any<String>,
   "title": Any<String>,
   "updated_at": Any<String>,
+  "winner_party": null,
 }
 `;
 
@@ -634,5 +639,6 @@ exports[`withdraw from a dispute 1`] = `
   "state": Any<String>,
   "title": Any<String>,
   "updated_at": Any<String>,
+  "winner_party": null,
 }
 `;

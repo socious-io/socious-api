@@ -38,10 +38,10 @@ export const createDID = async () => {
   return res.data.scheduledOperation.didRef
 }
 
-export const createConnectURL = async (callback) => {
+export const createConnectURL = async (callback, label) => {
   const res = await axios.post(
     `${config.wallet.agent}/cloud-agent/connections`,
-    { label: 'Socious Claim Connection' },
+    { label: label || 'Socious Claim Connection' },
     { headers }
   )
   const id = res.data.connectionId

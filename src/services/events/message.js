@@ -1,6 +1,6 @@
 import Data from '@socious/data'
 
-export const makeMessage = (type, { name, job_name = undefined, org_name = undefined }) => {
+export const makeMessage = (type, { name, job_name = undefined, org_name = undefined, dispute = undefined }) => {
   switch (type) {
     case Data.NotificationType.FOLLOWED:
       return {
@@ -195,23 +195,49 @@ export const makeMessage = (type, { name, job_name = undefined, org_name = undef
       }
     case Data.NotificationType.DISPUTE_INITIATED:
       return {
-        title: Data.NotificationTitle.DISPUTE_INITIATED,
-        body: `${name} has been initiated a dispute against you.`
+        title: `"${dispute.title}" (Dispute ID #${dispute.code}). Review the dispute details and submit your response before ${dispute.expiration}.`,
+        body: `${name} Submitted a dispute against you:`
       }
     case Data.NotificationType.DISPUTE_NEW_MESSAGE:
       return {
-        title: Data.NotificationTitle.DISPUTE_NEW_MESSAGE,
-        body: `${name} had put a message on the dispute.`
+        title: ``,
+        body: ``
       }
     case Data.NotificationType.DISPUTE_NEW_RESPONSE:
       return {
-        title: Data.NotificationTitle.DISPUTE_NEW_RESPONSE,
-        body: `${name} had send a response on the dispute.`
+        title: `"${dispute.title}" (Dispute ID #${dispute.code}). Review their response and evidence in the disputes section.`,
+        body: `${name} Has submitted their response to your dispute:`
       }
     case Data.NotificationType.DISPUTE_WITHDRAWN:
       return {
-        title: Data.NotificationTitle.DISPUTE_WITHDRAWN,
-        body: `${name} has been withdrawn the dispute.`
+        title: ``,
+        body: ``
+      }
+    case Data.NotificationType.DISPUTE_JUROR_CONTRIBUTION_INVITED:
+      return {
+        title: `Dispute ID #${dispute.code} - Response required within 72 Hours
+        
+        You have been invited to serve as a juror for a dispute on Socious. Accept the invitation to earn impact points and contribute to a fair resolution. Click to review the details and accept or decline.`,
+        body: `Socious Team Juror Invitation: `
+      }
+    //TODO: Goes to jurors only -> DISPUTE_JUROR_SELECTION_COMPLETED
+    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_JURORS: //TODO: add this
+      return {
+        title: `Dispute ID #${dispute.code} - Jury selection complete
+        
+        The jury selection process is now complete, you will be collaborating with two other jurors to review the case materials and reach a fair decision`,
+        body: `Socious Team`
+      }
+    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_PARTIES: //TODO: add this
+      return {
+        title: `Dispute ID #${dispute.code}
+        3 jurors have been selected. They have until ${dispute.expiration} to reach a decision.`,
+        body: `Socious Team`
+      }
+    case Data.NotificationType.DISPUTE_CLOSED_TO_LOSER_PARTY: //TODO: add this
+      return {
+        title: `The jurors have reached a decision on the dispute (Dispute ID #${dispute.code}) filed against you. View the outcome in the disputes section.`,
+        body: `Socious Team`
       }
     default:
       throw new Error(`${type} is not valid to create message`)

@@ -239,6 +239,12 @@ export const makeMessage = (type, { name, job_name = undefined, org_name = undef
         title: `The jurors have reached a decision on the dispute (Dispute ID #${dispute.code}) filed against you. View the outcome in the disputes section.`,
         body: `Socious Team`
       }
+    // FIXME: fix this notif message
+    case Data.NotificationType.REACH_10K_IMPACT_POINT:
+      return {
+        title: `Congratulations! you reached 10k impact points`,
+        body: `Socious Team`
+      }
     default:
       throw new Error(`${type} is not valid to create message`)
   }

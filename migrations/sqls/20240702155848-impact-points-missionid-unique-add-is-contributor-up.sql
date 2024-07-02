@@ -2,6 +2,7 @@ ALTER TABLE
   impact_points_history
 ADD
   COLUMN label text;
+  
 CREATE UNIQUE INDEX idx_disputes_mission_id ON disputes(mission_id);
 
 -- Settign a defult for is_contributor flag conciders "they haven't Opt-In to the program" as default behavior

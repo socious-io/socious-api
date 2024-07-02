@@ -70,7 +70,7 @@ export default {
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
         MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
-        IMPACT_POINTS_10K: ' d-f03c8940ad944e9b959b126247dcce55'
+        REACH_10K_IMPACT_POINT: ' d-f03c8940ad944e9b959b126247dcce55'
       }
     }
   },

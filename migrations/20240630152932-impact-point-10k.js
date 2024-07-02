@@ -19,7 +19,7 @@ exports.setup = function (options, seedLink) {
 }
 
 exports.up = function (db) {
-  var filePath = path.join(__dirname, 'sqls', '20240623183533-dispute-add-missing-notifications-up.sql')
+  var filePath = path.join(__dirname, 'sqls', '20240630152932-impact-point-10k-up.sql')
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
       if (err) return reject(err)
@@ -33,7 +33,7 @@ exports.up = function (db) {
 }
 
 exports.down = function (db) {
-  var filePath = path.join(__dirname, 'sqls', '20240623183533-dispute-add-missing-notifications-down.sql')
+  var filePath = path.join(__dirname, 'sqls', '20240630152932-impact-point-10k-down.sql')
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
       if (err) return reject(err)

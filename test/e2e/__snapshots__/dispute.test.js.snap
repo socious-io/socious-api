@@ -476,6 +476,10 @@ exports[`get a dispute 1`] = `
     "members": 0,
     "voted": 0,
   },
+  "project": {
+    "id": Any<String>,
+    "social_causes": Any<Array>,
+  },
   "respondent": Any<Object>,
   "state": Any<String>,
   "title": Any<String>,
@@ -502,6 +506,10 @@ exports[`get all disputes as climant 1`] = `
       "jury": {
         "members": 0,
         "voted": 0,
+      },
+      "project": {
+        "id": Any<String>,
+        "social_causes": Any<Array>,
       },
       "respondent": Any<Object>,
       "state": Any<String>,
@@ -560,6 +568,10 @@ exports[`issue a dispute 1`] = `
     "members": 0,
     "voted": 0,
   },
+  "project": {
+    "id": Any<String>,
+    "social_causes": Any<Array>,
+  },
   "respondent": Any<Object>,
   "state": Any<String>,
   "title": Any<String>,
@@ -584,6 +596,10 @@ exports[`put message on a dispute 1`] = `
   "jury": {
     "members": 0,
     "voted": 0,
+  },
+  "project": {
+    "id": Any<String>,
+    "social_causes": Any<Array>,
   },
   "respondent": Any<Object>,
   "state": Any<String>,
@@ -610,6 +626,10 @@ exports[`put response on a dispute 1`] = `
     "members": 0,
     "voted": 0,
   },
+  "project": {
+    "id": Any<String>,
+    "social_causes": Any<Array>,
+  },
   "respondent": Any<Object>,
   "state": Any<String>,
   "title": Any<String>,
@@ -634,6 +654,10 @@ exports[`withdraw from a dispute 1`] = `
   "jury": {
     "members": 0,
     "voted": 0,
+  },
+  "project": {
+    "id": Any<String>,
+    "social_causes": Any<Array>,
   },
   "respondent": Any<Object>,
   "state": Any<String>,

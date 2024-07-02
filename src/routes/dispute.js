@@ -8,6 +8,7 @@ import { checkIdParams, dispute } from '../utils/middlewares/route.js'
 import { validate } from '@socious/data'
 import { BadRequestError, NotFoundError } from '../utils/errors.js'
 import moment from 'moment'
+import { addHistory } from '../services/impact_points/badges.js'
 
 export const router = new Router()
 
@@ -152,6 +153,14 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
 
   await Dispute.castVoteOnDispute(dispute.id, identity.id, vote_side)
   ctx.body = await Dispute.getByIdentityIdAndId(identity.id, dispute.id)
+
+  //Calculating impact points to be awarded
+  const social_cause = ctx.body.project.social_causes[0]
+  await addHistory(identity.id, {
+    total_points: 100,
+    label: 'dispute',
+    social_cause: social_cause ?? null
+  })
 
   if (ctx.body.state == 'CLOSED' && ctx.body.winner_party) {
     const looserPartyIdentityId = ctx.body.winner_party == 'CLAIMANT' ? ctx.body.respondent.id : ctx.body.claimant.id

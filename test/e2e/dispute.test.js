@@ -109,6 +109,10 @@ test('issue a dispute', async () => {
       id: expect.any(String),
       name: expect.any(String)
     },
+    project: {
+      id: expect.any(String),
+      social_causes: expect.any(Array)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -135,6 +139,10 @@ test('get a dispute', async () => {
     contract: {
       id: expect.any(String),
       name: expect.any(String)
+    },
+    project: {
+      id: expect.any(String),
+      social_causes: expect.any(Array)
     },
     title: expect.any(String),
     state: expect.any(String),
@@ -165,6 +173,10 @@ test('put message on a dispute', async () => {
     contract: {
       id: expect.any(String),
       name: expect.any(String)
+    },
+    project: {
+      id: expect.any(String),
+      social_causes: expect.any(Array)
     },
     title: expect.any(String),
     state: expect.any(String),
@@ -197,6 +209,10 @@ test('put response on a dispute', async () => {
       id: expect.any(String),
       name: expect.any(String)
     },
+    project: {
+      id: expect.any(String),
+      social_causes: expect.any(Array)
+    },
     title: expect.any(String),
     state: expect.any(String),
     direction: expect.any(String),
@@ -220,6 +236,10 @@ test('get all disputes as climant', async () => {
         contract: {
           id: expect.any(String),
           name: expect.any(String)
+        },
+        project: {
+          id: expect.any(String),
+          social_causes: expect.any(Array)
         },
         title: expect.any(String),
         state: expect.any(String),
@@ -247,6 +267,10 @@ test('withdraw from a dispute', async () => {
     contract: {
       id: expect.any(String),
       name: expect.any(String)
+    },
+    project: {
+      id: expect.any(String),
+      social_causes: expect.any(Array)
     },
     title: expect.any(String),
     state: expect.any(String),

@@ -110,7 +110,7 @@ export const getJurors = async (disputeId, { transaction = null } = {}) => {
   const client = transaction ?? app.db
   const jurors = await client.query(
     sql`
-    SELECT *, row_to_json(u) as juror
+    SELECT dj.*, row_to_json(u) as juror
     FROM dispute_jourors dj
     JOIN users u ON u.id=dj.juror_id
     WHERE dispute_id=${disputeId}

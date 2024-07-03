@@ -26,6 +26,16 @@ services:
       - '8222:8222'
     restart: 'always'
 
+  nats-ui:
+    container_name: 'socious-nats-ui'
+    image: 'ghcr.io/nats-nui/nui'
+    ports:
+      - '31311:31311'
+    restart: 'always'
+    volumes:
+      - '../nui/db:/db'
+      - '../nui/creds:/nats-creds:ro'
+
 networks:
   default:
     driver: bridge

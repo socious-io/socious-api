@@ -142,7 +142,7 @@ export const optInContributions = async (id) => {
     const { rows } = await app.db.query(sql`
       UPDATE users
       SET is_contributor=true
-      WHERE id=${id} AND (is_contributor=false OR is_contributor IS NULL)
+      WHERE id=${id} AND is_contributor=false
       RETURNING *
     `)
     return rows[0]
@@ -156,7 +156,7 @@ export const leaveOutContributions = async (id) => {
     const { rows } = await app.db.query(sql`
       UPDATE users
       SET is_contributor=false
-      WHERE id=${id} AND (is_contributor=true OR is_contributor IS NULL)
+      WHERE id=${id} AND is_contributor=true
       RETURNING *
     `)
     return rows[0]

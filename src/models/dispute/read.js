@@ -68,7 +68,7 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
     d.id, d.title, d.category,
     (
       CASE
-        WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+        WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL AND d.state='PENDING_REVIEW' THEN 'DECISION_SUBMITTED'
         ELSE d.state
         END
     ) AS state,

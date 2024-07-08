@@ -198,20 +198,10 @@ export const makeMessage = (type, { name, job_name = undefined, org_name = undef
         title: `"${dispute.title}" (Dispute ID #${dispute.code}). Review the dispute details and submit your response before ${dispute.expiration}.`,
         body: `${name} Submitted a dispute against you:`
       }
-    case Data.NotificationType.DISPUTE_NEW_MESSAGE:
-      return {
-        title: ``,
-        body: ``
-      }
     case Data.NotificationType.DISPUTE_NEW_RESPONSE:
       return {
         title: `"${dispute.title}" (Dispute ID #${dispute.code}). Review their response and evidence in the disputes section.`,
         body: `${name} Has submitted their response to your dispute:`
-      }
-    case Data.NotificationType.DISPUTE_WITHDRAWN:
-      return {
-        title: ``,
-        body: ``
       }
     case Data.NotificationType.DISPUTE_JUROR_CONTRIBUTION_INVITED:
       return {
@@ -220,29 +210,28 @@ export const makeMessage = (type, { name, job_name = undefined, org_name = undef
         You have been invited to serve as a juror for a dispute on Socious. Accept the invitation to earn impact points and contribute to a fair resolution. Click to review the details and accept or decline.`,
         body: `Socious Team Juror Invitation: `
       }
-    //TODO: Goes to jurors only -> DISPUTE_JUROR_SELECTION_COMPLETED
-    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_JURORS: //TODO: add this
+    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_JURORS:
       return {
         title: `Dispute ID #${dispute.code} - Jury selection complete
         
         The jury selection process is now complete, you will be collaborating with two other jurors to review the case materials and reach a fair decision`,
         body: `Socious Team`
       }
-    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_PARTIES: //TODO: add this
+    case Data.NotificationType.DISPUTE_JUROR_SELECTION_COMPLETED_TO_PARTIES:
       return {
         title: `Dispute ID #${dispute.code}
         3 jurors have been selected. They have until ${dispute.expiration} to reach a decision.`,
         body: `Socious Team`
       }
-    case Data.NotificationType.DISPUTE_CLOSED_TO_LOSER_PARTY: //TODO: add this
+    case Data.NotificationType.DISPUTE_CLOSED_TO_LOSER_PARTY:
       return {
         title: `The jurors have reached a decision on the dispute (Dispute ID #${dispute.code}) filed against you. View the outcome in the disputes section.`,
         body: `Socious Team`
       }
-    // FIXME: fix this notif message
+
     case Data.NotificationType.REACH_10K_IMPACT_POINT:
       return {
-        title: `Congratulations! you reached 10k impact points`,
+        title: `Congratulations on reaching 10,000 impact points! You're now invited to join our Socious Contributor community and make an even bigger impact on our platform. Click to learn more and join now!`,
         body: `Socious Team`
       }
     default:

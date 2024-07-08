@@ -28,6 +28,8 @@ router.post('/', loginRequired, async (ctx) => {
     parentId: null,
     identity,
     dispute: {
+      claimant_name: ctx.body.claimant.meta.name,
+      respondent_name: ctx.body.respondent.meta.name,
       title: ctx.body.title,
       code: ctx.body.code,
       expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
@@ -100,6 +102,8 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
     parentId: null,
     identity,
     dispute: {
+      claimant_name: ctx.body.claimant.meta.name,
+      respondent_name: ctx.body.respondent.meta.name,
       title: ctx.body.title,
       code: ctx.body.code
     }
@@ -116,6 +120,8 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
         parentId: null,
         identity,
         dispute: {
+          claimant_name: ctx.body.claimant.meta.name,
+          respondent_name: ctx.body.respondent.meta.name,
           title: ctx.body.title,
           code: ctx.body.code
         }
@@ -171,6 +177,8 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
       parentId: null,
       identity,
       dispute: {
+        claimant_name: ctx.body.claimant.meta.name,
+        respondent_name: ctx.body.respondent.meta.name,
         title: ctx.body.title,
         code: ctx.body.code
       }
@@ -210,6 +218,8 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
           parentId: null,
           identity,
           dispute: {
+            claimant_name: dispute.claimant.meta.name,
+            respondent_name: dispute.respondent.meta.name,
             title: dispute.title,
             code: dispute.code
           }
@@ -222,8 +232,11 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
         parentId: null,
         identity,
         dispute: {
+          claimant_name: dispute.claimant.meta.name,
+          respondent_name: dispute.respondent.meta.name,
           title: dispute.title,
-          code: dispute.code
+          code: dispute.code,
+          expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         }
       })
 
@@ -233,8 +246,11 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
         parentId: null,
         identity,
         dispute: {
+          claimant_name: dispute.claimant.meta.name,
+          respondent_name: dispute.respondent.meta.name,
           title: dispute.title,
-          code: dispute.code
+          code: dispute.code,
+          expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         }
       })
     }

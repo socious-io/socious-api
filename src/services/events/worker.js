@@ -37,7 +37,7 @@ const pushNotifications = async (userIds, message, data) => {
   })
 }
 
-const email = async (notifType, userId, message, id, identityName) => {
+const email = async (notifType, userId, message, id, identityName, { additionalKwargs = {} }) => {
   let user = {}
   try {
     user = await User.get(userId)
@@ -54,7 +54,8 @@ const email = async (notifType, userId, message, id, identityName) => {
     kwargs: {
       notify_name: user.first_name,
       name: identityName,
-      link: `${Config.notifAppLink}/${id}`
+      link: `${Config.notifAppLink}/${id}`,
+      ...additionalKwargs
     }
   })
 }
@@ -76,7 +77,16 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
   if (setting.push) await pushNotifications([userId], message, body)
 
-  if (setting.email) await email(body.type, userId, message, id, identityName)
+  if (setting.email)
+    await email(body.type, userId, message, id, identityName, {
+      additionalKwargs: {
+        dispute_title: body.dispute ? body.dispute.title : null,
+        dispute_code: body.dispute ? body.dispute.code : null,
+        dispute_claimant: body.dispute ? body.dispute.claimant_name : null,
+        dispute_respondent: body.dispute ? body.dispute.respondent_name : null,
+        dispute_expiration_date: body.dispute ? body.dispute.expiration : null
+      }
+    })
 }
 
 const coordinateNotifs = async (userId, body) => {

@@ -95,7 +95,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "@babel/plugin-syntax-import-assertions": "^7.24.7",
     "@types/jest": "^29.5.12",
     "@types/koa": "^2.13.6",
     "@types/pg": "^8.6.6",

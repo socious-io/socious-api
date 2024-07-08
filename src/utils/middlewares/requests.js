@@ -52,6 +52,7 @@ export const paginateCTX = async (ctx, next) => {
 
   let limit = parseInt(ctx.query.limit) || 10
   if (limit < 1) limit = 10
+  if (limit > 1000) limit = 1000
 
   ctx.paginate = {
     page,

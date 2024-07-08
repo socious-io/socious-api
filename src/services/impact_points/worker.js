@@ -4,8 +4,10 @@ import Mission from '../../models/mission/index.js'
 import Offer from '../../models/offer/index.js'
 import Project from '../../models/project/index.js'
 import logger from '../../utils/logging.js'
-import ProofSpace from '../proofspace/index.js'
+import Event from '../../services/events/index.js'
+import Notif from '../../models/notification/index.js'
 import { addHistory, impactPointsCalculatedWorksIds, getbyMissionId, updateHistoryPoint } from './badges.js'
+import Identity from '../../models/identity/index.js'
 
 const RATIO = 0.1
 
@@ -119,8 +121,15 @@ export const worker = async ({ mission }) => {
     })
 
     logger.info(`Calculate impact point successfully ${history.id}`)
-
-    ProofSpace.Sync({ impact_point_id: history.id })
+    const user = await User.get(mission.assignee_id)
+    if (user.impact_points >= 10000) {
+      const identity = await Identity.get(user.id)
+      Event.push(Event.Types.NOTIFICATION, user.id, {
+        type: Notif.Types.REACH_10K_IMPACT_POINT,
+        refId: history.id,
+        identity: identity
+      })
+    }
   } catch (err) {
     logger.error(`Calculating impact points ${err.message}`)
     return false

@@ -64,10 +64,11 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
 
   const { rows } = await app.db.query(
     sql`
-    SELECT d.id, d.title, d.category,
+    SELECT COUNT(d.id) OVER () as total_count,
+    d.id, d.title, d.category,
     (
       CASE
-        WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL THEN 'DECISION_SUBMITTED'
+        WHEN dj.juror_id=${identityId} AND dj.vote_side IS NOT NULL AND d.state='PENDING_REVIEW' THEN 'DECISION_SUBMITTED'
         ELSE d.state
         END
     ) AS state,
@@ -86,6 +87,10 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
       'id', m.id,
       'name', p.title
     ) as contract,
+    json_build_object(
+      'id', p.id,
+      'social_causes', p.causes_tags
+    ) as project,
     COALESCE(
       (
         SELECT
@@ -165,6 +170,10 @@ export const getByIdentityIdAndId = async (identityId, id) => {
           'id', m.id,
           'name', p.title
         ) as contract,
+        json_build_object(
+          'id', p.id,
+          'social_causes', p.causes_tags
+        ) as project,
         COALESCE(
           (
             SELECT
@@ -234,7 +243,8 @@ export const getPotentialJurors = async (disputeId, { dispute, status = 'JUROR_S
 
 export const getAllInvitationsIdentityId = async (identityId, { offset = 0, limit = 10, sort, filter }) => {
   const { rows } = await app.db.query(sql`
-    SELECT dci.id,
+    SELECT COUNT(dci.id) OVER () as total_count,
+    dci.id,
     json_build_object(
       'id', d.id,
       'title', d.title,

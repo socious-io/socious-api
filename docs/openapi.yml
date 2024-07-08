@@ -2304,6 +2304,12 @@ components:
             - PENDING_REVIEW
             - WITHDRAWN
             - CLOSED
+        winner_party:
+          type: string
+          enum:
+            - RESPONDENT
+            - CLAIMANT
+            - NULL
         code:
           type: string
         direction:
@@ -2322,6 +2328,14 @@ components:
               type: string
             name:
               type: string
+        projects:
+          properties:
+            id:
+              type: string
+            social_causes:
+              type: array
+              items:
+                type: string
         jury:
           properties:
             voted:

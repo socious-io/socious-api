@@ -76,7 +76,14 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
   if (setting.push) await pushNotifications([userId], message, body)
 
-  if (setting.email) await email(body.type, userId, message, id, identityName)
+  if (setting.email) {
+    try {
+      await email(body.type, userId, message, id, identityName)
+    } catch(err) {
+      logger.error(`sending email on notifications: ${err}`)
+    }
+
+  }
 }
 
 const coordinateNotifs = async (userId, body) => {

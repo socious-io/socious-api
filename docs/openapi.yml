@@ -2343,7 +2343,9 @@ components:
             members:
               type: number
         events:
-          $ref: '#/components/schemas/DisputeEvents'
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeEvents'
         created_at:
           type: string
         updated_at:
@@ -6765,7 +6767,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Disputes'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Disputes'
   /disputes/{dispute_id}:
     parameters:
       - name: dispute_id

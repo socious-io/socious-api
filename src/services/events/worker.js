@@ -80,13 +80,7 @@ const send = async (userId, message, body, id, identityName, setting) => {
   if (setting.email) {
     try {
       await email(body.type, userId, message, id, identityName, {
-        additionalKwargs: {
-          dispute_title: body.dispute ? body.dispute.title : null,
-          dispute_code: body.dispute ? body.dispute.code : null,
-          dispute_claimant: body.dispute ? body.dispute.claimant_name : null,
-          dispute_respondent: body.dispute ? body.dispute.respondent_name : null,
-          dispute_expiration_date: body.dispute ? body.dispute.expiration : null
-        }
+        additionalKwargs: body.additionalKwargs ?? {}
       })
     } catch (err) {
       logger.error(`sending email on notifications: ${err}`)

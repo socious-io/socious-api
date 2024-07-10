@@ -37,7 +37,7 @@ const pushNotifications = async (userIds, message, data) => {
   })
 }
 
-const email = async (notifType, userId, message, id, identityName, { additionalKwargs = {} }) => {
+const email = async (notifType, userId, message, id, identityName, additionalKwargs = {}) => {
   let user = {}
   try {
     user = await User.get(userId)
@@ -79,9 +79,7 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
   if (setting.email) {
     try {
-      await email(body.type, userId, message, id, identityName, {
-        additionalKwargs: body.additionalKwargs ?? {}
-      })
+      await email(body.type, userId, message, id, identityName, body.additionalKwargs)
     } catch (err) {
       logger.error(`sending email on notifications: ${err}`)
     }

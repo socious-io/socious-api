@@ -2328,6 +2328,12 @@ components:
               type: string
             name:
               type: string
+        escrow:
+          properties:
+            id:
+              type: string
+            payment_id:
+              type: string
         projects:
           properties:
             id:

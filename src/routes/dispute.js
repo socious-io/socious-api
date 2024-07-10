@@ -172,12 +172,18 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
   if (ctx.body.state == 'CLOSED' && ctx.body.winner_party) {
     const looserPartyIdentityId = ctx.body.winner_party == 'CLAIMANT' ? ctx.body.respondent.id : ctx.body.claimant.id
 
-    await discordDisputeMessenger.send({
-      title: `:white_check_mark: Dispute has been closed, now Socious team can intervene and release the funds to the ${ctx.body.winner_party} of the project`,
+    await discordDisputeMessenger.sendWithTitleAndProperties({
+      title: `:white_check_mark: Dispute has been closed, now Socious team can intervene and release the funds to the \`${ctx.body.winner_party}\` of the project`,
       detailObject: {
-        claimant: `${ctx.body.claimant.meta.name} (${ctx.body.claimant.meta.email})`,
-        respondent: `${ctx.body.respondent.meta.name} (${ctx.body.respondent.meta.email})`,
-        winner_party: ctx.body.winner_party,
+        'Dispute ID': ctx.body.id,
+        Claimant: `${ctx.body.claimant.meta.name} (${ctx.body.claimant.meta.email})`,
+        Respondent: `${ctx.body.respondent.meta.name} (${ctx.body.respondent.meta.email})`,
+        'Contract ID': ctx.body.contract.id,
+        'Contract Name': ctx.body.contract.name,
+        'Project ID': ctx.body.project.id,
+        'Escrow ID': ctx.body.escrow.id,
+        'Escrow Payment ID': ctx.body.escrow.payment_id,
+        'Winner Party': ctx.body.winner_party,
       }
     })
 

@@ -470,6 +470,10 @@ exports[`get a dispute 1`] = `
   },
   "created_at": Any<String>,
   "direction": Any<String>,
+  "escrow": {
+    "id": null,
+    "payment_id": null,
+  },
   "events": Any<Array>,
   "id": Any<String>,
   "jury": {
@@ -501,6 +505,10 @@ exports[`get all disputes as climant 1`] = `
       },
       "created_at": Any<String>,
       "direction": Any<String>,
+      "escrow": {
+        "id": null,
+        "payment_id": null,
+      },
       "events": Any<Array>,
       "id": Any<String>,
       "jury": {
@@ -562,6 +570,10 @@ exports[`issue a dispute 1`] = `
   },
   "created_at": Any<String>,
   "direction": Any<String>,
+  "escrow": {
+    "id": null,
+    "payment_id": null,
+  },
   "events": Any<Array>,
   "id": Any<String>,
   "jury": {
@@ -591,6 +603,10 @@ exports[`put message on a dispute 1`] = `
   },
   "created_at": Any<String>,
   "direction": Any<String>,
+  "escrow": {
+    "id": null,
+    "payment_id": null,
+  },
   "events": Any<Array>,
   "id": Any<String>,
   "jury": {
@@ -620,6 +636,10 @@ exports[`put response on a dispute 1`] = `
   },
   "created_at": Any<String>,
   "direction": Any<String>,
+  "escrow": {
+    "id": null,
+    "payment_id": null,
+  },
   "events": Any<Array>,
   "id": Any<String>,
   "jury": {
@@ -649,6 +669,10 @@ exports[`withdraw from a dispute 1`] = `
   },
   "created_at": Any<String>,
   "direction": Any<String>,
+  "escrow": {
+    "id": null,
+    "payment_id": null,
+  },
   "events": Any<Array>,
   "id": Any<String>,
   "jury": {

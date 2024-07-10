@@ -6,16 +6,26 @@ class DiscordMessenger {
     this.webhook = webhook
   }
 
-  async send({ title, detailObject }) {
+  async send(content) {
+    try {
+      await axios.post(this.webhook, {
+        content
+      })
+    } catch (error) {
+      console.error('Error sending message:', error)
+    }
+  }
+
+  async sendWithTitleAndProperties({ title, detailObject }) {
+    const flatProperties = Object.keys(detailObject)
+      .map((detailKey) => `${detailKey}: ${detailObject[detailKey]}`)
+      .join('\n')
+
     try {
       await axios.post(this.webhook, {
         content: `
         ${title}:
-        \`\`\`
-        ${Object.keys(detailObject)
-          .map((detailKey) => `${detailKey}: ${detailObject[detailKey]}`)
-          .join('\n')}
-        \`\`\`
+        \`\`\`\n${flatProperties}\n\`\`\`
       `
       })
     } catch (error) {

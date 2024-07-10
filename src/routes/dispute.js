@@ -9,6 +9,7 @@ import { validate } from '@socious/data'
 import { BadRequestError, NotFoundError } from '../utils/errors.js'
 import moment from 'moment'
 import { addHistory } from '../services/impact_points/badges.js'
+import { discordDisputeMessenger } from '../utils/externals.js'
 
 export const router = new Router()
 
@@ -184,6 +185,21 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
 
   if (ctx.body.state == 'CLOSED' && ctx.body.winner_party) {
     const looserPartyIdentityId = ctx.body.winner_party == 'CLAIMANT' ? ctx.body.respondent.id : ctx.body.claimant.id
+
+    await discordDisputeMessenger.sendWithTitleAndProperties({
+      title: `:white_check_mark: Dispute has been closed, now Socious team can intervene and release the funds to the \`${ctx.body.winner_party}\` of the project`,
+      detailObject: {
+        'Dispute ID': ctx.body.id,
+        Claimant: `${ctx.body.claimant.meta.name} (${ctx.body.claimant.meta.email})`,
+        Respondent: `${ctx.body.respondent.meta.name} (${ctx.body.respondent.meta.email})`,
+        'Contract ID': ctx.body.contract.id,
+        'Contract Name': ctx.body.contract.name,
+        'Project ID': ctx.body.project.id,
+        'Escrow ID': ctx.body.escrow.id,
+        'Escrow Payment ID': ctx.body.escrow.payment_id,
+        'Winner Party': ctx.body.winner_party,
+      }
+    })
 
     Event.push(Event.Types.NOTIFICATION, looserPartyIdentityId, {
       type: Notif.Types.DISPUTE_CLOSED_TO_LOSER_PARTY,

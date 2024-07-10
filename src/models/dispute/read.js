@@ -91,6 +91,10 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
       'id', p.id,
       'social_causes', p.causes_tags
     ) as project,
+    json_build_object(
+      'id', e.id,
+      'payment_id', e.payment_id
+    ) as escrow,
     COALESCE(
       (
         SELECT
@@ -135,9 +139,10 @@ export const all = async (identityId, { offset = 0, limit = 10, sort, filter }) 
     LEFT JOIN dispute_jourors dj ON dispute_id=d.id
     JOIN missions m ON mission_id=m.id
     JOIN projects p ON m.project_id=p.id
+    LEFT JOIN escrows e ON e.mission_id=m.id
     WHERE ${customFiltering}
     ${filtering(filter, filterColumns, true, 'd')}
-    GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id
+    GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id, e.id
     ${sorting(sort, sortColumns, 'd')}
     LIMIT ${limit} OFFSET ${offset}`
   )
@@ -174,6 +179,10 @@ export const getByIdentityIdAndId = async (identityId, id) => {
           'id', p.id,
           'social_causes', p.causes_tags
         ) as project,
+        json_build_object(
+          'id', e.id,
+          'payment_id', e.payment_id
+        ) as escrow,
         COALESCE(
           (
             SELECT
@@ -218,8 +227,9 @@ export const getByIdentityIdAndId = async (identityId, id) => {
         LEFT JOIN dispute_jourors dj ON dispute_id=d.id
         JOIN missions m ON mission_id=m.id
         JOIN projects p ON m.project_id=p.id
+        LEFT JOIN escrows e ON e.mission_id=m.id
         WHERE d.id=${id} AND (claimant_id=${identityId} OR respondent_id=${identityId} OR dj.juror_id=${identityId})
-        GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id
+        GROUP BY d.id, i1.id, i2.id, dj.id, m.id, p.id, e.id
       `
     )
   } catch (e) {

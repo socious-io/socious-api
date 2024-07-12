@@ -70,7 +70,11 @@ export default {
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
         MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
-        REACH_10K_IMPACT_POINT: ' d-f03c8940ad944e9b959b126247dcce55'
+        REACH_10K_IMPACT_POINT: 'd-f03c8940ad944e9b959b126247dcce55',
+        DISPUTE_INITIATED: 'd-ae6797e518f5471ab0daad3bfa9bfd02',
+        DISPUTE_NEW_RESPONSE: 'd-3640f7c8e1844090aad9e7e33f2ba1dc',
+        DISPUTE_JUROR_CONTRIBUTION_INVITED: 'd-8164cf4bc84b4dd5a76cc82a6d16cfef',
+        DISPUTE_CLOSED_TO_LOSER_PARTY: 'd-f5ffe648b6224607a4dc33395612cf77'
       }
     }
   },
@@ -337,6 +341,7 @@ export default {
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY,
   discordLogger: process.env.DISCORD_LOGGER,
+  discordDisputeWebhook: process.env.DISCORD_DISPUTE_WEBHOOK,
   oauth: {
     google: {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,

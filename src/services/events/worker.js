@@ -83,6 +83,7 @@ const send = async (userId, message, body, id, identityName, setting) => {
     } catch (err) {
       logger.error(`sending email on notifications: ${err}`)
     }
+
   }
 }
 

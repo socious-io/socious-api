@@ -62,7 +62,7 @@
     "ethers": "^6.9.2",
     "fuzzball": "^2.1.2",
     "http-errors": "~2.0.0",
-    "i18n-iso-countries": "^7.5.0",
+    "i18n-iso-countries": "^7.11.2",
     "jest-junit": "^15.0.0",
     "joi": "^17.9.1",
     "jsonwebtoken": "^9.0.0",

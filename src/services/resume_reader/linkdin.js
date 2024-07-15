@@ -8,7 +8,7 @@ const JobTitleCode = '11.5-0-0-11.5-223.56'
 const SkillsCode = '10.5-0-0-10.5-21.6'
 const LeftTopicsCode = '13-0-0-13-21.6'
 
-export default async function Read(filepath) {
+export default async function (filepath) {
   const items = await extractTextWithStyles(filepath)
   return {
     ...Profile(items),
@@ -27,7 +27,6 @@ async function extractTextWithStyles(filePath) {
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum)
     const textContent = await page.getTextContent()
-    let i = 0
     textInfo.push(...textContent.items)
   }
   return textInfo
@@ -103,11 +102,19 @@ function Experience(items) {
     }
   }
   for (const i in companies) {
+    let splited = dates[i].split('-')
+    splited = splited.map((d) => {
+      const [month, year] = d.trim().split(' ')
+      const monthIndex = new Date(Date.parse(month + ' 1, 2020')).getMonth()
+      const dateObj = new Date(year, monthIndex)
+      return dateObj
+    })
     result.push({
       company: companies[i],
       job: jobs[i],
       location: locations[i],
-      date: dates[i],
+      start_date: splited[0],
+      end_date: splited[1],
       descriptions: descriptions[i]
     })
   }
@@ -131,7 +138,7 @@ function Educations(items) {
       const matchs = yearRegexPattern.exec(items[idx + 4]?.str) ?? []
       result.push({
         name: item.str,
-        grage: items[idx + 2]?.str.split(',')[0].trim(),
+        grade: items[idx + 2]?.str.split(',')[0].trim(),
         degree: items[idx + 2]?.str.split(',')[1].trim(),
         start_at: matchs[1] ?? new Date().getFullYear(),
         end_at: matchs[2]

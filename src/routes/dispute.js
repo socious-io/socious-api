@@ -197,7 +197,7 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
         'Project ID': ctx.body.project.id,
         'Escrow ID': ctx.body.escrow.id,
         'Escrow Payment ID': ctx.body.escrow.payment_id,
-        'Winner Party': ctx.body.winner_party,
+        'Winner Party': ctx.body.winner_party
       }
     })
 

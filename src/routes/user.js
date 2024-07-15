@@ -19,7 +19,7 @@ import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 import Credential from '../models/credentials/index.js'
 import logger from '../utils/logging.js'
-import Linkdin from '../services/resume_reader/linkdin.js'
+import Resume from '../services/resume_reader/index.js'
 import { koaBody } from 'koa-body'
 
 export const router = new Router()
@@ -332,9 +332,14 @@ router.post('/educations/remove/:id', loginRequired, checkIdParams, async (ctx) 
   ctx.body = await User.removeEducation(ctx.params.id, ctx.user)
 })
 
-router.post('/imports/linkdin', koaBody({ multipart: true, uploadDir: '.' }), async (ctx) => {
+router.post('/imports/linkdin', loginRequired, koaBody({ multipart: true, uploadDir: '.' }), async (ctx) => {
   if (!ctx.request.files.file) throw new BadRequestError('file is required')
   const { filepath, mimetype } = ctx.request.files.file
   if (mimetype != 'application/pdf') throw new BadRequestError('bad file type, only pdf files are allowed')
-  ctx.body = await Linkdin(filepath)
+  ctx.body = await Resume.read({ identity_id: ctx.identity.id, body: filepath, type: 'LINKDIN' })
+})
+
+router.post('/imports/:id/apply', loginRequired, checkIdParams, async (ctx) => {
+  await Resume.apply(ctx.identity.id, ctx.params.id)
+  ctx.body = { message: 'success' }
 })

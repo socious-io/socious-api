@@ -79,7 +79,11 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
   if (setting.email) {
     try {
+<<<<<<< HEAD
       await email(body.type, userId, message, id, identityName, body.additionalKwargs)
+=======
+      await email(body.type, userId, message, id, identityName)
+>>>>>>> 368757f (linkdin cv parser)
     } catch (err) {
       logger.error(`sending email on notifications: ${err}`)
     }

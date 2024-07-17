@@ -50,7 +50,7 @@ const email = async (notifType, userId, message, id, identityName, additionalKwa
   publish('tmp_email', {
     to: user.email,
     subject: message.title,
-    template: Config.mail.templates.notifications[notifType],
+    template: Config.mail.templates.notifications[notifType] || Config.mail.templates.notifications.GENERAL_NOTIF,
     kwargs: {
       notify_name: user.first_name,
       name: identityName,

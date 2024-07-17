@@ -50,6 +50,7 @@ export default {
       activation: 'd-d242926eac4e4c33a166764638cf6e7f',
       forgetPassword: 'd-d7aea3b78df042e8a2fdc83953960259',
       otp: 'd-0146441b623f4cb78833c50eb1a8c813',
+      referral: 'd-95ca4e22ae7a459c8d9218a8e0c46a28',
       notifications: {
         FOLLOWED: 'd-aeeec637f91f418388bf9b5ce40e94c2',
         COMMENT_LIKE: 'd-ce5fc950a83642d78c32c305d56acd9a',

@@ -1,4 +1,4 @@
-import { identity_sent, insert } from './write.js'
+import { insert } from './write.js'
 import nodeMailer from 'nodemailer'
 import sendgrid from '@sendgrid/mail'
 import config from '../../config.js'
@@ -194,10 +194,9 @@ export const identitySendEmails = async ({ to, identity_id, template, kwargs = {
           kwargs
         })
     }
+    return result
   } catch (err) {
     logger.error(`[tmp_email] => ${err.message}`)
     return
   }
-
-  await identity_sent({ identity_id, email: to, type })
 }

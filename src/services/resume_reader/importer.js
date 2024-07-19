@@ -72,8 +72,16 @@ const getSkills = async (bodySkills) => {
 
   return skills
     .map((s) => {
-      return { ...s, ratio: ratio(s.name.toLowerCase().replaceAll('_', ' ').toLowerCase(), s.name) }
+      let bestMatch = null
+      let bestRatio = 0
+      bodySkills.forEach((b) => {
+        if (ratio(s.name.toLowerCase().replaceAll('_', ' ').toLowerCase(), b) > bestRatio) {
+          bestMatch = s.name
+        }
+      })
+      return { name: bestMatch, ratio: bestRatio }
     })
     .filter((s) => s.ratio >= FUZZY_TRESHHOLD)
     .sort((a, b) => b.ratio - a.ratio)
+    .map((s) => s.name)
 }

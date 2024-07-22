@@ -17,19 +17,21 @@ router.get('/', loginRequired, async (ctx) => {
 })
 
 router.post('/', loginRequired, async (ctx) => {
-  const { identity, request: { body } } = ctx
+  const {
+    identity,
+    request: { body }
+  } = ctx
   const { title } = body
 
   await validate.PreferencesSchema.validateAsync(body)
 
-  try{
-    const oldPreference = await Preferences.getOneByIdentityAndTitle(identity.id, title);
-    if (oldPreference) ctx.body = await Preferences.updateById(oldPreference.id, body);
-    return;
-  }catch(e){
+  try {
+    const oldPreference = await Preferences.getOneByIdentityAndTitle(identity.id, title)
+    if (oldPreference) ctx.body = await Preferences.updateById(oldPreference.id, body)
+    return
+  } catch (e) {
     logger.error('Preference not found, will create one')
   }
 
   ctx.body = await Preferences.create(identity.id, body)
-  
 })

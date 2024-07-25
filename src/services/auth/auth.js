@@ -60,7 +60,7 @@ export const basic = async (body) => {
     throw new AuthorizationError('User has been suspended!')
   }
 
-  return signin(user.id)
+  return { signin: signin(user.id), user }
 }
 
 export const register = async (body, referredById) => {

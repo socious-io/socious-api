@@ -11,16 +11,3 @@ export const getAllByIdentity = async (identityId) => {
   )
   return rows
 }
-
-export const getOneByIdentityAndTitle = async (identityId, title) => {
-  try {
-    return await app.db.get(
-      sql`
-      SELECT * FROM preferences
-      WHERE identity_id=${identityId} AND title=${title}
-    `
-    )
-  } catch (e) {
-    throw new NotFoundError()
-  }
-}

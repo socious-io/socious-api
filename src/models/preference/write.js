@@ -1,49 +1,35 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 
-export const create = async (identityId, { title, value, description }, { transaction = null } = {}) => {
-  const client = transaction ?? app.db
-  const preference = await client.query(
-    sql`
-      INSERT INTO preferences (
-        identity_id,
-        title,
-        value,
-        description
-      ) VALUES (
-        ${identityId},
-        ${title},
-        ${value},
-        ${description}
-      )
-      RETURNING *;
-    `
-  )
-  return preference.rows[0]
-}
+export const upsert = async (identityId, preferences, { transaction = null } = {}) => {
+  const client = transaction ?? app.db;
 
-export const update = async (identityId, { title, value, description }, { transaction = null } = {}) => {
-  const client = transaction ?? app.db
-  const preference = await client.query(
-    sql`
-      UPDATE preferences
-      SET value=${value} AND description=${description}
-      WHERE identity_id=${identityId} AND title=${title}
-      RETURNING *
-    `
-  )
-  return preference.rows[0]
-}
+  const commitedPreferences = []
 
-export const updateById = async (id, { value, description }, { transaction = null } = {}) => {
-  const client = transaction ?? app.db
-  const preference = await client.query(
-    sql`
-      UPDATE preferences
-      SET value=${value}, description=${description}
-      WHERE id=${id}
-      RETURNING *
-    `
-  )
-  return preference.rows[0]
+  for(const preference of preferences){
+    const { title, value, description } = preference;
+
+    const commitedPreference = await client.query(
+      sql`
+        INSERT INTO preferences (
+          identity_id,
+          title,
+          value,
+          description
+        ) VALUES (
+          ${identityId},
+          ${title},
+          ${value},
+          ${description}
+        )
+        ON CONFLICT (identity_id, title)
+        DO UPDATE SET value = ${value}, description = ${description}
+        RETURNING *;
+      `
+    )
+    commitedPreferences.push(commitedPreference.rows[0]);
+  }
+
+  return commitedPreferences;
+  
 }

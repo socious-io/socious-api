@@ -23,6 +23,7 @@ CREATE TYPE preferences_titles AS ENUM (
   'HEALTH_AND_SAFETY_MEASURES',
   'WORK_LIFE_BALANCE_AND_EMPLOYEE_HEALTH_OTHERS',
 
+  'COMPETITIVE_SALARY',
   'EQUITY_AND_TOKEN_BENEFITS',
   'PERFORMANCE_BONUSES',
   'EMPLOYEE_RECOGNITION_PROGRAMS',
@@ -114,15 +115,14 @@ CREATE TYPE preferences_values AS ENUM (
   'NEUTRAL',
   'STRONG_LOW',
   'MODERATE_LOW',
-  'PREFER_NOT_SAY',
-  'DESCRIPTION_ONLY'
+  'PREFER_NOT_SAY'
 );
 
 CREATE TABLE preferences (
   id uuid NOT NULL DEFAULT public.uuid_generate_v4() PRIMARY KEY,
   identity_id uuid NOT NULL,
   title preferences_titles NOT NULL,
-  value preferences_values NOT NULL DEFAULT 'DESCRIPTION_ONLY',
+  value preferences_values NOT NULL,
   description text DEFAULT NULL,
   UNIQUE(identity_id, title),
   created_at timestamp with time zone NOT NULL DEFAULT now(),

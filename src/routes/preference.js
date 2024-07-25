@@ -23,18 +23,14 @@ router.post('/', loginRequired, async (ctx) => {
   } = ctx
 
   const validPreferences = []
-  for(const preference of body.preferences) {
-    try{
+  for (const preference of body.preferences) {
+    try {
       await validate.PreferencesSchema.validateAsync(preference)
       validPreferences.push(preference)
-    }catch{
+    } catch {
       logger.error('Invalid preference, ignoring the current one')
     }
   }
 
-  ctx.body = await Preferences.upsert(identity.id, validPreferences);
-    
+  ctx.body = await Preferences.upsert(identity.id, validPreferences)
 })
-
-
-//TODO: add competitive-salary

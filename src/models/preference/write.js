@@ -2,12 +2,12 @@ import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 
 export const upsert = async (identityId, preferences, { transaction = null } = {}) => {
-  const client = transaction ?? app.db;
+  const client = transaction ?? app.db
 
   const commitedPreferences = []
 
-  for(const preference of preferences){
-    const { title, value, description } = preference;
+  for (const preference of preferences) {
+    const { title, value, description } = preference
 
     const commitedPreference = await client.query(
       sql`
@@ -24,12 +24,11 @@ export const upsert = async (identityId, preferences, { transaction = null } = {
         )
         ON CONFLICT (identity_id, title)
         DO UPDATE SET value = ${value}, description = ${description}
-        RETURNING *;
+        RETURNING title, value, description;
       `
     )
-    commitedPreferences.push(commitedPreference.rows[0]);
+    commitedPreferences.push(commitedPreference.rows[0])
   }
 
-  return commitedPreferences;
-  
+  return commitedPreferences
 }

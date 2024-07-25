@@ -6,7 +6,8 @@ export const filterColumns = {
   country: String,
   city: String,
   social_causes: Array,
-  skills: Array
+  skills: Array,
+  events: Array
 }
 
 export const sortColumns = ['created_at', 'updated_at', 'impact_points']
@@ -82,6 +83,7 @@ export const getProfile = async (id, currentIdentity) => {
     open_to_volunteer,
     is_contributor,
     identity_verified,
+    events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -267,6 +269,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     open_to_volunteer,
     identity_verified,
     is_contributor,
+    events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -443,6 +446,7 @@ export const getProfileLimited = async (id) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
+    events,
     (
 	    SELECT COUNT(*)::int
 	    FROM connections c2
@@ -477,6 +481,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     mobile_country_code,
     identity_verified,
     is_contributor,
+    events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -649,7 +654,8 @@ export const getProfileByUsernameLimited = async (username) => {
     followers, followings, u.created_at,
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
-    row_to_json(cover.*) AS cover_image
+    row_to_json(cover.*) AS cover_image,
+    events
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

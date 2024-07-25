@@ -1,5 +1,6 @@
 import Router from '@koa/router'
 import Auth from '../services/auth/index.js'
+import User from '../models/user/index.js'
 import Data from '@socious/data'
 import OAuthConnects from '../services/oauth_connects/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
@@ -16,7 +17,9 @@ import Identity from '../models/identity/index.js'
 export const router = new Router()
 
 router.post('/login', async (ctx) => {
-  ctx.body = await Auth.basic(ctx.request.body)
+  const { signin, user } = await Auth.basic(ctx.request.body)
+  if (ctx.query.event) await User.updateUserEvents(user.id, ctx.query.event)
+  ctx.body = signin
 })
 
 router.post('/refresh', async (ctx) => {
@@ -32,13 +35,14 @@ router.post('/logout', async (ctx) => {
 })
 
 router.post('/web/login', async (ctx) => {
-  const response = await Auth.basic(ctx.request.body)
-  ctx.session.token = response.access_token
+  const { signin } = await Auth.basic(ctx.request.body)
+  ctx.session.token = signin.access_token
   ctx.body = { message: 'success' }
 })
 
 router.post('/register', async (ctx) => {
   const user = await Auth.register(ctx.request.body, ctx.query.referred_by)
+  if (ctx.query.event) await User.updateUserEvents(user.id, ctx.query.event)
 
   ctx.body = {
     message: 'success'

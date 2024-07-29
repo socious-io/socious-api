@@ -12,7 +12,8 @@ import { PermissionError } from '../utils/errors.js'
 import publish from '../services/jobs/publish.js'
 import ejs from 'ejs'
 import { checkIdParams } from '../utils/middlewares/route.js'
-import { paginateCTX } from '../utils/middlewares/requests.js'
+import { paginate, paginateCTX } from '../utils/middlewares/requests.js'
+import Additionals from '../models/additionals/index.js'
 
 export const router = new Router()
 
@@ -47,6 +48,10 @@ router.get('/options', loginOptional, async (ctx) => {
       sort_columns: Offer.sortColumns
     }
   }
+})
+
+router.get('/events', loginOptional, paginate, async (ctx) => {
+  ctx.body = await Additionals.getSociousEvents()
 })
 
 router.post('/publish', loginOptional, async (ctx) => {

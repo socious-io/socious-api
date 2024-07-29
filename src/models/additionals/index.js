@@ -47,9 +47,15 @@ const get = async (id) => {
   return app.db.get(sql`SELECT * FROM additionals WHERE id=${id}`)
 }
 
+const getSociousEvents = async () => {
+  const { rows } = await app.db.query(sql`SELECT COUNT(*) OVER () as total_count, * FROM socious_events`)
+  return rows
+}
+
 export default {
   insert,
   update,
   remove,
-  get
+  get,
+  getSociousEvents
 }

@@ -64,18 +64,18 @@ export const login = async (request, data) => {
 }
 
 export const loginEvent = async (request, data) => {
-    const event = await app.db.get(`SELECT * FROM socious_events`)
-    const response = await request.post(`/auth/login?event_id=${event.id}`).send({
-      email: data.users[0].email,
-      password: data.users[0].password
-    })
+  const event = await app.db.get(`SELECT * FROM socious_events`)
+  const response = await request.post(`/auth/login?event_id=${event.id}`).send({
+    email: data.users[0].email,
+    password: data.users[0].password
+  })
 
-      expect(response.status).toBe(200)
-      expect(response.body.access_token).not.toBeNull()
-      expect(response.body.refresh_token).not.toBeNull()
-      expect(response.body.token_type).toBe('Bearer')
+  expect(response.status).toBe(200)
+  expect(response.body.access_token).not.toBeNull()
+  expect(response.body.refresh_token).not.toBeNull()
+  expect(response.body.token_type).toBe('Bearer')
 
-      data.users[0].access_token = response.body.access_token
+  data.users[0].access_token = response.body.access_token
 }
 
 export const profile = async (request, data) => {

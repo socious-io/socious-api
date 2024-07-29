@@ -38,7 +38,7 @@
     "workers:watch": "nodemon --inspect src/services/jobs/workers.js"
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.21.8",
+    "@babel/eslint-parser": "^7.25.1",
     "@koa/cors": "^4.0.0",
     "@koa/router": "^12.0.0",
     "@maxmind/geoip2-node": "^3.5.0",

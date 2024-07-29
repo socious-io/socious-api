@@ -33,6 +33,7 @@ import { router as referring } from './referring.js'
 import { router as dispute } from './dispute.js'
 import { router as contribution } from './contributions.js'
 import { router as root } from './root.js'
+import { router as preference } from './preference.js'
 
 export default (app) => {
   const blueprint = new Router()
@@ -73,6 +74,7 @@ export default (app) => {
   blueprint.use('/referrers', referring.routes(), referring.allowedMethods())
   blueprint.use('/disputes', dispute.routes(), dispute.allowedMethods())
   blueprint.use('/contributions', contribution.routes(), contribution.allowedMethods())
+  blueprint.use('/preferences', preference.routes(), preference.allowedMethods())
 
   if (Config.mail.allowTest) {
     blueprint.use('/test-emails', testEmails.routes(), testEmails.allowedMethods())

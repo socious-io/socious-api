@@ -22,7 +22,8 @@ import {
   addEducation,
   updateEducation,
   requestEducationCredentials,
-  approveRequestedEducationCredentials
+  approveRequestedEducationCredentials,
+  loginEvent
 } from './globals/user.js'
 
 let server, request
@@ -35,6 +36,7 @@ beforeAll(async () => {
 test('register', async () => register(request, data))
 test('verify', async () => verifyUser(request, data))
 test('login', async () => login(request, data))
+test('login event', async () => loginEvent(request, data))
 test('add language', async () => addLanguage(request, data))
 test('add experience', async () => addExperience(request, data))
 test('add education', async () => addEducation(request, data))

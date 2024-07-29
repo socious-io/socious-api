@@ -66,13 +66,14 @@ export const updateWalletAddress = async (id, walletAddress) => {
 
 export const updateUserEvents = async (id, event) => {
   await app.db.query(sql`
-    UPDATE users SET 
+    UPDATE users
     SET events = 
     CASE 
-        WHEN events IS NULL THEN ARRAY[${event}]
-        ELSE events || ${event}
+        WHEN events IS NULL THEN ARRAY[${event}::uuid]
+        WHEN NOT events @> ARRAY[${event}::uuid] THEN events || ${event}::uuid
+        ELSE events
     END
-    WHERE id=${id}`)
+    WHERE id = ${id}`)
 }
 
 export const updatePassword = async (id, newPassword) => {

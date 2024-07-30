@@ -471,7 +471,7 @@ export const getProfileLimited = async (id) => {
           'id', id,
           'title', title,
           'description', description,
-          'event_at', event_at
+          'event_at', event_at,
           'created_at', created_at
         ))
         FROM socious_events
@@ -516,7 +516,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
           'id', id,
           'title', title,
           'description', description,
-          'event_at', event_at
+          'event_at', event_at,
           'created_at', created_at
         ))
         FROM socious_events ev
@@ -700,7 +700,7 @@ export const getProfileByUsernameLimited = async (username) => {
           'id', id,
           'title', title,
           'description', description,
-          'event_at', event_at
+          'event_at', event_at,
           'created_at', created_at
         ))
         FROM socious_events ev

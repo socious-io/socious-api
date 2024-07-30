@@ -150,6 +150,8 @@ router.get('/google', async (ctx) => {
     })
   }
 
+  if (ctx.query.event_id) await User.updateUserEvents(login.user.id, ctx.query.event_id)
+
   ctx.body = {
     ...login.signin,
     registered: login.registered

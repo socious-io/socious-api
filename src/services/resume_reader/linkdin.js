@@ -7,6 +7,7 @@ const OrgTitleCode = '12-0-0-12-223.56'
 const JobTitleCode = '11.5-0-0-11.5-223.56'
 const SkillsCode = '10.5-0-0-10.5-21.6'
 const LeftTopicsCode = '13-0-0-13-21.6'
+const JobDateCode = '10.5-0-0-10.5-223.56'
 
 export default async function (filepath) {
   const items = await extractTextWithStyles(filepath)
@@ -84,10 +85,27 @@ function Experience(items) {
     }
     if (items[i].transform.join('-').includes(JobTitleCode)) {
       jobs.push(items[i].str)
-      dates.push(items[idx + 2].str)
-      locations.push(items[idx + 6].str)
+      // dates.push(items[idx + 2].str)
+      // locations.push(items[idx + 6].str)
       let desc = ''
-      for (let j = 0; j < 50; j++) {
+      let gotDate = false
+      let gotLocation = false
+      for (let j = 0; j < 15; j++) {
+        const item = items[idx + j]
+        const itemCode = item?.transform.join('-')
+        if (!item.str) continue
+        if (gotDate && gotLocation) break
+        if (itemCode.includes(JobDateCode)) {
+          if (!gotDate) {
+            dates.push(item.str)
+            gotDate = true
+            continue
+          }
+          locations.push(item.str)
+          gotLocation = true
+        }
+      }
+      for (let j = 0; j < 100; j++) {
         const item = items[idx + 8 + j]
         const itemCode = item?.transform.join('-')
         if (!item?.str) continue

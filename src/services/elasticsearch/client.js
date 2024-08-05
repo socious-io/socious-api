@@ -37,6 +37,4 @@ class SearchEngine {
   }
 }
 
-export default {
-  searchEngine: new SearchEngine(client)
-} 
+export default new SearchEngine(client)

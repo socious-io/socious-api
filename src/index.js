@@ -10,6 +10,10 @@ import blueprint from './routes/index.js'
 import middlewares from './utils/middlewares/site.js'
 import { koaLogger } from './utils/logging.js'
 import Config from './config.js'
+import SearchEngine from './services/elasticsearch/index.js'
+
+//Search
+await SearchEngine.config()
 
 /** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })

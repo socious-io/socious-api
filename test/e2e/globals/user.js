@@ -63,6 +63,21 @@ export const login = async (request, data) => {
   }
 }
 
+export const loginEvent = async (request, data) => {
+  const event = await app.db.get(`SELECT * FROM socious_events`)
+  const response = await request.post(`/auth/login?event_id=${event.id}`).send({
+    email: data.users[0].email,
+    password: data.users[0].password
+  })
+
+  expect(response.status).toBe(200)
+  expect(response.body.access_token).not.toBeNull()
+  expect(response.body.refresh_token).not.toBeNull()
+  expect(response.body.token_type).toBe('Bearer')
+
+  data.users[0].access_token = response.body.access_token
+}
+
 export const profile = async (request, data) => {
   for (const i in data.users) {
     if (data.users[i].invalid) {
@@ -87,6 +102,7 @@ export const profile = async (request, data) => {
           credential: expect.any(Object)
         }
       ],
+      events: expect.any(Object),
       educations: [
         {
           id: expect.any(String),
@@ -142,6 +158,7 @@ export const updateProfile = async (request, data) => {
           credential: expect.any(Object)
         }
       ],
+      events: expect.any(Object),
       educations: [
         {
           id: expect.any(String),
@@ -437,6 +454,7 @@ export const profileByUsername = async (request, data) => {
           id: expect.any(String)
         }
       ],
+      events: expect.any(Object),
       experiences: [
         {
           id: expect.any(String),

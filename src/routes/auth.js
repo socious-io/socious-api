@@ -18,7 +18,7 @@ export const router = new Router()
 
 router.post('/login', async (ctx) => {
   const { signin, user } = await Auth.basic(ctx.request.body)
-  if (ctx.query.event) await User.updateUserEvents(user.id, ctx.query.event)
+  if (ctx.query.event_id) await User.updateUserEvents(user.id, ctx.query.event_id)
   ctx.body = signin
 })
 
@@ -42,7 +42,7 @@ router.post('/web/login', async (ctx) => {
 
 router.post('/register', async (ctx) => {
   const user = await Auth.register(ctx.request.body, ctx.query.referred_by)
-  if (ctx.query.event) await User.updateUserEvents(user.id, ctx.query.event)
+  if (ctx.query.event_id) await User.updateUserEvents(user.id, ctx.query.event_id)
 
   ctx.body = {
     message: 'success'
@@ -149,6 +149,8 @@ router.get('/google', async (ctx) => {
       identity: identity
     })
   }
+
+  if (ctx.query.event_id) await User.updateUserEvents(login.user.id, ctx.query.event_id)
 
   ctx.body = {
     ...login.signin,

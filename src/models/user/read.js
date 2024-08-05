@@ -83,7 +83,17 @@ export const getProfile = async (id, currentIdentity) => {
     open_to_volunteer,
     is_contributor,
     identity_verified,
-    events,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', id,
+          'title', title,
+          'description', description,
+          'event_at', event_at,
+          'created_at', created_at
+        ))
+     FROM socious_events
+     WHERE id=ANY(u.events)
+    ) AS events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -269,7 +279,17 @@ export const getProfileByUsername = async (username, currentIdentity) => {
     open_to_volunteer,
     identity_verified,
     is_contributor,
-    events,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', id,
+          'title', title,
+          'description', description,
+          'event_at', event_at,
+          'created_at', created_at
+        ))
+        FROM socious_events
+        WHERE id=ANY(u.events)
+    ) AS events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -446,7 +466,17 @@ export const getProfileLimited = async (id) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
-    events,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', id,
+          'title', title,
+          'description', description,
+          'event_at', event_at,
+          'created_at', created_at
+        ))
+        FROM socious_events
+        WHERE id=ANY(u.events)
+    ) AS events,
     (
 	    SELECT COUNT(*)::int
 	    FROM connections c2
@@ -481,7 +511,17 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
     mobile_country_code,
     identity_verified,
     is_contributor,
-    events,
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', id,
+          'title', title,
+          'description', description,
+          'event_at', event_at,
+          'created_at', created_at
+        ))
+        FROM socious_events ev
+        WHERE id=ANY(u.events)
+    ) AS events,
     (SELECT
       jsonb_agg(json_build_object(
           'id', adds.id,
@@ -655,7 +695,17 @@ export const getProfileByUsernameLimited = async (username) => {
     array_to_json(u.social_causes) AS social_causes,
     row_to_json(avatar.*) AS avatar,
     row_to_json(cover.*) AS cover_image,
-    events
+    (SELECT
+      jsonb_agg(json_build_object(
+          'id', id,
+          'title', title,
+          'description', description,
+          'event_at', event_at,
+          'created_at', created_at
+        ))
+        FROM socious_events ev
+        WHERE id=ANY(u.events)
+    ) AS events
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

@@ -2533,6 +2533,16 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /site/events:
+    get:
+      tags:
+        - site
+      summary: get all events
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /auth/login:
     post:
       tags:

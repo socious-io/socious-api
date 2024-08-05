@@ -1,7 +1,11 @@
 import client from './client.js'
-import { users } from './models/index.js'
+import models from './models/index.js'
 
-const indices = [users.indices]
+const indices = [
+  models.users.indices,
+  models.organizations.indices,
+  models.jobs.indices
+];
 
 async function ensureIndexes() {
   const indicesConfigs = []

@@ -1,12 +1,14 @@
-const index = 'users';
+const index = 'organizations'
 const indices = {
   index,
   fields: {
-    first_name: { type: 'text' },
-    last_name: { type: 'text' },
-    username: { type: 'keyword' },
-    email: { type: 'keyword' },
-    created_at: { type: 'date' }
+    name: { type: 'text' },
+    bio: { type: 'text' },
+    description: { type: 'text' },
+    shortname: { type: 'text' },
+    address: { type: 'text' },
+    email: { type: 'text' },
+    phone: { type: 'text' }
   }
 }
 

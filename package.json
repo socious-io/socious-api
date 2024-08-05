@@ -54,7 +54,7 @@
     "chalk": "^5.2.0",
     "cockatiel": "^2.0.2",
     "cookie-parser": "~1.4.6",
-    "db-migrate": "^1.0.0-beta.18",
+    "db-migrate": "^1.0.0-beta.29",
     "db-migrate-pg": "^1.2.2",
     "debug": "~4.3.4",
     "dotenv": "^16.0.3",

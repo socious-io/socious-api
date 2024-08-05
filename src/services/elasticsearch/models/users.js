@@ -6,7 +6,17 @@ const indices = {
     last_name: { type: 'text' },
     username: { type: 'keyword' },
     email: { type: 'keyword' },
-    created_at: { type: 'date' }
+    created_at: { type: 'date' },
+
+    experience_level: { type: 'keyword' },
+    project_length: { type: 'keyword' },
+    job_category_id: { type: 'keyword' },
+    remote_preference: { type: 'keyword' },
+    skills: { type: 'keyword' },
+    country: { type: 'keyword' },
+    city: { type: 'keyword' },
+    payment_type: { type: 'keyword' },
+    causes_tags: { type: 'keyword' }
   }
 }
 

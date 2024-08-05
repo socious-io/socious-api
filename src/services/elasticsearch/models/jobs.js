@@ -6,12 +6,18 @@ const indices = {
     description: { type: 'text' },
     other_party_title: { type: 'text' },
     other_party_url: { type: 'text' },
-    skills: { type: 'text' },
-    country: { type: 'text' },
-    city: { type: 'text' },
-    payment_type: { type: 'text' },
-    causes_tags: { type: 'text' },
-    remote_preference: { type: 'text' }
+    project_type: { type: 'keyword' },
+    payment_scheme: { type: 'keyword' },
+    
+    experience_level: { type: 'keyword' },
+    payment_type: { type: 'keyword' },
+    project_length: { type: 'keyword' },
+    job_category_id: { type: 'keyword' },
+    remote_preference: { type: 'keyword' },
+    skills: { type: 'keyword' },
+    country: { type: 'keyword' },
+    city: { type: 'keyword' },
+    causes_tags: { type: 'keyword' }
   }
 }
 

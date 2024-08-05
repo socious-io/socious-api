@@ -8,7 +8,11 @@ const indices = {
     shortname: { type: 'text' },
     address: { type: 'text' },
     email: { type: 'text' },
-    phone: { type: 'text' }
+    phone: { type: 'text' },
+
+    country: { type: 'keyword' },
+    city: { type: 'keyword' },
+    social_causes: { type: 'keyword' }
   }
 }
 

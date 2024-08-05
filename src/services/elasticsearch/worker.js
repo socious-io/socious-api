@@ -1,24 +1,11 @@
 import client from './client.js'
-
-const indexUser = async(document) => {
-  const indexingDocuments = [
-    client.indexDocument("users", document.id, document)
-  ]
-
-  try{
-    return await Promise.all(indexingDocuments)
-  }catch(e){
-    console.log(e)
-  }
-}
+import { users } from './models/index.js'
 
 export const indexDocument = async ({ type, document }) => {
-
   const indexMapping = {
-    user_update: indexUser,
-    user_create: indexUser
+    user_update: users.indexing,
+    user_create: users.indexing
   }
 
-  if(indexMapping[type]) return await indexMapping[type];
-
+  if (indexMapping[type]) return await indexMapping[type](client, document)
 }

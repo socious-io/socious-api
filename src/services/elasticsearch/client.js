@@ -8,8 +8,23 @@ class SearchEngine {
     this.client = client
   }
 
+  async existsIndex(index) {
+    return await client.indices.exists({ index })
+  }
+
   async createIndex(index) {
     return await client.indices.create({ index })
+  }
+
+  async createIndices(index, fields) {
+    return await client.indices.create({
+      index,
+      body: {
+        mappings: {
+          properties: fields
+        }
+      }
+    })
   }
 
   async deleteIndex(index) {
@@ -17,7 +32,11 @@ class SearchEngine {
   }
 
   async indexDocument(index, id, document) {
-    return await client.index({ index, id, document })
+    try {
+      return await client.index({ index, id, document })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async getDocument(index, id) {

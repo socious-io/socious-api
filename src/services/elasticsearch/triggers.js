@@ -1,13 +1,13 @@
 import publish from '../jobs/publish.js'
 
-export const indexUsers = ({ document }) => {
-  publish('index_users', { type: 'users', document })
+export const indexUsers = ({ id }) => {
+  publish('index_users', { id })
 }
 
-export const indexJobs = ({ document }) => {
-  publish('index_jobs', { type: 'jobs', document })
+export const indexJobs = ({ id }) => {
+  publish('index_jobs', { id })
 }
 
-export const indexOrganizations = ({ document }) => {
-  publish('index_organizations', { type: 'organizations', document })
+export const indexOrganizations = ({ id }) => {
+  publish('index_organizations', { id })
 }

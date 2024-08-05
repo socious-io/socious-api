@@ -76,7 +76,7 @@ router.post('/update/profile', loginRequired, async (ctx) => {
 
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body)
 
-  SearchEngine.triggers.indexUsers({ document: ctx.body })
+  SearchEngine.triggers.indexUsers({ id: ctx.body.id })
 
   putContact({
     first_name: ctx.body.first_name,

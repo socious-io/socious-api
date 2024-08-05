@@ -44,9 +44,9 @@ const register = {
   analytics_identitfy: consumer(Analytics.identifyWorker),
   analytics_track: consumer(Analytics.trackWorker),
   sync_proofspace: consumer(ProofSpace.SyncWorker),
-  index_users: consumer(SearchEngine.worker.indexDocument),
-  index_jobs: consumer(SearchEngine.worker.indexDocument),
-  index_organizations: consumer(SearchEngine.worker.indexDocument)
+  index_users: consumer(SearchEngine.models.users.indexing),
+  index_jobs: consumer(SearchEngine.models.jobs.indexing),
+  index_organizations: consumer(SearchEngine.models.organizations.indexDocument)
 }
 
 for await (const [name, handler] of Object.entries(register)) {

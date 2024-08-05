@@ -1,3 +1,6 @@
+import { app } from '../../../index.js'
+import sql from 'sql-template-tag'
+
 const index = 'organizations'
 const indices = {
   index,
@@ -16,8 +19,22 @@ const indices = {
   }
 }
 
-const indexing = async (client, document) => {
-  const indexingDocuments = [client.indexDocument(index, document.id, document)]
+const indexing = async ({id}) => {
+  const organization = await app.db.get(sql`SELECT * FROM organizations WHERE id=${id}`)
+  const document = {
+    name: organization.name,
+    bio: organization.bio,
+    description: organization.description,
+    shortname: organization.shortname,
+    address: organization.address,
+    email: organization.email,
+    phone: organization.phone,
+    country: organization.country,
+    city: organization.city,
+    social_causes: organization.social_causes
+  }
+
+  const indexingDocuments = [app.searchClient.indexDocument(index, organization.id, document)]
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {

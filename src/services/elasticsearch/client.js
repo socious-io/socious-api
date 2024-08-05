@@ -39,6 +39,15 @@ class SearchEngine {
     }
   }
 
+  async updateIndexMapping(index, fields) {
+    return await client.indices.putMapping({
+      index,
+      body: {
+        properties: fields
+      }
+    })
+  }
+
   async getDocument(index, id) {
     return await client.get({ index, id })
   }

@@ -9,6 +9,7 @@ async function ensureIndexes() {
   for (const indice of indices) {
     const exists = await client.existsIndex(indice.index)
     if (!exists) indicesConfigs.push(client.createIndices(indice.index, indice.fields))
+    else indicesConfigs.push(client.updateIndexMapping(indice.index, indice.fields))
   }
 
   await Promise.allSettled(indicesConfigs)

@@ -110,7 +110,7 @@ export default {
   },
   elasticsearch: {
     node: process.env.ELASTIC_NODE,
-    auth:{
+    auth: {
       apiKey: process.env.ELASTIC_APIKEY_SECRET
     }
   },

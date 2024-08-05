@@ -1,4 +1,4 @@
-const index = 'users';
+const index = 'users'
 const indices = {
   index,
   fields: {

@@ -1,11 +1,7 @@
 import client from './client.js'
 import models from './models/index.js'
 
-const indices = [
-  models.users.indices,
-  models.organizations.indices,
-  models.jobs.indices
-];
+const indices = [models.users.indices, models.organizations.indices, models.jobs.indices]
 
 async function ensureIndexes() {
   const indicesConfigs = []
@@ -15,7 +11,7 @@ async function ensureIndexes() {
     if (!exists) indicesConfigs.push(client.createIndices(indice.index, indice.fields))
   }
 
-  const results = await Promise.allSettled(indicesConfigs)
+  await Promise.allSettled(indicesConfigs)
 }
 
 async function configure() {

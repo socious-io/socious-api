@@ -12,6 +12,8 @@ import { checkIdParams, projectPermission } from '../utils/middlewares/route.js'
 import { ConflictError, PermissionError } from '../utils/errors.js'
 import Analytics from '../services/analytics/index.js'
 import { recommendProjectByProject } from '../services/recommender/index.js'
+import SearchEngine from '../services/elasticsearch/index.js'
+
 export const router = new Router()
 
 router.get('/mark', loginRequired, paginate, async (ctx) => {
@@ -37,11 +39,15 @@ router.post('/', loginRequired, async (ctx) => {
 
   await validate.ProjectSchema.validateAsync(ctx.request.body)
   ctx.body = await Project.insert(ctx.identity.id, ctx.request.body)
+
+  SearchEngine.triggers.indexJobs({ id: ctx.body.id })
 })
 
 router.post('/update/:id', loginRequired, checkIdParams, projectPermission, async (ctx) => {
   await validate.ProjectSchema.validateAsync(ctx.request.body)
   ctx.body = await Project.update(ctx.params.id, ctx.request.body)
+
+  SearchEngine.triggers.indexJobs({ id: ctx.body.id })
 })
 
 router.post('/update/:id/close', loginRequired, checkIdParams, projectPermission, async (ctx) => {

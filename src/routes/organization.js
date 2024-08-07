@@ -12,6 +12,7 @@ import { isTestEmail } from '../services/email/index.js'
 import Notif from '../models/notification/index.js'
 import Event from '../services/events/index.js'
 import { recommendOrgByOrg, recommendUserByOrg } from '../services/recommender/index.js'
+import SearchEngine from '../services/elasticsearch/index.js'
 
 export const router = new Router()
 
@@ -56,6 +57,8 @@ router.post('/', loginRequired, async (ctx) => {
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)
   if (ctx.query.auto_member !== 'false') await Org.addMember(ctx.body.id, ctx.user.id)
   if (referredById) await Referring.insert(ctx.body.id, referredById)
+
+  SearchEngine.triggers.indexOrganizations({id: ctx.body.id})
 })
 
 router.get('/check', loginRequired, async (ctx) => {
@@ -74,6 +77,8 @@ router.post('/update/:id', loginRequired, checkIdParams, orgMember, async (ctx) 
   }
   await Org.update(ctx.params.id, ctx.request.body)
   ctx.body = await Org.get(ctx.params.id)
+
+  SearchEngine.triggers.indexOrganizations({id: ctx.body.id})
 })
 
 router.get('/:id/members', loginRequired, checkIdParams, paginate, async (ctx) => {

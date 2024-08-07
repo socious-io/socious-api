@@ -46,7 +46,7 @@ const register = {
   sync_proofspace: consumer(ProofSpace.SyncWorker),
   index_users: consumer(SearchEngine.models.users.indexing),
   index_jobs: consumer(SearchEngine.models.jobs.indexing),
-  index_organizations: consumer(SearchEngine.models.organizations.indexDocument)
+  index_organizations: consumer(SearchEngine.models.organizations.indexing)
 }
 
 for await (const [name, handler] of Object.entries(register)) {

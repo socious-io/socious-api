@@ -5,48 +5,83 @@ const index = 'users'
 const indices = {
   index,
   fields: {
+    //Full text search
     first_name: { type: 'text' },
     last_name: { type: 'text' },
     username: { type: 'keyword' },
     email: { type: 'keyword' },
     created_at: { type: 'date' },
 
-    experience_level: { type: 'keyword' },
-    project_length: { type: 'keyword' },
-    job_category_id: { type: 'keyword' },
-    remote_preference: { type: 'keyword' },
-    skills: { type: 'keyword' },
-    country: { type: 'keyword' },
-    city: { type: 'keyword' },
-    payment_type: { type: 'keyword' },
-    causes_tags: { type: 'keyword' }
+    //Filters
+    causes_tags: { type: 'keyword' }, //Filter: Social Causes
+    skills: { type: 'keyword' }, //Filter: Skills
+    city: { type: 'keyword' }, //Filter: Location
+    country: { type: 'keyword' }, //Filter: Location
+    timezone: { type: 'keyword' }, //Filter: Timezone
+    // experience_level: { type: 'keyword' },//Filter: Experience Level //TODO: add to object after adding to preferences on users?
+    // payment_type: { type: 'keyword' }, //Filter: Payment Type //TODO: add to object after adding to preferences on users?
+    /*Payment Scheme: ? //TODO: add to object after adding to preferences on users?
+        > Fixed: Multiple options
+        > Hourly: Range
+    */
+    open_to_volunteer: { type: 'keyword' }, //Filter: Open To Volunteer
+    preferences: {
+      properties: {
+        title: { type: 'keyword' },
+        value: { type: 'keyword' },
+        title_value: { type: 'keyword' }
+      }
+    }
   }
 }
 
-const indexing = async ({id}) => {
-
-  const user = await app.db.get(sql`SELECT * FROM users WHERE id=${id}`)
-  const document = {
-    first_name: user.first_name,
-    last_name: user.last_name,
-    username: user.username,
-    email: user.email,
-    created_at: user.created_at,
-
-    experience_level: user.experience_level,
-    project_length: user.project_length,
-    job_category_id: user.job_category_id,
-    remote_preference: user.remote_preference,
-    skills: user.skills,
-    country: user.country,
-    city: user.city,
-    payment_type: user.payment_type,
-    causes_tags: user.causes_tags
+function transformer(document) {
+  return {
+    id: document.id,
+    first_name: document.first_name,
+    last_name: document.last_name,
+    username: document.username,
+    email: document.email,
+    created_at: document.created_at,
+    causes_tags: document.causes_tags ?? [],
+    skills: document.skills ?? [],
+    city: document.city,
+    country: document.country,
+    timezone: document.timezone,
+    open_to_volunteer: document.open_to_volunteer,
+    preferences: document.preferences.map((preference) => {
+      return {
+        ...preference,
+        title_value: `${preference.title}:${preference.value}`
+      }
+    })
   }
+}
 
-  console.log(user, document)
+const indexing = async ({ id }) => {
+  const user = await app.db.get(
+    sql`
+    SELECT *, gn.timezone as timezone,
+    COALESCE(
+      jsonb_agg(
+        json_build_object(
+          'title', p.title, 
+          'value', p.value
+        ) 
+      ) FILTER (WHERE p.id IS NOT NULL),
+      '[]'
+    ) as preferences
+    FROM users u
+    LEFT JOIN geonames gn ON gn.id=u.geoname_id
+    LEFT JOIN preferences p ON p.identity_id=u.id
+    WHERE u.id=${id}
+    GROUP BY u.id, gn.timezone
+    `
+  )
 
-  const indexingDocuments = [app.searchClient.indexDocument(index,user.id, document)]
+  const document = transformer(user)
+
+  const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {
@@ -54,7 +89,42 @@ const indexing = async ({id}) => {
   }
 }
 
+const initIndexing = async () => {
+  const { rows } = await app.db.query(
+    sql`
+    SELECT u.*, gn.timezone as timezone,
+    COALESCE(
+      jsonb_agg(
+        json_build_object(
+          'title', p.title, 
+          'value', p.value
+        ) 
+      ) FILTER (WHERE p.id IS NOT NULL),
+      '[]'
+    ) as preferences
+    FROM users u
+    LEFT JOIN geonames gn ON gn.id=u.geoname_id
+    LEFT JOIN preferences p ON p.identity_id=u.id
+    GROUP BY u.id, gn.timezone
+    `
+  )
+
+  let users = []
+  for (const user of rows) users.push(transformer(user))
+  const indexingDocuments = [app.searchClient.bulkIndexDocuments(index, users)]
+
+  try {
+    return {
+      result: await Promise.all(indexingDocuments),
+      count: users.length
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export default {
   indices,
-  indexing
+  indexing,
+  initIndexing
 }

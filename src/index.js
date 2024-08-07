@@ -12,13 +12,12 @@ import { koaLogger } from './utils/logging.js'
 import Config from './config.js'
 import SearchEngine from './services/elasticsearch/index.js'
 
-
 /** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })
 
 //Search
 await SearchEngine.config()
-app.searchClient = SearchEngine.client;
+app.searchClient = SearchEngine.client
 
 app.keys = [Config.secret]
 app.users = {}

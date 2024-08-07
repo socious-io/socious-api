@@ -9,7 +9,7 @@ async function ensureIndexes() {
   for (const indice of indices) {
     // const exists = await client.existsIndex(indice.index)
     // console.log(indice.index, exists)
-    // if (!exists) 
+    // if (!exists)
     // else indicesConfigs.push(client.updateIndexMapping(indice.index, indice.fields))
     indicesConfigs.push(client.createIndices(indice.index, indice.fields))
   }

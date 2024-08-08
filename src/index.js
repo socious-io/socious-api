@@ -16,8 +16,12 @@ import SearchEngine from './services/elasticsearch/index.js'
 export const app = new Koa({ proxy: true })
 
 //Search
-await SearchEngine.config()
-app.searchClient = SearchEngine.client
+
+if(Config.env != 'testing') {
+  await SearchEngine.config()
+  app.searchClient = SearchEngine.client
+}
+
 
 app.keys = [Config.secret]
 app.users = {}

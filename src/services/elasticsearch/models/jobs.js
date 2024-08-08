@@ -108,7 +108,7 @@ const indexing = async ({ id }) => {
   }
 }
 
-const initIndexing = async () => {
+async function getAllJobsIncremental({ initialOffset = -1000, inrementPaceOffset = 1000 }) {
   const { rows } = await app.db.query(
     sql`
     SELECT p.*, gn.timezone, o.id as organization, o.type as organization_type, o.size as organization_size,
@@ -122,6 +122,11 @@ const initIndexing = async () => {
       '[]'
     ) as preferences
     FROM projects p
+    INNER JOIN (
+        SELECT id FROM projects p WHERE p.status='ACTIVE' ORDER BY id LIMIT ${inrementPaceOffset} OFFSET ${
+      initialOffset + inrementPaceOffset
+    }
+    ) AS tmp USING (id)
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
     LEFT JOIN preferences pf ON pf.identity_id=p.identity_id
@@ -129,17 +134,40 @@ const initIndexing = async () => {
     `
   )
 
-  let projects = []
-  for (const project of rows) projects.push(transformer(project))
-  const indexingDocuments = [app.searchClient.chunkedBulkIndexDocuments(index, projects, { chunks: 5000 })]
+  return rows
+}
 
-  try {
-    return {
-      result: await Promise.all(indexingDocuments),
-      count: projects.length
+const initIndexing = async () => {
+  let initialOffset = -100,
+    inrementPaceOffset = 100
+  let projects = await getAllJobsIncremental({
+    initialOffset,
+    inrementPaceOffset
+  })
+  let count = 0,
+    chunkCounter = 0
+
+  while (projects.length > 0) {
+    console.log(`Processing Chunk #${++chunkCounter} (${projects.length} items)`)
+
+    projects = projects.map((project) => transformer(project))
+    const indexingDocuments = [app.searchClient.bulkIndexDocuments(index, projects)]
+
+    try {
+      await Promise.all(indexingDocuments)
+      count += projects.length
+    } catch (e) {
+      console.log(e)
     }
-  } catch (e) {
-    console.log(e)
+
+    projects = await getAllJobsIncremental({
+      initialOffset: initialOffset + inrementPaceOffset,
+      inrementPaceOffset
+    })
+  }
+
+  return {
+    count
   }
 }
 

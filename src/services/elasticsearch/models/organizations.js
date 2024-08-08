@@ -66,19 +66,21 @@ const indexing = async ({ id }) => {
     sql`
     SELECT o.*, gn.timezone,
     COALESCE(
-      jsonb_agg(
-        json_build_object(
-          'title', p.title, 
-          'value', p.value
-        ) 
-      ) FILTER (WHERE p.id IS NOT NULL),
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'title', pf.title, 
+            'value', pf.value
+          ) 
+        )
+        FROM preferences pf
+        WHERE pf.identity_id=o.id
+      ),
       '[]'
-    ) as preferences
+    ) AS preferences
     FROM organizations o
     LEFT JOIN geonames gn ON gn.id=o.geoname_id
-    LEFT JOIN preferences p ON p.identity_id=o.id
     WHERE o.id=${id}
-    GROUP BY o.id, gn.timezone
     `
   )
 
@@ -92,38 +94,47 @@ const indexing = async ({ id }) => {
   }
 }
 
-const initIndexing = async () => {
+async function getAllOrgs({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
     SELECT o.*, gn.timezone,
     COALESCE(
-      jsonb_agg(
-        json_build_object(
-          'title', p.title, 
-          'value', p.value
-        ) 
-      ) FILTER (WHERE p.id IS NOT NULL),
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'title', pf.title, 
+            'value', pf.value
+          ) 
+        )
+        FROM preferences pf
+        WHERE pf.identity_id=o.id
+      ),
       '[]'
-    ) as preferences
+    ) AS preferences
     FROM organizations o
     LEFT JOIN geonames gn ON gn.id=o.geoname_id
-    LEFT JOIN preferences p ON p.identity_id=o.id
-    GROUP BY o.id, gn.timezone
+    LIMIT ${limit} OFFSET ${offset}
     `
   )
 
-  let organizations = []
-  for (const organization of rows) organizations.push(transformer(organization))
-  const indexingDocuments = [app.searchClient.bulkIndexDocuments(index, organizations)]
+  return rows
+}
 
-  try {
-    return {
-      result: await Promise.all(indexingDocuments),
-      count: organizations.length
-    }
-  } catch (e) {
-    console.log(e)
+const initIndexing = async () => {
+  let offset = 0,
+    limit = 100,
+    count = 0,
+    orgs = []
+
+  while (true) {
+    orgs = await getAllOrgs({ limit, offset })
+    if (orgs.length < 1) break
+    await app.searchClient.bulkIndexDocuments(index, orgs.map(transformer))
+    count += orgs.length
+    offset += limit
   }
+
+  return { count }
 }
 
 export default {

@@ -110,7 +110,7 @@ const indexing = async ({ id }) => {
   }
 }
 
-async function getAllJobsIncremental({ initialOffset = -100, inrementPaceOffset = 100 }) {
+async function getAllJobs({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
     SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
@@ -131,7 +131,7 @@ async function getAllJobsIncremental({ initialOffset = -100, inrementPaceOffset 
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
     WHERE p.status='ACTIVE'
-    LIMIT ${inrementPaceOffset} OFFSET ${initialOffset + inrementPaceOffset}
+    LIMIT ${limit} OFFSET ${offset}
     `
   )
 
@@ -139,20 +139,17 @@ async function getAllJobsIncremental({ initialOffset = -100, inrementPaceOffset 
 }
 
 const initIndexing = async () => {
-  const initialOffset = -100,
-    inrementPaceOffset = 100
-
-  let count = 0,
+  let offset = 0,
+    limit = 100,
+    count = 0,
     projects = []
 
   while (true) {
-    projects = await getAllJobsIncremental({
-      initialOffset: initialOffset + inrementPaceOffset,
-      inrementPaceOffset
-    })
+    projects = await getAllJobs({ limit, offset })
     if (projects.length < 1) break
     await app.searchClient.bulkIndexDocuments(index, projects.map(transformer))
     count += projects.length
+    offset += limit
   }
 
   return { count }

@@ -5,4 +5,5 @@ export interface IApp extends Application {
   users: any
   http: any
   listen: any
+  searchClient: any
 }

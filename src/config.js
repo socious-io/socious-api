@@ -108,6 +108,12 @@ export default {
     servers: process.env.NATS_HOSTS?.split(','),
     token: process.env.NATS_TOKEN
   },
+  elasticsearch: {
+    node: process.env.ELASTIC_NODE,
+    auth: {
+      apiKey: process.env.ELASTIC_APIKEY_SECRET
+    }
+  },
   session: {
     key: 'Socious.sess',
     maxAge: 140 * 60 * 60 * 1000,

@@ -65,9 +65,9 @@ function transformer(document) {
     payment_range_lower: document.payment_range_lower,
     payment_range_higher: document.payment_range_higher,
     //Equity / tokens
-    organization: document.organization,
-    organization_type: document.organization_type,
-    organization_size: document.organization_size,
+    organization: document.organization.id,
+    organization_type: document.organization.type,
+    organization_size: document.organization.size,
     organization_preferences: document.preferences.map((preference) => {
       return {
         ...preference,
@@ -80,22 +80,24 @@ function transformer(document) {
 const indexing = async ({ id }) => {
   const project = await app.db.get(
     sql`
-    SELECT p.*, gn.timezone, o.id as organization, o.type as organization_type, o.size as organization_size,
+    SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
     COALESCE(
-      jsonb_agg(
-        json_build_object(
-          'title', pf.title, 
-          'value', pf.value
-        ) 
-      ) FILTER (WHERE pf.id IS NOT NULL),
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'title', pf.title, 
+            'value', pf.value
+          ) 
+        )
+        FROM preferences pf
+        WHERE pf.identity_id=o.id
+      ),
       '[]'
-    ) as preferences
+    ) AS preferences
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    LEFT JOIN preferences pf ON pf.identity_id=p.identity_id
     WHERE p.id=${id}
-    GROUP BY p.id, gn.timezone, o.id
     `
   )
   const document = transformer(project)
@@ -108,29 +110,28 @@ const indexing = async ({ id }) => {
   }
 }
 
-async function getAllJobsIncremental({ initialOffset = -1000, inrementPaceOffset = 1000 }) {
+async function getAllJobsIncremental({ initialOffset = -100, inrementPaceOffset = 100 }) {
   const { rows } = await app.db.query(
     sql`
-    SELECT p.*, gn.timezone, o.id as organization, o.type as organization_type, o.size as organization_size,
+    SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
     COALESCE(
-      jsonb_agg(
-        json_build_object(
-          'title', pf.title, 
-          'value', pf.value
-        ) 
-      ) FILTER (WHERE pf.id IS NOT NULL),
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'title', pf.title, 
+            'value', pf.value
+          ) 
+        )
+        FROM preferences pf
+        WHERE pf.identity_id=o.id
+      ),
       '[]'
-    ) as preferences
+    ) AS preferences
     FROM projects p
-    INNER JOIN (
-        SELECT id FROM projects p WHERE p.status='ACTIVE' ORDER BY id LIMIT ${inrementPaceOffset} OFFSET ${
-      initialOffset + inrementPaceOffset
-    }
-    ) AS tmp USING (id)
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    LEFT JOIN preferences pf ON pf.identity_id=p.identity_id
-    GROUP BY p.id, gn.timezone, o.id
+    WHERE p.status='ACTIVE'
+    LIMIT ${inrementPaceOffset} OFFSET ${initialOffset + inrementPaceOffset}
     `
   )
 
@@ -138,37 +139,23 @@ async function getAllJobsIncremental({ initialOffset = -1000, inrementPaceOffset
 }
 
 const initIndexing = async () => {
-  let initialOffset = -100,
+  const initialOffset = -100,
     inrementPaceOffset = 100
-  let projects = await getAllJobsIncremental({
-    initialOffset,
-    inrementPaceOffset
-  })
+
   let count = 0,
-    chunkCounter = 0
+    projects = []
 
-  while (projects.length > 0) {
-    console.log(`Processing Chunk #${++chunkCounter} (${projects.length} items)`)
-
-    projects = projects.map((project) => transformer(project))
-    const indexingDocuments = [app.searchClient.bulkIndexDocuments(index, projects)]
-
-    try {
-      await Promise.all(indexingDocuments)
-      count += projects.length
-    } catch (e) {
-      console.log(e)
-    }
-
+  while (true) {
     projects = await getAllJobsIncremental({
       initialOffset: initialOffset + inrementPaceOffset,
       inrementPaceOffset
     })
+    if (projects.length < 1) break
+    await app.searchClient.bulkIndexDocuments(index, projects.map(transformer))
+    count += projects.length
   }
 
-  return {
-    count
-  }
+  return { count }
 }
 
 export default {

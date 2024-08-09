@@ -26,6 +26,7 @@
     "start:debug": "nodemon --inspect serve.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.js\" --fix",
     "pretest": "cross-env ENV=testing node scripts/createdb.js ; db-migrate --dotenvCustomPath=test.env up --config ./migrations/database.json",
+    "search:config": "node scripts/config-searchengine.js",
     "search:seed": "node scripts/seed-searchengine.js",
     "test": "cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js -i --forceExit ${TEST:-}; npm run aftertest",
     "test:update": "npm run pretest; cross-env ENV=testing NEW_RELIC_ENABLED=false node --experimental-vm-modules node_modules/jest/bin/jest.js --updateSnapshot -i --forceExit ${TEST:-}; npm run aftertest",

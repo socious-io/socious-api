@@ -61,7 +61,7 @@ function transformer(document) {
 const indexing = async ({ id }) => {
   const user = await app.db.get(
     sql`
-    SELECT *, gn.timezone as timezone,
+    SELECT u.*, gn.timezone as timezone,
     COALESCE(
       (SELECT
         jsonb_agg(
@@ -81,7 +81,9 @@ const indexing = async ({ id }) => {
     `
   )
 
+  console.log(user)
   const document = transformer(user)
+  console.log(document)
 
   const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
   try {
@@ -119,14 +121,14 @@ async function getAllOrgs({ offset = 0, limit = 100 }) {
 
 const initIndexing = async () => {
   let offset = 0,
-    limit = 100,
+    limit = 1000,
     count = 0,
     users = []
 
   while (true) {
     users = await getAllOrgs({ limit, offset })
     if (users.length < 1) break
-    await app.searchClient.bulkIndexDocuments(index, users.map(transformer))
+    console.log(await app.searchClient.bulkIndexDocuments(index, users.map(transformer)))
     count += users.length
     offset += limit
   }

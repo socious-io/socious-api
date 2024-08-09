@@ -24,7 +24,6 @@ import Resume from '../services/resume_reader/index.js'
 import { koaBody } from 'koa-body'
 import publish from '../services/jobs/publish.js'
 import config from '../config.js'
-import SearchEngine from '../services/elasticsearch/index.js'
 
 export const router = new Router()
 
@@ -76,7 +75,7 @@ router.post('/update/profile', loginRequired, async (ctx) => {
 
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body)
 
-  SearchEngine.triggers.indexUsers({ id: ctx.body.id })
+  if(ctx.searchTriggers) ctx.searchTriggers.indexUsers({ id: ctx.body.id })
 
   putContact({
     first_name: ctx.body.first_name,

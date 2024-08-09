@@ -50,7 +50,7 @@ class SearchEngine {
 
     const documentsToProceed = documents.slice(0, chunks - 1)
     const remainingDocuments = documents.slice(chunks)
-    const operations = documentsToProceed.flatMap((document) => [{ index: { _index: index } }, document])
+    const operations = documentsToProceed.flatMap((document) => [{ index: { _index: index, _id: document.id } }, document])
 
     try {
       await client.bulk({ operations })
@@ -64,7 +64,7 @@ class SearchEngine {
   async bulkIndexDocuments(index, documents) {
     index = index + this.indexModifier
     try {
-      const operations = documents.flatMap((document) => [{ index: { _index: index } }, document])
+      const operations = documents.flatMap((document) => [{ index: { _index: index, _id: document.id } }, document])
       return await client.bulk({ refresh: true, operations })
     } catch (e) {
       console.log(e)

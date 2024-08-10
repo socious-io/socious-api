@@ -125,6 +125,7 @@ const initIndexing = async () => {
     count = 0,
     users = []
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     users = await getAllOrgs({ limit, offset })
     if (users.length < 1) break

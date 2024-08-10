@@ -17,15 +17,14 @@ export const app = new Koa({ proxy: true })
 
 //Search
 
-if(Config.env != 'testing') {
+if (Config.env != 'testing') {
   const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
   app.searchClient = SearchEngineClient
-  app.use((ctx, next)=>{
+  app.use((ctx, next) => {
     ctx.searchTriggers = SearchEngineTriggers
     return next()
   })
 }
-
 
 app.keys = [Config.secret]
 app.users = {}

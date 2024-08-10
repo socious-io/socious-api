@@ -3,7 +3,7 @@ import SearchEngine from '../src/services/elasticsearch/index.js'
 
 async function run() {
   console.log('Configuring Elastic Search ...')
-  await SearchEngine.config();
+  await SearchEngine.config()
   console.log(`Configuring Completed`)
 }
 

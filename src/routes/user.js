@@ -75,6 +75,8 @@ router.post('/update/profile', loginRequired, async (ctx) => {
 
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body)
 
+  if (ctx.searchTriggers) ctx.searchTriggers.indexUsers({ id: ctx.body.id })
+
   putContact({
     first_name: ctx.body.first_name,
     last_name: ctx.body.last_name,

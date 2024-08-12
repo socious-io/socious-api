@@ -93,7 +93,7 @@
     "supertest-koa-agent": "^0.3.2",
     "winston": "^3.8.2",
     "winston-papertrail": "^1.0.5",
-    "winston-transport": "^4.5.0",
+    "winston-transport": "^4.7.1",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

@@ -50,6 +50,7 @@ export default {
       activation: 'd-d242926eac4e4c33a166764638cf6e7f',
       forgetPassword: 'd-d7aea3b78df042e8a2fdc83953960259',
       otp: 'd-0146441b623f4cb78833c50eb1a8c813',
+      referral: 'd-95ca4e22ae7a459c8d9218a8e0c46a28',
       notifications: {
         FOLLOWED: 'd-aeeec637f91f418388bf9b5ce40e94c2',
         COMMENT_LIKE: 'd-ce5fc950a83642d78c32c305d56acd9a',
@@ -70,7 +71,16 @@ export default {
         CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
         ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
         MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
-        REACH_10K_IMPACT_POINT: ' d-f03c8940ad944e9b959b126247dcce55'
+        REACH_10K_IMPACT_POINT: 'd-f03c8940ad944e9b959b126247dcce55',
+        DISPUTE_INITIATED: 'd-ae6797e518f5471ab0daad3bfa9bfd02',
+        DISPUTE_NEW_RESPONSE: 'd-3640f7c8e1844090aad9e7e33f2ba1dc',
+        DISPUTE_JUROR_CONTRIBUTION_INVITED: 'd-8164cf4bc84b4dd5a76cc82a6d16cfef',
+        DISPUTE_CLOSED_TO_LOSER_PARTY: 'd-f5ffe648b6224607a4dc33395612cf77',
+        REFERRAL_JOINED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        REFERRAL_VERIFIED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        REFERRAL_HIRED: 'd-7c4f194c10f14c099a201c403668c6bb',
+        REFERRAL_COMPLETED_JOB: 'd-7c4f194c10f14c099a201c403668c6bb',
+        GENERAL_NOTIF: 'd-7c4f194c10f14c099a201c403668c6bb'
       }
     }
   },
@@ -97,6 +107,12 @@ export default {
   nats: {
     servers: process.env.NATS_HOSTS?.split(','),
     token: process.env.NATS_TOKEN
+  },
+  elasticsearch: {
+    node: process.env.ELASTIC_NODE,
+    auth: {
+      apiKey: process.env.ELASTIC_APIKEY_SECRET
+    }
   },
   session: {
     key: 'Socious.sess',
@@ -337,6 +353,7 @@ export default {
   privateKey: process.env.PRIVATE_KEY,
   publicKey: process.env.PUBLIC_KEY,
   discordLogger: process.env.DISCORD_LOGGER,
+  discordDisputeWebhook: process.env.DISCORD_DISPUTE_WEBHOOK,
   oauth: {
     google: {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,

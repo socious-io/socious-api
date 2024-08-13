@@ -1,4 +1,5 @@
-import { sendHtmlEmail, sendTemplateEmail } from '../email/index.js'
+import { identitySendEmails, sendHtmlEmail, sendTemplateEmail } from '../email/index.js'
+import SearchEngine from '../elasticsearch/index.js'
 import { simplePush } from '../fcm/index.js'
 import { contactWorker } from '../sendgrid/index.js'
 import { worker as eventsWorker } from '../events/worker.js'
@@ -35,13 +36,17 @@ const consumer = (handler) => {
 const register = {
   email: consumer(sendHtmlEmail),
   tmp_email: consumer(sendTemplateEmail),
+  identity_email: consumer(identitySendEmails),
   fcm: consumer(simplePush),
   notify: consumer(eventsWorker),
   calculate_impact_points: consumer(impactPointsWorker),
   sendgrid_add_contacts: consumer(contactWorker),
   analytics_identitfy: consumer(Analytics.identifyWorker),
   analytics_track: consumer(Analytics.trackWorker),
-  sync_proofspace: consumer(ProofSpace.SyncWorker)
+  sync_proofspace: consumer(ProofSpace.SyncWorker),
+  index_users: consumer(SearchEngine.models.users.indexing),
+  index_jobs: consumer(SearchEngine.models.jobs.indexing),
+  index_organizations: consumer(SearchEngine.models.organizations.indexing)
 }
 
 for await (const [name, handler] of Object.entries(register)) {

@@ -1,4 +1,5 @@
 import Router from '@koa/router'
+import Joi from 'joi'
 import User from '../models/user/index.js'
 import Applicant from '../models/applicant/index.js'
 import Notif from '../models/notification/index.js'
@@ -19,6 +20,10 @@ import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 import Credential from '../models/credentials/index.js'
 import logger from '../utils/logging.js'
+import Resume from '../services/resume_reader/index.js'
+import { koaBody } from 'koa-body'
+import publish from '../services/jobs/publish.js'
+import config from '../config.js'
 
 export const router = new Router()
 
@@ -69,6 +74,8 @@ router.post('/update/profile', loginRequired, async (ctx) => {
   ctx.request.body.skills = skills.map((s) => s.name)
 
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body)
+
+  if (ctx.searchTriggers) ctx.searchTriggers.indexUsers({ id: ctx.body.id })
 
   putContact({
     first_name: ctx.body.first_name,
@@ -328,4 +335,32 @@ router.post('/educations/update/:id', loginRequired, checkIdParams, async (ctx) 
 
 router.post('/educations/remove/:id', loginRequired, checkIdParams, async (ctx) => {
   ctx.body = await User.removeEducation(ctx.params.id, ctx.user)
+})
+
+router.post('/imports/linkdin', loginRequired, koaBody({ multipart: true, uploadDir: '.' }), async (ctx) => {
+  if (!ctx.request.files.file) throw new BadRequestError('file is required')
+  const { filepath, mimetype } = ctx.request.files.file
+  if (mimetype != 'application/pdf') throw new BadRequestError('bad file type, only pdf files are allowed')
+  ctx.body = await Resume.read({ identity_id: ctx.identity.id, body: filepath, type: 'LINKDIN' })
+})
+
+router.post('/imports/:id/apply', loginRequired, checkIdParams, async (ctx) => {
+  await Resume.apply(ctx.identity.id, ctx.params.id)
+  ctx.body = { message: 'success' }
+})
+
+router.post('/emails/refers', loginRequired, async (ctx) => {
+  const validator = Joi.string().email()
+  for (const email of ctx.request.body.emails) {
+    const valid = validator.validate(email)
+    if (valid.error) continue
+    publish('identity_email', {
+      to: email,
+      identity_id: ctx.identity.id,
+      type: 'REFERRAL',
+      template: config.mail.templates.referral,
+      kwargs: { name: ctx.user.first_name }
+    })
+  }
+  ctx.body = { message: 'success' }
 })

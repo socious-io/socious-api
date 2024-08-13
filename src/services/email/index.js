@@ -5,6 +5,7 @@ import config from '../../config.js'
 import ejs from 'ejs'
 import crypto from 'crypto'
 import logger from '../../utils/logging.js'
+import { get_identity_sent } from './read.js'
 
 const smtp = nodeMailer.createTransport(config.mail.smtp)
 sendgrid.setApiKey(config.sendgridApiKey)
@@ -170,4 +171,32 @@ export const sendTemplateEmail = async ({ to, subject, template, kwargs = {}, ca
     sender,
     date
   )
+}
+
+export const identitySendEmails = async ({ to, identity_id, template, kwargs = {}, type }) => {
+  const sender = isTestEmail(to) ? MailSenderTypes.TEST : config.mail.defaultSender
+  const rows = await get_identity_sent({ identity_id, email: to, type })
+  if (rows.length > 0) {
+    logger.info(`email to ${to} canceled cause it's already sent less than 2 weeks ago ${JSON.stringify(kwargs)}`)
+    return
+  }
+  let result = {}
+  try {
+    switch (sender) {
+      case MailSenderTypes.TEST:
+        result = null
+        break
+      default:
+        result = await sendTemplateBySendgrid({
+          to,
+          from: config.mail.sendgrid.from,
+          template,
+          kwargs
+        })
+    }
+    return result
+  } catch (err) {
+    logger.error(`[tmp_email] => ${err.message}`)
+    return
+  }
 }

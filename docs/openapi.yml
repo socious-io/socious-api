@@ -2328,6 +2328,12 @@ components:
               type: string
             name:
               type: string
+        escrow:
+          properties:
+            id:
+              type: string
+            payment_id:
+              type: string
         projects:
           properties:
             id:
@@ -2343,7 +2349,9 @@ components:
             members:
               type: number
         events:
-          $ref: '#/components/schemas/DisputeEvents'
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeEvents'
         created_at:
           type: string
         updated_at:
@@ -2394,6 +2402,125 @@ components:
           type: string
         updated_at:
           type: string
+    Preference:
+      properties:
+        title:
+          type: string
+          example: EMPLOYEE_RECOGNITION_PROGRAMS
+          enum:
+            - HIRING
+            - CRYPTO_PAYMENT_AVAILABLE
+            - RISK_TAKING_VS_RISK_AVERSE
+            - RESULTS_DRIVEN_VS_PROCESS_ORIENTED
+            - AUTONOMY_VS_STRUCTURED_GUIDANCE
+            - HONEST_FEEDBACK_VS_AVOID_CONFLICT
+            - RELOCATION_ASSISTANCE
+            - VISA_SUPPORT_AND_SPONSORSHIP
+            - REMOTE_WORK_FLEXIBILITY
+            - COMMUTER_BENEFITS
+            - GENEROUS_VACATION_POLICY
+            - CHILDCARE_SUPPORT
+            - CASUAL_DRESS
+            - PET_FRIENDLY_WORKPLACE
+            - PARENTAL_LEAVE
+            - WORK_LIFE_BALANCE_INITIATIVES
+            - SABBATICALS
+            - WELLNESS_BENEFITS
+            - HEALTH_INSURANCE
+            - HEALTH_AND_SAFETY_MEASURES
+            - WORK_LIFE_BALANCE_AND_EMPLOYEE_HEALTH_OTHERS
+            - COMPETITIVE_SALARY
+            - EQUITY_AND_TOKEN_BENEFITS
+            - PERFORMANCE_BONUSES
+            - EMPLOYEE_RECOGNITION_PROGRAMS
+            - EMPLOYEE_DISCOUNTS
+            - RETIREMENT_PLANS
+            - COMPANY_MEALS
+            - FLEXIBLE_SPENDING_ACCOUNTS
+            - EMPLOYEE_ASSISTANCE_PROGRAMS_EAP_
+            - FAIR_COMPENSATION_AND_BENEFITS_OTHERS
+            - PROFESSIONAL_DEVELOPMENT
+            - LEADERSHIP_TRAINING_PROGRAMS
+            - LANGUAGE_LEARNING_SUPPORT
+            - MENTORSHIP_OPPORTUNITIES
+            - CAREER_PATHING_ASSISTANCE
+            - PERSONAL_DEVELOPMENT_PLANS
+            - CROSS_FUNCTIONAL_TRAINING
+            - PERFORMANCE_FEEDBACK_AND_COACHING
+            - NETWORKING_AND_RELATIONSHIP_BUILDING
+            - DIVERSITY_OF_ASSIGNMENT
+            - GROWTH_AND_LEARNING_OTHERS
+            - GENDER_EQUITY
+            - CULTURAL_DIVERSITY
+            - RACIAL_AND_ETHNIC_EQUALITY
+            - LGBTQ_INCLUSION
+            - ACCESSIBILITY_AND_ACCOMMODATION
+            - NEURODIVERSITY_INCLUSION
+            - AGE_DIVERSITY
+            - SOCIOECONOMIC_INCLUSIVITY
+            - MULTILINGUALISM_AND_COMMUNICATION
+            - RELIGIOUS_AND_SPIRITUAL_RESPECT
+            - DIVERSE_LEADERSHIP_REPRESENTATION
+            - INCLUSIVE_PRACTICES
+            - SOCIAL_EVENTS_AND_TEAM_BUILDING
+            - DIVERSITY_EQUITY_AND_INCLUSION_DEI_OTHERS
+            - NET_ZERO_COMMITMENTS
+            - RENEWABLE_ENERGY_USE
+            - CARBON_FOOTPRINT_REDUCTION
+            - WASTE_MANAGEMENT_AND_REDUCTION
+            - SUSTAINABLE_RESOURCE_USE
+            - ECO_FRIENDLY_PRODUCTS_AND_SERVICES
+            - GREEN_BUILDING_AND_FACILITIES
+            - WATER_CONSERVATION_INITIATIVES
+            - SUSTAINABLE_SUPPLY_CHAIN_PRACTICES
+            - BIODIVERSITY_PROTECTION
+            - ENVIRONMENTAL_EDUCATION_AND_AWARENESS
+            - POLLUTION_CONTROL_MEASURES
+            - SUSTAINABLE_TRANSPORTATION_INITIATIVES
+            - GREEN_PROCUREMENT_POLICIES
+            - CLIMATE_CHANGE_MITIGATION
+            - ENERGY_EFFICIENCY_PROGRAMS
+            - REFORESTATION_AND_AFFORESTATION_PROJECTS
+            - WILDLIFE_CONSERVATION_SUPPORT
+            - SUSTAINABLE_AGRICULTURE_SUPPORT
+            - ENVIRONMENTAL_CERTIFICATIONS
+            - ZERO_WASTE_GOALS
+            - ENVIRONMENTAL_IMPACT_OTHERS
+            - COMMUNITY_ENGAGEMENT_PROGRAMS
+            - VOLUNTEERING_OPPORTUNITIES
+            - CHARITABLE_DONATIONS_AND_PARTNERSHIPS
+            - CORPORATE_SOCIAL_RESPONSIBILITY_INITIATIVES
+            - SOCIAL_ADVOCACY
+            - ETHICAL_SUPPLY_CHAIN_MANAGEMENT
+            - DISASTER_RELIEF_AND_EMERGENCY_SUPPORT
+            - EMPLOYEE_MATCHING_GIFT_PROGRAMS
+            - SOCIAL_IMPACT_OTHERS
+            - TRANSPARENCY_IN_OPERATIONS
+            - OPEN_COMMUNICATION_CHANNELS
+            - ETHICAL_CONDUCT_POLICIES
+            - FINANCIAL_INTEGRITY_AND_REPORTING
+            - REGULATORY_COMPLIANCE
+            - RESPONSIBLE_SUPPLY_CHAIN_MANAGEMENT
+            - DATA_PRIVACY_AND_SECURITY
+            - RISK_MANAGEMENT_AND_MITIGATION
+            - CORPORATE_ETHICS_TRAINING
+            - CORPORATE_GOVERNANCE_STANDARDS
+            - TRANSPARENCY_AND_ETHICAL_PRACTICES_OTHER
+        value:
+          type: string
+          example: ON
+          enum:
+            - ON
+            - OFF
+            - STRONG_HIGH
+            - MODERATE_HIGH
+            - NEUTRAL
+            - STRONG_LOW
+            - MODERATE_LOW
+            - PREFER_NOT_SAY
+        description:
+          type: string
+          example: This is a user-issued text
           
 paths:
   /site/options:
@@ -2401,6 +2528,16 @@ paths:
       tags:
         - site
       summary: filtering and sorting options
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /site/events:
+    get:
+      tags:
+        - site
+      summary: get all events
       responses:
         '200':
           description: Successful response
@@ -4335,6 +4472,69 @@ paths:
           schema:
             type: string
           example: 311fca4c-057d-4752-9e7c-b985ff1c5294
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/imports/linkdin:
+    post:
+      tags:
+        - users
+      summary: import linkdin cv
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/imports/{importer_id}/apply:
+    parameters:
+      - name: importer_id
+        in: path
+        schema:
+          type: string
+        required: true
+    post:
+      tags:
+        - users
+      summary: apply imports
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/emails/refers:
+    post:
+      tags:
+        - users
+      summary: email referral
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emails: ['info@test.com']
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -6765,7 +6965,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Disputes'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Disputes'
   /disputes/{dispute_id}:
     parameters:
       - name: dispute_id
@@ -7017,3 +7219,51 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /preferences:
+    parameters:
+      - name: filter.status
+        in: query
+        schema:
+          type: string
+          enum:
+            - INVITED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
+        required: false
+      - name: filter.dispute_id
+        in: query
+        schema:
+          type: string
+          example: bcb21136-8067-4fb3-8d4d-8c8788adcf4c
+        required: false
+    get:
+      tags:
+        - preferences
+      summary: Get All Preferences
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Preference'
+    post:
+      tags:
+        - preferences
+      summary: Update or Create Preferences
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Preference'

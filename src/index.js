@@ -10,9 +10,21 @@ import blueprint from './routes/index.js'
 import middlewares from './utils/middlewares/site.js'
 import { koaLogger } from './utils/logging.js'
 import Config from './config.js'
+import * as SearchEngineTriggers from './services/elasticsearch/triggers.js'
 
 /** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })
+
+//Search
+
+if (Config.env != 'testing') {
+  const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
+  app.searchClient = SearchEngineClient
+  app.use((ctx, next) => {
+    ctx.searchTriggers = SearchEngineTriggers
+    return next()
+  })
+}
 
 app.keys = [Config.secret]
 app.users = {}

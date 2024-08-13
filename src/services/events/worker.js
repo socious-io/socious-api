@@ -37,7 +37,7 @@ const pushNotifications = async (userIds, message, data) => {
   })
 }
 
-const email = async (notifType, userId, message, id, identityName) => {
+const email = async (notifType, userId, message, id, identityName, additionalKwargs = {}) => {
   let user = {}
   try {
     user = await User.get(userId)
@@ -50,11 +50,12 @@ const email = async (notifType, userId, message, id, identityName) => {
   publish('tmp_email', {
     to: user.email,
     subject: message.title,
-    template: Config.mail.templates.notifications[notifType],
+    template: Config.mail.templates.notifications[notifType] || Config.mail.templates.notifications.GENERAL_NOTIF,
     kwargs: {
       notify_name: user.first_name,
       name: identityName,
-      link: `${Config.notifAppLink}/${id}`
+      link: `${Config.notifAppLink}/${id}`,
+      ...additionalKwargs
     }
   })
 }
@@ -78,11 +79,10 @@ const send = async (userId, message, body, id, identityName, setting) => {
 
   if (setting.email) {
     try {
-      await email(body.type, userId, message, id, identityName)
-    } catch(err) {
+      await email(body.type, userId, message, id, identityName, body.additionalKwargs)
+    } catch (err) {
       logger.error(`sending email on notifications: ${err}`)
     }
-
   }
 }
 

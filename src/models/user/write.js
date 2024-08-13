@@ -48,7 +48,7 @@ export const updateProfile = async (
       city=${city}, geoname_id=${geoname_id}, address=${address}, country=${country},
       wallet_address=${wallet_address}, social_causes=${social_causes},
       skills=${skills}, mission=${mission}, language=${language},
-      mobile_country_code=${mobile_country_code},username=${username.toLowerCase()},
+      mobile_country_code=${mobile_country_code}, username=${username.toLowerCase()},
       certificates=${certificates},goals=${goals}, educations=${educations}
     WHERE id=${id} RETURNING id
   `
@@ -62,6 +62,18 @@ export const updateProfile = async (
 
 export const updateWalletAddress = async (id, walletAddress) => {
   await app.db.query(sql`UPDATE users SET wallet_address=${walletAddress} WHERE id=${id}`)
+}
+
+export const updateUserEvents = async (id, event) => {
+  await app.db.query(sql`
+    UPDATE users
+    SET events = 
+    CASE 
+        WHEN events IS NULL THEN ARRAY[${event}::uuid]
+        WHEN NOT events @> ARRAY[${event}::uuid] THEN events || ${event}::uuid
+        ELSE events
+    END
+    WHERE id = ${id}`)
 }
 
 export const updatePassword = async (id, newPassword) => {

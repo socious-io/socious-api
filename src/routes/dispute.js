@@ -9,6 +9,7 @@ import { validate } from '@socious/data'
 import { BadRequestError, NotFoundError } from '../utils/errors.js'
 import moment from 'moment'
 import { addHistory } from '../services/impact_points/badges.js'
+import { discordDisputeMessenger } from '../utils/externals.js'
 
 export const router = new Router()
 
@@ -31,6 +32,13 @@ router.post('/', loginRequired, async (ctx) => {
       title: ctx.body.title,
       code: ctx.body.code,
       expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+    },
+    additionalKwargs: {
+      dispute_title: ctx.body.title,
+      dispute_code: ctx.body.code,
+      dispute_claimant: ctx.body.claimant.meta.name,
+      dispute_respondent: ctx.body.respondent.meta.name,
+      dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
     }
   })
 })
@@ -102,6 +110,12 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
     dispute: {
       title: ctx.body.title,
       code: ctx.body.code
+    },
+    additionalKwargs: {
+      dispute_title: ctx.body.title,
+      dispute_code: ctx.body.code,
+      dispute_claimant: ctx.body.claimant.meta.name,
+      dispute_respondent: ctx.body.respondent.meta.name
     }
   })
 
@@ -118,6 +132,13 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
         dispute: {
           title: ctx.body.title,
           code: ctx.body.code
+        },
+        additionalKwargs: {
+          dispute_title: ctx.body.title,
+          dispute_code: ctx.body.code,
+          dispute_claimant: ctx.body.claimant.meta.name,
+          dispute_respondent: ctx.body.respondent.meta.name,
+          dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         }
       })
     }
@@ -165,6 +186,21 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
   if (ctx.body.state == 'CLOSED' && ctx.body.winner_party) {
     const looserPartyIdentityId = ctx.body.winner_party == 'CLAIMANT' ? ctx.body.respondent.id : ctx.body.claimant.id
 
+    await discordDisputeMessenger.sendWithTitleAndProperties({
+      title: `:white_check_mark: Dispute has been closed, now Socious team can intervene and release the funds to the \`${ctx.body.winner_party}\` of the project`,
+      detailObject: {
+        'Dispute ID': ctx.body.id,
+        Claimant: `${ctx.body.claimant.meta.name} (${ctx.body.claimant.meta.email})`,
+        Respondent: `${ctx.body.respondent.meta.name} (${ctx.body.respondent.meta.email})`,
+        'Contract ID': ctx.body.contract.id,
+        'Contract Name': ctx.body.contract.name,
+        'Project ID': ctx.body.project.id,
+        'Escrow ID': ctx.body.escrow.id,
+        'Escrow Payment ID': ctx.body.escrow.payment_id,
+        'Winner Party': ctx.body.winner_party
+      }
+    })
+
     Event.push(Event.Types.NOTIFICATION, looserPartyIdentityId, {
       type: Notif.Types.DISPUTE_CLOSED_TO_LOSER_PARTY,
       refId: ctx.body.id,
@@ -173,6 +209,13 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
       dispute: {
         title: ctx.body.title,
         code: ctx.body.code
+      },
+      additionalKwargs: {
+        dispute_title: ctx.body.title,
+        dispute_code: ctx.body.code,
+        dispute_claimant: ctx.body.claimant.meta.name,
+        dispute_respondent: ctx.body.respondent.meta.name,
+        dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
       }
     })
   }
@@ -212,6 +255,12 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
           dispute: {
             title: dispute.title,
             code: dispute.code
+          },
+          additionalKwargs: {
+            dispute_title: ctx.body.title,
+            dispute_code: ctx.body.code,
+            dispute_claimant: ctx.body.claimant.meta.name,
+            dispute_respondent: ctx.body.respondent.meta.name
           }
         })
       })
@@ -222,8 +271,11 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
         parentId: null,
         identity,
         dispute: {
+          claimant_name: dispute.claimant.meta.name,
+          respondent_name: dispute.respondent.meta.name,
           title: dispute.title,
-          code: dispute.code
+          code: dispute.code,
+          expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         }
       })
 
@@ -234,7 +286,15 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
         identity,
         dispute: {
           title: dispute.title,
-          code: dispute.code
+          code: dispute.code,
+          expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+        },
+        additionalKwargs: {
+          dispute_title: ctx.body.title,
+          dispute_code: ctx.body.code,
+          dispute_claimant: ctx.body.claimant.meta.name,
+          dispute_respondent: ctx.body.respondent.meta.name,
+          dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         }
       })
     }

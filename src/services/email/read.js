@@ -18,3 +18,14 @@ export const message = async (address, id) => {
   `)
   return rows
 }
+
+export const get_identity_sent = async ({ identity_id, email, type }) => {
+  const { rows } = await app.db.query(sql`
+    SELECT * FROM identities_emails 
+    WHERE identity_id=${identity_id} AND 
+    email=${email}
+    AND type=${type} AND 
+    created_at >= NOW() - INTERVAL '2 weeks'
+  `)
+  return rows
+}

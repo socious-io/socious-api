@@ -9,6 +9,13 @@ router.post('/', loginOptional, paginate, async (ctx) => {
   ctx.body = await Search.find(ctx.request.body, { identityId: ctx.identity.id, shouldSave: !ctx.guest }, ctx.paginate)
 })
 
+router.post('/v2', loginOptional, paginate, async (ctx) => {
+  if (ctx.searchClient) {
+    ctx.body = await ctx.searchService.search(ctx.request.body, ctx.paginate)
+    if (!ctx.guest) await Search.addHistory(ctx.request.body, ctx.identity.id)
+  }
+})
+
 router.get('/history', loginRequired, paginate, async (ctx) => {
   ctx.body = await Search.history(ctx.identity.id, ctx.paginate)
 })

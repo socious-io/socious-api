@@ -99,8 +99,30 @@ class SearchEngine {
     return await client.delete({ index, id })
   }
 
-  async searchDocuments(query) {
-    return await client.search({ query })
+  async countAllDocuments(index) {
+    return await client.count({ index })
+  }
+
+  async searchDocuments(index, query, { pagination }) {
+    const { limit = 10, offset = 0 } = pagination
+    try {
+      const searchResults = await client.search({ index, from: offset, size: limit, query })
+      const results = searchResults.hits.hits.reduce((pv, hit) => {
+        pv.push(hit._source)
+        return pv
+      }, [])
+      const count = searchResults.hits.total
+      return {
+        results,
+        count
+      }
+    } catch (e) {
+      console.log(e)
+      return {
+        results: [],
+        count: 0
+      }
+    }
   }
 }
 

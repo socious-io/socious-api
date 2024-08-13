@@ -5496,6 +5496,61 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /search/v2:
+    post:
+      tags:
+        - search
+      summary: search
+      description: >-
+        filtering format would be like mongo objects with ('eq', 'ne', 'gt',
+        'gte', 'lt', 'lte') for array columns only 'eq' would be available for
+        clarify filters operator stand for (greater, greater
+        equal, little, little equal)
+        available columns to filter based on type:
+          projects:
+            ('title', 'city', 'country', 'description', 'causes_tags', 'skills', 'payment_type',
+            'payment_scheme', 'status', 'organization_size', 'organization_type', 'project_length',
+            'project_type', 'remote_preference', 'skills', 'timezone', 'payment_range_higher', 'payment_range_lower',
+            'organization', 'organization_preferences.title_value', 'organization_preferences.title', 'organization_preferences.value')
+          users:
+            ('causes_tags', 'city', 'country', 'created_at', 'email', 'first_name', 'id', 'last_name', 'open_to_volunteer',
+            'preferences.title', 'preferences.title_value', 'preferences.value', 'skills', 'timezone', 'username')
+          organizations:
+            ('address', 'bio', 'city', 'country', 'description', 'email', 'id', 'mission', 'name', 'phone',
+            'preferences.title', 'preferences.title_value', 'preferences.value', 'shortname', 'size')
+            'social_causes', 'timezone', 'type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  type: string
+                  example: search q
+                type:
+                  type: string
+                  example: projects
+                  enum:
+                    - projects
+                    - users
+                    - organizations
+                filter:
+                  type: object
+                  example:
+                    title: untitled
+                    country:
+                      - AR
+                      - NP
+                    payment_range_lower:
+                      gt: 0
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /search/history:
     get:
       tags:

@@ -16,12 +16,14 @@ import * as SearchEngineTriggers from './services/elasticsearch/triggers.js'
 export const app = new Koa({ proxy: true })
 
 //Search
-
 if (Config.env != 'testing') {
   const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
+  const SearchEngineService = (await import('./services/elasticsearch/service.js'))
   app.searchClient = SearchEngineClient
   app.use((ctx, next) => {
     ctx.searchTriggers = SearchEngineTriggers
+    ctx.searchClient = SearchEngineClient
+    ctx.searchService = SearchEngineService
     return next()
   })
 }

@@ -58,5 +58,6 @@ const history = async (identityId, { offset = 0, limit = 10 }) => {
 
 export default {
   find,
-  history
+  history,
+  addHistory
 }

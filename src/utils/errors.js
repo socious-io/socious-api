@@ -43,3 +43,8 @@ export class NotImplementedError extends Error {
   message = 'Not implemented'
   status = 501
 }
+
+export class InternalServerError extends Error {
+  message = 'Internal Server'
+  status = 500
+}

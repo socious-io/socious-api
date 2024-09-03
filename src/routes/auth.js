@@ -13,6 +13,7 @@ import Event from '../services/events/index.js'
 import Notif from '../models/notification/index.js'
 import { googleLogin } from '../services/oauth_connects/google.js'
 import Identity from '../models/identity/index.js'
+import { appleLogin } from '../services/oauth_connects/apple.js'
 
 export const router = new Router()
 
@@ -139,6 +140,29 @@ router.get('/stripe', async (ctx) => {
 router.get('/google', async (ctx) => {
   const { code, referrer_by } = ctx.query
   const login = await googleLogin(code, referrer_by, ctx.headers.referer)
+
+  if (login.registered && referrer_by) {
+    const identity = await Identity.get(login.user)
+    Event.push(Event.Types.NOTIFICATION, referrer_by, {
+      type: Notif.Types.REFERRAL_JOINED,
+      refId: login.user.id,
+      parentId: identity.id,
+      identity: identity
+    })
+  }
+
+  if (ctx.query.event_id) await User.updateUserEvents(login.user.id, ctx.query.event_id)
+
+  ctx.body = {
+    ...login.signin,
+    registered: login.registered
+  }
+})
+
+router.get('/apple', async (ctx) => {
+  const { code, referrer_by } = ctx.query
+  const { first_name, last_name } = ctx.body
+  const login = await appleLogin(code, first_name, last_name, referrer_by, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

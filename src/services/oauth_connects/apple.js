@@ -8,9 +8,8 @@ import { signin } from '../auth/jwt.js'
 import { generateUsername } from '../auth/auth.js'
 import { BadRequestError } from '../../utils/errors.js'
 
-export async function appleLogin(code, first_name, last_name, referredById, ref) {
+export async function appleLogin(code, id_token, referredById, ref) {
   // Create the client secret
-  console.log(Config.oauth.apple.privateKeyPath)
   const privateKey = await fs.readFile(Config.oauth.apple.privateKeyPath)
   const client_secret = Jwt.sign(
     {
@@ -47,8 +46,8 @@ export async function appleLogin(code, first_name, last_name, referredById, ref)
     throw error
   }
 
-  // Verify and decode the ID token to get user information
-  const { email } = Jwt.decode(token.id_token)
+  // // Verify and decode the ID token to get user information
+  const { name, email } = Jwt.decode(token.id_token)
 
   try {
     const user = await User.getByEmail(email)
@@ -64,7 +63,7 @@ export async function appleLogin(code, first_name, last_name, referredById, ref)
     }
 
     const username = generateUsername(email)
-    const user = await User.insert(first_name, last_name, username, email)
+    const user = await User.insert(name?.first_name, name?.last_name, username, email)
     if (referredById) await Referring.insert(user.id, referredById)
 
     return {

@@ -360,9 +360,8 @@ export default {
       secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
     },
     apple: {
-      id: process.env.OAUTH_APPLE_ID,
       team_id: process.env.OAUTH_APPLE_TEAM_ID,
-      client_id: process.env.OAUTH_APPLE_TEAM_ID,
+      client_id: process.env.OAUTH_APPLE_CLIENT_ID,
       key_id: process.env.OAUTH_APPLE_KEY_ID,
       privateKeyPath: process.env.OAUTH_APPLE_PRIVATE_KEY_PATH
     }

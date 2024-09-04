@@ -8,7 +8,7 @@ import { signin } from '../auth/jwt.js'
 import { generateUsername } from '../auth/auth.js'
 import { BadRequestError } from '../../utils/errors.js'
 
-export async function appleLogin(code, id_token, referredById, ref) {
+export async function appleLogin(code, id_token, referredById) {
   // Create the client secret
   const privateKey = await fs.readFile(Config.oauth.apple.privateKeyPath)
   const client_secret = Jwt.sign(

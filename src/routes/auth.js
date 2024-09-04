@@ -161,8 +161,8 @@ router.get('/google', async (ctx) => {
 
 router.get('/apple', async (ctx) => {
   const { code, referrer_by } = ctx.query
-  const { first_name, last_name } = ctx.body
-  const login = await appleLogin(code, first_name, last_name, referrer_by, ctx.headers.referer)
+  const { id_token } = ctx.request.body
+  const login = await appleLogin(code, id_token, referrer_by, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

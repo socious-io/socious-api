@@ -32,8 +32,7 @@ export async function appleLogin(code, id_token, referredById, ref) {
         client_id: Config.oauth.apple.client_id,
         client_secret,
         code,
-        grant_type: 'authorization_code',
-        redirect_uri: ref
+        grant_type: 'authorization_code'
       },
       {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

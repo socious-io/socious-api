@@ -223,6 +223,9 @@ jobs:
       # - name: Run NATS
       #  run: docker-compose up -d
 
+      - name: Check user (temp)
+        run: whoami
+
       - name: Run DB migrations
         run: |
           docker pull ${{ steps.meta.outputs.tags }}

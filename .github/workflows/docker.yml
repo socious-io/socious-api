@@ -199,7 +199,7 @@ jobs:
     needs: [build, run-tests]
     name: Deploy to Dev
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ["backend-dev-new"]
+    runs-on: ["socious-production"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -223,6 +223,9 @@ jobs:
       # - name: Run NATS
       #  run: docker-compose up -d
 
+      - name: Check user (temp)
+        run: whoami
+
       - name: Run DB migrations
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
@@ -245,7 +248,7 @@ jobs:
     needs: [build]
     name: Deploy to Production
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
-    runs-on: ["backend-prod-new"]
+    runs-on: ["socious-production"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'

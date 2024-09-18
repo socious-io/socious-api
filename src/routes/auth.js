@@ -13,6 +13,8 @@ import Event from '../services/events/index.js'
 import Notif from '../models/notification/index.js'
 import { googleLogin } from '../services/oauth_connects/google.js'
 import Identity from '../models/identity/index.js'
+import { appleLogin } from '../services/oauth_connects/apple.js'
+import koaBody from 'koa-bodyparser';
 
 export const router = new Router()
 
@@ -139,6 +141,38 @@ router.get('/stripe', async (ctx) => {
 router.get('/google', async (ctx) => {
   const { code, referrer_by } = ctx.query
   const login = await googleLogin(code, referrer_by, ctx.headers.referer)
+
+  if (login.registered && referrer_by) {
+    const identity = await Identity.get(login.user)
+    Event.push(Event.Types.NOTIFICATION, referrer_by, {
+      type: Notif.Types.REFERRAL_JOINED,
+      refId: login.user.id,
+      parentId: identity.id,
+      identity: identity
+    })
+  }
+
+  if (ctx.query.event_id) await User.updateUserEvents(login.user.id, ctx.query.event_id)
+
+  ctx.body = {
+    ...login.signin,
+    registered: login.registered
+  }
+})
+
+router.post('/apple', koaBody(), async (ctx) => {
+  const {code, id_token} = ctx.request.body;
+
+  if(config.env == 'production'){
+    ctx.redirect(`https://app.socious.io/oauth/apple?code=${code}&id_token=${id_token}`);
+  }else {
+    ctx.redirect(`https://webapp2.dev.socious.io/oauth/apple?code=${code}&id_token=${id_token}`);
+  }
+})
+
+router.get('/apple', async (ctx) => {
+  const { code, id_token, referrer_by } = ctx.query
+  const login = await appleLogin(code, id_token, referrer_by, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

@@ -47,6 +47,28 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
   }
 }
 
+const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
+  await Data.SearchSchema.validateAsync(body)
+
+  const options = { ...paginate, filter: body.filter, sort: body.sort }
+
+  if (shouldSave) await addHistory(body, identityId)
+
+  switch (body.type) {
+    case Data.SearchType.USERS:
+      return User.getAllProfile(ids, options.sort, identityId)
+
+    case Data.SearchType.PROJECTS:
+      return Project.getAll(ids, options.sort, identityId)
+
+    case Data.SearchType.ORGANIZATIONS:
+      return Org.getAll(ids, options.sort, identityId)
+
+    default:
+      throw new BadRequestError(`type '${body.type}' is not valid`)
+  }
+}
+
 const history = async (identityId, { offset = 0, limit = 10 }) => {
   const { rows } = await app.db.query(sql`
   SELECT COUNT(*) OVER () as total_count, *
@@ -58,6 +80,7 @@ const history = async (identityId, { offset = 0, limit = 10 }) => {
 
 export default {
   find,
+  findV2,
   history,
   addHistory
 }

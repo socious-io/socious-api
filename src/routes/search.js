@@ -12,8 +12,12 @@ router.post('/', loginOptional, paginate, async (ctx) => {
 
 router.post('/v2', loginOptional, paginate, async (ctx) => {
   if (!ctx.searchClient) throw new InternalServerError()
-  ctx.body = await ctx.searchService.search(ctx.request.body, ctx.paginate)
-  if (!ctx.guest) await Search.addHistory(ctx.request.body, ctx.identity.id)
+    
+  const {count, results} = await ctx.searchService.search(ctx.request.body, ctx.paginate)
+  const searchResults = await Search.findV2(ctx.request.body, results.map(sr=>sr.id), {identityId: ctx.identity.id, shouldSave: !ctx.guest})
+  searchResults.map(sr=>sr.total_count=count.value)
+
+  ctx.body = results
 })
 
 router.get('/history', loginRequired, paginate, async (ctx) => {

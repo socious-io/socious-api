@@ -14,7 +14,7 @@ export const search = async (body, pagination) => {
   if (!index) throw new BadRequestError(`type '${type}' is not valid`)
   await Data.SearchSchema.validateAsync(body)
 
-  //make filters elastic-complient
+  //make filters elastic-compliant
   const filters = []
   for (const [key, value] of Object.entries(filter)) {
     const tempFilter = {}
@@ -48,12 +48,10 @@ export const search = async (body, pagination) => {
     queryDsl.bool.must = [
       {
         query_string: {
-          query: q.trim()
+          query: `*${q.trim()}*`
         }
       }
     ]
 
-  const { count, results } = await client.searchDocuments(index, queryDsl, { pagination })
-  results.forEach((result) => (result.total_count = count.value))
-  return results
+  return await client.searchDocuments(index, queryDsl, { pagination })
 }

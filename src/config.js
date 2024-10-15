@@ -309,9 +309,10 @@ export default {
         {
           chain: {
             name: 'bsc',
-            explorer: 'https://api.bscscan.com/api'
+            explorer: 'https://api.bscscan.com/api',
+            apikey: process.env.BSC_API_KEY
           },
-          escrow: '0x2Bdf475Bf5353cF52Aa4339A0FA308B4e1e22C3A',
+          escrow: '0x2Bdf475Bf5353cF52Aa4339A0FA308B4e1e22C3A',          
           tokens: [
             {
               name: 'USD Coin',

@@ -17,7 +17,7 @@ router.post('/v2', loginOptional, paginate, async (ctx) => {
   const searchResults = await Search.findV2(ctx.request.body, results.map(sr=>sr.id), {identityId: ctx.identity.id, shouldSave: !ctx.guest})
   searchResults.map(sr=>sr.total_count=count.value)
 
-  ctx.body = results
+  ctx.body = searchResults
 })
 
 router.get('/history', loginRequired, paginate, async (ctx) => {

@@ -3,7 +3,7 @@ import { BadRequestError } from '../../utils/errors.js'
 import client from './client.js'
 
 export const search = async (body, pagination) => {
-  const typeToIndex = {
+  let typeToIndex = {
       users: 'users',
       projects: 'jobs',
       organizations: 'organizations'
@@ -16,6 +16,7 @@ export const search = async (body, pagination) => {
 
   //make filters elastic-compliant
   const filters = []
+  filter = filter??{}
   for (const [key, value] of Object.entries(filter)) {
     const tempFilter = {}
 

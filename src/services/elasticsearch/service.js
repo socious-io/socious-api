@@ -1,6 +1,7 @@
 import Data from '@socious/data'
 import { BadRequestError } from '../../utils/errors.js'
 import client from './client.js'
+import config from '../../config.js'
 
 export const search = async (body, pagination) => {
   let typeToIndex = {
@@ -24,7 +25,7 @@ export const search = async (body, pagination) => {
       ]
     },
     { q, type, filter } = body,
-    index = typeToIndex[type] + '_dev',
+    index = config.env=='production'?typeToIndex[type]:typeToIndex[type] + '_dev',
     fields = typeToFields[type]
 
   if (!index) throw new BadRequestError(`type '${type}' is not valid`)

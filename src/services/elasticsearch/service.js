@@ -25,7 +25,7 @@ export const search = async (body, pagination) => {
       ]
     },
     { q, type, filter } = body,
-    index = config.env=='production'?typeToIndex[type]:typeToIndex[type] + '_dev',
+    index = config.env == 'production' ? typeToIndex[type] : typeToIndex[type] + '_dev',
     fields = typeToFields[type]
 
   if (!index) throw new BadRequestError(`type '${type}' is not valid`)
@@ -35,8 +35,6 @@ export const search = async (body, pagination) => {
   let filters = []
   filter = filter ?? {}
   for (const [key, value] of Object.entries(filter)) {
-    const tempFilter = {}
-
     if (typeof value == 'string') {
       filters.push({
         match_phrase: {

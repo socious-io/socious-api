@@ -140,7 +140,7 @@ async function getAllJobs({ offset = 0, limit = 100 }) {
 
 const initIndexing = async () => {
   let offset = 0,
-    limit = 100,
+    limit = 10000,
     count = 0,
     projects = []
 

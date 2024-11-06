@@ -13,6 +13,13 @@ const indices = {
     created_at: { type: 'date' },
 
     //Filters
+    languages: {
+      properties: {
+        name: { type: 'keyword' },
+        level: { type: 'keyword' },
+        name_level: { type: 'keyword' }
+      }
+    },
     causes_tags: { type: 'keyword' }, //Filter: Social Causes
     skills: { type: 'keyword' }, //Filter: Skills
     city: { type: 'keyword' }, //Filter: Location
@@ -45,6 +52,12 @@ function transformer(document) {
     created_at: document.created_at,
     causes_tags: document.causes_tags ?? [],
     skills: document.skills ?? [],
+    languages: document.languages.map((language) => {
+      return {
+        ...language,
+        name_level: `${language.name}:${language.level}`
+      }
+    }),
     city: document.city,
     country: document.country,
     timezone: document.timezone,
@@ -74,7 +87,20 @@ const indexing = async ({ id }) => {
         WHERE pf.identity_id=u.id
       ),
       '[]'
-    ) AS preferences
+    ) AS preferences,
+    COALESCE(
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'name', l.name, 
+            'level', l.level
+          ) 
+        )
+        FROM languages l
+        WHERE l.user_id=u.id
+      ),
+      '[]'
+    ) AS languages
     FROM users u
     LEFT JOIN geonames gn ON gn.id=u.geoname_id
     WHERE u.id=${id}
@@ -109,7 +135,20 @@ async function getAllOrgs({ offset = 0, limit = 100 }) {
         WHERE pf.identity_id=u.id
       ),
       '[]'
-    ) AS preferences
+    ) AS preferences,
+    COALESCE(
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'name', l.name, 
+            'level', l.level
+          ) 
+        )
+        FROM languages l
+        WHERE l.user_id=u.id
+      ),
+      '[]'
+    ) AS languages
     FROM users u
     LEFT JOIN geonames gn ON gn.id=u.geoname_id
     LIMIT ${limit} OFFSET ${offset}
@@ -121,7 +160,7 @@ async function getAllOrgs({ offset = 0, limit = 100 }) {
 
 const initIndexing = async () => {
   let offset = 0,
-    limit = 1000,
+    limit = 10000,
     count = 0,
     users = []
 

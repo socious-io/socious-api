@@ -3,7 +3,7 @@
 # (to get an image run `docker build -t socious-api-dev --target development .`)
 ###################
 
-FROM node:lts AS development
+FROM node:20 AS development
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
@@ -55,7 +55,7 @@ RUN npm rebuild bcrypt --build-from-source
 # PRODUCTION
 ###################
 
-FROM node:lts AS production
+FROM node:20 AS production
 
 # Add Tini
 COPY --from=development /tini /

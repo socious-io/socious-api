@@ -1,7 +1,8 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
+import { normalizeIndexName } from '../utils.js'
 
-const index = 'jobs'
+const index = normalizeIndexName('jobs')
 const indices = {
   index,
   fields: {

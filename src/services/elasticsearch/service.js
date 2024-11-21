@@ -2,12 +2,14 @@ import Data from '@socious/data'
 import { BadRequestError } from '../../utils/errors.js'
 import client from './client.js'
 import config from '../../config.js'
+import { normalizeIndexName } from './utils.js'
 
 export const search = async (body, pagination) => {
   let typeToIndex = {
       users: 'users',
       projects: 'jobs',
-      organizations: 'organizations'
+      organizations: 'organizations',
+      locations: 'locations'
     },
     typeToFields = {
       users: ['first_name^2', 'last_name^1'],
@@ -22,14 +24,17 @@ export const search = async (body, pagination) => {
         'address^3',
         'email^2',
         'phone^1'
+      ],
+      locations: [
+        'name'
       ]
     },
     { q, type, filter } = body,
-    index = config.env == 'production' ? typeToIndex[type] : typeToIndex[type] + '_dev',
+    
+    index = normalizeIndexName(typeToIndex[type]),
     fields = typeToFields[type]
 
   if (!index) throw new BadRequestError(`type '${type}' is not valid`)
-  await Data.SearchSchema.validateAsync(body)
 
   //make filters elastic-compliant
   let filters = []
@@ -63,6 +68,16 @@ export const search = async (body, pagination) => {
     }
   }
 
+  //make sort elastic-compliant
+  let sort = [];
+  if(body.sort){
+    for ( const [sortKey, sortValue] of Object.entries(body.sort) ) {
+      sort.push({
+        [sortKey]: sortValue
+      })
+    }
+  }
+
   //setting filter parameters
   const queryDsl = {
     bool: {
@@ -79,5 +94,5 @@ export const search = async (body, pagination) => {
       }
     ]
 
-  return await client.searchDocuments(index, queryDsl, { pagination })
+  return await client.searchDocuments(index, queryDsl, { pagination, sort })
 }

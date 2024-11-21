@@ -1,5 +1,6 @@
 import Router from '@koa/router'
 import Search from '../services/search/index.js'
+import Data from '@socious/data'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { InternalServerError } from '../utils/errors.js'

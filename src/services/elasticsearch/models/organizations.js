@@ -1,7 +1,9 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
+import { normalizeIndexName } from '../utils.js'
 
-const index = 'organizations'
+
+const index = normalizeIndexName('organizations')
 const indices = {
   index,
   fields: {
@@ -29,7 +31,8 @@ const indices = {
         value: { type: 'keyword' },
         title_value: { type: 'keyword' }
       }
-    }
+    },
+    verified: { type: 'boolean' }
   }
 }
 
@@ -57,7 +60,8 @@ function transformer(document) {
         ...preference,
         title_value: `${preference.title}:${preference.value}`
       }
-    })
+    }),
+    verified: document.verified
   }
 }
 

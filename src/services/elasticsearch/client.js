@@ -103,10 +103,10 @@ class SearchEngine {
     return await client.count({ index })
   }
 
-  async searchDocuments(index, query, { pagination }) {
+  async searchDocuments(index, query, { pagination, sort }) {
     const { limit = 10, offset = 0 } = pagination
     try {
-      const searchResults = await client.search({ index, from: offset, size: limit, query })
+      const searchResults = await client.search({ index, from: offset, size: limit, query, sort: sort })
       const results = searchResults.hits.hits.reduce((pv, hit) => {
         pv.push(hit._source)
         return pv

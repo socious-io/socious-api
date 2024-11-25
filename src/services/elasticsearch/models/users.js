@@ -1,43 +1,98 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
-import { normalizeIndexName } from '../utils.js'
 
-const index = normalizeIndexName('users')
+const index = 'users'
 const indices = {
   index,
+  settings: {
+    analysis: {
+      normalizer: {
+        case_insensitive_normalizer: {
+          type: 'custom',
+          filter: ['lowercase']
+        }
+      }
+    }
+  },
   fields: {
     //Full text search
-    first_name: { type: 'text' },
-    last_name: { type: 'text' },
-    username: { type: 'keyword' },
-    email: { type: 'keyword' },
+    first_name: {
+      type: 'text'
+    },
+    last_name: {
+      type: 'text'
+    },
+    username: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    email: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
     created_at: { type: 'date' },
 
     //Filters
     languages: {
       properties: {
-        name: { type: 'keyword' },
-        level: { type: 'keyword' },
-        name_level: { type: 'keyword' }
+        name: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        level: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        name_level: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
       }
     },
-    causes_tags: { type: 'keyword' }, //Filter: Social Causes
-    skills: { type: 'keyword' }, //Filter: Skills
-    city: { type: 'keyword' }, //Filter: Location
-    country: { type: 'keyword' }, //Filter: Location
-    timezone: { type: 'keyword' }, //Filter: Timezone
+    causes_tags: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Social Causes
+    skills: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Skills
+    city: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    country: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    timezone: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Timezone
     // experience_level: { type: 'keyword' },//Filter: Experience Level //TODO: add to object after adding to preferences on users?
     // payment_type: { type: 'keyword' }, //Filter: Payment Type //TODO: add to object after adding to preferences on users?
     /*Payment Scheme: ? //TODO: add to object after adding to preferences on users?
         > Fixed: Multiple options
         > Hourly: Range
     */
-    open_to_volunteer: { type: 'keyword' }, //Filter: Open To Volunteer
+    open_to_volunteer: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Open To Volunteer
     preferences: {
       properties: {
-        title: { type: 'keyword' },
-        value: { type: 'keyword' },
-        title_value: { type: 'keyword' }
+        title: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        title_value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
       }
     }
   }

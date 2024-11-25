@@ -143,7 +143,7 @@ export const get = async (id, currentIdentity) => {
     WHERE (c.status <> 'BLOCKED' OR c.status IS NULL) AND org.id=${id}`)
 }
 
-export const getAll = async (ids, sort, currentIdentity) => {
+export const getAll = async (ids, currentIdentity) => {
   const { rows } = await app.db.query(sql`
     SELECT 
       org.*,
@@ -199,7 +199,7 @@ export const getAll = async (ids, sort, currentIdentity) => {
       (c.requested_id=org.id AND c.requester_id=${currentIdentity}) OR
       (c.requested_id=${currentIdentity} AND c.requester_id=org.id)
     WHERE org.id=ANY(${ids})
-    ${sorting(sort, sortColumns, 'org')}
+    ORDER BY array_position(${ids}, org.id)
     `)
   return rows
 }
@@ -304,8 +304,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort, currentI
     `)
 
   const orgs = await getAll(
-    rows.map((r) => r.id),
-    sort
+    rows.map((r) => r.id)
   )
 
   return orgs.map((r) => {

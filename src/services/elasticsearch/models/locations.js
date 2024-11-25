@@ -1,57 +1,153 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
-import { normalizeIndexName } from '../utils.js'
 
-const index = normalizeIndexName('locations')
+const index = 'locations'
 const indices = {
   index,
+  settings: {
+    analysis: {
+      normalizer: {
+        case_insensitive_normalizer: {
+          type: 'custom',
+          filter: ['lowercase']
+        }
+      }
+    }
+  },
   fields: {
     //mutual
-    id: { type: 'integer' }, //geonameid
-    name: { type: 'text' }, // name for place, country for countryinfo
-    iso_code: { type: 'keyword' },
-    iso3_code: { type: 'keyword' },
-    fips_code: { type: 'keyword' },
-    population: { type: 'integer' },
-    created_at: { type: 'date' },
-    updated_at: { type: 'date' },
+    id: {
+      type: 'integer'
+    }, //geonameid
+    name: {
+      type: 'text'
+    }, // name for place, country for countryinfo
+    iso_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    iso3_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    fips_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    population: {
+      type: 'integer'
+    },
+    created_at: {
+      type: 'date'
+    },
+    updated_at: {
+      type: 'date'
+    },
 
     //geoname fields
-    asciiname: { type: 'text' },
-    country_name: { type: 'text' },
-    postal_code_format: { type: 'text' },
-    postal_code_regex: { type: 'text' },
+    asciiname: {
+      type: 'text'
+    },
+    country_name: {
+      type: 'text'
+    },
+    postal_code_format: {
+      type: 'text'
+    },
+    postal_code_regex: {
+      type: 'text'
+    },
 
-    latlong: { type: 'geo_point' },
-    feature_class: { type: 'keyword' },
-    feature_code: { type: 'keyword' },
-    country_code: { type: 'keyword' },
-    cc2: { type: 'keyword' },
-    admin1_code: { type: 'keyword' },
-    admin2_code: { type: 'keyword' },
-    timezone: { type: 'keyword' },
-    timezone_utc: { type: 'keyword' },
+    latlong: {
+      type: 'geo_point'
+    },
+    feature_class: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    feature_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    country_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    cc2: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    admin1_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    admin2_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    timezone: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    timezone_utc: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
 
     //countries fields
-    iso_numeric: { type: 'keyword' },
-    capital: { type: 'keyword' },
-    area: { type: 'integer' },
-    continent: { type: 'keyword' },
-    tld: { type: 'keyword' },
-    currency_code: { type: 'keyword' },
-    currency_name: { type: 'keyword' },
-    phone: { type: 'keyword' },
-    languages: { type: 'keyword' },
-    neighbours: { type: 'keyword' },
-    equivalent_fips_code: { type: 'keyword' },
+    iso_numeric: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    capital: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    area: {
+      type: 'integer'
+    },
+    continent: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    tld: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    currency_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    currency_name: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    phone: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    languages: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    neighbours: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    equivalent_fips_code: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
 
     //type
-    location_type: { type: 'keyword' }
+    location_type: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }
   }
 }
 
 function geoNamesTransformer(document) {
-
   return {
     id: document.id,
     name: document.name,
@@ -71,13 +167,11 @@ function geoNamesTransformer(document) {
     timezone_utc: document.timezone_utc,
     created_at: document.created_at,
     updated_at: document.updated_at,
-    location_type: "place"
+    location_type: 'place'
   }
-  
 }
 
 function countriesTransformer(document) {
-
   return {
     id: document.id,
     name: document.name,
@@ -99,7 +193,7 @@ function countriesTransformer(document) {
     equivalent_fips_code: document.equivalent_fips_code,
     created_at: document.created_at,
     updated_at: document.updated_at,
-    location_type: "country"
+    location_type: 'country'
   }
 }
 

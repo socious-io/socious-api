@@ -19,11 +19,12 @@ class SearchEngine {
     return await client.indices.create({ index })
   }
 
-  async createIndices(index, fields) {
+  async createIndices(index, fields, settings) {
     index = index + this.indexModifier
     return await client.indices.create({
       index,
       body: {
+        settings,
         mappings: {
           properties: fields
         }
@@ -100,10 +101,12 @@ class SearchEngine {
   }
 
   async countAllDocuments(index) {
+    index = index + this.indexModifier
     return await client.count({ index })
   }
 
   async searchDocuments(index, query, { pagination, sort }) {
+    index = index + this.indexModifier
     const { limit = 10, offset = 0 } = pagination
     try {
       const searchResults = await client.search({ index, from: offset, size: limit, query, sort: sort })

@@ -50,21 +50,23 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
 }
 
 const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
-  await Data.SearchV2Schema.validateAsync(body)
+  // await Data.SearchV2Schema.validateAsync(body)
 
   const options = { ...paginate, filter: body.filter }
 
   if (shouldSave) await addHistory(body, identityId)
+  console.log(ids, body.type, identityId)
 
   switch (body.type) {
     case Data.SearchV2Type.USERS:
+      //TODO: Fix user default sorting -> couldn't remove recommender depends on it
       return User.getAllProfile(ids, options.sort, identityId)
 
     case Data.SearchV2Type.PROJECTS:
-      return Project.getAll(ids, options.sort, identityId)
+      return Project.getAll(ids, identityId)
 
     case Data.SearchV2Type.ORGANIZATIONS:
-      return Org.getAll(ids, options.sort, identityId)
+      return Org.getAll(ids, identityId)
 
     case Data.SearchV2Type.LOCATIONS:
       const countries = (await getAllCountries(ids)).map((country) => {

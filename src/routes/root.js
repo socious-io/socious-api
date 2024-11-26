@@ -26,6 +26,7 @@ router.get('/verify/claims/:apikey/:id', async (ctx) => {
       first_name: 'Ehsan',
       last_name: 'Mahmoudi',
       document_type: 'WhoIsYourDaddy',
+      date_of_birth: '1990-05-10',
       issued_date: new Date().toISOString()
     }
   })

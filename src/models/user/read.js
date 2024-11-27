@@ -157,54 +157,74 @@ export const getProfile = async (id, currentIdentity) => {
         FROM languages l
         WHERE user_id=u.id
     ) AS languages,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', e.id,
-          'title', e.title,
-          'description', e.description,
-          'skills', e.skills,
-          'start_at', e.start_at,
-          'end_at', e.end_at,
+    
+      (SELECT
+    jsonb_agg(
+        json_build_object(
+          'id', oe.id,
+          'title', oe.title,
+          'description', oe.description,
+          'skills', oe.skills,
+          'start_at', oe.start_at,
+          'end_at', oe.end_at,
           'org', json_build_object(
-            'id', org.id,
-            'name', org.name,
-            'bio', org.bio,
-            'shortname', org.shortname,
-            'city', org.city,
-            'country', org.country,
-            'created_at', org.created_at,
-            'updated_at', org.created_at,
-            'description', org.description,
-            'image', row_to_json(org_media.*)
+              'id', oe.org_id,
+              'name', oe.org_name,
+              'bio', oe.org_bio,
+              'shortname', oe.org_shortname,
+              'city', oe.org_city,
+              'country', oe.org_country,
+              'created_at', oe.org_created_at,
+              'updated_at', oe.org_updated_at,
+              'description', oe.org_description,
+              'image', json_build_object(
+                'id', oe.org_media_id,
+                'url', oe.org_media_url -- Example media fields
+              )
           ),
-          'job_category', row_to_json(j.*),
-          'country', e.country,
-          'city', e.city,
-          'employment_type', e.employment_type,
-          'credential', CASE WHEN ec.id IS NULL THEN NULL
-          ELSE json_build_object(
-            'id', ec.id,
-            'status', ec.status,
-            'message', ec.message,
-            'connection_id', ec.connection_id,
-            'connection_url', ec.connection_url,
-            'created_at', ec.created_at,
-            'updated_at', ec.updated_at
-          )
+          'job_category', json_build_object(
+              'id', oe.job_category_id,
+              'name', oe.job_category_name -- Example job category fields
+          ),
+          'country', oe.country,
+          'city', oe.city,
+          'employment_type', oe.employment_type,
+          'credential', CASE WHEN oe.ec_id IS NULL THEN NULL
+              ELSE json_build_object(
+                'id', oe.ec_id,
+                'status', oe.ec_status,
+                'message', oe.ec_message,
+                'connection_id', oe.ec_connection_id,
+                'connection_url', oe.ec_connection_url,
+                'created_at', oe.ec_created_at,
+                'updated_at', oe.ec_updated_at
+              )
           END
-        ))
-        FROM (
-          SELECT *
-          FROM experiences e
-          WHERE e.user_id = u.id
-          ORDER BY e.start_at
-        ) e
-        JOIN organizations org ON org.id=e.org_id
-        LEFT JOIN media org_media ON org_media.id=org.image
-        LEFT JOIN job_categories j ON j.id=e.job_category_id
-        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
-        WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
-    ) AS experiences,
+        )
+    )
+    FROM (
+        SELECT 
+          e.id, e.title, e.description, e.skills, e.start_at, e.end_at, 
+          e.country, e.city, e.employment_type,
+          org.id AS org_id, org.name AS org_name, org.bio AS org_bio, 
+          org.shortname AS org_shortname, org.city AS org_city, org.country AS org_country, 
+          org.created_at AS org_created_at, org.updated_at AS org_updated_at, org.description AS org_description,
+          org_media.id AS org_media_id, org_media.url AS org_media_url, -- Explicit media fields
+          j.id AS job_category_id, j.name AS job_category_name, -- Explicit job category fields
+          ec.id AS ec_id, ec.status AS ec_status, ec.message AS ec_message, 
+          ec.connection_id AS ec_connection_id, ec.connection_url AS ec_connection_url, 
+          ec.created_at AS ec_created_at, ec.updated_at AS ec_updated_at
+        FROM experiences e
+        JOIN organizations org ON org.id = e.org_id
+        LEFT JOIN media org_media ON org_media.id = org.image
+        LEFT JOIN job_categories j ON j.id = e.job_category_id
+        LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
+        WHERE e.user_id = u.id 
+          AND (ec.status IS NULL OR ec.status != 'ISSUED')
+        ORDER BY e.start_at
+    ) AS oe
+  ) AS experiences
+    ,
     (SELECT
       jsonb_agg(json_build_object(
           'id', e.id,
@@ -358,54 +378,73 @@ export const getProfileByUsername = async (username, currentIdentity) => {
         FROM languages l
         WHERE user_id=u.id
     ) AS languages,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', e.id,
-          'title', e.title,
-          'description', e.description,
-          'skills', e.skills,
-          'start_at', e.start_at,
-          'end_at', e.end_at,
+       (SELECT
+    jsonb_agg(
+        json_build_object(
+          'id', oe.id,
+          'title', oe.title,
+          'description', oe.description,
+          'skills', oe.skills,
+          'start_at', oe.start_at,
+          'end_at', oe.end_at,
           'org', json_build_object(
-            'id', org.id,
-            'name', org.name,
-            'bio', org.bio,
-            'shortname', org.shortname,
-            'city', org.city,
-            'country', org.country,
-            'created_at', org.created_at,
-            'updated_at', org.created_at,
-            'description', org.description,
-            'image', row_to_json(org_media.*)
+              'id', oe.org_id,
+              'name', oe.org_name,
+              'bio', oe.org_bio,
+              'shortname', oe.org_shortname,
+              'city', oe.org_city,
+              'country', oe.org_country,
+              'created_at', oe.org_created_at,
+              'updated_at', oe.org_updated_at,
+              'description', oe.org_description,
+              'image', json_build_object(
+                'id', oe.org_media_id,
+                'url', oe.org_media_url -- Example media fields
+              )
           ),
-          'job_category', row_to_json(j.*),
-          'country', e.country,
-          'city', e.city,
-          'employment_type', e.employment_type,
-          'credential', CASE WHEN ec.id IS NULL THEN NULL
-          ELSE json_build_object(
-            'id', ec.id,
-            'status', ec.status,
-            'message', ec.message,
-            'connection_id', ec.connection_id,
-            'connection_url', ec.connection_url,
-            'created_at', ec.created_at,
-            'updated_at', ec.updated_at
-          )
+          'job_category', json_build_object(
+              'id', oe.job_category_id,
+              'name', oe.job_category_name -- Example job category fields
+          ),
+          'country', oe.country,
+          'city', oe.city,
+          'employment_type', oe.employment_type,
+          'credential', CASE WHEN oe.ec_id IS NULL THEN NULL
+              ELSE json_build_object(
+                'id', oe.ec_id,
+                'status', oe.ec_status,
+                'message', oe.ec_message,
+                'connection_id', oe.ec_connection_id,
+                'connection_url', oe.ec_connection_url,
+                'created_at', oe.ec_created_at,
+                'updated_at', oe.ec_updated_at
+              )
           END
-        ))
-        FROM (
-          SELECT *
-          FROM experiences e
-          WHERE e.user_id = u.id
-          ORDER BY e.start_at
-        ) e
-        JOIN organizations org ON org.id=e.org_id
-        LEFT JOIN media org_media ON org_media.id=org.image
-        LEFT JOIN job_categories j ON j.id=e.job_category_id
-        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
-        WHERE e.user_id=u.id
-    ) AS experiences,
+        )
+    )
+    FROM (
+        SELECT 
+          e.id, e.title, e.description, e.skills, e.start_at, e.end_at, 
+          e.country, e.city, e.employment_type,
+          org.id AS org_id, org.name AS org_name, org.bio AS org_bio, 
+          org.shortname AS org_shortname, org.city AS org_city, org.country AS org_country, 
+          org.created_at AS org_created_at, org.updated_at AS org_updated_at, org.description AS org_description,
+          org_media.id AS org_media_id, org_media.url AS org_media_url, -- Explicit media fields
+          j.id AS job_category_id, j.name AS job_category_name, -- Explicit job category fields
+          ec.id AS ec_id, ec.status AS ec_status, ec.message AS ec_message, 
+          ec.connection_id AS ec_connection_id, ec.connection_url AS ec_connection_url, 
+          ec.created_at AS ec_created_at, ec.updated_at AS ec_updated_at
+        FROM experiences e
+        JOIN organizations org ON org.id = e.org_id
+        LEFT JOIN media org_media ON org_media.id = org.image
+        LEFT JOIN job_categories j ON j.id = e.job_category_id
+        LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
+        WHERE e.user_id = u.id 
+          AND (ec.status IS NULL OR ec.status != 'ISSUED')
+        ORDER BY e.start_at
+    ) AS oe
+  ) AS experiences
+     ,
     (SELECT
       jsonb_agg(json_build_object(
           'id', e.id,
@@ -595,54 +634,72 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
         FROM languages l
         WHERE user_id=u.id
     ) AS languages,
-    (SELECT
-      jsonb_agg(json_build_object(
-          'id', e.id,
-          'title', e.title,
-          'description', e.description,
-          'skills', e.skills,
-          'start_at', e.start_at,
-          'end_at', e.end_at,
+      (SELECT
+    jsonb_agg(
+        json_build_object(
+          'id', oe.id,
+          'title', oe.title,
+          'description', oe.description,
+          'skills', oe.skills,
+          'start_at', oe.start_at,
+          'end_at', oe.end_at,
           'org', json_build_object(
-            'id', org.id,
-            'name', org.name,
-            'bio', org.bio,
-            'shortname', org.shortname,
-            'city', org.city,
-            'country', org.country,
-            'created_at', org.created_at,
-            'updated_at', org.created_at,
-            'description', org.description,
-            'image', row_to_json(org_media.*)
+              'id', oe.org_id,
+              'name', oe.org_name,
+              'bio', oe.org_bio,
+              'shortname', oe.org_shortname,
+              'city', oe.org_city,
+              'country', oe.org_country,
+              'created_at', oe.org_created_at,
+              'updated_at', oe.org_updated_at,
+              'description', oe.org_description,
+              'image', json_build_object(
+                'id', oe.org_media_id,
+                'url', oe.org_media_url -- Example media fields
+              )
           ),
-          'job_category', row_to_json(j.*),
-          'country', e.country,
-          'city', e.city,
-          'employment_type', e.employment_type,
-          'credential', CASE WHEN ec.id IS NULL THEN NULL
-           ELSE json_build_object(
-            'id', ec.id,
-            'status', ec.status,
-            'message', ec.message,
-            'connection_id', ec.connection_id,
-            'connection_url', ec.connection_url,
-            'created_at', ec.created_at,
-            'updated_at', ec.updated_at
-          )
+          'job_category', json_build_object(
+              'id', oe.job_category_id,
+              'name', oe.job_category_name -- Example job category fields
+          ),
+          'country', oe.country,
+          'city', oe.city,
+          'employment_type', oe.employment_type,
+          'credential', CASE WHEN oe.ec_id IS NULL THEN NULL
+              ELSE json_build_object(
+                'id', oe.ec_id,
+                'status', oe.ec_status,
+                'message', oe.ec_message,
+                'connection_id', oe.ec_connection_id,
+                'connection_url', oe.ec_connection_url,
+                'created_at', oe.ec_created_at,
+                'updated_at', oe.ec_updated_at
+              )
           END
-        ))
-        FROM (
-          SELECT *
-          FROM experiences e
-          WHERE e.user_id = u.id
-          ORDER BY e.start_at
-        ) e
-        LEFT JOIN job_categories j ON j.id=e.job_category_id
-        JOIN organizations org ON org.id=e.org_id
-        LEFT JOIN media org_media ON org_media.id=org.image
-        LEFT JOIN experience_credentials ec ON ec.experience_id=e.id
-        WHERE e.user_id=u.id
-    ) AS experiences,
+        )
+    )
+    FROM (
+        SELECT 
+          e.id, e.title, e.description, e.skills, e.start_at, e.end_at, 
+          e.country, e.city, e.employment_type,
+          org.id AS org_id, org.name AS org_name, org.bio AS org_bio, 
+          org.shortname AS org_shortname, org.city AS org_city, org.country AS org_country, 
+          org.created_at AS org_created_at, org.updated_at AS org_updated_at, org.description AS org_description,
+          org_media.id AS org_media_id, org_media.url AS org_media_url, -- Explicit media fields
+          j.id AS job_category_id, j.name AS job_category_name, -- Explicit job category fields
+          ec.id AS ec_id, ec.status AS ec_status, ec.message AS ec_message, 
+          ec.connection_id AS ec_connection_id, ec.connection_url AS ec_connection_url, 
+          ec.created_at AS ec_created_at, ec.updated_at AS ec_updated_at
+        FROM experiences e
+        JOIN organizations org ON org.id = e.org_id
+        LEFT JOIN media org_media ON org_media.id = org.image
+        LEFT JOIN job_categories j ON j.id = e.job_category_id
+        LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
+        WHERE e.user_id = u.id 
+          AND (ec.status IS NULL OR ec.status != 'ISSUED')
+        ORDER BY e.start_at
+    ) AS oe
+  ) AS experiences,
     (SELECT
       jsonb_agg(json_build_object(
           'id', e.id,

@@ -54,7 +54,7 @@ export const get = async (id, identityId) => {
   `)
 }
 
-export const getAll = async (ids, sort, identityId) => {
+export const getAll = async (ids, identityId) => {
   const { rows } = await app.db.query(sql`
   SELECT p.*,
     i.type  as identity_type,
@@ -69,7 +69,6 @@ export const getAll = async (ids, sort, identityId) => {
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
   WHERE p.id=ANY(${ids})
-  ${sorting(sort, sortColumns, 'p')}
   `)
   return rows
 }
@@ -136,8 +135,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
   `)
 
   const projects = await getAll(
-    rows.map((r) => r.id),
-    sort
+    rows.map((r) => r.id)
   )
 
   return projects.map((r) => {

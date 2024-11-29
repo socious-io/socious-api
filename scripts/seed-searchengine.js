@@ -13,6 +13,10 @@ async function run() {
   console.log('Indexing All Jobs ...')
   const jobResult = await SearchEngine.models.jobs.initIndexing()
   console.log(`Indexed ${jobResult.count} Jobs`)
+
+  console.log('Indexing All Locations ...')
+  const locationResult = await SearchEngine.models.locations.initIndexing()
+  console.log(`Indexed ${locationResult.count} Locations`)
 }
 
 run().then(() => process.exit(0))

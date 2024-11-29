@@ -36,7 +36,6 @@ export const recommendProjectByUser = async (username, options) => {
   if (!newRecommends)
     return Project.getAll(
       recommends.map((r) => r.entity_id),
-      undefined,
       user.id
     )
 
@@ -63,7 +62,7 @@ export const recommendProjectByUser = async (username, options) => {
     excludes: notIntresteds.map((m) => m.project_id),
     intrests: saves.map((m) => m.project_id)
   })
-  const projects = await Project.getAll(result.data.jobs, undefined, user.id)
+  const projects = await Project.getAll(result.data.jobs, user.id)
   let saved = []
   let i = 1
   for (const p of projects) {

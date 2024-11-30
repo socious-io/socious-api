@@ -48,9 +48,18 @@ router.post('/', loginRequired, async (ctx) => {
 
   const referredById = ctx.query.referred_by
   if (referredById) {
-    const user = await User.get(referredById)
+    let verified = false
+    let referrer = null
 
-    if (!user.identity_verified) throw new BadRequestError('Referrer identity is not verified')
+    try {
+      referrer = await User.get(referredById)
+      verified = referrer.identity_verified
+    } catch {
+      referrer = await Org.get(referredById)
+      verified = referrer.verified
+    }
+
+    if (!verified) throw new BadRequestError('Referrer is not verified')
   }
 
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)

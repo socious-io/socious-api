@@ -221,7 +221,7 @@ export const getProfile = async (id, currentIdentity) => {
         LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
         WHERE e.user_id = u.id 
           AND (ec.status IS NULL OR ec.status != 'ISSUED')
-        ORDER BY e.start_at
+        ORDER BY e.start_at DESC
     ) AS oe
   ) AS experiences
     ,
@@ -441,7 +441,7 @@ export const getProfileByUsername = async (username, currentIdentity) => {
         LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
         WHERE e.user_id = u.id 
           AND (ec.status IS NULL OR ec.status != 'ISSUED')
-        ORDER BY e.start_at
+        ORDER BY e.start_at DESC
     ) AS oe
   ) AS experiences
      ,
@@ -697,7 +697,7 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
         LEFT JOIN experience_credentials ec ON ec.experience_id = e.id
         WHERE e.user_id = u.id 
           AND (ec.status IS NULL OR ec.status != 'ISSUED')
-        ORDER BY e.start_at
+        ORDER BY e.start_at DESC
     ) AS oe
   ) AS experiences,
     (SELECT

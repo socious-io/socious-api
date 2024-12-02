@@ -6,13 +6,12 @@ import { upsert, get, updateStatus } from './tokens.js'
 export const STRPE_PROVIDERS = ['STRIPE', 'STRIPE_JP']
 export const PROVIDER = 'STRIPE'
 
-export const stripe = Stripe(Config.payments.stripe.secret_key)
+export const stripe = Stripe(Config.payments.stripe_jp.secret_key)
 
 // TODO: should be on redis or any stable ramdbs
 const accountsTmp = {}
 
 export const connectLink = async (identityId, { country, is_jp, redirect_url }) => {
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const account = await s.accounts.create({
     type: 'express',
@@ -30,7 +29,7 @@ export const connectLink = async (identityId, { country, is_jp, redirect_url }) 
     }
   })
 
-  const accountLink = await s.accountLinks.create({
+  const accountLink = await stripe.accountLinks.create({
     account: account.id,
     refresh_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
     return_url: `${Config.payments.stripe.connect_redirect}?stripe_account=${account.id}`,
@@ -44,10 +43,9 @@ export const connectLink = async (identityId, { country, is_jp, redirect_url }) 
 
 export const authorize = async ({ stripe_account }) => {
   const { id, is_jp, redirect_url } = accountsTmp[stripe_account]
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
   const provider = is_jp ? STRPE_PROVIDERS[1] : STRPE_PROVIDERS[0]
 
-  const account = await s.accounts.retrieve(stripe_account)
+  const account = await stripe.accounts.retrieve(stripe_account)
 
   const oauth = await upsert(id, {
     provider: provider,
@@ -92,11 +90,10 @@ export const refresh = async (identityId) => {
 }
 
 export const profile = async (identityId, { is_jp }) => {
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const provider = is_jp ? [STRPE_PROVIDERS[1]] : [STRPE_PROVIDERS[0]]
   const oauth = await get(identityId, provider)
-  const account = await s.accounts.retrieve(oauth.matrix_unique_id)
+  const account = await stripe.accounts.retrieve(oauth.matrix_unique_id)
   const status = account.payouts_enabled ? Data.UserStatusType.ACTIVE : Data.UserStatusType.INACTIVE
 
   if (oauth.status !== status) await updateStatus(oauth.id, status)

@@ -78,7 +78,7 @@ export const charge = async (identityId, body) => {
   }
 }
 
-export const payout = async ({ description, destination, is_jp }) => {
+export const payout = async ({ description, destination }) => {
 
   const params = {}
 

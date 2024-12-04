@@ -13,7 +13,7 @@ const accountsTmp = {}
 
 export const connectLink = async (identityId, { country, is_jp, redirect_url }) => {
 
-  const account = await s.accounts.create({
+  const account = await stripe.accounts.create({
     type: 'express',
     country,
     capabilities: {

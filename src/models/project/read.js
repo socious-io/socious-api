@@ -96,7 +96,7 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
 }
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
-  filter.kind = "JOB";
+  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
@@ -124,7 +124,7 @@ export const permissioned = async (identityId, id) => {
 }
 
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
-  filter.kind = "JOB";
+  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,

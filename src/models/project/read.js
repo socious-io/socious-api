@@ -19,7 +19,8 @@ export const filterColumns = {
   remote_preference: String,
   promoted: Boolean,
   experience_level: Number,
-  job_category_id: String
+  job_category_id: String,
+  kind: String
 }
 
 export const markingFilterColumns = {
@@ -50,7 +51,7 @@ export const get = async (id, identityId) => {
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN applicants a ON a.project_id=${id} AND a.user_id=${identityId}
     LEFT JOIN job_categories j ON j.id=p.job_category_id
-  WHERE p.id=${id}
+  WHERE p.id=${id} AND p.kind='JOB'
   `)
 }
 
@@ -90,10 +91,11 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
       ${filtering(filter, markingFilterColumns, false, 'jm')}
       ${sorting(sort, sortColumns, 'p')}
       LIMIT ${limit} OFFSET ${offset}`)
-  return rows
+  return rows //TODO: Add p.kind='JOB'
 }
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
+  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
@@ -121,6 +123,7 @@ export const permissioned = async (identityId, id) => {
 }
 
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
+  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,

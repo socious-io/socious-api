@@ -170,7 +170,7 @@ const indexing = async ({ id }) => {
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    WHERE p.id=${id}
+    WHERE p.id=${id} AND p.kind='JOB'
     `
   )
   const document = transformer(project)
@@ -203,7 +203,7 @@ async function getAllJobs({ offset = 0, limit = 100 }) {
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    WHERE p.status='ACTIVE'
+    WHERE p.status='ACTIVE' AND p.kind='JOB'
     LIMIT ${limit} OFFSET ${offset}
     `
   )

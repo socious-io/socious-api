@@ -5,7 +5,7 @@ import logger from '../../utils/logging.js'
 import { getCard } from './card.js'
 import { create, setCompleteTrx } from './transaction.js'
 
-export const stripe = Stripe(Config.payments.stripe.secret_key)
+export const stripe = Stripe(Config.payments.stripe_jp.secret_key)
 
 const stripeAmount = (amount, currency) => {
   switch (currency) {
@@ -21,11 +21,9 @@ const stripeAmount = (amount, currency) => {
 }
 
 export const charge = async (identityId, body) => {
-  let { amount, currency, meta, source, description, transfers, is_jp } = body
+  let { amount, currency, meta, source, description, transfers } = body
   let card = await getCard(source, identityId)
   if (!currency) currency = Data.PaymentCurrency.USD
-
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
 
   const trx = await create({
     identity_id: identityId,
@@ -51,9 +49,9 @@ export const charge = async (identityId, body) => {
 
   if (transfers.amount) transfers.amount = stripeAmount(transfers.amount, currency)
 
-  const paymentMethods = await s.customers.listPaymentMethods(card.customer, { type: 'card' })
+  const paymentMethods = await stripe.customers.listPaymentMethods(card.customer, { type: 'card' })
 
-  const paymentIntent = await s.paymentIntents.create({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: fixedAmount,
     currency: currency,
     customer: card.customer,
@@ -65,7 +63,7 @@ export const charge = async (identityId, body) => {
     }
   })
 
-  const confirmedPaymentIntent = await s.paymentIntents.confirm(paymentIntent.id)
+  const confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id)
 
   if (confirmedPaymentIntent.status !== 'succeeded') {
     throw Error(`Payment got error with status : ${confirmedPaymentIntent.status}`)
@@ -80,12 +78,11 @@ export const charge = async (identityId, body) => {
   }
 }
 
-export const payout = async ({ description, destination, is_jp }) => {
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+export const payout = async ({ description, destination }) => {
 
   const params = {}
 
-  const balance = await s.balance.retrieve({ stripeAccount: destination })
+  const balance = await stripe.balance.retrieve({ stripeAccount: destination })
 
   for (const available of balance.available) {
     if (available.amount > 0) {
@@ -105,18 +102,17 @@ export const payout = async ({ description, destination, is_jp }) => {
     })}`
   )
 
-  return s.payouts.create(params, { stripeAccount: destination })
+  return stripe.payouts.create(params, { stripeAccount: destination })
 }
 
-export const addCustomer = async ({ email, token, is_jp }) => {
-  const s = is_jp ? Stripe(Config.payments.stripe_jp.secret_key) : stripe
+export const addCustomer = async ({ email, token }) => {
 
-  const paymentMethod = await s.paymentMethods.create({
+  const paymentMethod = await stripe.paymentMethods.create({
     type: 'card',
     card: { token: token }
   })
 
-  const customer = await s.customers.create({
+  const customer = await stripe.customers.create({
     email: email,
     payment_method: paymentMethod.id
   })

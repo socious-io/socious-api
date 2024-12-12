@@ -17,10 +17,22 @@ const indices = {
   fields: {
     //Full text search
     first_name: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     last_name: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     username: {
       type: 'keyword',
@@ -30,7 +42,9 @@ const indices = {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
     },
-    created_at: { type: 'date' },
+    created_at: {
+      type: 'date'
+    },
 
     //Filters
     languages: {

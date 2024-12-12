@@ -69,7 +69,8 @@ export const getAll = async (ids, identityId) => {
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
-  WHERE p.id=ANY(${ids})
+  WHERE p.id=ANY(${ids}) AND p.kind='JOB'
+  ORDER BY array_position(${ids}, org.id)
   `)
   return rows
 }

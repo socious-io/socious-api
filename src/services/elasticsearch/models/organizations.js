@@ -17,28 +17,72 @@ const indices = {
   fields: {
     //Full Text Search
     name: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
     },
     bio: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
     },
     description: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
     },
     shortname: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
     },
     mission: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     address: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     email: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     phone: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
 
     //Filters

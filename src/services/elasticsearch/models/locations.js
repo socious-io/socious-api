@@ -20,7 +20,13 @@ const indices = {
       type: 'integer'
     }, //geonameid
     name: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     }, // name for place, country for countryinfo
     iso_code: {
       type: 'keyword',
@@ -46,16 +52,40 @@ const indices = {
 
     //geoname fields
     asciiname: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     country_name: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     postal_code_format: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     postal_code_regex: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
 
     latlong: {

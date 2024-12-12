@@ -17,16 +17,40 @@ const indices = {
   fields: {
     //Full Text Search
     title: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     description: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     other_party_title: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
     other_party_url: {
-      type: 'text'
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
     },
 
     //Filters

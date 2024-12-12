@@ -10,6 +10,7 @@ import { BadRequestError, NotFoundError } from '../utils/errors.js'
 import moment from 'moment'
 import { addHistory } from '../services/impact_points/badges.js'
 import { discordDisputeMessenger } from '../utils/externals.js'
+import config from '../config.js'
 
 export const router = new Router()
 
@@ -35,10 +36,14 @@ router.post('/', loginRequired, async (ctx) => {
     },
     additionalKwargs: {
       dispute_title: ctx.body.title,
+      dispute_description: ctx.body.events[0].message??"[No Description]",
+      dispute_category: ctx.body.category.toLowerCase().replace(/(?:^|_)([a-z])/g, (_, char) => " "+char.toUpperCase()).slice(1),
       dispute_code: ctx.body.code,
       dispute_claimant: ctx.body.claimant.meta.name,
       dispute_respondent: ctx.body.respondent.meta.name,
-      dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+      dispute_respondent_email: ctx.body.respondent.meta.email,
+      dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a'),
+      dispute_url:  `${config.fronthost}/disputes/${ctx.body.id}`
     }
   })
 })
@@ -115,7 +120,9 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
       dispute_title: ctx.body.title,
       dispute_code: ctx.body.code,
       dispute_claimant: ctx.body.claimant.meta.name,
-      dispute_respondent: ctx.body.respondent.meta.name
+      dispute_respondent: ctx.body.respondent.meta.name,
+      dispute_claimant_email: ctx.body.claimant.meta.email,
+      dispute_url:  `${config.fronthost}/disputes/${ctx.body.id}`
     }
   })
 
@@ -131,14 +138,13 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
         identity,
         dispute: {
           title: ctx.body.title,
-          code: ctx.body.code
+          code: ctx.body.code,
+          expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
         },
         additionalKwargs: {
           dispute_title: ctx.body.title,
           dispute_code: ctx.body.code,
-          dispute_claimant: ctx.body.claimant.meta.name,
-          dispute_respondent: ctx.body.respondent.meta.name,
-          dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+          dispute_url:  `${config.fronthost}/disputes/${ctx.body.id}`
         }
       })
     }
@@ -215,7 +221,8 @@ router.post('/:id/vote', loginRequired, checkIdParams, dispute, async (ctx) => {
         dispute_code: ctx.body.code,
         dispute_claimant: ctx.body.claimant.meta.name,
         dispute_respondent: ctx.body.respondent.meta.name,
-        dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
+        dispute_expiration_date: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a'),
+        dispute_url:  `${config.fronthost}/disputes/${ctx.body.id}`
       }
     })
   }
@@ -254,7 +261,8 @@ router.post('/invitations/:invitation_id/accept', loginRequired, async (ctx) => 
           identity,
           dispute: {
             title: dispute.title,
-            code: dispute.code
+            code: dispute.code,
+            expiration: moment(ctx.body.created_at).add(3, 'days').utc(true).format('MMMM D, YYYY h:mm a')
           },
           additionalKwargs: {
             dispute_title: ctx.body.title,

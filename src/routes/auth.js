@@ -162,12 +162,7 @@ router.get('/google', async (ctx) => {
 
 router.post('/apple', koaBody(), async (ctx) => {
   const { code, id_token } = ctx.request.body
-
-  if (config.env == 'production') {
-    ctx.redirect(`https://app.socious.io/oauth/apple?code=${code}&id_token=${id_token}`)
-  } else {
-    ctx.redirect(`https://webapp2.dev.socious.io/oauth/apple?code=${code}&id_token=${id_token}`)
-  }
+  ctx.redirect(`${config.fronthost}/oauth/apple?code=${code}&id_token=${id_token}`)
 })
 
 router.get('/apple', async (ctx) => {

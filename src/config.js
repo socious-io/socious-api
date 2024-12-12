@@ -12,6 +12,7 @@ export default {
   secret: process.env.SECRET,
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
+  fronthost: process.env.ENV == 'production'? 'https://app.socious.io': 'https://webapp2.dev.socious.io',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',

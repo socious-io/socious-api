@@ -230,11 +230,11 @@ export const updateInvitation = async (identityId, invitationId, status) => {
       }, {})
 
       //TODO: Handle race condition
-      const { ACCEPTED, INVITED } = contributeInvitationsAggregation // + DECLINED, EXPIRED
-      if (ACCEPTED && ACCEPTED >= 3) {
+      const { ACCEPTED = 0, INVITED = 0 } = contributeInvitationsAggregation // + DECLINED, EXPIRED
+      if (ACCEPTED >= 3) {
         await updateDisputeState(contributeInvitation.dispute_id, 'PENDING_REVIEW', { transaction: client })
         await deleteRedudantInvitations(contributeInvitation.dispute_id, { transaction: client })
-      } else if (!INVITED || (INVITED && INVITED + ACCEPTED < 3)) {
+      } else if (INVITED + ACCEPTED < 3) {
         await updateDisputeState(contributeInvitation.dispute_id, 'JUROR_RESELECTION', { transaction: client })
         //TODO: Reselect Jury?
       } else {

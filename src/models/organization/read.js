@@ -303,9 +303,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort, currentI
     LIMIT ${limit} OFFSET ${offset}
     `)
 
-  const orgs = await getAll(
-    rows.map((r) => r.id)
-  )
+  const orgs = await getAll(rows.map((r) => r.id))
 
   return orgs.map((r) => {
     return {

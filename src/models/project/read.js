@@ -138,9 +138,7 @@ export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
     LIMIT ${limit} OFFSET ${offset}
   `)
 
-  const projects = await getAll(
-    rows.map((r) => r.id)
-  )
+  const projects = await getAll(rows.map((r) => r.id))
 
   return projects.map((r) => {
     return {

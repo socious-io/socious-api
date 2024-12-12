@@ -59,7 +59,6 @@ const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
 
   switch (body.type) {
     case Data.SearchV2Type.USERS:
-      //TODO: Fix user default sorting -> couldn't remove recommender depends on it
       return User.getAllProfile(ids, options.sort, identityId)
 
     case Data.SearchV2Type.PROJECTS:
@@ -68,7 +67,7 @@ const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
     case Data.SearchV2Type.ORGANIZATIONS:
       return Org.getAll(ids, identityId)
 
-    case Data.SearchV2Type.LOCATIONS:
+    case Data.SearchV2Type.LOCATIONS: {
       const countries = (await getAllCountries(ids)).map((country) => {
           return {
             ...country,
@@ -83,7 +82,7 @@ const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
         })
 
       return [...countries, ...places]
-
+    }
     default:
       throw new BadRequestError(`type '${body.type}' is not valid`)
   }

@@ -15,12 +15,12 @@ async function ensureIndexes() {
   }
 
   const results = await Promise.allSettled(indicesConfigs)
-  results.forEach(result=>{
+  results.forEach((result) => {
     // @ts-ignore
-    const { status, reason, value} = result;
-    if(status=="fulfilled"){
+    const { status, reason, value } = result
+    if (status == 'fulfilled') {
       console.log(value)
-    }else {
+    } else {
       console.error(reason)
     }
   })

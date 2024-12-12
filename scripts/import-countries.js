@@ -5,16 +5,13 @@ import { open } from 'node:fs/promises'
 import sql from 'sql-template-tag'
 
 import Config from '../src/config.js'
-
 ;(async () => {
-
   //Connecting DB
   const client = new pg.Client(Config.database)
   await client.connect()
 
   //Reading File
   const file = await open('import/countryInfo.txt')
-  
 
   //Importing
   for await (const line of file.readLines()) {
@@ -39,8 +36,8 @@ import Config from '../src/config.js'
       neighbours,
       equivalent_fips_code
     ] = line.split('\t')
-    
-    try{
+
+    try {
       await client.query(sql`
         INSERT INTO countries (
           id,
@@ -79,17 +76,17 @@ import Config from '../src/config.js'
           ${phone},
           ${postal_code_format},
           ${postal_code_regex},
-          ${languages.length>0?languages.split(','):[]},
-          ${neighbours.length>0?neighbours.split(','):[]},
+          ${languages.length > 0 ? languages.split(',') : []},
+          ${neighbours.length > 0 ? neighbours.split(',') : []},
           ${equivalent_fips_code}
         )
       `)
-    }catch(e){
+    } catch (e) {
       console.error(e)
       process.exit(1)
     }
   }
   await client.end()
-  console.log("Imported Countries")
+  console.log('Imported Countries')
   process.exit(0)
 })()

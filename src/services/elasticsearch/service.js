@@ -1,7 +1,5 @@
-import Data from '@socious/data'
 import { BadRequestError } from '../../utils/errors.js'
 import client from './client.js'
-import config from '../../config.js'
 
 export const search = async (body, pagination) => {
   let typeToIndex = {
@@ -24,12 +22,9 @@ export const search = async (body, pagination) => {
         'email^2',
         'phone^1'
       ],
-      locations: [
-        'name'
-      ]
+      locations: ['name']
     },
     { q, type, filter } = body,
-    
     index = typeToIndex[type],
     fields = typeToFields[type]
 
@@ -68,9 +63,9 @@ export const search = async (body, pagination) => {
   }
 
   //make sort elastic-compliant
-  let sort = [];
-  if(body.sort){
-    for ( const [sortKey, sortValue] of Object.entries(body.sort) ) {
+  let sort = []
+  if (body.sort) {
+    for (const [sortKey, sortValue] of Object.entries(body.sort)) {
       sort.push({
         [sortKey]: sortValue
       })

@@ -4,31 +4,134 @@ import sql from 'sql-template-tag'
 const index = 'organizations'
 const indices = {
   index,
+  settings: {
+    analysis: {
+      normalizer: {
+        case_insensitive_normalizer: {
+          type: 'custom',
+          filter: ['lowercase']
+        }
+      }
+    }
+  },
   fields: {
     //Full Text Search
-    name: { type: 'text' },
-    bio: { type: 'text' },
-    description: { type: 'text' },
-    shortname: { type: 'text' },
-    mission: { type: 'text' },
-    address: { type: 'text' },
-    email: { type: 'text' },
-    phone: { type: 'text' },
+    name: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
+    },
+    bio: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
+    },
+    description: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
+    },
+    shortname: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword'
+        }
+      }
+    },
+    mission: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    address: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    email: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    phone: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
 
     //Filters
-    social_causes: { type: 'keyword' }, //Filter: Social Causes
-    id: { type: 'keyword' }, //Filter: Organization
-    type: { type: 'keyword' }, //Filter: Organization Type
-    size: { type: 'keyword' }, //Filter: Organization Size
-    city: { type: 'keyword' }, //Filter: Location
-    country: { type: 'keyword' }, //Filter: Location
-    timezone: { type: 'keyword' }, //Filter: Timezone
+    social_causes: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Social Causes
+    id: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Organization
+    type: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Organization Type
+    size: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Organization Size
+    city: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    country: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    timezone: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Timezone
     preferences: {
       properties: {
-        title: { type: 'keyword' },
-        value: { type: 'keyword' },
-        title_value: { type: 'keyword' }
+        title: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        title_value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
       }
+    },
+    verified: {
+      type: 'boolean'
     }
   }
 }
@@ -57,7 +160,8 @@ function transformer(document) {
         ...preference,
         title_value: `${preference.title}:${preference.value}`
       }
-    })
+    }),
+    verified: document.verified
   }
 }
 

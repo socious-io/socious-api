@@ -1,0 +1,23 @@
+CREATE TABLE countries (
+  id int NOT NULL PRIMARY KEY,
+  iso_code varchar(2),
+  iso_code3 varchar(3),
+  iso_numeric_code varchar(3),
+  fips_code varchar(2),
+  name text,
+  capital text,
+  area_km double precision,
+  population int,
+  continent varchar(2),
+  tld varchar(3),
+  currency_code varchar(3),
+  currency_name text,
+  phone text,
+  postal_code_format text,
+  postal_code_regex text,
+  languages text[],
+  neighbours varchar(2)[],
+  equivalent_fips_code varchar(2),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  created_at timestamp with time zone NOT NULL DEFAULT now()
+);

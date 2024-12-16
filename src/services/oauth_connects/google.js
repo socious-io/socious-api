@@ -16,16 +16,28 @@ async function getGoogleUserInfo(accessToken) {
   return response.data // This contains user information
 }
 
-export async function googleLogin(code, referredById, ref) {
-  const response = await axios.post('https://oauth2.googleapis.com/token', {
-    code,
-    client_id: Config.oauth.google.id,
-    client_secret: Config.oauth.google.secret,
-    grant_type: 'authorization_code',
-    redirect_uri: `${ref}oauth/google`
-  })
+export async function googleLogin(platform, code, referredById, ref) {
+  let userInfo;
 
-  const userInfo = await getGoogleUserInfo(response.data.access_token)
+  if (platform && platform == 'ios') {
+    const { data } = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${code}`)
+
+    // Validate the audience
+    if (data.aud !== Config.oauth.google_ios.id || data.exp < Math.floor(Date.now() / 1000)) {
+      throw new BadRequestError('Token is invalid')
+    }
+    userInfo = data
+    
+  } else {
+    const response = await axios.post('https://oauth2.googleapis.com/token', {
+      code,
+      client_id: Config.oauth.google.id,
+      client_secret: Config.oauth.google.secret,
+      grant_type: 'authorization_code',
+      redirect_uri: `${ref}oauth/google`
+    })
+    userInfo = await getGoogleUserInfo(response.data.access_token)
+  }
 
   try {
     const user = await User.getByEmail(userInfo.email)

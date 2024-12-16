@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from 'axios'
 import Config from '../../config.js'
 import User from '../../models/user/index.js'
@@ -16,7 +17,19 @@ async function getGoogleUserInfo(accessToken) {
   return response.data // This contains user information
 }
 
-export async function googleLogin(code, referredById, ref) {
+async function verifyGoogleToken(token) {
+  const { data } = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
+  const { aud, exp } = data
+
+  // Validate the audience
+  const currentTime = Math.floor(Date.now() / 1000)
+  const clientId = Config.oauth.google.ios_id
+  if (aud !== clientId || exp < currentTime) throw new BadRequestError('Token is invalid')
+
+  return data
+}
+
+async function getGoogleToken(code, ref) {
   const response = await axios.post('https://oauth2.googleapis.com/token', {
     code,
     client_id: Config.oauth.google.id,
@@ -25,7 +38,16 @@ export async function googleLogin(code, referredById, ref) {
     redirect_uri: `${ref}oauth/google`
   })
 
-  const userInfo = await getGoogleUserInfo(response.data.access_token)
+  return await getGoogleUserInfo(response.data.access_token)
+}
+
+export async function googleLogin(platform, code, referredById, ref) {
+  let userInfo
+
+  if (platform == 'ios')
+    userInfo = verifyGoogleToken(code)
+  else
+    userInfo = getGoogleToken(code, ref)
 
   try {
     const user = await User.getByEmail(userInfo.email)

@@ -139,8 +139,8 @@ router.get('/stripe', async (ctx) => {
 })
 
 router.get('/google', async (ctx) => {
-  const { code, referrer_by } = ctx.query
-  const login = await googleLogin(code, referrer_by, ctx.headers.referer)
+  const { platform, code, referrer_by } = ctx.query
+  const login = await googleLogin(platform, code, referrer_by, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

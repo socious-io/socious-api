@@ -359,10 +359,8 @@ export default {
   oauth: {
     google: {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,
-      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
-    },
-    google_ios: {
-      id: process.env.OAUTH_GOOGLE_IOS_CLIENT_ID,
+      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
+      ios_id: process.env.OAUTH_GOOGLE_IOS_CLIENT_ID
     },
     apple: {
       team_id: process.env.OAUTH_APPLE_TEAM_ID,

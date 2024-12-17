@@ -45,9 +45,9 @@ export async function googleLogin(platform, code, referredById, ref) {
   let userInfo
 
   if (platform == 'ios')
-    userInfo = verifyGoogleToken(code)
+    userInfo = await verifyGoogleToken(code)
   else
-    userInfo = getGoogleToken(code, ref)
+    userInfo = await getGoogleToken(code, ref)
 
   try {
     const user = await User.getByEmail(userInfo.email)

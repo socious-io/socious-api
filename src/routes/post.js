@@ -6,6 +6,7 @@ import Event from '../services/events/index.js'
 import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { checkIdParams } from '../utils/middlewares/route.js'
+import { discordfeedReportMessenger } from '../utils/externals.js'
 export const router = new Router()
 
 router.get('/:id', loginOptional, checkIdParams, async (ctx) => {
@@ -23,10 +24,24 @@ router.post('/', loginRequired, async (ctx) => {
 
 router.post('/:id/report', loginRequired, async (ctx) => {
   await validate.ReportSchema.validateAsync(ctx.request.body)
-  await Post.report({
+  const reportId = await Post.report({
     ...ctx.request.body,
     post_id: ctx.params.id,
     identity_id: ctx.identity.id
+  })
+
+  //Reporting on Discord
+  const report = await Post.getPostReport(reportId)
+  await discordfeedReportMessenger.sendWithTitleAndProperties({
+    title: `:no_entry_sign: Post '${report.post.title}' has been reported`,
+    detailObject: {
+      'Post ID': report.post?.id,
+      'Post Title': report.post?.title,
+      'Post Content': report.post?.content,
+      'Reporter ID': report.identity_meta.id,
+      'Reporter Name': report.identity_meta.name,
+      'Reporter Email': report.identity_meta.email,
+    }
   })
 
   ctx.body = {
@@ -82,10 +97,26 @@ router.post('/:id/comments', loginRequired, checkIdParams, async (ctx) => {
 
 router.post('/comments/:id/report', loginRequired, async (ctx) => {
   await validate.ReportSchema.validateAsync(ctx.request.body)
-  await Post.reportComment({
+  const reportId = await Post.reportComment({
     ...ctx.request.body,
     comment_id: ctx.params.id,
     identity_id: ctx.identity.id
+  })
+
+  //Reporting on Discord
+  const report = await Post.getCommentReport(reportId)
+  await discordfeedReportMessenger.sendWithTitleAndProperties({
+    title: `:no_entry_sign: Comment on Post: '${report.post.title}' has been reported`,
+    detailObject: {
+      'Post ID': report.post?.id,
+      'Post Title': report.post?.title,
+      'Post Content': report.post?.content,
+      'Comment ID': report.comment?.id,
+      'Comment Content': report.comment?.content,
+      'Reporter ID': report.identity_meta.id,
+      'Reporter Name': report.identity_meta.name,
+      'Reporter Email': report.identity_meta.email,
+    }
   })
 
   ctx.body = {

@@ -157,3 +157,20 @@ export const reportComment = async ({ identity_id, comment_id, comment, blocked 
     throw new EntryError(err.message)
   }
 }
+
+export const getCommentReport = async (reportId) => {
+  return await app.db.get(sql`
+    SELECT r.*,row_to_json(p.*) as post, row_to_json(c.*) as comment,
+      i.type AS identity_type, i.meta AS identity_meta,
+      (SELECT
+        jsonb_agg(json_build_object('url', m.url, 'id', m.id))
+        FROM media m
+        WHERE m.id=ANY(p.media)
+      ) AS media
+    FROM reports r
+    JOIN comments c ON r.comment_id=c.id
+    JOIN posts p ON c.post_id=p.id
+    JOIN identities i ON r.identity_id=i.id
+    WHERE r.id=${reportId}
+  `)
+}

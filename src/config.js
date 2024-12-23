@@ -356,6 +356,7 @@ export default {
   publicKey: process.env.PUBLIC_KEY,
   discordLogger: process.env.DISCORD_LOGGER,
   discordDisputeWebhook: process.env.DISCORD_DISPUTE_WEBHOOK,
+  discordFeedReportWebhook: process.env.DISCORD_FEED_REPORT_WEBHOOK,
   oauth: {
     google: {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,

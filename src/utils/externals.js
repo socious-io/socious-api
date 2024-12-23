@@ -35,3 +35,4 @@ class DiscordMessenger {
 }
 
 export const discordDisputeMessenger = new DiscordMessenger(Config.discordDisputeWebhook)
+export const discordfeedReportMessenger = new DiscordMessenger(Config.discordFeedReportWebhook)

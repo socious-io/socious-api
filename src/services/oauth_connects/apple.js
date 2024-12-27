@@ -8,19 +8,19 @@ import { signin } from '../auth/jwt.js'
 import { generateUsername } from '../auth/auth.js'
 import { BadRequestError } from '../../utils/errors.js'
 
-export async function appleLogin(code, id_token, referredById) {
+async function getAppleToken({code, clientId, privateKeyPath, keyid, teamId}) {
   // Create the client secret
-  const privateKey = await fs.readFile(Config.oauth.apple.privateKeyPath)
+  const privateKey = await fs.readFile(privateKeyPath)
   const client_secret = Jwt.sign(
     {
-      iss: Config.oauth.apple.team_id,
+      iss: teamId,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 15777000, // 6 months
       aud: 'https://appleid.apple.com',
-      sub: Config.oauth.apple.client_id
+      sub: clientId
     },
     privateKey,
-    { algorithm: 'ES256', keyid: Config.oauth.apple.key_id }
+    { algorithm: 'ES256', keyid }
   )
 
   // Exchange the authorization code for tokens
@@ -29,7 +29,7 @@ export async function appleLogin(code, id_token, referredById) {
     const response = await axios.post(
       'https://appleid.apple.com/auth/token',
       {
-        client_id: Config.oauth.apple.client_id,
+        client_id: clientId,
         client_secret,
         code,
         grant_type: 'authorization_code'
@@ -45,8 +45,20 @@ export async function appleLogin(code, id_token, referredById) {
     throw error
   }
 
-  // // Verify and decode the ID token to get user information
-  const { name, email } = Jwt.decode(token.id_token)
+  return Jwt.decode(token.id_token)
+}
+
+export async function appleLogin(code, referredById, platform) {
+  
+  const userInfo = await getAppleToken({
+    code,
+    clientId: platform == 'ios' ? Config.oauth.apple.ios_client_id : Config.oauth.apple.client_id,
+    privateKeyPath: Config.oauth.apple.privateKeyPath,
+    keyid: Config.oauth.apple.key_id,
+    teamId: Config.oauth.apple.team_id
+  })
+
+  const { email, name } = userInfo
 
   try {
     const user = await User.getByEmail(email)

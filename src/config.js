@@ -366,6 +366,7 @@ export default {
     apple: {
       team_id: process.env.OAUTH_APPLE_TEAM_ID,
       client_id: process.env.OAUTH_APPLE_CLIENT_ID,
+      ios_client_id: process.env.OAUTH_APPLE_IOS_CLIENT_ID,
       key_id: process.env.OAUTH_APPLE_KEY_ID,
       privateKeyPath: process.env.OAUTH_APPLE_PRIVATE_KEY_PATH
     }

@@ -166,8 +166,8 @@ router.post('/apple', koaBody(), async (ctx) => {
 })
 
 router.get('/apple', async (ctx) => {
-  const { code, id_token, referrer_by } = ctx.query
-  const login = await appleLogin(code, id_token, referrer_by, ctx.headers.referer)
+  const { code, referrer_by, platform } = ctx.query
+  const login = await appleLogin(code, referrer_by, platform, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

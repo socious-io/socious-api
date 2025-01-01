@@ -232,6 +232,21 @@ export default {
               decimals: 6
             }
           ]
+        },
+        {
+          chain: {
+            name: 'Sepolia',
+            explorer: 'https://api-sepolia.etherscan.io/api',
+          },
+          escrow: '0x383fdB2917B1bB02841116811f94159D9263D53d',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: '0x06666b1DbFb62613515cEAE861CAd3d8A9d88451',
+              decimals: 18
+            }
+          ]
         }
       ],
       mainet: [

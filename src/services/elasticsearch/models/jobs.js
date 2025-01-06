@@ -4,38 +4,135 @@ import sql from 'sql-template-tag'
 const index = 'jobs'
 const indices = {
   index,
+  settings: {
+    analysis: {
+      normalizer: {
+        case_insensitive_normalizer: {
+          type: 'custom',
+          filter: ['lowercase']
+        }
+      }
+    }
+  },
   fields: {
     //Full Text Search
-    title: { type: 'text' },
-    description: { type: 'text' },
-    other_party_title: { type: 'text' },
-    other_party_url: { type: 'text' },
+    title: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    description: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    other_party_title: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
+    other_party_url: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
+      }
+    },
 
     //Filters
-    causes_tags: { type: 'keyword' }, //Filter: Social Causes
-    skills: { type: 'keyword' }, //Filter: Skills
-    city: { type: 'keyword' }, //Filter: Location
-    country: { type: 'keyword' }, //Filter: Location
-    timezone: { type: 'keyword' }, //Filter: Timezone
-    remote_preference: { type: 'keyword' }, // add to object
-    category: { type: 'keyword' }, //Filter: Job Category
-    project_type: { type: 'keyword' }, //Filter: Project Type
-    project_length: { type: 'keyword' }, //Filter: Project Length
-    payment_type: { type: 'keyword' }, //Filter: Payment Type
+    causes_tags: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Social Causes
+    skills: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Skills
+    city: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    country: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Location
+    timezone: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Timezone
+    remote_preference: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, // add to object
+    category: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Job Category
+    project_type: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Project Type
+    project_length: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Project Length
+    payment_type: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Payment Type
     //payment options
-    payment_scheme: { type: 'keyword' }, //Filter: Payment Scheme
-    payment_range_lower: { type: 'integer' }, //Filter: Payment Range Lower
-    payment_range_higher: { type: 'integer' }, //Filter: Payment Range Higher
+    payment_scheme: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    }, //Filter: Payment Scheme
+    payment_range_lower: {
+      type: 'integer'
+    }, //Filter: Payment Range Lower
+    payment_range_higher: {
+      type: 'integer'
+    }, //Filter: Payment Range Higher
     //Equity / tokens
 
-    organization: { type: 'keyword' },
-    organization_type: { type: 'keyword' },
-    organization_size: { type: 'keyword' },
+    organization: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    organization_type: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
+    organization_size: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
     organization_preferences: {
       properties: {
-        title: { type: 'keyword' },
-        value: { type: 'keyword' },
-        title_value: { type: 'keyword' }
+        title: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        },
+        title_value: {
+          type: 'keyword',
+          normalizer: 'case_insensitive_normalizer'
+        }
       }
     }
   }
@@ -97,7 +194,7 @@ const indexing = async ({ id }) => {
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    WHERE p.id=${id}
+    WHERE p.id=${id} AND p.kind='JOB'
     `
   )
   const document = transformer(project)
@@ -130,7 +227,7 @@ async function getAllJobs({ offset = 0, limit = 100 }) {
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     JOIN organizations o ON o.id=p.identity_id
-    WHERE p.status='ACTIVE'
+    WHERE p.status='ACTIVE' AND p.kind='JOB'
     LIMIT ${limit} OFFSET ${offset}
     `
   )

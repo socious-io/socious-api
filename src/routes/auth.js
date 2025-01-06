@@ -139,8 +139,8 @@ router.get('/stripe', async (ctx) => {
 })
 
 router.get('/google', async (ctx) => {
-  const { code, referrer_by } = ctx.query
-  const login = await googleLogin(code, referrer_by, ctx.headers.referer)
+  const { platform, code, referrer_by } = ctx.query
+  const login = await googleLogin(platform, code, referrer_by, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)
@@ -162,17 +162,12 @@ router.get('/google', async (ctx) => {
 
 router.post('/apple', koaBody(), async (ctx) => {
   const { code, id_token } = ctx.request.body
-
-  if (config.env == 'production') {
-    ctx.redirect(`https://app.socious.io/oauth/apple?code=${code}&id_token=${id_token}`)
-  } else {
-    ctx.redirect(`https://webapp2.dev.socious.io/oauth/apple?code=${code}&id_token=${id_token}`)
-  }
+  ctx.redirect(`${config.fronthost}/oauth/apple?code=${code}&id_token=${id_token}`)
 })
 
 router.get('/apple', async (ctx) => {
-  const { code, id_token, referrer_by } = ctx.query
-  const login = await appleLogin(code, id_token, referrer_by, ctx.headers.referer)
+  const { code, referrer_by, platform } = ctx.query
+  const login = await appleLogin(code, referrer_by, platform, ctx.headers.referer)
 
   if (login.registered && referrer_by) {
     const identity = await Identity.get(login.user)

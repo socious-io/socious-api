@@ -7,6 +7,8 @@ import Applicant from '../../models/applicant/index.js'
 import Data from '@socious/data'
 import { app } from '../../index.js'
 import { BadRequestError } from '../../utils/errors.js'
+import { getAll as getAllGeonames } from '../geo/geoname.js'
+import { getAll as getAllCountries } from '../geo/country.js'
 
 const addHistory = async (body, identityId) => {
   await app.db.query(sql`
@@ -48,22 +50,39 @@ const find = async (body, { identityId, shouldSave }, paginate) => {
 }
 
 const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
-  await Data.SearchSchema.validateAsync(body)
+  // await Data.SearchV2Schema.validateAsync(body)
 
-  const options = { ...paginate, filter: body.filter, sort: body.sort }
+  const options = { ...paginate, filter: body.filter }
 
   if (shouldSave) await addHistory(body, identityId)
+  console.log(ids, body.type, identityId)
 
   switch (body.type) {
-    case Data.SearchType.USERS:
+    case Data.SearchV2Type.USERS:
       return User.getAllProfile(ids, options.sort, identityId)
 
-    case Data.SearchType.PROJECTS:
-      return Project.getAll(ids, options.sort, identityId)
+    case Data.SearchV2Type.PROJECTS:
+      return Project.getAll(ids, identityId)
 
-    case Data.SearchType.ORGANIZATIONS:
-      return Org.getAll(ids, options.sort, identityId)
+    case Data.SearchV2Type.ORGANIZATIONS:
+      return Org.getAll(ids, identityId)
 
+    case Data.SearchV2Type.LOCATIONS: {
+      const countries = (await getAllCountries(ids)).map((country) => {
+          return {
+            ...country,
+            locations_type: 'country'
+          }
+        }),
+        places = (await getAllGeonames(ids)).map((place) => {
+          return {
+            ...place,
+            locations_type: 'place'
+          }
+        })
+
+      return [...countries, ...places]
+    }
     default:
       throw new BadRequestError(`type '${body.type}' is not valid`)
   }

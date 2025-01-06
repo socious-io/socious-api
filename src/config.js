@@ -12,6 +12,7 @@ export default {
   secret: process.env.SECRET,
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
+  fronthost: process.env.ENV == 'production'? 'https://app.socious.io': 'https://webapp2.dev.socious.io',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
@@ -231,6 +232,21 @@ export default {
               decimals: 6
             }
           ]
+        },
+        {
+          chain: {
+            name: 'Sepolia',
+            explorer: 'https://api-sepolia.etherscan.io/api',
+          },
+          escrow: '0x383fdB2917B1bB02841116811f94159D9263D53d',
+          tokens: [
+            {
+              name: 'USDC',
+              symbol: 'USDC',
+              address: '0x06666b1DbFb62613515cEAE861CAd3d8A9d88451',
+              decimals: 18
+            }
+          ]
         }
       ],
       mainet: [
@@ -355,14 +371,17 @@ export default {
   publicKey: process.env.PUBLIC_KEY,
   discordLogger: process.env.DISCORD_LOGGER,
   discordDisputeWebhook: process.env.DISCORD_DISPUTE_WEBHOOK,
+  discordFeedReportWebhook: process.env.DISCORD_FEED_REPORT_WEBHOOK,
   oauth: {
     google: {
       id: process.env.OAUTH_GOOGLE_CLIENT_ID,
-      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
+      secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
+      ios_id: process.env.OAUTH_GOOGLE_IOS_CLIENT_ID
     },
     apple: {
       team_id: process.env.OAUTH_APPLE_TEAM_ID,
       client_id: process.env.OAUTH_APPLE_CLIENT_ID,
+      ios_client_id: process.env.OAUTH_APPLE_IOS_CLIENT_ID,
       key_id: process.env.OAUTH_APPLE_KEY_ID,
       privateKeyPath: process.env.OAUTH_APPLE_PRIVATE_KEY_PATH
     }

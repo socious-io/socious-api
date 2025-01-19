@@ -1,24 +1,22 @@
 import { BadRequestError } from '../../utils/errors.js'
 import Linkdin from './linkdin.js'
 import * as model from './model.js'
-import { apply } from './importer.js'
+import { apply, upsertOrg } from './importer.js'
 import Org from '../../models/organization/index.js'
 
 const read = async ({ identity_id, body, type }) => {
   if (type === 'LINKDIN') {
     const parsed = await Linkdin(body)
 
-    for (let experience of parsed.experiences) {
+    for (const experience of parsed.experiences) {
+      const organization = await upsertOrg(experience.company)
+      experience.company = organization
+    }
 
-      console.log(experience.company)
-      const organization = await Org.search(experience.company, {
-        offset: 0,
-        limit: 1,
-        filter: {},
-        sort: null,
-        currentIdentity: identity_id
-      })
-      experience.company = organization[0]??null
+    for (const education of parsed.educations) {
+      const organization = await upsertOrg(education.name)
+      // @ts-ignore
+      education.organization = organization
     }
 
     return await model.insert(identity_id, { body: parsed, type })

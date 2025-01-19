@@ -2,7 +2,6 @@ import { BadRequestError } from '../../utils/errors.js'
 import Linkdin from './linkdin.js'
 import * as model from './model.js'
 import { apply, upsertOrg } from './importer.js'
-import Org from '../../models/organization/index.js'
 
 const read = async ({ identity_id, body, type }) => {
   if (type === 'LINKDIN') {

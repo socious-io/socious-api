@@ -18,8 +18,8 @@ export const apply = async (identityId, modelId) => {
       org_id: exp.company.id,
       title: exp.job,
       description: exp.description,
-      start_at: exp.start_date!=null?new Date(exp.start_date):null,
-      end_at: exp.end_date!=null?new Date(exp.end_date):null
+      start_at: exp.start_date != null ? new Date(exp.start_date) : null,
+      end_at: exp.end_date != null ? new Date(exp.end_date) : null
     })
   }
   for (const edu of body.educations) {
@@ -29,8 +29,8 @@ export const apply = async (identityId, modelId) => {
       title: edu.name,
       degree: edu.degree,
       grade: edu.grade,
-      start_at: edu.start_at!=null?new Date(edu.start_at):null,
-      end_at: edu.end_at!=null?new Date(edu.end_at):null
+      start_at: edu.start_at != null ? new Date(edu.start_at) : null,
+      end_at: edu.end_at != null ? new Date(edu.end_at) : null
     })
   }
   // @ts-ignore

@@ -20,7 +20,10 @@ export const filterColumns = {
   promoted: Boolean,
   experience_level: Number,
   job_category_id: String,
-  kind: String
+  kind: String,
+  payment_range_lower: Number,
+  payment_range_higher: Number,
+  payment_mode: String
 }
 
 export const markingFilterColumns = {
@@ -69,7 +72,7 @@ export const getAll = async (ids, identityId) => {
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
-  WHERE p.id=ANY(${ids}) AND p.kind='JOB'
+  WHERE p.id=ANY(${ids})
   ORDER BY array_position(${ids}, p.id)
   `)
   return rows
@@ -96,7 +99,10 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
 }
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
-  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
+  //Default job filter
+  if (!filter) filter = { kind: 'JOB' }
+  else if (filter && !filter.kind) filter = { ...filter, kind: 'JOB' }
+
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
@@ -124,7 +130,10 @@ export const permissioned = async (identityId, id) => {
 }
 
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
-  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
+  //Default job filter
+  if (!filter) filter = { kind: 'JOB' }
+  else if (filter && !filter.kind) filter = { ...filter, kind: 'JOB' }
+
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,

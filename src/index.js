@@ -15,19 +15,6 @@ import * as SearchEngineTriggers from './services/elasticsearch/triggers.js'
 /** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })
 
-//Search
-if (Config.env != 'testing') {
-  const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
-  const SearchEngineService = await import('./services/elasticsearch/service.js')
-  app.searchClient = SearchEngineClient
-  app.use((ctx, next) => {
-    ctx.searchTriggers = SearchEngineTriggers
-    ctx.searchClient = SearchEngineClient
-    ctx.searchService = SearchEngineService
-    return next()
-  })
-}
-
 app.keys = [Config.secret]
 app.users = {}
 app.use(koaLogger)
@@ -56,6 +43,19 @@ blueprint(app)
 app.http = http.createServer(app.callback())
 
 socket(app)
+
+//Search
+if (Config.env != 'testing') {
+  const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
+  const SearchEngineService = await import('./services/elasticsearch/service.js')
+  app.searchClient = SearchEngineClient
+  app.use((ctx, next) => {
+    ctx.searchClient = SearchEngineClient
+    ctx.searchService = SearchEngineService
+    return next()
+  })
+  SearchEngineTriggers.startSync()
+}
 
 app.listen = (...args) => {
   app.http.listen.call(app.http, ...args)

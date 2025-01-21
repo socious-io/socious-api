@@ -64,6 +64,32 @@ export class DBCircuitBreaker {
     return this.policy.execute(() => this.pool.query(...args))
   }
 
+  //handling pg_notify(event, data) here
+  on(event, callback) {
+    return this.policy.execute(() => {
+      this.pool.connect(function (err, client, done) {
+        if (err) {
+          console.log(err)
+
+          // // in case of error while connecting (DB down?), retry after 1"
+          // return setTimeout(addListener, 1000).unref();
+        }
+
+        // when client is closed, open a new one
+        // client.on('end', addListener);
+        // this should be improved to handle a correct server shutdown
+        // in case of server shutdown,
+        // probably we want to close the client without opening a new one
+
+        // in case of error, close the client as well
+        client.on('error', done)
+
+        client.on('notification', callback)
+        client.query(`LISTEN ${event}`)
+      })
+    })
+  }
+
   async get(...args) {
     const { rows } = await this.query(...args)
     if (rows.length < 1) throw new NotMatchedError()

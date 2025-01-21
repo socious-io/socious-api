@@ -17,38 +17,38 @@ const indices = {
   fields: {
     //Full Text Search
     title: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     description: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     other_party_title: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     other_party_url: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
@@ -162,9 +162,9 @@ function transformer(document) {
     payment_range_lower: document.payment_range_lower,
     payment_range_higher: document.payment_range_higher,
     //Equity / tokens
-    organization: document.organization.id,
-    organization_type: document.organization.type,
-    organization_size: document.organization.size,
+    organization: document.organization?.id,
+    organization_type: document.organization?.type,
+    organization_size: document.organization?.size,
     organization_preferences: document.preferences.map((preference) => {
       return {
         ...preference,
@@ -193,8 +193,8 @@ const indexing = async ({ id }) => {
     ) AS preferences
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
-    JOIN organizations o ON o.id=p.identity_id
-    WHERE p.id=${id} AND p.kind='JOB'
+    LEFT JOIN organizations o ON o.id=p.identity_id
+    WHERE p.id=${id}
     `
   )
   const document = transformer(project)
@@ -226,8 +226,8 @@ async function getAllJobs({ offset = 0, limit = 100 }) {
     ) AS preferences
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
-    JOIN organizations o ON o.id=p.identity_id
-    WHERE p.status='ACTIVE' AND p.kind='JOB'
+    LEFT JOIN organizations o ON o.id=p.identity_id
+    WHERE p.status='ACTIVE'
     LIMIT ${limit} OFFSET ${offset}
     `
   )

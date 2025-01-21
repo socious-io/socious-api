@@ -17,30 +17,40 @@ const indices = {
   fields: {
     //Full text search
     first_name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     last_name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     username: {
       type: 'keyword',
-      normalizer: 'case_insensitive_normalizer'
+      normalizer: 'case_insensitive_normalizer',
+      fields: {
+        text: {
+          type: 'text'
+        }
+      }
     },
     email: {
       type: 'keyword',
-      normalizer: 'case_insensitive_normalizer'
+      normalizer: 'case_insensitive_normalizer',
+      fields: {
+        text: {
+          type: 'text'
+        }
+      }
     },
     created_at: {
       type: 'date'

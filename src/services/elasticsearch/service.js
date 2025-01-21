@@ -1,36 +1,39 @@
 import { BadRequestError } from '../../utils/errors.js'
 import client from './client.js'
 
-export const search = async (body, pagination) => {
-  let typeToIndex = {
-      users: 'users',
-      projects: 'jobs',
-      organizations: 'organizations',
-      locations: 'locations'
-    },
-    typeToFields = {
-      users: ['first_name^2', 'last_name^1'],
-      projects: ['title^2', 'description^1'],
-      organizations: [
-        'name^9',
-        'description^8',
-        'bio^7',
-        'email^6',
-        'shortname^5',
-        'mission^4',
-        'address^3',
-        'email^2',
-        'phone^1'
-      ],
-      locations: ['name']
-    },
-    { q, type, filter } = body,
-    index = typeToIndex[type],
-    fields = typeToFields[type]
+function getIndexByType(type) {
+  const typeToIndex = {
+    users: 'users',
+    projects: 'jobs',
+    organizations: 'organizations',
+    locations: 'locations'
+  }
 
-  if (!index) throw new BadRequestError(`type '${type}' is not valid`)
+  return typeToIndex[type]
+}
 
-  //make filters elastic-compliant
+function getFieldsByType(type) {
+  const typeToFields = {
+    users: ['first_name.text^4', 'last_name.text^3', 'username^2', 'email.text^1'],
+    projects: ['title.text^2', 'description.text^1'],
+    organizations: [
+      'name.text^8',
+      'description.text^7',
+      'bio.text^6',
+      'email.text^5',
+      'shortname.text^4',
+      'mission.text^3',
+      'address.text^2',
+      'phone.text^1'
+    ],
+    locations: ['name.text^3', 'asciiname.text^2', 'country_name.text^1']
+  }
+
+  return typeToFields[type]
+}
+
+//make filters elastic-compliant
+function generateFilters(filter) {
   let filters = []
   filter = filter ?? {}
   for (const [key, value] of Object.entries(filter)) {
@@ -62,15 +65,34 @@ export const search = async (body, pagination) => {
     }
   }
 
-  //make sort elastic-compliant
-  let sort = []
-  if (body.sort) {
-    for (const [sortKey, sortValue] of Object.entries(body.sort)) {
+  return filters
+}
+
+//make sort elastic-compliant
+function generateSorts(sort) {
+  let sorts = []
+  if (sort) {
+    for (const [sortKey, sortValue] of Object.entries(sort)) {
+      //export type sortValue :SortOrder = 'asc' | 'desc';
       sort.push({
         [sortKey]: sortValue
       })
     }
   }
+
+  return sorts
+}
+
+export const search = async (body, pagination) => {
+  const { q, type, filter, sort } = body,
+    index = getIndexByType(type),
+    fields = getFieldsByType(type)
+
+  if (!index) throw new BadRequestError(`type '${type}' is not valid`)
+
+  //make sort elastic-compliant
+  const filters = generateFilters(filter)
+  const sorts = generateSorts(sort)
 
   //setting filter parameters
   const queryDsl = {
@@ -88,5 +110,5 @@ export const search = async (body, pagination) => {
       }
     ]
 
-  return await client.searchDocuments(index, queryDsl, { pagination, sort })
+  return await client.searchDocuments(index, queryDsl, { pagination, sort: sorts })
 }

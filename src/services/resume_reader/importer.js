@@ -13,26 +13,24 @@ export const apply = async (identityId, modelId) => {
   const body = imports.body
 
   for (const exp of body.experiences) {
-    const org = await upsertOrg(exp.company)
     // @ts-ignore
     await User.addExperience(user, {
-      org_id: org.id,
+      org_id: exp.company.id,
       title: exp.job,
       description: exp.description,
-      start_at: exp.start_date,
-      end_at: exp.end_date
+      start_at: exp.start_date != null ? new Date(exp.start_date) : null,
+      end_at: exp.end_date != null ? new Date(exp.end_date) : null
     })
   }
   for (const edu of body.educations) {
-    const org = await upsertOrg(edu.name)
     await User.addEducation(user, {
-      org_id: org.id,
+      org_id: edu.organization.id,
       description: null,
       title: edu.name,
       degree: edu.degree,
       grade: edu.grade,
-      start_at: new Date(edu.start_at),
-      end_at: new Date(edu.end_at)
+      start_at: edu.start_at != null ? new Date(edu.start_at) : null,
+      end_at: edu.end_at != null ? new Date(edu.end_at) : null
     })
   }
   // @ts-ignore
@@ -41,7 +39,7 @@ export const apply = async (identityId, modelId) => {
   await model.update(identityId, { body, status: 'APPLIED' })
 }
 
-const upsertOrg = async (name) => {
+export const upsertOrg = async (name) => {
   let orgs = await Org.search(name, {
     offset: 0,
     limit: 5,

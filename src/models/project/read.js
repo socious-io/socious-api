@@ -81,7 +81,7 @@ export const getAll = async (ids, identityId) => {
         ),
         '[]'
       )
-    ) AS work_samples
+    ) AS work_samples,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
@@ -141,7 +141,7 @@ export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) 
           ),
           '[]'
         )
-      ) AS work_samples
+      ) AS work_samples,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
       EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,

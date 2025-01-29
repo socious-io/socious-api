@@ -240,42 +240,41 @@ async function getAllGeoNames({ offset = 0, limit = 100 }) {
 }
 
 const indexing = async ({ id }) => {
-
-  let document;
+  let document
   const indexingDocuments = []
 
-  let country, geoname;
+  let country, geoname
 
-  try{
+  try {
     country = await app.db.get(
       sql`
       SELECT * FROM countries
       WHERE id=${id}
       `
     )
-  }catch(e){
+  } catch (e) {
     country = null
   }
 
-  try{
+  try {
     geoname = await app.db.get(
       sql`
       SELECT * FROM geonames
       WHERE id=${id}
       `
     )
-  }catch(e){
+  } catch (e) {
     geoname = null
   }
 
-  if(country){
+  if (country) {
     document = countriesTransformer(country)
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
-  }else if (geoname){
+  } else if (geoname) {
     document = geoNamesTransformer(geoname)
     console.log(document)
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
-  }else {
+  } else {
     indexingDocuments.push(app.searchClient.deleteDocument(index, id))
   }
 

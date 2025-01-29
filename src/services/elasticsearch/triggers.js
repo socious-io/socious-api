@@ -23,7 +23,7 @@ export const startSync = async () => {
     users: indexUsers,
     organizations: indexOrganizations,
     geonames: indexLocations,
-    countries: indexLocations,
+    countries: indexLocations
   }
 
   app.db.on('elastic_update', async (msg) => {

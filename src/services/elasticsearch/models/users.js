@@ -152,10 +152,10 @@ function transformer(document) {
 }
 
 const indexing = async ({ id }) => {
-  let document;
+  let document
   const indexingDocuments = []
 
-  try{
+  try {
     const user = await app.db.get(
       sql`
       SELECT u.*, gn.timezone as timezone,
@@ -193,7 +193,7 @@ const indexing = async ({ id }) => {
 
     document = transformer(user)
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
-  }catch(e){
+  } catch (e) {
     indexingDocuments.push(app.searchClient.deleteDocument(index, id))
   }
 

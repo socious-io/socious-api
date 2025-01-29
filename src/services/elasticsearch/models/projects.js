@@ -138,7 +138,7 @@ const indices = {
     kind: {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
-    },
+    }
   }
 }
 
@@ -180,10 +180,10 @@ function transformer(document) {
 }
 
 const indexing = async ({ id }) => {
-  let document;
+  let document
   const indexingDocuments = []
 
-  try{
+  try {
     const project = await app.db.get(
       sql`
       SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
@@ -208,9 +208,9 @@ const indexing = async ({ id }) => {
     )
     document = transformer(project)
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
-  }catch(e){
+  } catch (e) {
     indexingDocuments.push(app.searchClient.deleteDocument(index, id))
-  } 
+  }
 
   try {
     return await Promise.all(indexingDocuments)

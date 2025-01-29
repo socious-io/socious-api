@@ -1,29 +1,41 @@
-import models from './models/index.js'
 import { app } from '../../index.js'
+import publish from '../jobs/publish.js'
+
+export const indexUsers = ({ id }) => {
+  publish('index_users', { id })
+}
+
+export const indexJobs = ({ id }) => {
+  publish('index_jobs', { id })
+}
+
+export const indexOrganizations = ({ id }) => {
+  publish('index_organizations', { id })
+}
+
+export const indexLocations = ({ id }) => {
+  publish('index_locations', { id })
+}
 
 export const startSync = async () => {
   const tableToIndexFunc = {
-    projects: models.jobs.indexing,
-    users: models.users.indexing,
-    organizations: models.organizations.indexing
+    projects: indexJobs,
+    users: indexUsers,
+    organizations: indexOrganizations,
+    geonames: indexLocations,
+    countries: indexLocations,
   }
 
   app.db.on('elastic_update', async (msg) => {
     const { operation, table, data } = JSON.parse(msg.payload)
     const indexFunc = tableToIndexFunc[table]
 
-    console.log(indexFunc, operation, table, data)
-
     if (!indexFunc) {
       console.error(`No indexing function found for table ${table} on elastic`)
     }
 
-    if (operation === 'INSERT' || operation === 'UPDATE') {
+    if (operation === 'INSERT' || operation === 'UPDATE' || operation === 'DELETE') {
       await indexFunc(data)
     }
-    //TODO: implement delete operation
-    // else if (payload.operation === 'DELETE') {
-    //   await deleteFromElasticsearch(payload.data.id)
-    // }
   })
 }

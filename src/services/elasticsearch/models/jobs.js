@@ -175,31 +175,39 @@ function transformer(document) {
 }
 
 const indexing = async ({ id }) => {
-  const project = await app.db.get(
-    sql`
-    SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
-    COALESCE(
-      (SELECT
-        jsonb_agg(
-          json_build_object(
-            'title', pf.title, 
-            'value', pf.value
-          ) 
-        )
-        FROM preferences pf
-        WHERE pf.identity_id=o.id
-      ),
-      '[]'
-    ) AS preferences
-    FROM projects p
-    LEFT JOIN geonames gn ON gn.id=p.geoname_id
-    LEFT JOIN organizations o ON o.id=p.identity_id
-    WHERE p.id=${id}
-    `
-  )
-  const document = transformer(project)
 
-  const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
+  let document;
+  const indexingDocuments = []
+
+  try{
+    const project = await app.db.get(
+      sql`
+      SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'title', pf.title, 
+              'value', pf.value
+            ) 
+          )
+          FROM preferences pf
+          WHERE pf.identity_id=o.id
+        ),
+        '[]'
+      ) AS preferences
+      FROM projects p
+      LEFT JOIN geonames gn ON gn.id=p.geoname_id
+      LEFT JOIN organizations o ON o.id=p.identity_id
+      WHERE p.id=${id}
+      `
+    )
+    document = transformer(project)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  }catch(e){
+    indexingDocuments.push(app.searchClient.deleteDocument(index, id))
+  } 
+
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {

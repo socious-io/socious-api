@@ -74,14 +74,14 @@ const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
             locations_type: 'country'
           }
         }),
-        places = (await getAllGeonames(ids)).map((place) => {
+        geonames = (await getAllGeonames(ids)).map((place) => {
           return {
             ...place,
-            locations_type: 'place'
+            locations_type: 'geoname'
           }
         })
 
-      return [...countries, ...places]
+      return [...countries, ...geonames]
     }
     default:
       throw new BadRequestError(`type '${body.type}' is not valid`)

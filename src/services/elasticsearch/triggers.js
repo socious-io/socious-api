@@ -5,8 +5,8 @@ export const indexUsers = ({ id }) => {
   publish('index_users', { id })
 }
 
-export const indexJobs = ({ id }) => {
-  publish('index_jobs', { id })
+export const indexProjects = ({ id }) => {
+  publish('index_projects', { id })
 }
 
 export const indexOrganizations = ({ id }) => {
@@ -19,7 +19,7 @@ export const indexLocations = ({ id }) => {
 
 export const startSync = async () => {
   const tableToIndexFunc = {
-    projects: indexJobs,
+    projects: indexProjects,
     users: indexUsers,
     organizations: indexOrganizations,
     geonames: indexLocations,

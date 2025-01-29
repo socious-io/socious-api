@@ -1,7 +1,7 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
 
-const index = 'jobs'
+const index = 'projects'
 const indices = {
   index,
   settings: {
@@ -134,7 +134,11 @@ const indices = {
           normalizer: 'case_insensitive_normalizer'
         }
       }
-    }
+    },
+    kind: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
+    },
   }
 }
 
@@ -170,12 +174,12 @@ function transformer(document) {
         ...preference,
         title_value: `${preference.title}:${preference.value}`
       }
-    })
+    }),
+    kind: document.kind
   }
 }
 
 const indexing = async ({ id }) => {
-
   let document;
   const indexingDocuments = []
 
@@ -215,7 +219,7 @@ const indexing = async ({ id }) => {
   }
 }
 
-async function getAllJobs({ offset = 0, limit = 100 }) {
+async function getAllProjects({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
     SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
@@ -251,7 +255,7 @@ const initIndexing = async () => {
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    projects = await getAllJobs({ limit, offset })
+    projects = await getAllProjects({ limit, offset })
     if (projects.length < 1) break
     await app.searchClient.bulkIndexDocuments(index, projects.map(transformer))
     count += projects.length

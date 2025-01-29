@@ -4,7 +4,7 @@ import client from './client.js'
 function getIndexByType(type) {
   const typeToIndex = {
     users: 'users',
-    projects: 'jobs',
+    projects: 'projects',
     organizations: 'organizations',
     locations: 'locations'
   }

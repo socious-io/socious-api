@@ -55,7 +55,6 @@ const findV2 = async (body, ids, { identityId, shouldSave }, paginate) => {
   const options = { ...paginate, filter: body.filter }
 
   if (shouldSave) await addHistory(body, identityId)
-  console.log(ids, body.type, identityId)
 
   switch (body.type) {
     case Data.SearchV2Type.USERS:

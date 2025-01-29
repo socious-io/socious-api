@@ -65,8 +65,6 @@ router.post('/', loginRequired, async (ctx) => {
   ctx.body = await Org.insert(ctx.user.id, ctx.request.body)
   if (ctx.query.auto_member !== 'false') await Org.addMember(ctx.body.id, ctx.user.id)
   if (referredById) await Referring.insert(ctx.body.id, referredById)
-
-  if (ctx.searchTriggers) ctx.searchTriggers.indexOrganizations({ id: ctx.body.id })
 })
 
 router.get('/check', loginRequired, async (ctx) => {
@@ -85,8 +83,6 @@ router.post('/update/:id', loginRequired, checkIdParams, orgMember, async (ctx) 
   }
   await Org.update(ctx.params.id, ctx.request.body)
   ctx.body = await Org.get(ctx.params.id)
-
-  if (ctx.searchTriggers) ctx.searchTriggers.indexOrganizations({ id: ctx.body.id })
 })
 
 router.get('/:id/members', loginRequired, checkIdParams, paginate, async (ctx) => {

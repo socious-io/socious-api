@@ -12,7 +12,7 @@ export default {
   secret: process.env.SECRET,
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
-  fronthost: process.env.ENV == 'production'? 'https://app.socious.io': 'https://webapp2.dev.socious.io',
+  fronthost: process.env.ENV == 'production' ? 'https://app.socious.io' : 'https://webapp2.dev.socious.io',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
@@ -237,6 +237,7 @@ export default {
           chain: {
             name: 'Sepolia',
             explorer: 'https://api-sepolia.etherscan.io/api',
+            apikey: 'PWNI98429AJWP5ZX8F9I7WJSXYUFMKRQM8'
           },
           escrow: '0x383fdB2917B1bB02841116811f94159D9263D53d',
           tokens: [

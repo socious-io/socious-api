@@ -1,7 +1,7 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
 
-const index = 'jobs'
+const index = 'projects'
 const indices = {
   index,
   settings: {
@@ -17,38 +17,38 @@ const indices = {
   fields: {
     //Full Text Search
     title: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     description: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     other_party_title: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     other_party_url: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
@@ -134,6 +134,10 @@ const indices = {
           normalizer: 'case_insensitive_normalizer'
         }
       }
+    },
+    kind: {
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
     }
   }
 }
@@ -162,44 +166,52 @@ function transformer(document) {
     payment_range_lower: document.payment_range_lower,
     payment_range_higher: document.payment_range_higher,
     //Equity / tokens
-    organization: document.organization.id,
-    organization_type: document.organization.type,
-    organization_size: document.organization.size,
+    organization: document.organization?.id,
+    organization_type: document.organization?.type,
+    organization_size: document.organization?.size,
     organization_preferences: document.preferences.map((preference) => {
       return {
         ...preference,
         title_value: `${preference.title}:${preference.value}`
       }
-    })
+    }),
+    kind: document.kind
   }
 }
 
 const indexing = async ({ id }) => {
-  const project = await app.db.get(
-    sql`
-    SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
-    COALESCE(
-      (SELECT
-        jsonb_agg(
-          json_build_object(
-            'title', pf.title, 
-            'value', pf.value
-          ) 
-        )
-        FROM preferences pf
-        WHERE pf.identity_id=o.id
-      ),
-      '[]'
-    ) AS preferences
-    FROM projects p
-    LEFT JOIN geonames gn ON gn.id=p.geoname_id
-    JOIN organizations o ON o.id=p.identity_id
-    WHERE p.id=${id} AND p.kind='JOB'
-    `
-  )
-  const document = transformer(project)
+  let document
+  const indexingDocuments = []
 
-  const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
+  try {
+    const project = await app.db.get(
+      sql`
+      SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'title', pf.title, 
+              'value', pf.value
+            ) 
+          )
+          FROM preferences pf
+          WHERE pf.identity_id=o.id
+        ),
+        '[]'
+      ) AS preferences
+      FROM projects p
+      LEFT JOIN geonames gn ON gn.id=p.geoname_id
+      LEFT JOIN organizations o ON o.id=p.identity_id
+      WHERE p.id=${id}
+      `
+    )
+    document = transformer(project)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  } catch (e) {
+    indexingDocuments.push(app.searchClient.deleteDocument(index, id))
+  }
+
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {
@@ -207,7 +219,7 @@ const indexing = async ({ id }) => {
   }
 }
 
-async function getAllJobs({ offset = 0, limit = 100 }) {
+async function getAllProjects({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
     SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
@@ -226,8 +238,8 @@ async function getAllJobs({ offset = 0, limit = 100 }) {
     ) AS preferences
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
-    JOIN organizations o ON o.id=p.identity_id
-    WHERE p.status='ACTIVE' AND p.kind='JOB'
+    LEFT JOIN organizations o ON o.id=p.identity_id
+    WHERE p.status='ACTIVE'
     LIMIT ${limit} OFFSET ${offset}
     `
   )
@@ -243,7 +255,7 @@ const initIndexing = async () => {
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    projects = await getAllJobs({ limit, offset })
+    projects = await getAllProjects({ limit, offset })
     if (projects.length < 1) break
     await app.searchClient.bulkIndexDocuments(index, projects.map(transformer))
     count += projects.length

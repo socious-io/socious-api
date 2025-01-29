@@ -15,6 +15,11 @@ import * as SearchEngineTriggers from './services/elasticsearch/triggers.js'
 /** @type {import('../types/app').IApp} */
 export const app = new Koa({ proxy: true })
 
+//Search
+if (Config.env != 'testing') {
+  app.searchClient = (await import('./services/elasticsearch/client.js')).default
+}
+
 app.keys = [Config.secret]
 app.users = {}
 app.use(koaLogger)
@@ -35,6 +40,9 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err)
   process.exit(-1)
 })
+if (Config.env != 'testing') {
+  SearchEngineTriggers.startSync()
+}
 
 app.use(middlewares(app))
 
@@ -43,19 +51,6 @@ blueprint(app)
 app.http = http.createServer(app.callback())
 
 socket(app)
-
-//Search
-if (Config.env != 'testing') {
-  const SearchEngineClient = (await import('./services/elasticsearch/client.js')).default
-  const SearchEngineService = await import('./services/elasticsearch/service.js')
-  app.searchClient = SearchEngineClient
-  app.use((ctx, next) => {
-    ctx.searchClient = SearchEngineClient
-    ctx.searchService = SearchEngineService
-    return next()
-  })
-  SearchEngineTriggers.startSync()
-}
 
 app.listen = (...args) => {
   app.http.listen.call(app.http, ...args)

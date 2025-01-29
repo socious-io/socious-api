@@ -74,7 +74,7 @@ function generateSorts(sort) {
   if (sort) {
     for (const [sortKey, sortValue] of Object.entries(sort)) {
       //export type sortValue :SortOrder = 'asc' | 'desc';
-      sort.push({
+      sorts.push({
         [sortKey]: sortValue
       })
     }

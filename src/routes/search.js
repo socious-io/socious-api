@@ -2,7 +2,7 @@ import Router from '@koa/router'
 import Search from '../services/search/index.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import { paginate } from '../utils/middlewares/requests.js'
-import * as SearchEngineService from '../services/elasticsearch/service.js'
+import { InternalServerError } from '../utils/errors.js'
 
 export const router = new Router()
 
@@ -11,7 +11,9 @@ router.post('/', loginOptional, paginate, async (ctx) => {
 })
 
 router.post('/v2', loginOptional, paginate, async (ctx) => {
-  const { count, results } = await SearchEngineService.search(ctx.request.body, ctx.paginate)
+  if (!ctx.searchService) throw new InternalServerError()
+
+  const { count, results } = await ctx.searchService.search(ctx.request.body, ctx.paginate)
   const searchResults = await Search.findV2(
     ctx.request.body,
     results.map((sr) => sr.id),

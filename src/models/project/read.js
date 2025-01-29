@@ -65,6 +65,23 @@ export const getAll = async (ids, identityId) => {
     i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
+    (
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+            'id', m.id,
+            'url', m.url, 
+            'filename', m.filename
+            )
+          )
+        FROM media m
+        LEFT JOIN service_work_samples sws ON sws.service_id=p.id
+        WHERE m.id = sws.document
+        ),
+        '[]'
+      )
+    ) AS work_samples,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
@@ -108,6 +125,23 @@ export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) 
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
       row_to_json(j.*) AS job_category,
+      (
+        COALESCE(
+          (SELECT
+            jsonb_agg(
+              json_build_object(
+              'id', m.id,
+              'url', m.url, 
+              'filename', m.filename
+              )
+            )
+          FROM media m
+          LEFT JOIN service_work_samples sws ON sws.service_id=p.id
+          WHERE m.id = sws.document
+          ),
+          '[]'
+        )
+      ) AS work_samples,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
       EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,

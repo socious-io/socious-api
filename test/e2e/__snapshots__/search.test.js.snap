@@ -259,6 +259,7 @@ exports[`projects with filter 1`] = `
       "updated_at": Any<String>,
       "weekly_hours_higher": "13",
       "weekly_hours_lower": "12",
+      "work_samples": [],
     },
   ],
   "limit": 10,
@@ -322,6 +323,7 @@ exports[`search projects 1`] = `
       "updated_at": Any<String>,
       "weekly_hours_higher": "13",
       "weekly_hours_lower": "12",
+      "work_samples": [],
     },
     {
       "applicants": 0,
@@ -375,6 +377,7 @@ exports[`search projects 1`] = `
       "updated_at": Any<String>,
       "weekly_hours_higher": "13",
       "weekly_hours_lower": "12",
+      "work_samples": [],
     },
   ],
   "limit": 10,

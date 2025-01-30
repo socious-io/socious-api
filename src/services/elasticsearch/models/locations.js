@@ -298,8 +298,9 @@ const initIndexing = async () => {
     countries = (await getAllCountries({ limit, offset })).map(countriesTransformer)
 
     if (geonames.length < 1 && countries.length < 1) break
-    await app.searchClient.bulkIndexDocuments(index, geonames)
-    await app.searchClient.bulkIndexDocuments(index, countries)
+    if(geonames.length>1) await app.searchClient.bulkIndexDocuments(index, geonames)
+    if(countries.length>1) await app.searchClient.bulkIndexDocuments(index, countries)
+      
     count += geonames.length + countries.length
     offset += limit
   }

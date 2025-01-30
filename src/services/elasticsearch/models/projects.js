@@ -151,8 +151,8 @@ function transformer(document) {
     other_party_title: document.other_party_title,
     other_party_url: document.other_party_url,
 
-    causes_tags: document.causes_tags,
-    skills: document.causes_tags,
+    causes_tags: document.causes_tags ?? [],
+    skills: document.skills ?? [],
     city: document.city,
     country: document.country,
     timezone: document.timezone,

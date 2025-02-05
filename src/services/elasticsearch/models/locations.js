@@ -20,14 +20,14 @@ const indices = {
       type: 'integer'
     }, //geonameid
     name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
-    }, // name for place, country for countryinfo
+    }, // name for geoname, country for countryinfo
     iso_code: {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
@@ -52,40 +52,30 @@ const indices = {
 
     //geoname fields
     asciiname: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     country_name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     postal_code_format: {
-      type: 'text',
-      fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
-        }
-      }
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
     },
     postal_code_regex: {
-      type: 'text',
-      fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
-        }
-      }
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer'
     },
 
     latlong: {
@@ -186,7 +176,7 @@ function geoNamesTransformer(document) {
     population: document.population,
     asciiname: document.asciiname,
     country_name: document.country_name,
-    latlong: document.latlong,
+    latlong: [document.latlong.y, document.latlong.x],
     feature_class: document.feature_class,
     feature_code: document.feature_code,
     country_code: document.country_code,
@@ -197,7 +187,7 @@ function geoNamesTransformer(document) {
     timezone_utc: document.timezone_utc,
     created_at: document.created_at,
     updated_at: document.updated_at,
-    location_type: 'place'
+    location_type: 'geoname'
   }
 }
 
@@ -249,6 +239,52 @@ async function getAllGeoNames({ offset = 0, limit = 100 }) {
   return rows
 }
 
+const indexing = async ({ id }) => {
+  let document
+  const indexingDocuments = []
+
+  let country, geoname
+
+  try {
+    country = await app.db.get(
+      sql`
+      SELECT * FROM countries
+      WHERE id=${id}
+      `
+    )
+  } catch (e) {
+    country = null
+  }
+
+  try {
+    geoname = await app.db.get(
+      sql`
+      SELECT * FROM geonames
+      WHERE id=${id}
+      `
+    )
+  } catch (e) {
+    geoname = null
+  }
+
+  if (country) {
+    document = countriesTransformer(country)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  } else if (geoname) {
+    document = geoNamesTransformer(geoname)
+    console.log(document)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  } else {
+    indexingDocuments.push(app.searchClient.deleteDocument(index, id))
+  }
+
+  try {
+    return await Promise.all(indexingDocuments)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 const initIndexing = async () => {
   let offset = 0,
     limit = 10000,
@@ -262,8 +298,9 @@ const initIndexing = async () => {
     countries = (await getAllCountries({ limit, offset })).map(countriesTransformer)
 
     if (geonames.length < 1 && countries.length < 1) break
-    await app.searchClient.bulkIndexDocuments(index, geonames)
-    await app.searchClient.bulkIndexDocuments(index, countries)
+    if(geonames.length>1) await app.searchClient.bulkIndexDocuments(index, geonames)
+    if(countries.length>1) await app.searchClient.bulkIndexDocuments(index, countries)
+      
     count += geonames.length + countries.length
     offset += limit
   }
@@ -273,5 +310,6 @@ const initIndexing = async () => {
 
 export default {
   indices,
-  initIndexing
+  initIndexing,
+  indexing
 }

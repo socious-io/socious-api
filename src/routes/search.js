@@ -11,7 +11,7 @@ router.post('/', loginOptional, paginate, async (ctx) => {
 })
 
 router.post('/v2', loginOptional, paginate, async (ctx) => {
-  if (!ctx.searchClient) throw new InternalServerError()
+  if (!ctx.searchService) throw new InternalServerError()
 
   const { count, results } = await ctx.searchService.search(ctx.request.body, ctx.paginate)
   const searchResults = await Search.findV2(

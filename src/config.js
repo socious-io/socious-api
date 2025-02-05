@@ -12,7 +12,7 @@ export default {
   secret: process.env.SECRET,
   jwtExpireTime: '2d',
   jwtRefreshExpireTime: '30d',
-  fronthost: process.env.ENV == 'production'? 'https://app.socious.io': 'https://webapp2.dev.socious.io',
+  fronthost: process.env.ENV == 'production' ? 'https://app.socious.io' : 'https://webapp2.dev.socious.io',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
   sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
@@ -139,12 +139,18 @@ export default {
       retryCount: process.env.AUTH_REQUEST_BLOCKER_COUNTER || 10
     }
   },
+  storageType: process.env.STORAGE_TYPE || 'AWS',
   aws: {
     cdn_url: process.env.AWS_CDN_URL || 'https://socious-new.s3.ap-northeast-1.amazonaws.com',
-    bucket: process.env.AWS_BUCKET || 'socious-new',
+    bucket: process.env.AWS_BUCKET || 'socious-s3',
     key_id: process.env.AWS_ACCESS_KEY_ID,
     secret_key: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_DEFAULT_REGION || 'ap-northeast-1'
+  },
+  gcs: {
+    bucket: process.env.GCS_BUCKET || 'socious-gcs',
+    cdn_url: process.env.GCS_CDN_URL || 'https://storage.googleapis.com/socious-gcs',
+    credentials: process.env.GCS_CREDENTIALS_PATH
   },
   socket: {
     cors: {
@@ -237,6 +243,7 @@ export default {
           chain: {
             name: 'Sepolia',
             explorer: 'https://api-sepolia.etherscan.io/api',
+            apikey: 'PWNI98429AJWP5ZX8F9I7WJSXYUFMKRQM8'
           },
           escrow: '0x383fdB2917B1bB02841116811f94159D9263D53d',
           tokens: [

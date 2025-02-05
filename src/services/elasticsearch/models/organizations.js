@@ -17,70 +17,74 @@ const indices = {
   fields: {
     //Full Text Search
     name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword'
+        text: {
+          type: 'text'
         }
       }
     },
     bio: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword'
+        text: {
+          type: 'text'
         }
       }
     },
     description: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword'
+        text: {
+          type: 'text'
         }
       }
     },
     shortname: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword'
+        text: {
+          type: 'text'
         }
       }
     },
     mission: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     address: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     email: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     phone: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
@@ -166,31 +170,37 @@ function transformer(document) {
 }
 
 const indexing = async ({ id }) => {
-  const organization = await app.db.get(
-    sql`
-    SELECT o.*, gn.timezone,
-    COALESCE(
-      (SELECT
-        jsonb_agg(
-          json_build_object(
-            'title', pf.title, 
-            'value', pf.value
-          ) 
-        )
-        FROM preferences pf
-        WHERE pf.identity_id=o.id
-      ),
-      '[]'
-    ) AS preferences
-    FROM organizations o
-    LEFT JOIN geonames gn ON gn.id=o.geoname_id
-    WHERE o.id=${id}
-    `
-  )
+  let document
+  const indexingDocuments = []
 
-  const document = transformer(organization)
+  try {
+    const organization = await app.db.get(
+      sql`
+      SELECT o.*, gn.timezone,
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'title', pf.title, 
+              'value', pf.value
+            ) 
+          )
+          FROM preferences pf
+          WHERE pf.identity_id=o.id
+        ),
+        '[]'
+      ) AS preferences
+      FROM organizations o
+      LEFT JOIN geonames gn ON gn.id=o.geoname_id
+      WHERE o.id=${id}
+      `
+    )
+    document = transformer(organization)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  } catch (e) {
+    indexingDocuments.push(app.searchClient.deleteDocument(index, id))
+  }
 
-  const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {

@@ -20,7 +20,10 @@ export const filterColumns = {
   promoted: Boolean,
   experience_level: Number,
   job_category_id: String,
-  kind: String
+  kind: String,
+  payment_range_lower: Number,
+  payment_range_higher: Number,
+  payment_mode: String
 }
 
 export const markingFilterColumns = {
@@ -62,6 +65,23 @@ export const getAll = async (ids, identityId) => {
     i.meta as identity_meta,
     array_to_json(p.causes_tags) AS causes_tags,
     row_to_json(j.*) AS job_category,
+    (
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+            'id', m.id,
+            'url', m.url, 
+            'filename', m.filename
+            )
+          )
+        FROM media m
+        LEFT JOIN service_work_samples sws ON sws.service_id=p.id
+        WHERE m.id = sws.document
+        ),
+        '[]'
+      )
+    ) AS work_samples,
     (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
     (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
     EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
@@ -69,7 +89,7 @@ export const getAll = async (ids, identityId) => {
     FROM projects p
     JOIN identities i ON i.id=p.identity_id
     LEFT JOIN job_categories j ON j.id=p.job_category_id
-  WHERE p.id=ANY(${ids}) AND p.kind='JOB'
+  WHERE p.id=ANY(${ids})
   ORDER BY array_position(${ids}, p.id)
   `)
   return rows
@@ -96,12 +116,32 @@ export const getAllWithMarksByIdentity = async (identityId, { offset = 0, limit 
 }
 
 export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) => {
-  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
+  //Default job filter
+  if (!filter) filter = { kind: 'JOB' }
+  else if (filter && !filter.kind) filter = { ...filter, kind: 'JOB' }
+
   const { rows } = await app.db.query(sql`
       SELECT COUNT(*) OVER () as total_count, p.*,
       array_to_json(p.causes_tags) AS causes_tags,
       i.type  as identity_type, i.meta as identity_meta,
       row_to_json(j.*) AS job_category,
+      (
+        COALESCE(
+          (SELECT
+            jsonb_agg(
+              json_build_object(
+              'id', m.id,
+              'url', m.url, 
+              'filename', m.filename
+              )
+            )
+          FROM media m
+          LEFT JOIN service_work_samples sws ON sws.service_id=p.id
+          WHERE m.id = sws.document
+          ),
+          '[]'
+        )
+      ) AS work_samples,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
       EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
@@ -124,7 +164,10 @@ export const permissioned = async (identityId, id) => {
 }
 
 export const search = async (q, { offset = 0, limit = 10, filter, sort }) => {
-  filter = filter ? { ...filter, kind: 'JOB' } : { kind: 'JOB' }
+  //Default job filter
+  if (!filter) filter = { kind: 'JOB' }
+  else if (filter && !filter.kind) filter = { ...filter, kind: 'JOB' }
+
   const { rows } = await app.db.query(sql`
     SELECT
       COUNT(*) OVER () as total_count,

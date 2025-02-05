@@ -10,9 +10,9 @@ async function run() {
   const orgResult = await SearchEngine.models.organizations.initIndexing()
   console.log(`Indexed ${orgResult.count} Organizations`)
 
-  console.log('Indexing All Jobs ...')
-  const jobResult = await SearchEngine.models.jobs.initIndexing()
-  console.log(`Indexed ${jobResult.count} Jobs`)
+  console.log('Indexing All Projects ...')
+  const projectResult = await SearchEngine.models.projects.initIndexing()
+  console.log(`Indexed ${projectResult.count} Projects`)
 
   console.log('Indexing All Locations ...')
   const locationResult = await SearchEngine.models.locations.initIndexing()

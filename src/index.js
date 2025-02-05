@@ -21,7 +21,6 @@ if (Config.env != 'testing') {
   const SearchEngineService = await import('./services/elasticsearch/service.js')
   app.searchClient = SearchEngineClient
   app.use((ctx, next) => {
-    ctx.searchTriggers = SearchEngineTriggers
     ctx.searchClient = SearchEngineClient
     ctx.searchService = SearchEngineService
     return next()
@@ -48,6 +47,9 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err)
   process.exit(-1)
 })
+if (Config.env != 'testing') {
+  SearchEngineTriggers.startSync()
+}
 
 app.use(middlewares(app))
 

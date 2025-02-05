@@ -17,30 +17,40 @@ const indices = {
   fields: {
     //Full text search
     first_name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     last_name: {
-      type: 'text',
+      type: 'keyword',
+      normalizer: 'case_insensitive_normalizer',
       fields: {
-        keyword: {
-          type: 'keyword',
-          normalizer: 'case_insensitive_normalizer'
+        text: {
+          type: 'text'
         }
       }
     },
     username: {
       type: 'keyword',
-      normalizer: 'case_insensitive_normalizer'
+      normalizer: 'case_insensitive_normalizer',
+      fields: {
+        text: {
+          type: 'text'
+        }
+      }
     },
     email: {
       type: 'keyword',
-      normalizer: 'case_insensitive_normalizer'
+      normalizer: 'case_insensitive_normalizer',
+      fields: {
+        text: {
+          type: 'text'
+        }
+      }
     },
     created_at: {
       type: 'date'
@@ -142,46 +152,51 @@ function transformer(document) {
 }
 
 const indexing = async ({ id }) => {
-  const user = await app.db.get(
-    sql`
-    SELECT u.*, gn.timezone as timezone,
-    COALESCE(
-      (SELECT
-        jsonb_agg(
-          json_build_object(
-            'title', pf.title, 
-            'value', pf.value
-          ) 
-        )
-        FROM preferences pf
-        WHERE pf.identity_id=u.id
-      ),
-      '[]'
-    ) AS preferences,
-    COALESCE(
-      (SELECT
-        jsonb_agg(
-          json_build_object(
-            'name', l.name, 
-            'level', l.level
-          ) 
-        )
-        FROM languages l
-        WHERE l.user_id=u.id
-      ),
-      '[]'
-    ) AS languages
-    FROM users u
-    LEFT JOIN geonames gn ON gn.id=u.geoname_id
-    WHERE u.id=${id}
-    `
-  )
+  let document
+  const indexingDocuments = []
 
-  console.log(user)
-  const document = transformer(user)
-  console.log(document)
+  try {
+    const user = await app.db.get(
+      sql`
+      SELECT u.*, gn.timezone as timezone,
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'title', pf.title, 
+              'value', pf.value
+            ) 
+          )
+          FROM preferences pf
+          WHERE pf.identity_id=u.id
+        ),
+        '[]'
+      ) AS preferences,
+      COALESCE(
+        (SELECT
+          jsonb_agg(
+            json_build_object(
+              'name', l.name, 
+              'level', l.level
+            ) 
+          )
+          FROM languages l
+          WHERE l.user_id=u.id
+        ),
+        '[]'
+      ) AS languages
+      FROM users u
+      LEFT JOIN geonames gn ON gn.id=u.geoname_id
+      WHERE u.id=${id}
+      `
+    )
 
-  const indexingDocuments = [app.searchClient.indexDocument(index, document.id, document)]
+    document = transformer(user)
+    indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
+  } catch (e) {
+    indexingDocuments.push(app.searchClient.deleteDocument(index, id))
+  }
+
   try {
     return await Promise.all(indexingDocuments)
   } catch (e) {

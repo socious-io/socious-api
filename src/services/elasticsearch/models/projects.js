@@ -157,7 +157,7 @@ function transformer(document) {
     country: document.country,
     timezone: document.timezone,
     remote_preference: document.remote_preference,
-    category: document.job_category_id,
+    job_category_id: document.job_category_id,
     project_type: document.project_type,
     project_length: document.project_length,
     payment_type: document.payment_type,

@@ -6,7 +6,9 @@ import Data from '@socious/data'
 import { Storage } from '@google-cloud/storage'
 
 const s3 = new AWS.S3()
-let gcs;
+const gcs = new Storage({
+  credentials: Config.gcs.credentials
+});
 
 const makeExtention = (contentType) => {
   switch (contentType) {
@@ -42,12 +44,6 @@ async function uploadS3(file, contentType = Data.MediaContentType.JPEG) {
 }
 
 async function uploadGCS(file, contentType = Data.MediaContentType.JPEG) {
-  if(!gcs){
-    gcs = new Storage({
-      credentials: (await fs.readFile(Config.gcs.credentials)).toJSON()
-    })
-  }
-  
   const bucket = gcs.bucket(Config.gcs.bucket)
 
   const buffer = typeof file === 'string' ? await fs.readFile(file) : file

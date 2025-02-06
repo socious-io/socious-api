@@ -150,7 +150,20 @@ export default {
   gcs: {
     bucket: process.env.GCS_BUCKET || 'socious-gcs',
     cdn_url: process.env.GCS_CDN_URL || 'https://storage.googleapis.com/socious-gcs',
-    credentials: process.env.GCS_CREDENTIALS_PATH
+    credentials: {
+      type: "service_account",
+      project_id: process.env.GCS_PROJECT_ID, 
+      private_key_id: process.env.GCS_PRIVATE_KEY_ID,
+      private_key: process.env.GCS_PRIVATE_KEY,
+      client_email: "socious-storage-admin@social-network-dbc4f.iam.gserviceaccount.com",
+      client_id: "115763227997841388281",
+      auth_uri: "https://accounts.google.com/o/oauth2/auth",
+      token_uri: "https://oauth2.googleapis.com/token",
+      auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+      client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/socious-storage-admin%40social-network-dbc4f.iam.gserviceaccount.com",
+      universe_domain: "googleapis.com"
+    }    
+
   },
   socket: {
     cors: {

@@ -7,7 +7,7 @@ import { Storage } from '@google-cloud/storage'
 
 const s3 = new AWS.S3()
 const gcs = new Storage({
-  credentials: Config.gcs.credentials
+  keyFilename: Config.gcs.credentials
 });
 
 const makeExtention = (contentType) => {

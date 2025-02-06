@@ -41,6 +41,11 @@ async function uploadS3(file, contentType = Data.MediaContentType.JPEG) {
 }
 
 async function uploadGCS(file, contentType = Data.MediaContentType.JPEG) {
+  console.log("Config.gcs.credentials", Config.gcs.credentials, "Config.gcs.bucket", Config.gcs.bucket);
+  if(Config.gcs.credentials){
+    console.log(await fs.readFile(Config.gcs.credentials))
+  }
+
   const storage = new Storage({
     keyFilename: Config.gcs.credentials // Path to service account JSON file
   })

@@ -157,7 +157,7 @@ function transformer(document) {
     country: document.country,
     timezone: document.timezone,
     remote_preference: document.remote_preference,
-    category: document.job_category_id,
+    job_category_id: document.job_category_id,
     project_type: document.project_type,
     project_length: document.project_length,
     payment_type: document.payment_type,
@@ -186,7 +186,7 @@ const indexing = async ({ id }) => {
   try {
     const project = await app.db.get(
       sql`
-      SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
+      SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.causes_tags) AS causes_tags, gn.timezone,
       COALESCE(
         (SELECT
           jsonb_agg(
@@ -222,7 +222,7 @@ const indexing = async ({ id }) => {
 async function getAllProjects({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
-    SELECT p.*, row_to_json(o.*) as organization, gn.timezone,
+    SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.causes_tags) AS causes_tags, gn.timezone,
     COALESCE(
       (SELECT
         jsonb_agg(

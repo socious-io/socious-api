@@ -27,7 +27,7 @@ export const startSync = async () => {
   }
 
   app.db.on('elastic_update', async (msg) => {
-    const { operation, table, data } = JSON.parse(msg.payload)
+    const { operation, table, id } = JSON.parse(msg.payload)
     const indexFunc = tableToIndexFunc[table]
 
     if (!indexFunc) {
@@ -35,7 +35,7 @@ export const startSync = async () => {
     }
 
     if (operation === 'INSERT' || operation === 'UPDATE' || operation === 'DELETE') {
-      await indexFunc(data)
+      await indexFunc({ id })
     }
   })
 }

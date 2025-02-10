@@ -150,7 +150,7 @@ function transformer(document) {
     address: document.address,
     email: document.email,
     phone: document.phone,
-    social_causes: document.social_causes,
+    social_causes: document.social_causes ?? [],
     id: document.id,
     size: document.size,
     type: document.type,
@@ -176,7 +176,7 @@ const indexing = async ({ id }) => {
   try {
     const organization = await app.db.get(
       sql`
-      SELECT o.*, gn.timezone,
+      SELECT o.*, array_to_json(o.social_causes) AS social_causes, gn.timezone,
       COALESCE(
         (SELECT
           jsonb_agg(
@@ -211,7 +211,7 @@ const indexing = async ({ id }) => {
 async function getAllOrgs({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
-    SELECT o.*, gn.timezone,
+    SELECT o.*, array_to_json(o.social_causes) AS social_causes, gn.timezone,
     COALESCE(
       (SELECT
         jsonb_agg(

@@ -130,7 +130,7 @@ function transformer(document) {
     username: document.username,
     email: document.email,
     created_at: document.created_at,
-    causes_tags: document.causes_tags ?? [],
+    social_causes: document.social_causes ?? [],
     skills: document.skills ?? [],
     languages: document.languages.map((language) => {
       return {
@@ -158,7 +158,7 @@ const indexing = async ({ id }) => {
   try {
     const user = await app.db.get(
       sql`
-      SELECT u.*, gn.timezone as timezone,
+      SELECT u.*, array_to_json(u.social_causes) AS social_causes, gn.timezone as timezone,
       COALESCE(
         (SELECT
           jsonb_agg(
@@ -207,7 +207,7 @@ const indexing = async ({ id }) => {
 async function getAllOrgs({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
-    SELECT u.*, gn.timezone as timezone,
+    SELECT u.*, array_to_json(u.social_causes) AS social_causes, gn.timezone as timezone,
     COALESCE(
       (SELECT
         jsonb_agg(

@@ -73,7 +73,7 @@ const indices = {
         }
       }
     },
-    causes_tags: {
+    social_causes: {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
     }, //Filter: Social Causes

@@ -186,7 +186,7 @@ const indexing = async ({ id }) => {
   try {
     const project = await app.db.get(
       sql`
-      SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.social_causes) AS social_causes, gn.timezone,
+      SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.causes_tags) AS causes_tags, gn.timezone,
       COALESCE(
         (SELECT
           jsonb_agg(
@@ -222,7 +222,7 @@ const indexing = async ({ id }) => {
 async function getAllProjects({ offset = 0, limit = 100 }) {
   const { rows } = await app.db.query(
     sql`
-    SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.social_causes) AS social_causes, gn.timezone,
+    SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.causes_tags) AS causes_tags, gn.timezone,
     COALESCE(
       (SELECT
         jsonb_agg(

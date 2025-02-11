@@ -33,7 +33,9 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
     ctx.body = await User.getProfileLimited(ctx.params.id)
     return
   }
-  ctx.body = await User.getProfile(ctx.params.id, ctx.identity.id)
+  const profile = await User.getProfile(ctx.params.id, ctx.identity.id)
+  profile.rate = await mission.feedbacksRating(ctx.params.id)
+  ctx.body = profile
 })
 
 router.post('/:id/report', loginRequired, async (ctx) => {
@@ -58,7 +60,9 @@ router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
 })
 
 router.get('/profile', loginRequired, async (ctx) => {
-  ctx.body = await User.getProfile(ctx.user.id)
+  const profile = await User.getProfile(ctx.user.id)
+  profile.rate = await mission.feedbacksRating(ctx.user.id)
+  ctx.body = profile
 })
 
 router.post('/update/wallet', loginRequired, async (ctx) => {
@@ -366,8 +370,5 @@ router.post('/emails/refers', loginRequired, async (ctx) => {
 
 
 router.get('/reviews', loginRequired, paginate, async(ctx) => {
-  ctx.body = {
-    rate: await mission.feedbacksRating(ctx.user.id),
-    feedbacks: await mission.feedbacksForUser(ctx.user.id, ctx.paginate)
-  }
+  ctx.body = await mission.feedbacksForUser(ctx.user.id, ctx.paginate)
 })

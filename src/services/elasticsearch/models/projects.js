@@ -165,11 +165,9 @@ function transformer(document) {
     experience_level: document.experience_level,
     project_length: document.project_length,
     payment_type: document.payment_type,
-    //payment options
     payment_scheme: document.payment_scheme,
     payment_range_lower: document.payment_range_lower,
     payment_range_higher: document.payment_range_higher,
-    //Equity / tokens
     organization: document.organization?.id,
     organization_type: document.organization?.type,
     organization_size: document.organization?.size,

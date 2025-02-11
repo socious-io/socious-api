@@ -38,10 +38,16 @@ function getFieldsBooleanFilterByType(type) {
     users: {},
     projects: {
       project_type: 'OR',
-      project_length: 'OR',
       experience_level: 'OR',
+      project_length: 'OR',
+      payment_scheme: 'OR',
+      organization: 'OR',
+      organization_size: 'OR'
     },
-    organizations: {},
+    organizations: {
+      id: 'OR',
+      size: 'OR',
+    },
     locations: {}
   }
 

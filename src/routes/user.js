@@ -24,6 +24,7 @@ import Resume from '../services/resume_reader/index.js'
 import { koaBody } from 'koa-body'
 import publish from '../services/jobs/publish.js'
 import config from '../config.js'
+import mission from '../models/mission/index.js'
 
 export const router = new Router()
 
@@ -361,4 +362,12 @@ router.post('/emails/refers', loginRequired, async (ctx) => {
     })
   }
   ctx.body = { message: 'success' }
+})
+
+
+router.get('/reviews', loginRequired, paginate, async(ctx) => {
+  ctx.body = {
+    rate: await mission.feedbacksRating(ctx.user.id),
+    feedbacks: await mission.feedbacksForUser(ctx.user.id, ctx.paginate)
+  }
 })

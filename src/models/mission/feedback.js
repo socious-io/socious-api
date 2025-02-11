@@ -1,6 +1,7 @@
 import sql from 'sql-template-tag'
 import { EntryError } from '../../utils/errors.js'
 import { app } from '../../index.js'
+import organization from '../organization/index.js'
 
 export const getFeedback = async (id) => {
   return app.db.get(sql`
@@ -35,4 +36,42 @@ export const feedbacks = async (projectId, { offset = 0, limit = 10 }) => {
   ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}
     `)
   return rows
+}
+
+
+
+export const feedbacksForUser = async (userId, { offset = 0, limit = 10 }) => {
+  const { rows } = await app.db.query(sql`
+    SELECT 
+    COUNT(*) OVER () as total_count,
+    f.*,
+    row_to_json(i.*) AS identity,
+    row_to_json(m.*) AS mission,
+    row_to_json(p.*) AS project,
+    row_to_json(org.*) AS organization,
+    FROM feedbacks f
+    JOIN identities i ON i.id=f.identity_id
+    LEFT JOIN missions m ON f.mission_id=m.id
+    LEFT JOIN projects p ON f.project_id=p.id
+    LEFT JOIN organizations org ON org.id=m.assigner_id
+    WHERE m.assignee_id = ${userId}
+    ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}
+    `)
+    
+    return rows
+}
+
+
+export const feedbacksRating = async (userId) => {
+  const { rows } = await app.db.query(sql`
+    SELECT 
+      COUNT(*) OVER () AS total_count,
+      COUNT(*) FILTER (WHERE is_contest = true) AS contests_count
+    FROM feedbacks f
+      LEFT JOIN missions m ON f.mission_id=m.id
+      WHERE m.assignee_id = ${userId}
+    `)
+    if (rows.length < 1) return 0
+
+    return Number((Number(rows[0].total_count) / Number(rows[0].contests_count)).toFixed(2))
 }

@@ -86,6 +86,9 @@ const indices = {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
     }, //Filter: Project Type
+    experience_level: {
+      type: 'integer'
+    }, //Filter: Experience Level
     project_length: {
       type: 'keyword',
       normalizer: 'case_insensitive_normalizer'
@@ -159,6 +162,7 @@ function transformer(document) {
     remote_preference: document.remote_preference,
     job_category_id: document.job_category_id,
     project_type: document.project_type,
+    experience_level: document.experience_level,
     project_length: document.project_length,
     payment_type: document.payment_type,
     //payment options

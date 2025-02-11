@@ -1,7 +1,6 @@
 import sql from 'sql-template-tag'
 import { EntryError } from '../../utils/errors.js'
 import { app } from '../../index.js'
-import organization from '../organization/index.js'
 
 export const getFeedback = async (id) => {
   return app.db.get(sql`

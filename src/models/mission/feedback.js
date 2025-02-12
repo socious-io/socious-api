@@ -45,6 +45,7 @@ export const feedbacksForUser = async (userId, { offset = 0, limit = 10 }) => {
     COUNT(*) OVER () as total_count,
     f.*,
     row_to_json(i.*) AS identity,
+    row_to_json(c.*) AS contract,
     row_to_json(m.*) AS mission,
     row_to_json(p.*) AS project,
     row_to_json(org.*) AS organization

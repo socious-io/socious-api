@@ -51,9 +51,10 @@ export const feedbacksForUser = async (userId, { offset = 0, limit = 10 }) => {
     FROM feedbacks f
     LEFT JOIN identities i ON i.id=f.identity_id
     LEFT JOIN missions m ON f.mission_id=m.id
+    LEFT JOIN contracts c ON f.contract_id=c.id
     LEFT JOIN projects p ON f.project_id=p.id
     LEFT JOIN organizations org ON org.id=m.assigner_id
-    WHERE m.assignee_id = ${userId}
+    WHERE (m.assignee_id = ${userId}) OR (c.provider_id = ${userId}) OR (c.client_id = ${userId})
     ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}
     `)
     
@@ -68,7 +69,8 @@ export const feedbacksRating = async (userId) => {
       COUNT(*) FILTER (WHERE is_contest = true) AS contests_count
     FROM feedbacks f
       LEFT JOIN missions m ON f.mission_id=m.id
-      WHERE m.assignee_id = ${userId}
+      LEFT JOIN contracts c ON f.contract_id=c.id
+      WHERE (m.assignee_id = ${userId}) OR (c.provider_id = ${userId}) OR (c.client_id = ${userId})
     `)
     if (rows.length < 1) return 0
     const total = Number(rows[0].total_count)

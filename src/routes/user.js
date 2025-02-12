@@ -56,7 +56,9 @@ router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
     ctx.body = await User.getProfileByUsernameLimited(ctx.params.username)
     return
   }
-  ctx.body = await User.getProfileByUsername(ctx.params.username, ctx.identity.id)
+  const profile = await User.getProfileByUsername(ctx.params.username, ctx.identity.id)
+  profile.rate = await mission.feedbacksRating(profile.id)
+  ctx.body = profile
 })
 
 router.get('/profile', loginRequired, async (ctx) => {

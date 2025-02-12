@@ -1831,13 +1831,57 @@ ALTER TABLE public.experiences OWNER TO socious;
 -- Name: feedbacks; Type: TABLE; Schema: public; Owner: socious
 --
 
+CREATE TYPE public.contract_status AS ENUM (
+  'CREATED',
+  'CLIENT_APPROVED',
+  'SIGNED',
+  'PROVIDER_CANCELED',
+  'CLIENT_CANCELED'
+);
+
+CREATE TYPE public.contract_type AS ENUM (
+  'VOLUNTEER',
+  'PAID'
+);
+
+CREATE TYPE public.contract_commitment_period AS ENUM (
+  'HOURLY',
+  'DAILY',
+  'WEEKLY',
+  'MONTHLY'
+);
+
+CREATE TABLE public.contracts (
+  id UUID NOT NULL DEFAULT public.uuid_generate_v4() PRIMARY KEY,
+  name VARCHAR(128) NOT NULL,
+  description TEXT,
+  status public.contract_status DEFAULT 'CREATED',
+  type public.contract_type NOT NULL,
+  total_amount FLOAT DEFAULT 0,
+  currency_rate FLOAT DEFAULT 1,
+  commitment_period public.contract_commitment_period NOT NULL,
+  commitment integer DEFAULT 1,
+  commitment_period_count integer DEFAULT 1,
+  payment_type public.payment_mode_type DEFAULT 'FIAT',
+  currency public.payment_currency DEFAULT 'USD',
+  crypto_currency TEXT,
+  provider_id UUID NOT NULL,
+  client_id UUID NOT NULL,
+  project_id UUID,
+  applicant_id UUID,
+  payment_id UUID,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE public.feedbacks (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     content text,
     is_contest boolean,
     identity_id uuid NOT NULL,
     project_id uuid NOT NULL,
-    mission_id uuid NOT NULL,
+    mission_id uuid,
+    contract_id uuid,
     created_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -4009,6 +4053,9 @@ ALTER TABLE ONLY public.missions
 ALTER TABLE ONLY public.feedbacks
     ADD CONSTRAINT fk_identity FOREIGN KEY (identity_id) REFERENCES public.identities(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY public.feedbacks
+    ADD CONSTRAINT fk_contract FOREIGN KEY (contract_id) REFERENCES public.contracts(id) ON DELETE CASCADE;
+
 
 --
 -- Name: cards fk_identity; Type: FK CONSTRAINT; Schema: public; Owner: socious
@@ -4593,6 +4640,14 @@ ALTER TABLE ONLY public.referrings
 ALTER TABLE ONLY public.referrings
     ADD CONSTRAINT referrings_referred_identity_id_fkey FOREIGN KEY (referred_identity_id) REFERENCES public.identities(id);
 
+ALTER TABLE ONLY public.contracts
+  ADD CONSTRAINT fk_identity_provider FOREIGN KEY (provider_id) REFERENCES public.identities(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.contracts
+  ADD CONSTRAINT fk_identity_client FOREIGN KEY (client_id) REFERENCES public.identities(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.contracts
+  ADD CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES public.projects(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.contracts
+  ADD CONSTRAINT fk_applicant FOREIGN KEY (applicant_id) REFERENCES public.applicants(id) ON DELETE SET NULL;
 
 --
 -- PostgreSQL database dump complete

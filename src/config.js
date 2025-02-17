@@ -151,6 +151,7 @@ export default {
     bucket: process.env.GCS_BUCKET || 'socious-gcs',
     cdn_url: process.env.GCS_CDN_URL || 'https://storage.googleapis.com/socious-gcs',
     credentials: process.env.GCS_CREDENTIALS_PATH
+
   },
   socket: {
     cors: {

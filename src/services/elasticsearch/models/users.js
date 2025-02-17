@@ -125,10 +125,12 @@ const indices = {
 function transformer(document) {
   return {
     id: document.id,
+
     first_name: document.first_name,
     last_name: document.last_name,
     username: document.username,
     email: document.email,
+    
     created_at: document.created_at,
     social_causes: document.social_causes ?? [],
     skills: document.skills ?? [],

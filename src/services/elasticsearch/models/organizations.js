@@ -150,6 +150,7 @@ function transformer(document) {
     address: document.address,
     email: document.email,
     phone: document.phone,
+
     social_causes: document.social_causes ?? [],
     id: document.id,
     size: document.size,
@@ -157,8 +158,6 @@ function transformer(document) {
     city: document.city,
     country: document.country,
     timezone: document.timezone,
-    //payment options
-    //Equity / tokens
     preferences: document.preferences.map((preference) => {
       return {
         ...preference,

@@ -36,3 +36,46 @@ export const feedbacks = async (projectId, { offset = 0, limit = 10 }) => {
     `)
   return rows
 }
+
+
+
+export const feedbacksForUser = async (userId, { offset = 0, limit = 10 }) => {
+  const { rows } = await app.db.query(sql`
+    SELECT 
+    COUNT(*) OVER () as total_count,
+    f.*,
+    row_to_json(i.*) AS identity,
+    row_to_json(c.*) AS contract,
+    row_to_json(m.*) AS mission,
+    row_to_json(p.*) AS project,
+    row_to_json(org.*) AS organization
+    FROM feedbacks f
+    LEFT JOIN identities i ON i.id=f.identity_id
+    LEFT JOIN missions m ON f.mission_id=m.id
+    LEFT JOIN contracts c ON f.contract_id=c.id
+    LEFT JOIN projects p ON f.project_id=p.id
+    LEFT JOIN organizations org ON org.id=m.assigner_id
+    WHERE (m.assignee_id = ${userId}) OR (c.provider_id = ${userId}) OR (c.client_id = ${userId})
+    ORDER BY f.created_at DESC  LIMIT ${limit} OFFSET ${offset}
+    `)
+    
+    return rows
+}
+
+
+export const feedbacksRating = async (userId) => {
+  const { rows } = await app.db.query(sql`
+    SELECT 
+      COUNT(*) AS total_count,
+      COUNT(*) FILTER (WHERE is_contest = true) AS contests_count
+    FROM feedbacks f
+      LEFT JOIN missions m ON f.mission_id=m.id
+      LEFT JOIN contracts c ON f.contract_id=c.id
+      WHERE (m.assignee_id = ${userId}) OR (c.provider_id = ${userId}) OR (c.client_id = ${userId})
+    `)
+    if (rows.length < 1) return 0
+    const total = Number(rows[0].total_count)
+    const contests = Number(rows[0].contests_count)
+    
+    return Number((1 - (contests / total)).toFixed(2))
+}

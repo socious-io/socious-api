@@ -32,27 +32,64 @@ function getFieldsByType(type) {
   return typeToFields[type]
 }
 
+function getFieldsBooleanFilterByType(type) {
+  //AND by default
+  const typeToFields = {
+    users: {},
+    projects: {
+      project_type: 'OR',
+      experience_level: 'OR',
+      project_length: 'OR',
+      payment_scheme: 'OR',
+      organization: 'OR',
+      organization_size: 'OR'
+    },
+    organizations: {
+      id: 'OR',
+      size: 'OR',
+    },
+    locations: {}
+  }
+
+  return typeToFields[type]
+}
+
 //make filters elastic-compliant
-function generateFilters(filter) {
+function generateFilters(filter, type) {
   let filters = []
+
+  const fieldsBooleanFilter = getFieldsBooleanFilterByType(type)
+
   filter = filter ?? {}
   for (const [key, value] of Object.entries(filter)) {
+    const isOrFilter = fieldsBooleanFilter[key] == 'OR'
+
     if (typeof value == 'string') {
+      if(!value || value.length<1) continue;
       filters.push({
-        match_phrase: {
-          [key]: value
+        terms: {
+          [key]: [value]
         }
       })
     } else if (Array.isArray(value)) {
-      const phrase_filters = []
-      value.forEach((val) =>
-        phrase_filters.push({
-          match_phrase: {
-            [key]: val
+      if (value.length<1) continue;
+      if (isOrFilter){
+        filters.push({
+          terms: {
+            [key]: value
           }
         })
-      )
-      filters = [...filters, ...phrase_filters]
+      }else {
+        filters = [
+          ...filters,
+          ...value.map(v=>{return {
+            terms: {
+              [key]: [v]
+            }
+          }})
+        ]
+      }
+      
     } else if (typeof value == 'object') {
       const [op, opValue] = Object.entries(value)[0]
       filters.push({
@@ -91,7 +128,7 @@ export const search = async (body, pagination) => {
   if (!index) throw new BadRequestError(`type '${type}' is not valid`)
 
   //make sort elastic-compliant
-  const filters = generateFilters(filter)
+  const filters = generateFilters(filter, type)
   const sorts = generateSorts(sort)
 
   //setting filter parameters

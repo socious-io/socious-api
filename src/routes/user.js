@@ -24,6 +24,7 @@ import Resume from '../services/resume_reader/index.js'
 import { koaBody } from 'koa-body'
 import publish from '../services/jobs/publish.js'
 import config from '../config.js'
+import mission from '../models/mission/index.js'
 
 export const router = new Router()
 
@@ -32,7 +33,9 @@ router.get('/:id/profile', loginOptional, checkIdParams, async (ctx) => {
     ctx.body = await User.getProfileLimited(ctx.params.id)
     return
   }
-  ctx.body = await User.getProfile(ctx.params.id, ctx.identity.id)
+  const profile = await User.getProfile(ctx.params.id, ctx.identity.id)
+  profile.rate = await mission.feedbacksRating(ctx.params.id)
+  ctx.body = profile
 })
 
 router.post('/:id/report', loginRequired, async (ctx) => {
@@ -53,11 +56,15 @@ router.get('/by-username/:username/profile', loginOptional, async (ctx) => {
     ctx.body = await User.getProfileByUsernameLimited(ctx.params.username)
     return
   }
-  ctx.body = await User.getProfileByUsername(ctx.params.username, ctx.identity.id)
+  const profile = await User.getProfileByUsername(ctx.params.username, ctx.identity.id)
+  profile.rate = await mission.feedbacksRating(profile.id)
+  ctx.body = profile
 })
 
 router.get('/profile', loginRequired, async (ctx) => {
-  ctx.body = await User.getProfile(ctx.user.id)
+  const profile = await User.getProfile(ctx.user.id)
+  profile.rate = await mission.feedbacksRating(ctx.user.id)
+  ctx.body = profile
 })
 
 router.post('/update/wallet', loginRequired, async (ctx) => {
@@ -361,4 +368,9 @@ router.post('/emails/refers', loginRequired, async (ctx) => {
     })
   }
   ctx.body = { message: 'success' }
+})
+
+
+router.get('/reviews', loginRequired, paginate, async(ctx) => {
+  ctx.body = await mission.feedbacksForUser(ctx.user.id, ctx.paginate)
 })

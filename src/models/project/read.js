@@ -149,7 +149,8 @@ export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) 
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
       LEFT JOIN job_categories j ON j.id=p.job_category_id
-      ${filtering(filter, filterColumns, false, 'p')}
+      WHERE expires_at > NOW()
+      ${filtering(filter, filterColumns, true, 'p')}
       ${sorting(sort, sortColumns, 'p')}
       LIMIT ${limit} OFFSET ${offset}`)
   return rows

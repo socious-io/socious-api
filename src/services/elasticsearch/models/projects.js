@@ -213,7 +213,7 @@ const indexing = async ({ id }) => {
       FROM projects p
       LEFT JOIN geonames gn ON gn.id=p.geoname_id
       LEFT JOIN organizations o ON o.id=p.identity_id
-      WHERE p.id=${id} AND p.status='ACTIVE' AND p.expires_at IS NULL
+      WHERE p.id=${id} AND p.status='ACTIVE' AND (p.expires_at > NOW() OR p.expires_at IS NULL)
       `
     )
     document = transformer(project)
@@ -249,7 +249,7 @@ async function getAllProjects({ offset = 0, limit = 100 }) {
     FROM projects p
     LEFT JOIN geonames gn ON gn.id=p.geoname_id
     LEFT JOIN organizations o ON o.id=p.identity_id
-    WHERE p.status='ACTIVE' AND p.expires_at IS NULL
+    WHERE p.status='ACTIVE' AND (p.expires_at > NOW() OR p.expires_at IS NULL)
     LIMIT ${limit} OFFSET ${offset}
     `
   )

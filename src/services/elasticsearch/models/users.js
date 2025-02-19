@@ -52,10 +52,7 @@ const indices = {
         }
       }
     },
-    created_at: {
-      type: 'date'
-    },
-
+    
     //Filters
     languages: {
       properties: {
@@ -96,12 +93,12 @@ const indices = {
     // experience_level: { type: 'keyword' },//Filter: Experience Level //TODO: add to object after adding to preferences on users?
     // payment_type: { type: 'keyword' }, //Filter: Payment Type //TODO: add to object after adding to preferences on users?
     /*Payment Scheme: ? //TODO: add to object after adding to preferences on users?
-        > Fixed: Multiple options
-        > Hourly: Range
+    > Fixed: Multiple options
+    > Hourly: Range
     */
-    open_to_volunteer: {
-      type: 'keyword',
-      normalizer: 'case_insensitive_normalizer'
+   open_to_volunteer: {
+     type: 'keyword',
+     normalizer: 'case_insensitive_normalizer'
     }, //Filter: Open To Volunteer
     preferences: {
       properties: {
@@ -118,7 +115,13 @@ const indices = {
           normalizer: 'case_insensitive_normalizer'
         }
       }
-    }
+    },
+    created_at: {
+      type: 'date'
+    },
+    updated_at: {
+      type: 'date'
+    },
   }
 }
 
@@ -131,7 +134,6 @@ function transformer(document) {
     username: document.username,
     email: document.email,
     
-    created_at: document.created_at,
     social_causes: document.social_causes ?? [],
     skills: document.skills ?? [],
     languages: document.languages.map((language) => {
@@ -149,7 +151,9 @@ function transformer(document) {
         ...preference,
         title_value: `${preference.title}:${preference.value}`
       }
-    })
+    }),
+    created_at: document.created_at,
+    updated_at: document.updated_at,
   }
 }
 

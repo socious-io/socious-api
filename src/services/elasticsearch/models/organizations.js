@@ -136,7 +136,13 @@ const indices = {
     },
     verified: {
       type: 'boolean'
-    }
+    },
+    created_at: {
+      type: 'date'
+    },
+    updated_at: {
+      type: 'date'
+    },
   }
 }
 
@@ -164,7 +170,9 @@ function transformer(document) {
         title_value: `${preference.title}:${preference.value}`
       }
     }),
-    verified: document.verified
+    verified: document.verified,
+    created_at: document.created_at,
+    updated_at: document.updated_at,
   }
 }
 

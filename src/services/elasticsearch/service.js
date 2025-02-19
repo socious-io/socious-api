@@ -105,9 +105,22 @@ function generateFilters(filter, type) {
   return filters
 }
 
+function applyDefaultSorts(sort, type) {
+  //Handle ascending sort on projects by default
+  if (type=='projects'){
+    sort.updated_at = sort.updated_at??'desc'
+  }
+
+  return sort
+}
+
 //make sort elastic-compliant
-function generateSorts(sort) {
+function generateSorts(sort, type) {
   let sorts = []
+
+  sort = sort ?? {}
+  applyDefaultSorts(sort, type)
+
   if (sort) {
     for (const [sortKey, sortValue] of Object.entries(sort)) {
       //export type sortValue :SortOrder = 'asc' | 'desc';
@@ -129,7 +142,7 @@ export const search = async (body, pagination) => {
 
   //make sort elastic-compliant
   const filters = generateFilters(filter, type)
-  const sorts = generateSorts(sort)
+  const sorts = generateSorts(sort, type)
 
   //setting filter parameters
   const queryDsl = {

@@ -116,7 +116,11 @@ function applyDefaultSorts(sort, type) {
 
 //make sort elastic-compliant
 function generateSorts(sort, type) {
-  let sorts = []
+  let sorts = [
+    {
+      _score: "desc"
+    }
+  ]
 
   sort = sort ?? {}
   applyDefaultSorts(sort, type)
@@ -124,6 +128,7 @@ function generateSorts(sort, type) {
   if (sort) {
     for (const [sortKey, sortValue] of Object.entries(sort)) {
       //export type sortValue :SortOrder = 'asc' | 'desc';
+      // @ts-ignore
       sorts.push({
         [sortKey]: sortValue
       })
@@ -160,5 +165,6 @@ export const search = async (body, pagination) => {
       }
     ]
 
+    
   return await client.searchDocuments(index, queryDsl, { pagination, sort: sorts })
 }

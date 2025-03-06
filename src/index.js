@@ -47,9 +47,6 @@ app.db.pool.on('error', (err) => {
   console.error('Unexpected database error on idle client', err)
   process.exit(-1)
 })
-if (Config.env != 'testing') {
-  SearchEngineTriggers.startSync()
-}
 
 app.use(middlewares(app))
 

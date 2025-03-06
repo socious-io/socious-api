@@ -64,69 +64,6 @@ export class DBCircuitBreaker {
     return this.policy.execute(() => this.pool.query(...args))
   }
 
-  //handling pg_notify(event, data) here
-  on(event, callback) {
-    return this.policy.execute(() => {
-      const tryConnect = () => {
-        this.pool.connect((err, client, done) => {
-          if (err) {
-            console.error(`Error connecting to the database: (event: ${event})`, err);
-            // Retry connection after 5 second
-            return setTimeout(tryConnect, 5000);
-          }
-  
-          console.log(`Successfully connected to the database (event: ${event})`);
-          
-          // Flag to ensure client is only released once
-          let clientReleased = false;
-  
-          // Listen for notifications
-          client.on('notification', callback);
-          
-          // Handle client errors
-          client.on('error', (error) => {
-            if (!clientReleased) {
-              console.error(`Client error occurred (event: ${event}):`, error);
-              done(); // Release client back to pool
-              clientReleased = true; // Mark client as released
-            }
-            // Retry connection after 5 second
-            setTimeout(tryConnect, 5000);
-          });
-  
-          // Reconnect when connection is ended
-          client.on('end', () => {
-            if (!clientReleased) {
-              console.log(`Client connection ended (event: ${event})`);
-              done(); // Release client
-              clientReleased = true; // Mark client as released
-            }
-            // Retry connection after 5 second
-            setTimeout(tryConnect, 5000);
-          });
-  
-          // Execute LISTEN query for the event
-          client.query(`LISTEN ${event}`, (queryErr) => {
-            if (queryErr) {
-              console.error(`Error executing LISTEN query (event: ${event}):`, queryErr);
-              if (!clientReleased) {
-                done(); // Release client if LISTEN query fails
-                clientReleased = true; // Mark client as released
-              }
-              // Retry connection after 5 second
-              setTimeout(tryConnect, 5000);
-            } else {
-              console.log(`Listening for ${event} events`);
-            }
-          });
-        });
-      };
-  
-      // Start the connection attempt
-      tryConnect();
-    });
-  }
-
   async get(...args) {
     const { rows } = await this.query(...args)
     if (rows.length < 1) throw new NotMatchedError()

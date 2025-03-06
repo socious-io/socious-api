@@ -2,6 +2,7 @@ import sql, { raw } from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 import { get } from './read.js'
+import { indexProjects } from '../../services/elasticsearch/triggers.js'
 
 export const insert = async (
   identityId,
@@ -68,6 +69,7 @@ export const insert = async (
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`
     )
+    indexProjects({id: rows[0].id})
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -140,6 +142,7 @@ export const update = async (
         job_category_id=${job_category_id}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`
     )
+    indexProjects({id: rows[0].id})
     return get(rows[0].id)
   } catch (err) {
     throw new EntryError(err.message)
@@ -148,9 +151,11 @@ export const update = async (
 
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM projects WHERE id=${id}`)
+  indexProjects({id})
 }
 
 export const close = async (id) => {
   await app.db.query(sql`UPDATE projects SET status='EXPIRE',expires_at=NOW() WHERE id=${id}`)
+  indexProjects({id})
   return get(id)
 }

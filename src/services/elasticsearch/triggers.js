@@ -16,26 +16,3 @@ export const indexOrganizations = ({ id }) => {
 export const indexLocations = ({ id }) => {
   publish('index_locations', { id })
 }
-
-export const startSync = async () => {
-  const tableToIndexFunc = {
-    projects: indexProjects,
-    users: indexUsers,
-    organizations: indexOrganizations,
-    geonames: indexLocations,
-    countries: indexLocations
-  }
-
-  app.db.on('elastic_update', async (msg) => {
-    const { operation, table, id } = JSON.parse(msg.payload)
-    const indexFunc = tableToIndexFunc[table]
-
-    if (!indexFunc) {
-      console.error(`No indexing function found for table ${table} on elastic`)
-    }
-
-    if (operation === 'INSERT' || operation === 'UPDATE' || operation === 'DELETE') {
-      await indexFunc({ id })
-    }
-  })
-}

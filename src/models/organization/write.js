@@ -1,6 +1,7 @@
 import sql from 'sql-template-tag'
 import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
+import { indexOrganizations } from '../../services/elasticsearch/triggers.js'
 
 export const generateShortname = (name, website) => {
   const rand = Math.floor(1000 + Math.random() * 9000)
@@ -57,6 +58,7 @@ export const insert = async (
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture}, ${size}, ${industry})
         RETURNING *, array_to_json(social_causes) AS social_causes`
     )
+    indexOrganizations({id: rows[0].id})
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -114,6 +116,7 @@ export const update = async (
         industry=${industry}
       WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`
     )
+    indexOrganizations({id: rows[0].id})
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -136,6 +139,7 @@ export const updateDID = async (id, did) => {
 
 export const remove = async (id) => {
   await app.db.query(sql`DELETE FROM organizations WHERE id=${id}`)
+  indexOrganizations({id})
 }
 
 export const hiring = async (id) => {

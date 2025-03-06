@@ -67,27 +67,64 @@ export class DBCircuitBreaker {
   //handling pg_notify(event, data) here
   on(event, callback) {
     return this.policy.execute(() => {
-      this.pool.connect(function (err, client, done) {
-        if (err) {
-          console.log(err)
-
-          // // in case of error while connecting (DB down?), retry after 1"
-          // return setTimeout(addListener, 1000).unref();
-        }
-
-        // when client is closed, open a new one
-        // client.on('end', addListener);
-        // this should be improved to handle a correct server shutdown
-        // in case of server shutdown,
-        // probably we want to close the client without opening a new one
-
-        // in case of error, close the client as well
-        client.on('error', done)
-
-        client.on('notification', callback)
-        client.query(`LISTEN ${event}`)
-      })
-    })
+      const tryConnect = () => {
+        this.pool.connect((err, client, done) => {
+          if (err) {
+            console.error(`Error connecting to the database: (event: ${event})`, err);
+            // Retry connection after 5 second
+            return setTimeout(tryConnect, 5000);
+          }
+  
+          console.log(`Successfully connected to the database (event: ${event})`);
+          
+          // Flag to ensure client is only released once
+          let clientReleased = false;
+  
+          // Listen for notifications
+          client.on('notification', callback);
+          
+          // Handle client errors
+          client.on('error', (error) => {
+            if (!clientReleased) {
+              console.error(`Client error occurred (event: ${event}):`, error);
+              done(); // Release client back to pool
+              clientReleased = true; // Mark client as released
+            }
+            // Retry connection after 5 second
+            setTimeout(tryConnect, 5000);
+          });
+  
+          // Reconnect when connection is ended
+          client.on('end', () => {
+            if (!clientReleased) {
+              console.log(`Client connection ended (event: ${event})`);
+              done(); // Release client
+              clientReleased = true; // Mark client as released
+            }
+            // Retry connection after 5 second
+            setTimeout(tryConnect, 5000);
+          });
+  
+          // Execute LISTEN query for the event
+          client.query(`LISTEN ${event}`, (queryErr) => {
+            if (queryErr) {
+              console.error(`Error executing LISTEN query (event: ${event}):`, queryErr);
+              if (!clientReleased) {
+                done(); // Release client if LISTEN query fails
+                clientReleased = true; // Mark client as released
+              }
+              // Retry connection after 5 second
+              setTimeout(tryConnect, 5000);
+            } else {
+              console.log(`Listening for ${event} events`);
+            }
+          });
+        });
+      };
+  
+      // Start the connection attempt
+      tryConnect();
+    });
   }
 
   async get(...args) {

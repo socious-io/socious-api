@@ -3,6 +3,7 @@ import { app } from '../../index.js'
 import { EntryError } from '../../utils/errors.js'
 import { StatusType } from './enums.js'
 import { getProfile } from './read.js'
+import { indexUsers } from '../../services/elasticsearch/triggers.js'
 export const insert = async (first_name, last_name, username, email, hashedPasswd) => {
   try {
     const { rows } = await app.db.query(sql`
@@ -10,6 +11,7 @@ export const insert = async (first_name, last_name, username, email, hashedPassw
     VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
       ${email.toLowerCase()}, ${hashedPasswd}, 'ACTIVE') RETURNING *
   `)
+    indexUsers({id: rows[0].id})
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -54,6 +56,7 @@ export const updateProfile = async (
   `
   try {
     const { rows } = await app.db.query(query)
+    indexUsers({id: rows[0].id})
     return getProfile(rows[0].id)
   } catch (err) {
     throw new EntryError(err.message)
@@ -101,6 +104,7 @@ export const remove = async (user, reason) => {
     VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`
       )
       await client.query(sql`DELETE FROM users WHERE id=${user.id}`), await client.query('COMMIT')
+      indexUsers({id: user.id})
     } catch (err) {
       await client.query('ROLLBACK')
       throw err

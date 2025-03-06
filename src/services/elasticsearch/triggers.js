@@ -1,4 +1,3 @@
-import { app } from '../../index.js'
 import publish from '../jobs/publish.js'
 
 export const indexUsers = ({ id }) => {

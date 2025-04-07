@@ -395,7 +395,7 @@ export default {
     }
   },
   wallet: {
-    agent: 'https://agent.socious.io',
+    agent: process.env.PRISM_AGENT || 'https://agent.socious.io',
     agent_api_key: process.env.PRISM_AGENT_API_KEY,
     trust_did: process.env.PRISM_AGENT_TRUST_DID,
     connect_address: process.env.WALLET_CONNECT_URL || 'https://wallet.socious.io/connect',

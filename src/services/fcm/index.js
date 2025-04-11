@@ -1,11 +1,27 @@
 import axios from 'axios'
+// @ts-ignore
 import jwt from 'jsonwebtoken'
-import config from './config'
-import logger from './logger'
+import fs from 'fs'
+import config from '../../config.js'
+import logger from '../../utils/logging.js'
+import Device from '../../models/device/index.js'
 
 // Get OAuth 2.0 access token manually using JWT
+
+let credentials = null, accessToken = null;
+
+async function getCredentials() {
+  if (credentials == null) {
+    credentials = JSON.parse(fs.readFileSync(config.fcm.credentials, "utf-8"));
+  }
+  return credentials;
+}
+
 const getAccessToken = async () => {
-  const { client_email, private_key, project_id } = config.fcm.serviceAccount
+  if (accessToken != null) return accessToken;
+
+  // @ts-ignore
+  const { client_email, private_key, project_id } = await getCredentials()
 
   const now = Math.floor(Date.now() / 1000)
   const payload = {
@@ -34,7 +50,7 @@ export const simplePush = async ({ tokens, notification, data = {}, options = {}
   if (!tokens.length) return
 
   const accessToken = await getAccessToken()
-  const { project_id } = config.fcm.serviceAccount
+  const { project_id } = await getCredentials()
   const HEADERS = {
     Authorization: `Bearer ${accessToken}`
   }
@@ -47,9 +63,7 @@ export const simplePush = async ({ tokens, notification, data = {}, options = {}
         token,
         notification,
         data,
-        android: options.android,
-        apns: options.apns,
-        webpush: options.webpush
+        ...options
       }
     }
 

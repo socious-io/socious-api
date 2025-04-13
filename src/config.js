@@ -160,7 +160,7 @@ export default {
     }
   },
   fcm: {
-    credentials: process.env.GCS_CREDENTIALS_PATH
+    credentials: process.env.FCM_CREDENTIALS_PATH
   },
   papertrail: {
     host: process.env.PAPERTRAIL_HOST,

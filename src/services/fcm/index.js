@@ -21,7 +21,7 @@ const getAccessToken = async () => {
   if (accessToken != null) return accessToken;
 
   // @ts-ignore
-  const { client_email, private_key, project_id } = await getCredentials()
+  const { client_email, private_key } = await getCredentials()
 
   const now = Math.floor(Date.now() / 1000)
   const payload = {
@@ -56,12 +56,14 @@ export const simplePush = async ({ tokens, notification, data = {}, options = {}
   }
 
   const failedTokens = []
-
   for (const token of tokens) {
     const body = {
       message: {
         token,
-        notification,
+        notification: {
+          title: 'Notification',
+          body: notification
+        },
         data,
         ...options
       }

@@ -39,6 +39,7 @@ export const createDID = async () => {
 }
 
 export const createConnectURL = async (callback, label) => {
+  console.log(`logg connection url : ${config.wallet.agent}/cloud-agent/connections`)
   const res = await axios.post(
     `${config.wallet.agent}/cloud-agent/connections`,
     { label: label || 'Socious Claim Connection' },

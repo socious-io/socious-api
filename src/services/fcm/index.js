@@ -64,7 +64,9 @@ export const simplePush = async ({ tokens, notification, data = {}, options = {}
           title: notification.title,
           body: notification.body
         },
-        data,
+        data: {
+          stringified: JSON.stringify(data)
+        },
         ...options
       }
     }

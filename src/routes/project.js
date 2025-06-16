@@ -61,7 +61,7 @@ router.post('/:id/questions', loginRequired, checkIdParams, projectPermission, a
 })
 
 router.post('/:id/questions/batch', loginRequired, checkIdParams, projectPermission, async (ctx) => {
-  const questions = ctx.request.body,
+  const questions = ctx.request.body.questions,
     addedQuestions = [],
     projectId = ctx.params.id
 

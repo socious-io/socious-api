@@ -160,7 +160,9 @@ export const addQuestion = async (request, data) => {
 
 export const addMultipleQuestion = async (request, data) => {
   const projectList = data.projects.objs,
-    questionList = data.projects.questions
+    questionList = {
+      questions: data.projects.questions
+    }
 
   for (const project of projectList) {
     const response = await request

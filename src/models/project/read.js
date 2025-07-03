@@ -144,12 +144,12 @@ export const all = async (identityId, { offset = 0, limit = 10, filter, sort }) 
       ) AS work_samples,
       (SELECT COUNT(*) FROM missions a WHERE a.project_id=p.id)::int AS missions,
       (SELECT COUNT(*) FROM applicants a WHERE a.project_id=p.id)::int AS applicants,
-      EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='SAVE' AND identity_id=${identityId}) AS saved,
-      EXISTS(SELECT id FROM project_marks WHERE project_id=p.id AND marked_as='NOT_INTERESTED' AND identity_id=${identityId}) AS not_interested
+      (jm.marked_as='SAVE') AS saved
       FROM projects p
       JOIN identities i ON i.id=p.identity_id
       LEFT JOIN job_categories j ON j.id=p.job_category_id
-      WHERE (expires_at > NOW() OR expires_at IS NULL)
+      LEFT JOIN project_marks jm on jm.project_id=p.id AND jm.identity_id=${identityId}
+      WHERE (expires_at > NOW() OR expires_at IS NULL) AND (jm IS NULL OR jm.marked_as!='NOT_INTERESTED')
       ${filtering(filter, filterColumns, true, 'p')}
       ${sorting(sort, sortColumns, 'p')}
       LIMIT ${limit} OFFSET ${offset}`)

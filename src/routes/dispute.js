@@ -1,5 +1,6 @@
 import Router from '@koa/router'
 import Dispute from '../models/dispute/index.js'
+import Identity from '../models/identity/index.js'
 import Event from '../services/events/index.js'
 import Notif from '../models/notification/index.js'
 import { loginRequired } from '../utils/middlewares/authorization.js'
@@ -111,7 +112,7 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
     type: Notif.Types.DISPUTE_NEW_RESPONSE,
     refId: id,
     parentId: null,
-    identity,
+    identity: ctx.body.claimant,
     dispute: {
       title: ctx.body.title,
       code: ctx.body.code
@@ -129,13 +130,14 @@ router.post('/:id/response', loginRequired, checkIdParams, dispute, async (ctx) 
   //Sending Invitations
   if (isInAwaitingResponseState) {
     const potentialJurors = await Dispute.getPotentialJurors(id, { dispute: ctx.dispute })
+    const potentialJurorsIdentities = await Identity.getByIds(potentialJurors)
     const contributionInvitations = await Dispute.sendDisputeContributionInvitation(id, potentialJurors)
     for (const contributionInvitation of contributionInvitations) {
       Event.push(Event.Types.NOTIFICATION, contributionInvitation.contributor_id, {
         type: Notif.Types.DISPUTE_JUROR_CONTRIBUTION_INVITED,
         refId: contributionInvitation.id,
         parentId: null,
-        identity,
+        identity: potentialJurorsIdentities.find(identity=>identity.id==contributionInvitation.contributor_id),
         dispute: {
           title: ctx.body.title,
           code: ctx.body.code,

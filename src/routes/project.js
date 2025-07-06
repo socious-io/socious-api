@@ -88,7 +88,11 @@ router.post('/remove/:id', loginRequired, checkIdParams, projectPermission, asyn
 })
 
 router.get('/:id/applicants', loginRequired, paginate, checkIdParams, async (ctx) => {
-  ctx.body = await Applicant.getByProjectId(ctx.params.id, ctx.paginate)
+  const {
+    query: { q },
+  } = ctx
+
+  ctx.body = await Applicant.getByProjectId(ctx.params.id, {...ctx.paginate, q})
 })
 
 router.post('/:id/applicants', loginRequired, checkIdParams, async (ctx) => {

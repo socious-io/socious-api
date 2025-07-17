@@ -11,7 +11,7 @@ export const insert = async (first_name, last_name, username, email, hashedPassw
     VALUES (${first_name}, ${last_name}, ${username.toLowerCase()},
       ${email.toLowerCase()}, ${hashedPasswd}, 'ACTIVE') RETURNING *
   `)
-    indexUsers({id: rows[0].id})
+    indexUsers(rows[0])
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -56,7 +56,7 @@ export const updateProfile = async (
   `
   try {
     const { rows } = await app.db.query(query)
-    indexUsers({id: rows[0].id})
+    indexUsers(rows[0])
     return getProfile(rows[0].id)
   } catch (err) {
     throw new EntryError(err.message)
@@ -104,7 +104,7 @@ export const remove = async (user, reason) => {
     VALUES (${user.id}, ${user.username}, ${reason}, ${user.created_at})`
       )
       await client.query(sql`DELETE FROM users WHERE id=${user.id}`), await client.query('COMMIT')
-      indexUsers({id: user.id})
+      indexUsers(user)
     } catch (err) {
       await client.query('ROLLBACK')
       throw err

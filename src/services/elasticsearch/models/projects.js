@@ -1,5 +1,6 @@
 import { app } from '../../../index.js'
 import sql from 'sql-template-tag'
+import { indexProjects } from '../triggers.js'
 
 const index = 'projects'
 const indices = {
@@ -257,6 +258,37 @@ async function getAllProjects({ offset = 0, limit = 100 }) {
   return rows
 }
 
+async function getAllExpiredProjects({ offset = 0, limit = 100 }) {
+  const { rows } = await app.db.query(
+    sql`
+    SELECT p.*, row_to_json(o.*) as organization, array_to_json(p.causes_tags) AS causes_tags, gn.timezone,
+    COALESCE(
+      (SELECT
+        jsonb_agg(
+          json_build_object(
+            'title', pf.title, 
+            'value', pf.value
+          ) 
+        )
+        FROM preferences pf
+        WHERE pf.identity_id=o.id
+      ),
+      '[]'
+    ) AS preferences
+    FROM projects p
+    LEFT JOIN geonames gn ON gn.id=p.geoname_id
+    LEFT JOIN organizations o ON o.id=p.identity_id
+    WHERE p.expires_at < NOW() OR p.expires_at IS NOT NULL
+    LIMIT ${limit} OFFSET ${offset}
+    `
+  )
+  return rows
+}
+
+const expireProject = async (id) => {
+  return await app.db.query(sql`UPDATE projects SET status='EXPIRE' WHERE id=${id}`)
+}
+
 const initIndexing = async () => {
   let offset = 0,
     limit = 10000,
@@ -275,8 +307,50 @@ const initIndexing = async () => {
   return { count }
 }
 
+async function refreshIndexes() {
+  let offset = 0,
+    limit = 10000,
+    count = 0,
+    refreshedIndexes = [],
+    projects = [],
+    indexedProjects = [],
+    indexedProjectsIds = []
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    projects = await getAllExpiredProjects({ limit, offset })
+    if (projects.length < 1) break
+
+    //check if the entities is on the elastic
+    indexedProjects = await app.searchClient.getDocuments(index, projects.map(p=>p.id))
+    indexedProjectsIds = indexedProjects.map(ip=>ip.id)
+
+    
+    for(const project of projects) {
+      const isProjectExpired = (project.expires_at<new Date() || project.status!='ACTIVE');
+      const isProjectIndexed = indexedProjectsIds.includes(project.id)
+
+      //isProjectExpired && isProjectIndexed || !isProjectExpired && !isProjectIndexed then refresh the index
+      if(isProjectExpired == isProjectIndexed){
+        indexProjects(project)
+        refreshedIndexes.push(project.id)
+      } else if (project.expires_at<new Date() && project.status=='ACTIVE'){
+        expireProject(project.id)
+      }
+    }
+    count += projects.length
+    offset += limit
+  }
+
+  return {
+    count,
+    refreshedIndexes
+  }
+}
+
 export default {
   indices,
   indexing,
-  initIndexing
+  initIndexing,
+  refreshIndexes
 }

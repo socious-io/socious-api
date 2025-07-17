@@ -90,6 +90,26 @@ class SearchEngine {
     return await client.get({ index, id })
   }
 
+  async getDocuments(index, ids) {
+    index = index + this.indexModifier;
+    let docs = []
+
+    try{
+      const response = await client.mget({
+        index,
+        body: {
+          ids
+        }
+      });
+      // @ts-ignore
+      docs = response.docs.filter(d=>d.found).map(d=>d._source);
+    }catch(e){
+      console.log(e)
+    }
+    
+    return docs
+  }
+
   async updateDocument(index, id, document) {
     index = index + this.indexModifier
     return await client.update({ index, id, doc: document })

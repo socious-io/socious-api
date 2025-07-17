@@ -58,7 +58,7 @@ export const insert = async (
           ${identityId}, ${image}, ${cover_image}, ${mission}, ${culture}, ${size}, ${industry})
         RETURNING *, array_to_json(social_causes) AS social_causes`
     )
-    indexOrganizations({id: rows[0].id})
+    indexOrganizations(rows[0])
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -116,7 +116,7 @@ export const update = async (
         industry=${industry}
       WHERE id=${id} RETURNING *, array_to_json(social_causes) AS social_causes`
     )
-    indexOrganizations({id: rows[0].id})
+    indexOrganizations(rows[0])
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)

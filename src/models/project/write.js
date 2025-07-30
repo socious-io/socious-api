@@ -69,7 +69,7 @@ export const insert = async (
       )
       RETURNING *, array_to_json(causes_tags) AS causes_tags`
     )
-    indexProjects({id: rows[0].id})
+    indexProjects(rows[0])
     return rows[0]
   } catch (err) {
     throw new EntryError(err.message)
@@ -142,7 +142,7 @@ export const update = async (
         job_category_id=${job_category_id}
       WHERE id=${id} RETURNING *, array_to_json(causes_tags) AS causes_tags`
     )
-    indexProjects({id: rows[0].id})
+    indexProjects(rows[0])
     return get(rows[0].id)
   } catch (err) {
     throw new EntryError(err.message)

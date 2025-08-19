@@ -272,7 +272,6 @@ const indexing = async ({ id }) => {
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
   } else if (geoname) {
     document = geoNamesTransformer(geoname)
-    console.log(document)
     indexingDocuments.push(app.searchClient.indexDocument(index, document.id, document))
   } else {
     indexingDocuments.push(app.searchClient.deleteDocument(index, id))

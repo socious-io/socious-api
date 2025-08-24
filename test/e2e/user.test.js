@@ -5,7 +5,6 @@ import data from '../data/index.js'
 import {
   login,
   register,
-  profile,
   addLanguage,
   addExperience,
   updateExperience,

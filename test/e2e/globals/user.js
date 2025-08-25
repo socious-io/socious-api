@@ -84,7 +84,7 @@ export const profile = async (request, data) => {
       continue
     }
     const response = await request.get('/user/profile').set('Authorization', data.users[i].access_token)
-
+    console.log(response.body, "****************")
     expect(response.status).toBe(200)
   }
 }

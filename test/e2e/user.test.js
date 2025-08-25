@@ -4,6 +4,7 @@ import { app } from '../../src/index.js'
 import data from '../data/index.js'
 import {
   login,
+  profile,
   register,
   addLanguage,
   addExperience,
@@ -39,7 +40,7 @@ test('login event', async () => loginEvent(request, data))
 test('add language', async () => addLanguage(request, data))
 test('add experience', async () => addExperience(request, data))
 test('add education', async () => addEducation(request, data))
-// test('profile', async () => profile(request, data))
+test('profile', async () => profile(request, data))
 test('update language', async () => updateLanguage(request, data))
 test('update experience', async () => updateExperience(request, data))
 test('update education', async () => updateEducation(request, data))

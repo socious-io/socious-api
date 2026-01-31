@@ -5,6 +5,7 @@ on:
     branches: ["main", "production"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -22,7 +23,7 @@ jobs:
   #       run: echo '${{ toJSON(job) }}'
 
   build:
-    if:  github.event_name == 'push'
+    if:  github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -198,7 +199,7 @@ jobs:
   deploy-dev:
     needs: [build, run-tests]
     name: Deploy to Dev
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ["socious-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -253,7 +254,7 @@ jobs:
   deploy-prod:
     needs: [build]
     name: Deploy to Production
-    if: github.ref == 'refs/heads/production' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/production' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ["socious-production"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

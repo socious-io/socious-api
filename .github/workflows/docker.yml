@@ -5,6 +5,15 @@ on:
     branches: ["main", "production"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -22,7 +31,7 @@ jobs:
   #       run: echo '${{ toJSON(job) }}'
 
   build:
-    if:  github.event_name == 'push'
+    if:  github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -91,7 +100,7 @@ jobs:
 
   build-dev:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
     permissions:
       contents: read
       packages: write
@@ -147,7 +156,7 @@ jobs:
   run-tests:
     needs: build-dev
     name: Tests
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
     runs-on: ["socious-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -198,7 +207,7 @@ jobs:
   deploy-dev:
     needs: [build, run-tests]
     name: Deploy to Dev
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
     runs-on: ["socious-dev"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -253,7 +262,7 @@ jobs:
   deploy-prod:
     needs: [build]
     name: Deploy to Production
-    if: github.ref == 'refs/heads/production' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/production' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod')
     runs-on: ["socious-production"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}

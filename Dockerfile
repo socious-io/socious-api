@@ -48,7 +48,7 @@ COPY package*.json ./
 ENV NODE_ENV production
 
 # Running `npm ci` and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 RUN npm rebuild bcrypt --build-from-source
 
 ###################

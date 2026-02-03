@@ -1,13 +1,12 @@
 ###################
 # BUILD FOR DEVELOPMENT/TESTING
-# (to get an image run `docker build -t socious-api-dev --target development .`)
 ###################
 
 FROM node:20 AS development
 
-# Add Tini
+# Add Tini for arm64
 ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-arm64 /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
@@ -15,13 +14,11 @@ ENTRYPOINT ["/tini", "--"]
 WORKDIR /usr/src/app
 
 # Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
 COPY --chown=node:node package*.json ./
 
-# Install app dependencies using the `npm ci` command instead of `npm install`
+# Install app dependencies
 RUN npm ci
-RUN npm rebuild bcrypt --build-from-source
+RUN npm rebuild
 
 # Bundle app source
 COPY --chown=node:node . .
@@ -38,7 +35,7 @@ CMD [ "node", "serve.js" ]
 # BUILD PACKAGES FOR PRODUCTION
 ###################
 
-FROM node:lts AS modules
+FROM node:20 AS modules
 
 WORKDIR /usr/src/app
 
@@ -47,9 +44,9 @@ COPY package*.json ./
 # Set NODE_ENV environment variable
 ENV NODE_ENV production
 
-# Running `npm ci` and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+# Install production dependencies
 RUN npm ci --omit=dev
-RUN npm rebuild bcrypt --build-from-source
+RUN npm rebuild
 
 ###################
 # PRODUCTION
@@ -57,8 +54,8 @@ RUN npm rebuild bcrypt --build-from-source
 
 FROM node:20 AS production
 
-# Add Tini
-COPY --from=development /tini /
+# Copy Tini from development stage
+COPY --from=development /tini /tini
 ENTRYPOINT ["/tini", "--"]
 
 USER node
@@ -72,9 +69,7 @@ COPY --chown=node:node --from=development /usr/src/app/serve.js .
 COPY --chown=node:node --from=development /usr/src/app/templates ./templates
 COPY --chown=node:node --from=development /usr/src/app/docs ./docs
 COPY --chown=node:node --from=development /usr/src/app/scripts ./scripts
-# The package.json file is needed for the `"type": "module"` statement at least
 COPY --chown=node:node --from=development /usr/src/app/package.json .
-# Also bring in migrations so we can run them on deploy
 COPY --chown=node:node --from=development /usr/src/app/migrations ./migrations
 COPY --chown=node:node --from=development /usr/src/app/.env .
 

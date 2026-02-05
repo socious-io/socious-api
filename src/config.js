@@ -153,6 +153,12 @@ export default {
     credentials: process.env.GCS_CREDENTIALS_PATH
 
   },
+  oci: {
+    namespace: process.env.OCI_NAMESPACE,
+    bucket: process.env.OCI_BUCKET || 'socious-gcs',
+    region: process.env.OCI_REGION || 'us-phoenix-1',
+    cdn_url: process.env.OCI_CDN_URL
+  },
   socket: {
     cors: {
       origin: '*',

@@ -13,15 +13,22 @@ const gcs = new Storage({
 });
 
 let ociClient = null
-function getOCIClient() {
-  if (!ociClient) {
-    const provider = new common.InstancePrincipalsAuthenticationDetailsProviderBuilder().build()
-    ociClient = new os.ObjectStorageClient({ authenticationDetailsProvider: provider })
-    if (Config.oci.region) {
-      ociClient.region = Config.oci.region
-    }
-  }
-  return ociClient
+let ociClientPromise = null
+async function getOCIClient() {
+  if (ociClient) return ociClient
+  if (ociClientPromise) return ociClientPromise
+
+  ociClientPromise = (async () => {
+    const builder = new common.InstancePrincipalsAuthenticationDetailsProviderBuilder()
+    const provider = await builder.build()
+    ociClient = new os.ObjectStorageClient({
+      authenticationDetailsProvider: provider,
+      region: common.Region.US_PHOENIX_1
+    })
+    return ociClient
+  })()
+
+  return ociClientPromise
 }
 
 const makeExtention = (contentType) => {
@@ -85,7 +92,7 @@ async function uploadOCI(file, contentType = Data.MediaContentType.JPEG) {
   shasum.update(buffer)
   const filename = `${shasum.digest('hex')}${makeExtention(contentType)}`
 
-  const client = getOCIClient()
+  const client = await getOCIClient()
   await client.putObject({
     namespaceName: Config.oci.namespace,
     bucketName: Config.oci.bucket,

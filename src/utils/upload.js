@@ -4,11 +4,25 @@ import fs from 'fs/promises'
 import Config from '../config.js'
 import Data from '@socious/data'
 import { Storage } from '@google-cloud/storage'
+import os from 'oci-objectstorage'
+import common from 'oci-common'
 
 const s3 = new AWS.S3()
 const gcs = new Storage({
   keyFilename: Config.gcs.credentials
 });
+
+let ociClient = null
+function getOCIClient() {
+  if (!ociClient) {
+    const provider = new common.InstancePrincipalsAuthenticationDetailsProviderBuilder().build()
+    ociClient = new os.ObjectStorageClient({ authenticationDetailsProvider: provider })
+    if (Config.oci.region) {
+      ociClient.region = Config.oci.region
+    }
+  }
+  return ociClient
+}
 
 const makeExtention = (contentType) => {
   switch (contentType) {
@@ -50,7 +64,7 @@ async function uploadGCS(file, contentType = Data.MediaContentType.JPEG) {
   const shasum = Crypto.createHash('md5')
   shasum.update(buffer)
   const filename = `${shasum.digest('hex')}${makeExtention(contentType)}`
-  
+
   const blob = bucket.file(filename)
   const blobStream = blob.createWriteStream({
     metadata: { contentType }
@@ -65,12 +79,32 @@ async function uploadGCS(file, contentType = Data.MediaContentType.JPEG) {
   return `${Config.gcs.cdn_url}/${filename}`
 }
 
+async function uploadOCI(file, contentType = Data.MediaContentType.JPEG) {
+  const buffer = typeof file === 'string' ? await fs.readFile(file) : file
+  const shasum = Crypto.createHash('md5')
+  shasum.update(buffer)
+  const filename = `${shasum.digest('hex')}${makeExtention(contentType)}`
+
+  const client = getOCIClient()
+  await client.putObject({
+    namespaceName: Config.oci.namespace,
+    bucketName: Config.oci.bucket,
+    objectName: filename,
+    contentType: contentType,
+    putObjectBody: buffer
+  })
+
+  return `${Config.oci.cdn_url}/${filename}`
+}
+
 export default async (file, contentType = Data.MediaContentType.JPEG) => {
   console.log(Config.storageType)
   if(Config.storageType == 'AWS') {
     return await uploadS3(file, contentType)
   }else if(Config.storageType == 'GCS') {
     return await uploadGCS(file, contentType)
+  }else if(Config.storageType == 'OCI') {
+    return await uploadOCI(file, contentType)
   }else {
     throw new Error('Unknown storage type')
   }

@@ -5,7 +5,7 @@ import { configureHttp } from '../idealist/http-agent/configure-http.js'
 
 import { getLastReliefWebProjectId, processProject } from './project.js'
 
-const url = 'https://api.reliefweb.int/v1/jobs'
+const url = 'https://api.reliefweb.int/v2/jobs'
 const appName = process.env.RELIEFWEB_APPNAME || 'sociousjobaggregatorx7k2tqfw4zOnWYO3va14'
 
 /**
@@ -20,18 +20,17 @@ export async function listProjects() {
   let ttl = 100
   const limit = 100 // up to 1000, defaults to 1000
 
-  let url_params
-
   let count = 0
   let countProcessing = 0
   try {
     while (ttl > 0 && next === true) {
-      url_params =
-        `?appName=${appName}&profile=full&limit=${limit}` +
-        `&filter[field]=id&filter[value][from]=${last_id}&sort[]=id:asc`
-
       const response = await axios
-        .get(`${url}${url_params}`, {
+        .post(`${url}?appname=${appName}`, {
+          filter: { field: 'id', value: { from: last_id } },
+          sort: ['id:asc'],
+          limit,
+          profile: 'full'
+        }, {
           headers: {
             Accept: 'application/json'
           }
@@ -113,7 +112,7 @@ export async function verifyExists() {
     let exists = 0
     let expired = 0
     for (const project of rows) {
-      const response = await axios.get(`https://api.reliefweb.int/v1/jobs/${project.other_party_id}`, {
+      const response = await axios.get(`https://api.reliefweb.int/v2/jobs/${project.other_party_id}?appname=${appName}`, {
         headers: {
           Accept: 'application/json'
         }

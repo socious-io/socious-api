@@ -246,12 +246,12 @@ export async function expireProjects(title, ids) {
 
   try {
     const res = await app.db.query(sql`
-    UPDATE projects 
+    UPDATE projects
     SET status = 'EXPIRE',
       expires_at = NOW()
-    WHERE status <> 'EXPIRE' AND 
-      other_party_id = ANY(${ids} AND 
-      other_part_title=${title}
+    WHERE status <> 'EXPIRE' AND
+      other_party_id = ANY(${ids}) AND
+      other_party_title=${title}
     `)
 
     if (res.rowCount > 0) {

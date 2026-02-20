@@ -65,19 +65,19 @@ export async function createOrgFromProject(p) {
 async function findOrgFromTable(org) {
   try {
     const orgFromTable = await app.db.get(
-      sql`SELECT id FROM organizations 
-        WHERE other_party_id=${org.id} OR 
+      sql`SELECT id, other_party_id FROM organizations
+        WHERE other_party_id=${org.id} OR
         name = ${org.name} OR
-        website = ${org.url} 
+        website = ${org.url}
       LIMIT 1`
     )
 
-    if (!org.other_party_id) {
+    if (org.id && !orgFromTable.other_party_id) {
       await app.db.query(sql`
-        UPDATE organizations SET 
-          other_party_id=${org.other_party_id},
+        UPDATE organizations SET
+          other_party_id=${org.id},
           other_party_title='RELIEFWEB',
-          other_party_url=website,
+          other_party_url=${org.url},
           updated_at=now()
         WHERE id=${orgFromTable.id}
       `)

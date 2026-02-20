@@ -135,7 +135,7 @@ async function getProjectFromDb(p) {
   try {
     const pr = await app.db.get(sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`)
 
-    return pr.id
+    return pr
   } catch (err) {
     if (err.status !== 400 && err.message !== 'Not matched') {
       console.log(err.message, err.status)

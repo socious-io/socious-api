@@ -31,8 +31,6 @@ export async function checkIdealist() {
 
     console.log(`${count} ${projectTypes[x]} updated to status 'EXPIRE'`)
   }
-
-  process.exit(0)
 }
 
 /**
@@ -71,7 +69,6 @@ export async function verifyExists() {
     }
     console.log(`${exists} of projects still exists on Idealist and ${expired} of them expired`)
   }
-  process.exit(0)
 }
 
 /**.

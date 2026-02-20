@@ -3,11 +3,11 @@ import { checkIdealist, verifyExists } from '../src/services/idealist/check_acti
 
 switch (process.argv[2]) {
   case '--check':
-    checkIdealist()
+    checkIdealist().then(() => process.exit(0))
     break
   case '--verify':
-    verifyExists()
+    verifyExists().then(() => process.exit(0))
     break
   default:
-    start()
+    start().then(() => process.exit(0))
 }

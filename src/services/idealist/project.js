@@ -20,7 +20,9 @@ export const getProject = async function (projectTypes, id) {
       username: process.env.IDEALIST_TOKEN,
       password: ''
     },
-
+    headers: {
+      Accept: 'application/json'
+    },
     timeout: 0
   })
 

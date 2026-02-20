@@ -6,7 +6,7 @@ import { configureHttp } from '../idealist/http-agent/configure-http.js'
 import { getLastReliefWebProjectId, processProject } from './project.js'
 
 const url = 'https://api.reliefweb.int/v1/jobs'
-const appName = 'socious'
+const appName = process.env.RELIEFWEB_APPNAME || 'sociousjobaggregatorx7k2tqfw4zOnWYO3va14'
 
 /**
  *

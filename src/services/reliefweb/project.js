@@ -13,8 +13,8 @@ const other_party_title = 'reliefweb job'
 export async function getLastReliefWebProjectId() {
   try {
     const row = await app.db.get(
-      sql`SELECT other_party_id FROM projects WHERE other_party_title = ${other_party_title} 
-      ORDER BY other_party_id DESC LIMIT 1`
+      sql`SELECT other_party_id FROM projects WHERE other_party_title = ${other_party_title}
+      ORDER BY CAST(other_party_id AS INTEGER) DESC LIMIT 1`
     )
 
     return row.other_party_id || 0
@@ -133,7 +133,7 @@ async function getProjectFromDb(p) {
   try {
     const pr = await app.db.get(sql`SELECT id FROM projects WHERE other_party_id = ${p.id}`)
 
-    return pr.id
+    return pr
   } catch (err) {
     if (err.status !== 400 && err.message !== 'Not matched') {
       console.log(err.message, err.status)

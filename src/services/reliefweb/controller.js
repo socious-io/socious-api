@@ -84,7 +84,6 @@ export async function listProjects() {
   } catch (err) {
     console.log(err)
   }
-  process.exit(0)
 }
 
 /**
@@ -127,7 +126,6 @@ export async function verifyExists() {
     }
     console.log(`${exists} of projects still exists on Idealist and ${expired} of them expired`)
   }
-  process.exit(0)
 }
 
 /**

@@ -35,6 +35,4 @@ export async function start() {
   }
 
   console.log('\x1b[32m%s\x1b[0m', 'Projects successfully saved.')
-
-  process.exit(0)
 }

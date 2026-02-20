@@ -2,8 +2,8 @@ import { listProjects, verifyExists } from '../src/services/reliefweb/controller
 
 switch (process.argv[2]) {
   case '--verify':
-    verifyExists()
+    verifyExists().then(() => process.exit(0))
     break
   default:
-    listProjects()
+    listProjects().then(() => process.exit(0))
 }

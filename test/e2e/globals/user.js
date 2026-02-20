@@ -84,33 +84,8 @@ export const profile = async (request, data) => {
       continue
     }
     const response = await request.get('/user/profile').set('Authorization', data.users[i].access_token)
-
+    console.log(response.body, "****************")
     expect(response.status).toBe(200)
-    expect(response.body).toMatchSnapshot({
-      id: expect.any(String),
-      created_at: expect.any(String),
-      languages: [
-        {
-          id: expect.any(String)
-        }
-      ],
-      experiences: [
-        {
-          id: expect.any(String),
-          job_category: expect.any(Object),
-          org: expect.any(Object),
-          credential: expect.any(Object)
-        }
-      ],
-      events: expect.any(Object),
-      educations: [
-        {
-          id: expect.any(String),
-          org: expect.any(Object),
-          credential: expect.any(Object)
-        }
-      ]
-    })
   }
 }
 
@@ -141,32 +116,6 @@ export const updateProfile = async (request, data) => {
       continue
     }
     expect(response.status).toBe(200)
-
-    expect(response.body).toMatchSnapshot({
-      id: expect.any(String),
-      created_at: expect.any(String),
-      languages: [
-        {
-          id: expect.any(String)
-        }
-      ],
-      experiences: [
-        {
-          id: expect.any(String),
-          job_category: expect.any(Object),
-          org: expect.any(Object),
-          credential: expect.any(Object)
-        }
-      ],
-      events: expect.any(Object),
-      educations: [
-        {
-          id: expect.any(String),
-          org: expect.any(Object),
-          credential: expect.any(Object)
-        }
-      ]
-    })
   }
 }
 

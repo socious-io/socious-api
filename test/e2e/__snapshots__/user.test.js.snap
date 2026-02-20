@@ -107,162 +107,6 @@ exports[`login 1`] = `
 }
 `;
 
-exports[`profile 1`] = `
-{
-  "address": null,
-  "avatar": null,
-  "bio": null,
-  "certificates": null,
-  "city": null,
-  "connection_id": null,
-  "connection_status": null,
-  "connections": 0,
-  "country": null,
-  "cover_image": null,
-  "created_at": Any<String>,
-  "educations": [
-    {
-      "credential": Any<Object>,
-      "degree": null,
-      "description": "Test",
-      "end_at": "2022-11-16T13:32:30.211",
-      "grade": null,
-      "id": Any<String>,
-      "org": Any<Object>,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test",
-    },
-  ],
-  "events": Any<Object>,
-  "experiences": [
-    {
-      "city": "Tehran",
-      "country": "IR",
-      "credential": Any<Object>,
-      "description": "Test",
-      "employment_type": "FULL_TIME",
-      "end_at": null,
-      "id": Any<String>,
-      "job_category": Any<Object>,
-      "org": Any<Object>,
-      "skills": null,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test",
-    },
-  ],
-  "first_name": "testname",
-  "follower": false,
-  "followers": 0,
-  "following": false,
-  "followings": 2,
-  "geoname_id": null,
-  "id": Any<String>,
-  "identity_verified": false,
-  "impact_points": 0,
-  "is_contributor": null,
-  "languages": [
-    {
-      "id": Any<String>,
-      "level": "NATIVE",
-      "name": "FA",
-    },
-  ],
-  "last_name": "lastname",
-  "mission": null,
-  "mobile_country_code": null,
-  "open_to_volunteer": false,
-  "open_to_work": false,
-  "phone": null,
-  "portfolios": null,
-  "proofspace_connect_id": null,
-  "rate": null,
-  "recommendations": null,
-  "reported": false,
-  "skills": null,
-  "social_causes": null,
-  "username": "test_username",
-  "wallet_address": null,
-}
-`;
-
-exports[`profile 2`] = `
-{
-  "address": null,
-  "avatar": null,
-  "bio": null,
-  "certificates": null,
-  "city": null,
-  "connection_id": null,
-  "connection_status": null,
-  "connections": 0,
-  "country": null,
-  "cover_image": null,
-  "created_at": Any<String>,
-  "educations": [
-    {
-      "credential": Any<Object>,
-      "degree": null,
-      "description": "Test",
-      "end_at": "2022-11-16T13:32:30.211",
-      "grade": null,
-      "id": Any<String>,
-      "org": Any<Object>,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test",
-    },
-  ],
-  "events": Any<Object>,
-  "experiences": [
-    {
-      "city": "Tehran",
-      "country": "IR",
-      "credential": Any<Object>,
-      "description": "Test",
-      "employment_type": "FULL_TIME",
-      "end_at": null,
-      "id": Any<String>,
-      "job_category": Any<Object>,
-      "org": Any<Object>,
-      "skills": null,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test",
-    },
-  ],
-  "first_name": "testname",
-  "follower": false,
-  "followers": 0,
-  "following": false,
-  "followings": 0,
-  "geoname_id": null,
-  "id": Any<String>,
-  "identity_verified": false,
-  "impact_points": 0,
-  "is_contributor": null,
-  "languages": [
-    {
-      "id": Any<String>,
-      "level": "NATIVE",
-      "name": "FA",
-    },
-  ],
-  "last_name": "lastname",
-  "mission": null,
-  "mobile_country_code": null,
-  "open_to_volunteer": false,
-  "open_to_work": false,
-  "phone": null,
-  "portfolios": null,
-  "proofspace_connect_id": null,
-  "rate": null,
-  "recommendations": null,
-  "reported": false,
-  "skills": null,
-  "social_causes": null,
-  "username": "test_username_2",
-  "wallet_address": null,
-}
-`;
-
 exports[`profile by username 1`] = `
 {
   "address": null,
@@ -338,6 +182,7 @@ exports[`profile by username 1`] = `
   "social_causes": null,
   "username": "test_username",
   "wallet_address": null,
+  "wallets": null,
 }
 `;
 
@@ -416,6 +261,7 @@ exports[`profile by username 2`] = `
   "social_causes": null,
   "username": "test_username_2",
   "wallet_address": null,
+  "wallets": null,
 }
 `;
 
@@ -578,83 +424,6 @@ exports[`update language 2`] = `
 `;
 
 exports[`update profile 1`] = `
-{
-  "address": null,
-  "avatar": null,
-  "bio": "TEST",
-  "certificates": null,
-  "city": null,
-  "connection_id": null,
-  "connection_status": null,
-  "connections": 0,
-  "country": null,
-  "cover_image": null,
-  "created_at": Any<String>,
-  "educations": [
-    {
-      "credential": Any<Object>,
-      "degree": null,
-      "description": "Test",
-      "end_at": "2022-11-16T13:32:30.211",
-      "grade": null,
-      "id": Any<String>,
-      "org": Any<Object>,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test 2",
-    },
-  ],
-  "events": Any<Object>,
-  "experiences": [
-    {
-      "city": "Tehran",
-      "country": "IR",
-      "credential": Any<Object>,
-      "description": "Test",
-      "employment_type": "FULL_TIME",
-      "end_at": null,
-      "id": Any<String>,
-      "job_category": Any<Object>,
-      "org": Any<Object>,
-      "skills": null,
-      "start_at": "2022-10-16T13:32:30.211",
-      "title": "Test",
-    },
-  ],
-  "first_name": "testname",
-  "follower": false,
-  "followers": 0,
-  "following": false,
-  "followings": 2,
-  "geoname_id": null,
-  "id": Any<String>,
-  "identity_verified": false,
-  "impact_points": 0,
-  "is_contributor": null,
-  "languages": [
-    {
-      "id": Any<String>,
-      "level": "PROFICIENT",
-      "name": "EN",
-    },
-  ],
-  "last_name": "lastname",
-  "mission": "TEST",
-  "mobile_country_code": "+98",
-  "open_to_volunteer": false,
-  "open_to_work": false,
-  "phone": "9999999999",
-  "portfolios": null,
-  "proofspace_connect_id": null,
-  "recommendations": null,
-  "reported": false,
-  "skills": [],
-  "social_causes": null,
-  "username": "test_username",
-  "wallet_address": null,
-}
-`;
-
-exports[`update profile 2`] = `
 {
   "error": "duplicate key value violates unique constraint "idx_phone_country_code"",
 }

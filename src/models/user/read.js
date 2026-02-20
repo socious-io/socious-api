@@ -268,7 +268,8 @@ export const getProfile = async (id, currentIdentity) => {
 	    SELECT COUNT(*)::int
 	    FROM connections c2
 	    WHERE (c2.requested_id=u.id OR c2.requester_id=u.id) AND c2.status='CONNECTED'
-    ) AS connections
+    ) AS connections,
+    (SELECT array_agg(row_to_json(w.*)) FROM wallets w WHERE w.user_id=u.id) AS wallets
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
@@ -488,7 +489,8 @@ export const getProfileByUsername = async (username, currentIdentity) => {
 	    SELECT COUNT(*)::int
 	    FROM connections c2
 	    WHERE (c2.requested_id=u.id OR c2.requester_id=u.id) AND c2.status='CONNECTED'
-    ) AS connections
+    ) AS connections,
+     (SELECT array_agg(row_to_json(w.*)) FROM wallets w WHERE w.user_id=u.id) AS wallets
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image
@@ -738,7 +740,8 @@ export const getAllProfile = async (ids, sort, currentIdentity) => {
         LEFT JOIN media org_media ON org_media.id=org.image
         LEFT JOIN educations_credentials ec ON ec.education_id=e.id
         WHERE e.user_id=u.id AND (ec.status IS NULL OR ec.status != 'ISSUED')
-    ) AS educations
+    ) AS educations,
+     (SELECT array_agg(row_to_json(w.*)) FROM wallets w WHERE w.user_id=u.id) AS wallets
     FROM users u 
     LEFT JOIN media avatar ON avatar.id=u.avatar
     LEFT JOIN media cover ON cover.id=u.cover_image

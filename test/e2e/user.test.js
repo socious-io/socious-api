@@ -4,8 +4,8 @@ import { app } from '../../src/index.js'
 import data from '../data/index.js'
 import {
   login,
-  register,
   profile,
+  register,
   addLanguage,
   addExperience,
   updateExperience,

@@ -113,6 +113,9 @@ async function getListings(projectTypes) {
           auth: {
             username: idealist_token,
             password: ''
+          },
+          headers: {
+            Accept: 'application/json'
           }
         })
         .catch(function (error) {

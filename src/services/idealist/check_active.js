@@ -144,9 +144,13 @@ async function getListings(projectTypes) {
         if (projects.length > 0) {
           projectsCount = projectsCount + projects.length
 
-          process.stdout.clearLine(0)
-          process.stdout.cursorTo(0)
-          process.stdout.write(`Loaded: ${projectsCount} ${projectTypes}`)
+          if (process.stdout.clearLine) {
+            process.stdout.clearLine(0)
+            process.stdout.cursorTo(0)
+            process.stdout.write(`Loaded: ${projectsCount} ${projectTypes}`)
+          } else {
+            console.log(`Loaded: ${projectsCount} ${projectTypes}`)
+          }
 
           // get the since from this stack of project listing
           since = projects[projects.length - 1].updated

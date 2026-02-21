@@ -50,9 +50,13 @@ export async function listProjects() {
 
       if (response.status === 200) {
         countProcessing = countProcessing + response.data.data.length
-        process.stdout.clearLine(0)
-        process.stdout.cursorTo(0)
-        process.stdout.write('Projects found: ' + countProcessing)
+        if (process.stdout.clearLine) {
+          process.stdout.clearLine(0)
+          process.stdout.cursorTo(0)
+          process.stdout.write('Projects found: ' + countProcessing)
+        } else {
+          console.log('Projects found: ' + countProcessing)
+        }
 
         const data = response.data.data
 

@@ -36,6 +36,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       # # Install the cosign tool except on PR
       # # https://github.com/sigstore/cosign-installer
       # - name: Install cosign
@@ -68,12 +71,13 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
+      - name: Build and push Docker image (ARM64)
         id: build-and-push
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -135,12 +139,13 @@ jobs:
 
       # Build and push dev Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
+      - name: Build and push Docker image (ARM64)
         id: build-and-push
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
+          platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: development
@@ -255,7 +260,7 @@ jobs:
     needs: [build]
     name: Deploy to Production
     if: github.ref == 'refs/heads/production' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    runs-on: ["socious-production"]
+    runs-on: ["socious-prod"]
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -276,25 +281,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run DB migrations
-        run: |
-          docker pull ${{ steps.meta.outputs.tags }}
-          docker rm -fv socious-migrations
-          docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
+      # - name: Run DB migrations
+      #   run: |
+      #     docker pull ${{ steps.meta.outputs.tags }}
+      #     docker rm -fv socious-migrations
+      #     docker run --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-migrations ${{ steps.meta.outputs.tags }} npm run migrate
 
       - name: Docker run
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
-          docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api
+          docker ps -qa --filter "name=socious-api" | grep -q . && docker stop socious-api && docker rm -fv socious-api || true
           docker run -d --restart always -p 5061:5061 -h socious-api -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-api ${{ steps.meta.outputs.tags }}
 
       - name: Docker run workers
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
-          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers
+          docker ps -qa --filter "name=socious-workers" | grep -q . && docker stop socious-workers && docker rm -fv socious-workers || true
           docker run -d --restart always -h socious-workers -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-workers ${{ steps.meta.outputs.tags }} npm run workers
       - name: Docker run schedulers
         run: |
           docker pull ${{ steps.meta.outputs.tags }}
-          docker ps -qa --filter "name=socious-schedulers" | grep -q . && docker stop socious-schedulers && docker rm -fv socious-schedulers
+          docker ps -qa --filter "name=socious-schedulers" | grep -q . && docker stop socious-schedulers && docker rm -fv socious-schedulers || true
           docker run -d --restart always -h socious-schedulers -v /etc/socious-api/share:/var/lib/share -v /var/lib/geoip:/var/lib/geoip --env-file "/etc/socious-api/env" --network sociousapi_default --name socious-schedulers ${{ steps.meta.outputs.tags }} npm run schedulers

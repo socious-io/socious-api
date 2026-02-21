@@ -89,7 +89,7 @@ async function parseProject(p, type) {
     title: p.title,
     description: p['body-html'] ? p['body-html'] : p.body ? p.body : 'No information aviable',
     country: countryIso2,
-    city: p.city[0].name,
+    city: p.city?.[0]?.name || null,
     experience_level: experienceLevel,
     status: 'ACTIVE',
     expires_at: p.date.closing,

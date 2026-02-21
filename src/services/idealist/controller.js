@@ -77,18 +77,22 @@ export async function getAllProjects(ids) {
 
           obj.processed = 1 // mark project as processed
 
-          process.stdout.clearLine(0)
-          process.stdout.cursorTo(0)
-          process.stdout.write(`${res} ${types}`)
+          if (process.stdout.clearLine) {
+            process.stdout.clearLine(0)
+            process.stdout.cursorTo(0)
+            process.stdout.write(`${res} ${types}`)
+          }
         }
       }
 
       // wait some time after each 50th project
       if (count > 50) {
         if (config.idealist.wait_between_project > 0) {
-          process.stdout.clearLine(0)
-          process.stdout.cursorTo(0)
-          process.stdout.write(`Waiting ${config.idealist.wait_break / 1000} secons`)
+          if (process.stdout.clearLine) {
+            process.stdout.clearLine(0)
+            process.stdout.cursorTo(0)
+            process.stdout.write(`Waiting ${config.idealist.wait_break / 1000} secons`)
+          }
           await sleep(config.idealist.wait_break)
         }
         count = 0

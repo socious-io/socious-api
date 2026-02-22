@@ -39,65 +39,56 @@ export async function getIds() {
  * @param ids
  * @example
  */
+const BATCH_SIZE = 50
+
 export async function getAllProjects(ids) {
   for (const [types, val] of Object.entries(ids)) {
-    // for each type of project (job, volop and intenrship)
     let res = 0
-    let count = 0
-    const failedProjectsIds = []
+
+    const projectType =
+      types === 'jobs' ? 'job' : types === 'volops' ? 'volop' : 'internship'
 
     console.log(`Loading ${types} projects...`)
 
-    for (let x = 0; x < val.length; x++) {
-      const obj = val[x] // object {id , processed}
-      count++
-      let p
-      try {
-        // get project from Idealist
-        p = await getProject(types, obj.id) // use queue?...
-      } catch (err) {
-        failedProjectsIds.push(obj.id)
-      }
+    // Process in batches to keep memory bounded
+    for (let batchStart = 0; batchStart < val.length; batchStart += BATCH_SIZE) {
+      const batch = val.slice(batchStart, batchStart + BATCH_SIZE)
 
-      let projectType
+      for (const obj of batch) {
+        let p
+        try {
+          p = await getProject(types, obj.id)
+        } catch (err) {
+          // skip failed project; retry pass will pick it up
+        }
 
-      if (types === 'jobs') {
-        projectType = 'job' // we need singular object property later
-      } else if (types === 'volops') {
-        projectType = 'volop'
-      } else if (types === 'internships') {
-        projectType = 'internship'
-      }
+        if (p && p[projectType]) {
+          if ((await processProject(p[projectType], projectType)) === true) {
+            res++
+            obj.processed = 1
 
-      // process project and insert/update in database
-
-      if (p && p[projectType]) {
-        if ((await processProject(p[projectType], projectType)) === true) {
-          res++
-
-          obj.processed = 1 // mark project as processed
-
-          if (process.stdout.clearLine) {
-            process.stdout.clearLine(0)
-            process.stdout.cursorTo(0)
-            process.stdout.write(`${res} ${types}`)
+            if (process.stdout.clearLine) {
+              process.stdout.clearLine(0)
+              process.stdout.cursorTo(0)
+              process.stdout.write(`${res} ${types}`)
+            }
           }
         }
-      }
 
-      // wait some time after each 50th project
-      if (count > 50) {
-        if (config.idealist.wait_between_project > 0) {
-          if (process.stdout.clearLine) {
-            process.stdout.clearLine(0)
-            process.stdout.cursorTo(0)
-            process.stdout.write(`Waiting ${config.idealist.wait_break / 1000} secons`)
-          }
-          await sleep(config.idealist.wait_break)
-        }
-        count = 0
-      } else {
+        // Release reference so response can be GC'd
+        p = null
+
         await sleep(config.idealist.wait_between_project)
+      }
+
+      // Pause between batches to allow GC and avoid API throttling
+      if (batchStart + BATCH_SIZE < val.length) {
+        if (process.stdout.clearLine) {
+          process.stdout.clearLine(0)
+          process.stdout.cursorTo(0)
+          process.stdout.write(`${res}/${val.length} ${types} processed, pausing...`)
+        }
+        await sleep(config.idealist.wait_break || 10000)
       }
     }
 

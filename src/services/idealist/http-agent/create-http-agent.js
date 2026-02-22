@@ -6,10 +6,10 @@ import Agent from 'agentkeepalive'
  */
 export function createHttpAgent() {
   return new Agent({
-    maxSockets: 100,
-    maxFreeSockets: 10,
+    maxSockets: 5,
+    maxFreeSockets: 2,
     timeout: 60000,
-    freeSocketTimeout: 30000
+    freeSocketTimeout: 15000
   })
 }
 
@@ -19,9 +19,9 @@ export function createHttpAgent() {
  */
 export function createHttpsAgent() {
   return new Agent.HttpsAgent({
-    maxSockets: 100,
-    maxFreeSockets: 10,
+    maxSockets: 5,
+    maxFreeSockets: 2,
     timeout: 60000,
-    freeSocketTimeout: 30000
+    freeSocketTimeout: 15000
   })
 }

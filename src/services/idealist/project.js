@@ -23,7 +23,7 @@ export const getProject = async function (projectTypes, id) {
     headers: {
       Accept: 'application/json'
     },
-    timeout: 0
+    timeout: 30000
   })
 
   if (proj.status !== 200) throw Error('fetching project')

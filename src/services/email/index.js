@@ -35,6 +35,13 @@ export const isTestEmail = (address) => {
   return false
 }
 
+const extractMessageId = (result) => {
+  if (!result?.messageId) return crypto.randomUUID()
+  // SMTP messageId is like "<uuid@domain>" — strip to just the UUID part
+  const match = result.messageId.match(/<?([0-9a-f-]{36})/)
+  return match ? match[1] : crypto.randomUUID()
+}
+
 const sendViaSmtp = async ({ to, subject, html }) => {
   return smtp.sendMail({
     to,
@@ -68,7 +75,7 @@ export const sendHtmlEmail = async ({ to, subject, template, kwargs = {} }) => {
   }
 
   await insert(
-    result?.messageId || crypto.randomUUID(),
+    extractMessageId(result),
     {
       service: sender,
       template,
@@ -104,7 +111,7 @@ export const sendTemplateEmail = async ({ to, subject, template, kwargs = {}, ca
   }
 
   await insert(
-    result?.messageId || crypto.randomUUID(),
+    extractMessageId(result),
     {
       service: sender,
       template,

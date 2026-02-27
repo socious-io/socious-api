@@ -14,7 +14,6 @@ export default {
   jwtRefreshExpireTime: '30d',
   fronthost: process.env.ENV == 'production' ? 'https://app.socious.io' : 'https://webapp2.dev.socious.io',
   geoipDb: process.env.GEOIP_DB || 'mini-geoip.mmdb',
-  sendgridApiKey: process.env.MAIL_SENDGRID_API_KEY,
   segmentAnalytics: process.env.SEGMENT_ANALYTICS || 'test',
   slack: {
     enabled: process.env.SLACK_ENABLED || true,
@@ -23,16 +22,6 @@ export default {
   },
 
   mail: {
-    sendgrid: {
-      from: {
-        email: process.env.MAIL_SENDGRID_FROM || 'team@socious.io',
-        name: process.env.MAIL_SENDGRID_NAME || 'Socious Team'
-      },
-      otp_from: {
-        email: process.env.MAIL_SENDGRID_FROM || 'no-replay@socious.io',
-        name: process.env.MAIL_SENDGRID_NAME || 'Socious'
-      }
-    },
     smtp: {
       host: process.env.MAIL_SMTP_HOST,
       port: process.env.MAIL_SMTP_PORT ?? 587,
@@ -46,43 +35,13 @@ export default {
       }
     },
     allowTest: boolVariable(process.env.ALLOW_TEST_EMAILS),
-    defaultSender: process.env.EMAIL_SENDER ?? 'SENDGRID',
+    defaultSender: process.env.EMAIL_SENDER ?? 'SMTP',
     templates: {
-      activation: 'd-d242926eac4e4c33a166764638cf6e7f',
-      forgetPassword: 'd-d7aea3b78df042e8a2fdc83953960259',
-      otp: 'd-0146441b623f4cb78833c50eb1a8c813',
-      referral: 'd-95ca4e22ae7a459c8d9218a8e0c46a28',
-      notifications: {
-        FOLLOWED: 'd-aeeec637f91f418388bf9b5ce40e94c2',
-        COMMENT_LIKE: 'd-ce5fc950a83642d78c32c305d56acd9a',
-        POST_LIKE: 'd-0033451102e4419bb277c067d27076fb',
-        CHAT: 'd-f074d0d0ac95496ca3717d5369f1d013',
-        SHARE_POST: 'd-9911d673f11d4a2ea7552a037caf4d6f',
-        SHARE_PROJECT: 'd-d330640808de4ff298798e3715663bb9',
-        COMMENT: 'd-0ccebf87a2954f0dbcb9e03ba6cd678c',
-        APPLICATION: 'd-d0e56e66b2354defadc55a1922f6f00c',
-        OFFER: 'd-f43f679352b947bb8af7d95101e37086',
-        REJECT: 'd-dc4cb57947284a5cb2c3c33abbafb96b',
-        APPROVED: 'd-f46c948afada4dc5862d751b7480364b',
-        HIRED: 'd-8d94367eacb5411fb6188a8ba06363df',
-        PROJECT_COMPLETE: 'd-731d6e77e1b4412d8e7b8fbbc7f418db',
-        ASSIGNEE_CANCELED: 'd-0df6e8629f644986b2d6ff9b758058bc',
-        ASSIGNER_CANCELED: 'd-65e541665d20410d806089be8fa4d4d9',
-        ASSIGNER_CONFIRMED: 'd-c8701ca45acc4922a6551575953952d4',
-        CONNECT: 'd-fbdf106885cf43699af6ce4d7d7b27da',
-        ACCEPT_CONNECT: 'd-a4a688a2513f41a1bbae531abdc269b5',
-        MEMBERED: 'd-7bb68df4ca12457b9d4f403977565443',
-        REACH_10K_IMPACT_POINT: 'd-f03c8940ad944e9b959b126247dcce55',
-        DISPUTE_INITIATED: 'd-ae6797e518f5471ab0daad3bfa9bfd02',
-        DISPUTE_NEW_RESPONSE: 'd-3640f7c8e1844090aad9e7e33f2ba1dc',
-        DISPUTE_JUROR_CONTRIBUTION_INVITED: 'd-8164cf4bc84b4dd5a76cc82a6d16cfef',
-        DISPUTE_CLOSED_TO_LOSER_PARTY: 'd-f5ffe648b6224607a4dc33395612cf77',
-        REFERRAL_JOINED: 'd-7c4f194c10f14c099a201c403668c6bb',
-        REFERRAL_VERIFIED: 'd-7c4f194c10f14c099a201c403668c6bb',
-        REFERRAL_HIRED: 'd-7c4f194c10f14c099a201c403668c6bb',
-        REFERRAL_COMPLETED_JOB: 'd-7c4f194c10f14c099a201c403668c6bb',
-        GENERAL_NOTIF: 'd-7c4f194c10f14c099a201c403668c6bb'
-      }
+      activation: 'src/templates/emails/activation.ejs',
+      forgetPassword: 'src/templates/emails/forget-password.ejs',
+      otp: 'src/templates/emails/otp.ejs',
+      referral: 'src/templates/emails/referral.ejs',
+      notification: 'src/templates/emails/notification.ejs'
     }
   },
   ai: {

@@ -15,7 +15,6 @@ import { paginate } from '../utils/middlewares/requests.js'
 import { loginOptional, loginRequired } from '../utils/middlewares/authorization.js'
 import Data, { validate } from '@socious/data'
 import { checkIdParams } from '../utils/middlewares/route.js'
-import { putContact } from '../services/sendgrid/index.js'
 import { BadRequestError, NotFoundError, PermissionError } from '../utils/errors.js'
 import { recommendUserByUser, recommendProjectByUser, recommendOrgByUser } from '../services/recommender/index.js'
 import Credential from '../models/credentials/index.js'
@@ -81,12 +80,6 @@ router.post('/update/profile', loginRequired, async (ctx) => {
   ctx.request.body.skills = skills.map((s) => s.name)
 
   ctx.body = await User.updateProfile(ctx.user.id, ctx.request.body)
-
-  putContact({
-    first_name: ctx.body.first_name,
-    last_name: ctx.body.last_name,
-    email: ctx.body.email
-  })
 })
 
 router.post('/change-password', loginRequired, async (ctx) => {

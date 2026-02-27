@@ -1,7 +1,6 @@
 import { identitySendEmails, sendHtmlEmail, sendTemplateEmail } from '../email/index.js'
 import SearchEngine from '../elasticsearch/index.js'
 import { simplePush } from '../fcm/index.js'
-import { contactWorker } from '../sendgrid/index.js'
 import { worker as eventsWorker } from '../events/worker.js'
 import { worker as impactPointsWorker } from '../impact_points/worker.js'
 import ProofSpace from '../proofspace/index.js'
@@ -40,7 +39,6 @@ const register = {
   fcm: consumer(simplePush),
   notify: consumer(eventsWorker),
   calculate_impact_points: consumer(impactPointsWorker),
-  sendgrid_add_contacts: consumer(contactWorker),
   analytics_identitfy: consumer(Analytics.identifyWorker),
   analytics_track: consumer(Analytics.trackWorker),
   sync_proofspace: consumer(ProofSpace.SyncWorker),

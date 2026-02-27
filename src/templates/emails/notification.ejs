@@ -1,0 +1,9 @@
+<% const body = `
+<h1>New notification</h1>
+<p>Hi ${notify_name},</p>
+<p>${name} has a new update for you on Socious.</p>
+<p>
+  <a href="${link}" class="btn">View Details</a>
+</p>
+` %>
+<%- include('_layout', { body, subject: 'New notification' }) %>

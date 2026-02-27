@@ -1,0 +1,9 @@
+<% const body = `
+<h1>You're invited to Socious!</h1>
+<p>${name} has invited you to join Socious — a platform connecting people and organizations working toward social and environmental impact.</p>
+<p>
+  <a href="https://app.socious.io" class="btn">Join Socious</a>
+</p>
+<p>See you there!</p>
+` %>
+<%- include('_layout', { body, subject: 'You\'re invited to Socious!' }) %>

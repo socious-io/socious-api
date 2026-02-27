@@ -1,0 +1,8 @@
+<% const body = `
+<h1>Verify your account</h1>
+<p>Hi ${name},</p>
+<p>Welcome to Socious! Please use the verification code below to activate your account:</p>
+<div class="code-box">${code}</div>
+<p>This code will expire in 10 minutes. If you didn't create an account, you can safely ignore this email.</p>
+` %>
+<%- include('_layout', { body, subject: 'Verify your account' }) %>

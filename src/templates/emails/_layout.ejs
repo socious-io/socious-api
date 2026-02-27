@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof subject !== 'undefined' ? subject : 'Socious' %></title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      width: 100%;
+      background-color: #f4f4f4;
+      padding: 40px 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .header {
+      background-color: #0C4D40;
+      padding: 24px 32px;
+      text-align: center;
+    }
+    .header img {
+      height: 36px;
+    }
+    .content {
+      padding: 32px;
+      color: #333333;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    .content h1 {
+      color: #0C4D40;
+      font-size: 22px;
+      margin: 0 0 16px 0;
+    }
+    .content p {
+      margin: 0 0 16px 0;
+    }
+    .code-box {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 6px;
+      color: #0C4D40;
+      margin: 24px 0;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #0C4D40;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 16px 0;
+    }
+    .footer {
+      background-color: #0C4D40;
+      padding: 20px 32px;
+      text-align: center;
+      color: #E8D5C4;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .footer a {
+      color: #E8D5C4;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <img src="https://socious.io/static/logo-white.svg" alt="Socious" />
+      </div>
+      <div class="content">
+        <%- body %>
+      </div>
+      <div class="footer">
+        &copy; <%= new Date().getFullYear() %> Socious. All rights reserved.<br>
+        <a href="https://socious.io">socious.io</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

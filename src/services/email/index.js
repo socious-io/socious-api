@@ -74,21 +74,25 @@ export const sendHtmlEmail = async ({ to, subject, template, kwargs = {} }) => {
     return
   }
 
-  await insert(
-    extractMessageId(result),
-    {
-      service: sender,
-      template,
-      kwargs
-    },
-    result,
-    to,
-    subject,
-    html,
-    'text/html',
-    sender,
-    date
-  )
+  try {
+    await insert(
+      extractMessageId(result),
+      {
+        service: sender,
+        template,
+        kwargs
+      },
+      result,
+      to,
+      subject,
+      html,
+      'text/html',
+      sender,
+      date
+    )
+  } catch (err) {
+    logger.error(`[email audit] => ${err.message}`)
+  }
 }
 
 export const sendTemplateEmail = async ({ to, subject, template, kwargs = {}, category }) => {
@@ -110,21 +114,25 @@ export const sendTemplateEmail = async ({ to, subject, template, kwargs = {}, ca
     return
   }
 
-  await insert(
-    extractMessageId(result),
-    {
-      service: sender,
+  try {
+    await insert(
+      extractMessageId(result),
+      {
+        service: sender,
+        template,
+        kwargs
+      },
+      result,
+      to,
+      subject,
+      html || `${Object.keys(kwargs).map((key) => `${key}=${kwargs[key]}`).join('&')}`,
       template,
-      kwargs
-    },
-    result,
-    to,
-    subject,
-    html || `${Object.keys(kwargs).map((key) => `${key}=${kwargs[key]}`).join('&')}`,
-    template,
-    sender,
-    date
-  )
+      sender,
+      date
+    )
+  } catch (err) {
+    logger.error(`[email audit] => ${err.message}`)
+  }
 }
 
 export const identitySendEmails = async ({ to, identity_id, template, kwargs = {}, type }) => {

@@ -23,7 +23,7 @@ const consumer = (handler) => {
       logger.info(`[${subj}]${pad} #${queue.getProcessed()} - ${q.subject} ${JSON.stringify(body)}`)
 
       try {
-        handler(body)
+        await handler(body)
       } catch (err) {
         logger.error(`${err.message} | ${err.stack}`)
       }

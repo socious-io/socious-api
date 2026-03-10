@@ -30,7 +30,7 @@ export const isTestEmail = (address) => {
   if (!domain) throw new Error('Invalid email')
   for (const td of testDomains) {
     if (td === domain) return true
-    if (domain.endsWith(`.${domain}`)) return true
+    if (domain.endsWith(`.${td}`)) return true
   }
   return false
 }
